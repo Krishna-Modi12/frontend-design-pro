@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/krishnamodi241/frontend-design-pro/rules/v12-envelope.schema.json",
+  "title": "Frontend Design Pro v12 JSON Envelope",
+  "description": "Schema for structured output emitted when [json] shortcode is used. schema_version: 12.0",
+  "type": "object",
+  "required": ["schema_version", "component", "metadata"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "12.0",
+      "description": "Envelope schema version. Always '12.0' for this release."
+    },
+    "component": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Complete, runnable component source code as a string."
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["intent", "mode", "files_loaded", "shortcodes_detected", "design_md_tokens_overridden", "dials", "eval_ids_applicable", "constraints_passed", "constraints_checked"],
+      "additionalProperties": false,
+      "properties": {
+        "intent": {
+          "type": "string",
+          "enum": [
+            "CREATE_PAGE", "CREATE_COMPONENT", "FIX_UI", "IMPROVE_UX",
+            "DEBUG_LAYOUT", "OPTIMIZE_PERFORMANCE", "HARDEN_ACCESSIBILITY",
+            "REFINE_COMPONENT", "BUILD_3D", "SCROLL_EXPERIENCE",
+            "ANIMATE", "DESIGN_SYSTEM", "REDESIGN"
+          ],
+          "description": "Primary intent classified in DETECT stage."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["Quick", "Full"],
+          "description": "Execution mode selected in CLASSIFY stage."
+        },
+        "files_loaded": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Reference files loaded in ROUTE stage (relative paths from skill root)."
+        },
+        "shortcodes_detected": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\[.+\\]$"
+          },
+          "description": "Shortcodes parsed from user prompt in DETECT stage."
+        },
+        "design_md_tokens_overridden": {
+          "type": "boolean",
+          "description": "Whether DESIGN.md token injection ran in BUILD stage."
+        },
+        "dials": {
+          "type": "object",
+          "required": ["dv", "mi", "vd"],
+          "additionalProperties": false,
+          "properties": {
+            "dv": {
+              "type": "integer", "minimum": 1, "maximum": 10,
+              "description": "DESIGN_VARIANCE dial value (1=symmetric, 10=artsy)."
+            },
+            "mi": {
+              "type": "integer", "minimum": 1, "maximum": 10,
+              "description": "MOTION_INTENSITY dial value (1=static, 10=cinematic)."
+            },
+            "vd": {
+              "type": "integer", "minimum": 1, "maximum": 10,
+              "description": "VISUAL_DENSITY dial value (1=whitespace, 10=data cockpit)."
+            }
+          }
+        },
+        "eval_ids_applicable": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "description": "IDs of evals.json entries applicable to this component type."
+        },
+        "constraints_passed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+-[0-9]+$"
+          },
+          "description": "Constraint IDs that passed VALIDATE stage (e.g. TYP-01, COL-01)."
+        },
+        "constraints_checked": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 29,
+          "description": "Total number of constraints checked in VALIDATE stage."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "12.0",
+      "component": "export default function MyComponent() { return <main>...</main> }",
+      "metadata": {
+        "intent": "CREATE_COMPONENT",
+        "mode": "Full",
+        "files_loaded": ["references/ux-guidelines.md", "references/industry-rules.md"],
+        "shortcodes_detected": ["[form]"],
+        "design_md_tokens_overridden": false,
+        "dials": { "dv": 7, "mi": 5, "vd": 4 },
+        "eval_ids_applicable": [3],
+        "constraints_passed": ["TYP-01", "TYP-02", "COL-01", "COL-02", "COL-03", "A11Y-01", "A11Y-02", "A11Y-03", "A11Y-04", "A11Y-05", "A11Y-06", "ANI-01", "ANI-02", "ANI-03", "STA-01", "STA-02", "SLOP-01", "SLOP-02", "SLOP-03", "SLOP-04", "RES-01", "RES-02", "TOK-01", "TOK-02", "QUA-01", "QUA-02", "QUA-03"],
+        "constraints_checked": 29
+      }
+    }
+  ]
+}

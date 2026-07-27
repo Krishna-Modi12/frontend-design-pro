@@ -1,0 +1,1166 @@
+{
+ "skill_name": "frontend-design-pro",
+ "evals": [
+  {
+   "id": 1,
+   "name": "saas-dashboard",
+   "prompt": "Build me a SaaS analytics dashboard with metric cards showing revenue, users, conversion rate, and churn. Include a tab bar for Overview/Analytics/Settings, a recent activity feed, and make it look premium \u2014 not like generic AI output.",
+   "expected_output": "Full React component with skeleton loading, semantic HTML, premium font, custom easing animations, organic data values, dark mode support, aria labels, and non-equal card layout",
+   "assertions": [
+    {
+     "text": "Uses approved premium font (not Inter/Roboto/Arial)",
+     "type": "regex",
+     "pattern": "Manrope|Clash Display|Plus Jakarta|Satoshi|Geist|Outfit"
+    },
+    {
+     "text": "Has skeleton loading state with animate-pulse",
+     "type": "regex",
+     "pattern": "animate-pulse|isLoading|skeleton"
+    },
+    {
+     "text": "Uses organic data values (not round numbers)",
+     "type": "semantic",
+     "prompt": "Check that all numeric data values shown (metrics, stats, percentages, dollar amounts) are non-round numbers. Values like 47.2%, $12,847, 10.4x are good. Values like 50%, $10,000, 10x are banned. Pass only if at least 3 organic (non-round) values appear in the component source."
+    },
+    {
+     "text": "Implements aria-label on interactive elements",
+     "type": "regex",
+     "pattern": "aria-label"
+    },
+    {
+     "text": "Has prefers-reduced-motion implementation",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion"
+    },
+    {
+     "text": "No #000000 or #FFFFFF as surface colors",
+     "type": "semantic",
+     "prompt": "Check that #000000 and #FFFFFF do not appear as surface background colors in the component. OKLCH values like oklch(98%...) or oklch(14%...) are correct surfaces. Raw hex #000000 or #FFFFFF on div/section/main/body elements should fail this check."
+    },
+    {
+     "text": "Uses custom easing or transition (not default ease-in)",
+     "type": "regex",
+     "pattern": "cubic-bezier|spring|ease-out|transition-|ease-in-out"
+    },
+    {
+     "text": "Touch targets >= 44px",
+     "type": "regex",
+     "pattern": "min-h-\\[44|h-11|size-11|min-h-11"
+    },
+    {
+     "text": "Responsive breakpoints present",
+     "type": "regex",
+     "pattern": "(sm|md|lg|xl):"
+    },
+    {
+     "text": "Not equal-height equal-width card grid",
+     "type": "semantic",
+     "prompt": "Check that the layout does NOT use an equal-height equal-width card grid as the dominant layout pattern. Look for asymmetric layouts, bento grids, varied card sizes, or data lists. Fail if all major cards/items share identical width and height CSS classes."
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "marketing-landing",
+   "prompt": "Create a landing page for a developer tool called 'Veloce' \u2014 it's a build tool that's 10x faster. Include a hero with a bold headline, social proof logos, feature section, and a CTA. Make it look like something that would win an Awwwards site of the day.",
+   "expected_output": "Full React component with scroll animations, premium typography, asymmetric layout, staggered reveals, conversion-optimized CTA placement, and no AI-generic gradients",
+   "assertions": [
+    {
+     "text": "Hero headline >= 48px",
+     "type": "regex",
+     "pattern": "text-5xl|text-6xl|text-7xl|text-8xl|48px|56px|64px|72px"
+    },
+    {
+     "text": "Uses Framer Motion or GSAP for animations",
+     "type": "regex",
+     "pattern": "motion\\.|framer-motion|gsap|ScrollTrigger"
+    },
+    {
+     "text": "Has staggered reveal pattern",
+     "type": "regex",
+     "pattern": "stagger|delay.*\\d|animation-delay"
+    },
+    {
+     "text": "CTA in at least 2 zones (hero + post-feature)",
+     "type": "semantic",
+     "prompt": "Verify that call-to-action buttons appear in at least 2 distinct zones of the landing page. Typically: one in the hero/header area and one after the features section or near the bottom. Fail if only one CTA zone is present."
+    },
+    {
+     "text": "No purple-pink-blue AI gradient",
+     "type": "semantic",
+     "prompt": "Check that no generic purple-to-pink or purple-to-blue gradient appears as a hero or background decoration. Look for from-purple-* to-pink-*, from-violet-* to-fuchsia-*, or similar Tailwind gradient classes. Pass if no such gradient pattern exists."
+    },
+    {
+     "text": "Social proof section present",
+     "type": "regex",
+     "pattern": "logo|trust|company|partner|used by"
+    },
+    {
+     "text": "prefers-reduced-motion implemented",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion"
+    },
+    {
+     "text": "Layout has asymmetry (not all centered)",
+     "type": "semantic",
+     "prompt": "Check that not every section has centered text (text-center). At least 2 major sections should use left-aligned text. Fail if text-center appears as the dominant alignment in more than 3 consecutive sections."
+    },
+    {
+     "text": "Premium font declared",
+     "type": "regex",
+     "pattern": "Manrope|Clash Display|Plus Jakarta|Satoshi|Geist|Cabinet Grotesk"
+    },
+    {
+     "text": "Skip navigation link present",
+     "type": "regex",
+     "pattern": "skip.*content|sr-only.*focus"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "accessible-form",
+   "prompt": "Build an accessible contact form with name, email, message, and a file upload field. It needs proper validation with inline errors, loading state on submit, success confirmation, and must pass WCAG 2.1 AA.",
+   "expected_output": "React form component with full WCAG compliance, all 4 states (idle/loading/error/success), aria-describedby on errors, focus-visible rings, semantic HTML, and file upload support",
+   "assertions": [
+    {
+     "text": "Rounded corners or border styling (standard form aesthetics)",
+     "type": "regex",
+     "pattern": "rounded-|border-"
+    },
+    {
+     "text": "Thick borders (brutalist)",
+     "type": "regex",
+     "pattern": "border-2|border-4|border-\\[2px|border-\\[4px"
+    },
+    {
+     "text": "All inputs have htmlFor/id labels",
+     "type": "regex",
+     "pattern": "htmlFor="
+    },
+    {
+     "text": "aria-describedby on error fields",
+     "type": "regex",
+     "pattern": "aria-describedby"
+    },
+    {
+     "text": "Loading state on submit",
+     "type": "regex",
+     "pattern": "submitting|isSubmitting|loading"
+    },
+    {
+     "text": "Success confirmation state",
+     "type": "regex",
+     "pattern": "success|submitted|thank"
+    },
+    {
+     "text": "Error state with retry",
+     "type": "regex",
+     "pattern": "error|Error|retry"
+    },
+    {
+     "text": "File upload field present",
+     "type": "regex",
+     "pattern": "type=.file|upload|dropzone"
+    },
+    {
+     "text": "Focus-visible states on interactive elements",
+     "type": "regex",
+     "pattern": "focus-visible:|focus:ring|focus:outline"
+    },
+    {
+     "text": "prefers-reduced-motion if animated",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion|no animation"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "brand-linear",
+   "prompt": "Build a hero section that matches Linear's brand \u2014 dark background, sharp typography, minimal UI, grid lines, subtle gradients on text. Must look like it belongs on linear.app.",
+   "expected_output": "React component with dark slate/gray surface, tight premium typography (not bloated), subtle grid overlay, text gradient only on accent words, no purple/pink AI gradients, Linear-appropriate motion",
+   "assertions": [
+    {
+     "text": "Dark background surface (slate/zinc/neutral/OKLCH near-black)",
+     "type": "regex",
+     "pattern": "bg-slate-9|bg-zinc-9|bg-neutral-9|bg-gray-9|#0[Ff]|#0[Ee]|#0[Dd]|oklch\\(1[0-9]%|oklch\\([0-9]%"
+    },
+    {
+     "text": "Text gradient on accent (not whole headline)",
+     "type": "regex",
+     "pattern": "bg-clip-text|text-transparent|WebkitBackgroundClip|backgroundClip.*text"
+    },
+    {
+     "text": "Grid or precision UI pattern present",
+     "type": "regex",
+     "pattern": "grid|Grid|pattern|mask|table|sidebar|nav|issue"
+    },
+    {
+     "text": "Large or tight typography (56px+ hero OR dense data UI)",
+     "type": "regex",
+     "pattern": "text-5xl|text-6xl|text-7xl|text-8xl|text-xl.*font-bold|font-extrabold|tabular-nums"
+    },
+    {
+     "text": "Tight letter-spacing or precision font control",
+     "type": "regex",
+     "pattern": "tracking-tight|tracking-\\[-|letter-spacing.*-|antialiased|tabular-nums"
+    },
+    {
+     "text": "Framer Motion or CSS for subtle animation",
+     "type": "regex",
+     "pattern": "motion\\.|transition|animate"
+    },
+    {
+     "text": "No warm/colorful gradient background",
+     "type": "semantic",
+     "prompt": "Verify the component does not use a warm, colorful, or AI-generic gradient as its background (e.g. pink-purple, orange-yellow gradients). Dark precision backgrounds (dark blue, near-black, charcoal) are expected. Pass if background is dark/neutral."
+    },
+    {
+     "text": "CTA button with hover state",
+     "type": "regex",
+     "pattern": "hover:"
+    },
+    {
+     "text": "prefers-reduced-motion guard",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "view-transitions",
+   "prompt": "Build a product listing page where clicking a product card navigates to a detail page with a smooth shared-element transition \u2014 the card image morphs into the hero image on the detail page. Use React View Transitions API.",
+   "expected_output": "Two-page React component using React 19 ViewTransition and view-transition-name CSS, with the image morphing between list and detail, fallback for reduced-motion, no GSAP or Framer for the transition itself",
+   "assertions": [
+    {
+     "text": "Uses ViewTransition component or startViewTransition",
+     "type": "regex",
+     "pattern": "ViewTransition|startViewTransition|view-transition"
+    },
+    {
+     "text": "view-transition-name applied to morphing elements",
+     "type": "regex",
+     "pattern": "viewTransitionName|view-transition-name"
+    },
+    {
+     "text": "CSS @keyframes for view transitions defined",
+     "type": "regex",
+     "pattern": "@keyframes|::view-transition"
+    },
+    {
+     "text": "Reduced motion fallback",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion"
+    },
+    {
+     "text": "No Framer layoutId on same element",
+     "type": "semantic",
+     "prompt": "Check that no single element has conflicting or duplicate layoutId usage. The component should use unique layoutId values per animated element. Pass if layoutId values appear unique in context."
+    },
+    {
+     "text": "Both list and detail pages rendered",
+     "type": "semantic",
+     "prompt": "Verify the component renders both a list view (multiple items) and a detail/expanded view that a user can navigate to. Both views should be present or togglable within the component. Fail if only one view is rendered."
+    },
+    {
+     "text": "Transition-name unique per item (dynamic key)",
+     "type": "regex",
+     "pattern": "\\$\\{|template.*id|`.*id"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "name": "mobile-bottom-nav",
+   "prompt": "Build a mobile-native bottom navigation bar for a social app with 5 tabs: Home, Explore, Post (center FAB), Notifications, Profile. Include safe area handling, active state animations, badge on notifications, and haptic feedback hint.",
+   "expected_output": "React component with env(safe-area-inset-bottom), FAB center button, badge counter, smooth active state with scale/color, keyboard dismiss on tap, all touch targets >= 44px",
+   "assertions": [
+    {
+     "text": "safe-area-inset-bottom applied",
+     "type": "regex",
+     "pattern": "safe-area|env\\(safe|pb-safe"
+    },
+    {
+     "text": "Touch targets >= 44px on all tabs",
+     "type": "regex",
+     "pattern": "min-h-\\[44|min-h-\\[48|min-h-\\[56|h-11|h-12|h-14|size-11|size-12|size-14"
+    },
+    {
+     "text": "Center FAB is visually elevated",
+     "type": "regex",
+     "pattern": "shadow|ring|scale|z-"
+    },
+    {
+     "text": "Badge counter on notifications",
+     "type": "regex",
+     "pattern": "badge|Badge|count|unread"
+    },
+    {
+     "text": "Active state has visual change (color + scale or opacity)",
+     "type": "regex",
+     "pattern": "active|isActive|selected"
+    },
+    {
+     "text": "Aria-current on active tab",
+     "type": "regex",
+     "pattern": "aria-current|aria-selected"
+    },
+    {
+     "text": "Motion respects prefers-reduced-motion",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion"
+    },
+    {
+     "text": "Nav is fixed/sticky to bottom",
+     "type": "regex",
+     "pattern": "fixed|sticky"
+    },
+    {
+     "text": "Role=navigation present",
+     "type": "regex",
+     "pattern": "role=.navigation|<nav"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": "checkout-payment",
+   "prompt": "Build a checkout payment form using Stripe PaymentElement. Include an order summary sidebar, 2-column layout on desktop, single column on mobile, loading state, error handling for declined cards, and a success confirmation screen.",
+   "expected_output": "React component with Elements provider, PaymentElement, order summary sidebar, responsive layout, inline error display, loading button state, success screen with checkmark animation",
+   "assertions": [
+    {
+     "text": "Elements provider wraps the form",
+     "type": "regex",
+     "pattern": "Elements|elements.*stripe|useElements"
+    },
+    {
+     "text": "PaymentElement used (not CardElement)",
+     "type": "regex",
+     "pattern": "PaymentElement"
+    },
+    {
+     "text": "useStripe and useElements hooks present",
+     "type": "regex",
+     "pattern": "useStripe|useElements"
+    },
+    {
+     "text": "elements.submit() called before confirmPayment",
+     "type": "regex",
+     "pattern": "elements\\.submit|submit\\(\\)"
+    },
+    {
+     "text": "Error displayed inline with role=alert",
+     "type": "regex",
+     "pattern": "role=.alert|aria-live"
+    },
+    {
+     "text": "Loading state on submit button",
+     "type": "regex",
+     "pattern": "isLoading|disabled.*stripe|loading"
+    },
+    {
+     "text": "Success screen rendered conditionally",
+     "type": "regex",
+     "pattern": "success|Success|confirmed|Confirmed"
+    },
+    {
+     "text": "Responsive layout (mobile single col)",
+     "type": "regex",
+     "pattern": "sm:|md:|lg:"
+    },
+    {
+     "text": "Secured by Stripe trust signal",
+     "type": "regex",
+     "pattern": "Stripe|secure|lock|Lock"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "name": "dark-mode-tokens",
+   "prompt": "Build a dark mode dashboard with proper OKLCH token architecture. Include a theme toggle, metric cards, a line chart, and a data table. Tokens must work in both light and dark modes using CSS custom properties.",
+   "expected_output": "React component with CSS variable token system (OKLCH), next-themes or manual class-based toggle, no hardcoded hex colors in components, semantic token names, and both modes visually complete",
+   "assertions": [
+    {
+     "text": "OKLCH color values used (not hex surfaces)",
+     "type": "regex",
+     "pattern": "oklch\\("
+    },
+    {
+     "text": "CSS custom properties defined for tokens",
+     "type": "regex",
+     "pattern": "--color-|--shadow-|--bg-|--surface-"
+    },
+    {
+     "text": "Dark mode class or media query present",
+     "type": "regex",
+     "pattern": "dark:|prefers-color-scheme|data-theme|class.*dark"
+    },
+    {
+     "text": "Theme toggle button present",
+     "type": "regex",
+     "pattern": "toggle|Toggle|theme|Theme|moon|sun|Moon|Sun"
+    },
+    {
+     "text": "next-themes ThemeProvider or useTheme hook (not manual document.documentElement toggle only)",
+     "type": "regex",
+     "pattern": "next-themes|useTheme\\(|ThemeProvider|resolvedTheme"
+    },
+    {
+     "text": "No bg-white or bg-black as surface",
+     "type": "semantic",
+     "prompt": "Check that bg-white and bg-black are not used as surface colors anywhere in the component. OKLCH surface tokens like bg-[oklch(...)] or CSS variable references are correct. Tailwind bg-white / bg-black on div/section/main elements should fail this check."
+    },
+    {
+     "text": "Skeleton loading state present",
+     "type": "regex",
+     "pattern": "animate-pulse|skeleton|isLoading"
+    },
+    {
+     "text": "Chart or data visualization present",
+     "type": "regex",
+     "pattern": "recharts|Chart|chart|LineChart|BarChart|ResponsiveContainer"
+    },
+    {
+     "text": "Aria-label on theme toggle",
+     "type": "regex",
+     "pattern": "aria-label.*theme|aria-label.*dark|aria-label.*light|aria-label.*mode"
+    },
+    {
+     "text": "Semantic token names (not raw values in components)",
+     "type": "semantic",
+     "prompt": "Check that components use semantic CSS variable names (like var(--color-surface), var(--color-brand), var(--color-ink)) rather than raw OKLCH/hex values inline in component JSX. Raw oklch() values are acceptable in the @theme/:root token definition block only. Pass if token names appear as semantic vars in component classes."
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "name": "auth-flow",
+   "prompt": "Build a complete authentication UI with a login form, signup form, and password reset flow. Include GitHub and Google OAuth buttons, form validation with Zod, inline errors, loading states, and a smooth tab switch between login and signup.",
+   "expected_output": "React component with RHF + Zod validation, OAuth social buttons, tab switcher, all 4 form states (idle/submitting/error/success), aria-describedby on errors, focus-visible rings, no placeholder names",
+   "assertions": [
+    {
+     "text": "GitHub and Google OAuth buttons present",
+     "type": "regex",
+     "pattern": "GitHub|Google|OAuth|oauth"
+    },
+    {
+     "text": "Form validation with Zod or inline validation",
+     "type": "regex",
+     "pattern": "zod|Zod|z\\.string|validate|validation"
+    },
+    {
+     "text": "aria-describedby on error fields",
+     "type": "regex",
+     "pattern": "aria-describedby"
+    },
+    {
+     "text": "Loading state on submit button",
+     "type": "regex",
+     "pattern": "isSubmitting|isLoading|submitting|loading"
+    },
+    {
+     "text": "Tab/toggle between login and signup",
+     "type": "regex",
+     "pattern": "tab|Tab|login|Login|signup|Signup|register|Register"
+    },
+    {
+     "text": "Error state displayed inline",
+     "type": "regex",
+     "pattern": "role=.alert|aria-live|error.*message|field.*error"
+    },
+    {
+     "text": "Focus-visible states on inputs",
+     "type": "regex",
+     "pattern": "focus-visible:|focus:ring|focus:outline"
+    },
+    {
+     "text": "Password input type=password",
+     "type": "regex",
+     "pattern": "type=.password"
+    },
+    {
+     "text": "No John Doe or Jane Doe placeholder names",
+     "type": "semantic",
+     "prompt": "Check that no placeholder names appear in the component source: John Doe, Jane Doe, John Smith, Jane Smith, User Name, or similar generic names. Real, diverse names (Priya Shah, Kenji Tanaka, Ana Ngugi, etc.) are expected. Pass only if zero placeholder names found."
+    },
+    {
+     "text": "Touch targets >= 44px on buttons",
+     "type": "regex",
+     "pattern": "h-11|h-12|min-h-\\[44|size-11"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "name": "3d-scene",
+   "prompt": "Build a 3D product showcase using React Three Fiber. Show a rotating geometric shape (sphere or box) with PBR materials, environment lighting, an OrbitControls for interaction, and a loading fallback while the scene initializes.",
+   "expected_output": "React component with @react-three/fiber Canvas, @react-three/drei helpers (OrbitControls, Environment, Suspense), PBR material (MeshStandardMaterial or MeshPhysicalMaterial), useFrame animation, loading skeleton fallback",
+   "assertions": [
+    {
+     "text": "React Three Fiber Canvas present",
+     "type": "regex",
+     "pattern": "@react-three/fiber|Canvas.*camera|<Canvas"
+    },
+    {
+     "text": "OrbitControls or camera interaction",
+     "type": "regex",
+     "pattern": "OrbitControls|orbitControls|useThree|camera"
+    },
+    {
+     "text": "3D material defined (PBR or drei material)",
+     "type": "regex",
+     "pattern": "MeshStandardMaterial|MeshPhysicalMaterial|MeshDistortMaterial|MeshWobbleMaterial|ShaderMaterial|meshStandardMaterial|meshBasicMaterial|pointsMaterial|<mesh"
+    },
+    {
+     "text": "Animation loop with useFrame",
+     "type": "regex",
+     "pattern": "useFrame"
+    },
+    {
+     "text": "Suspense fallback for scene loading",
+     "type": "regex",
+     "pattern": "Suspense|fallback|isLoading|loading"
+    },
+    {
+     "text": "Environment lighting or ambient light",
+     "type": "regex",
+     "pattern": "Environment|ambientLight|directionalLight|pointLight|hemisphereLight"
+    },
+    {
+     "text": "Three.js lazy-loaded (not top-level import)",
+     "type": "regex",
+     "pattern": "dynamic\\(|lazy\\(|Suspense"
+    },
+    {
+     "text": "dpr or pixel ratio capped for performance",
+     "type": "regex",
+     "pattern": "dpr|devicePixelRatio|pixelRatio"
+    },
+    {
+     "text": "prefers-reduced-motion respected",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion|reduce"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "name": "scroll-experience",
+   "prompt": "Build a scroll-driven storytelling section using GSAP ScrollTrigger. As the user scrolls through 4 panels, text and visuals animate in with staggered reveals, a progress bar tracks scroll depth, and the section pins during the animation sequence.",
+   "expected_output": "React component with GSAP ScrollTrigger, pinned section, 4 animated panels, staggered text reveals, scroll progress indicator, and useGSAP hook for proper React cleanup",
+   "assertions": [
+    {
+     "text": "GSAP ScrollTrigger imported and registered",
+     "type": "regex",
+     "pattern": "ScrollTrigger|scrollTrigger|gsap\\.registerPlugin"
+    },
+    {
+     "text": "useGSAP hook used (not useEffect for GSAP)",
+     "type": "regex",
+     "pattern": "useGSAP|@gsap/react"
+    },
+    {
+     "text": "Pin or scrub scroll behavior",
+     "type": "regex",
+     "pattern": "pin:|scrub:|pin:.*true|scrub:.*true"
+    },
+    {
+     "text": "Multiple panels or sections animated",
+     "type": "regex",
+     "pattern": "panel|Panel|section|step|Step"
+    },
+    {
+     "text": "Stagger animation present",
+     "type": "regex",
+     "pattern": "stagger|gsap\\.to.*stagger|staggerFrom"
+    },
+    {
+     "text": "Scroll progress tracking (indicator, onUpdate, or progress callback)",
+     "type": "regex",
+     "pattern": "progress|Progress|indicator|scrollProgress|onUpdate|onProgress|scaleX"
+    },
+    {
+     "text": "prefers-reduced-motion guard",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion|matchMedia"
+    },
+    {
+     "text": "GSAP cleanup on unmount",
+     "type": "regex",
+     "pattern": "revert\\(\\)|kill\\(\\)|ctx\\.revert|cleanup"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "name": "data-table",
+   "prompt": "Build a data table for a SaaS admin panel showing 20 rows of user data with columns: Name, Email, Plan, Status, MRR, Joined. Include sorting on all columns, row selection with checkboxes, a bulk action bar, search/filter, and pagination.",
+   "expected_output": "React component with sortable columns (aria-sort), row selection state, bulk action bar that appears on selection, search input that filters rows, pagination controls, and no equal-height card grid layout",
+   "assertions": [
+    {
+     "text": "Sortable column headers with aria-sort",
+     "type": "regex",
+     "pattern": "aria-sort|sortable|onSort|handleSort"
+    },
+    {
+     "text": "Row checkboxes for selection",
+     "type": "regex",
+     "pattern": "checkbox|Checkbox|type=.checkbox|selected|isSelected"
+    },
+    {
+     "text": "Bulk action bar appears on selection",
+     "type": "regex",
+     "pattern": "bulk|Bulk|selected.*length|selectedRows|bulkAction"
+    },
+    {
+     "text": "Search or filter input present",
+     "type": "regex",
+     "pattern": "search|Search|filter|Filter|query|Query"
+    },
+    {
+     "text": "Pagination controls present",
+     "type": "regex",
+     "pattern": "page|Page|pagination|Pagination|next|prev"
+    },
+    {
+     "text": "Semantic table element used",
+     "type": "regex",
+     "pattern": "<table|<thead|<tbody|<tr|<th|<td"
+    },
+    {
+     "text": "Organic data values (not round numbers)",
+     "type": "semantic",
+     "prompt": "Verify that numeric data in the data table uses organic non-round values. Look for values like 2,847, 47.3%, $12,847, 10.4x rather than round numbers like 2000, 50%, $10,000, 10x. Pass if at least 3 organic (non-round) values appear in the data."
+    },
+    {
+     "text": "Diverse non-placeholder names",
+     "type": "semantic",
+     "prompt": "Verify that the data table uses diverse, realistic names rather than placeholder names (John Doe, Jane Doe, User 1, Test User). Names should reflect global diversity \u2014 at least 3 different cultural origins represented. Pass only if all names in the table data are real, non-generic."
+    },
+    {
+     "text": "Loading skeleton state",
+     "type": "regex",
+     "pattern": "animate-pulse|skeleton|isLoading"
+    },
+    {
+     "text": "Responsive \u2014 horizontal scroll on mobile",
+     "type": "regex",
+     "pattern": "overflow-x|overflow-auto|scrollable"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "name": "gsap-advanced",
+   "prompt": "Build a scroll-driven hero with GSAP ScrollTrigger where the headline uses SplitText to reveal characters one by one as the user scrolls. Below the hero, a product card grid uses GSAP Flip to animate cards expanding into a full detail view on click. Use useGSAP for proper React cleanup.",
+   "expected_output": "React component with GSAP ScrollTrigger, SplitText character reveal, Flip animation on card expand, useGSAP hook for cleanup, prefers-reduced-motion guard",
+   "assertions": [
+    {
+     "text": "GSAP ScrollTrigger registered and used",
+     "type": "regex",
+     "pattern": "ScrollTrigger|scrollTrigger|gsap\\.registerPlugin"
+    },
+    {
+     "text": "useGSAP hook used (not bare useEffect)",
+     "type": "regex",
+     "pattern": "useGSAP|@gsap/react"
+    },
+    {
+     "text": "GSAP cleanup on unmount",
+     "type": "regex",
+     "pattern": "ctx\\.revert|revert\\(\\)|kill\\(\\)|cleanup"
+    },
+    {
+     "text": "Stagger animation present",
+     "type": "regex",
+     "pattern": "stagger|staggerFrom|staggerTo"
+    },
+    {
+     "text": "prefers-reduced-motion guard",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion|matchMedia"
+    },
+    {
+     "text": "ARIA semantics on animated content",
+     "type": "regex",
+     "pattern": "aria-label|aria-hidden|role="
+    },
+    {
+     "text": "pin or scrub scroll behavior",
+     "type": "regex",
+     "pattern": "pin:|scrub:|pin:.*true|scrub:.*true"
+    },
+    {
+     "text": "Animation enter uses ease-out not ease-in",
+     "type": "semantic",
+     "prompt": "Check that animations triggering on element entrance use ease-out or custom cubic-bezier easing rather than ease-in. Look for cubic-bezier values with a slow start (ease-in pattern). Pass if entrance animations use ease-out, spring, or custom cubic-bezier with fast start."
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "name": "react19-patterns",
+   "prompt": "Build a task manager using React 19 useOptimistic for instant UI feedback when adding/completing tasks, useActionState for the form submission state machine, and useFormStatus for the pending indicator inside the submit button. Tasks should roll back if the server action fails.",
+   "expected_output": "React 19 component with useOptimistic, useActionState, useFormStatus, startTransition, optimistic rollback on error, aria-live for status announcements",
+   "assertions": [
+    {
+     "text": "useOptimistic hook used",
+     "type": "regex",
+     "pattern": "useOptimistic"
+    },
+    {
+     "text": "useActionState or useFormState used",
+     "type": "regex",
+     "pattern": "useActionState|useFormState"
+    },
+    {
+     "text": "useFormStatus for pending state",
+     "type": "regex",
+     "pattern": "useFormStatus|pending"
+    },
+    {
+     "text": "startTransition wrapping non-urgent updates",
+     "type": "regex",
+     "pattern": "startTransition|useTransition"
+    },
+    {
+     "text": "aria-live for status announcements",
+     "type": "regex",
+     "pattern": "aria-live|role=.status|aria-busy"
+    },
+    {
+     "text": "Loading/pending state shown on submit",
+     "type": "regex",
+     "pattern": "animate-pulse|isPending|isLoading|skeleton"
+    },
+    {
+     "text": "Optimistic UI rolls back on error",
+     "type": "semantic",
+     "prompt": "Verify that the optimistic update implementation includes an error handler that rolls back the UI state when the operation fails. Look for patterns like: try/catch that reverses state, onError callback that restores previous data, or a rollback/revert mechanism. Fail if optimistic updates have no error rollback."
+    },
+    {
+     "text": "Error state with role=alert",
+     "type": "regex",
+     "pattern": "role=.alert|aria-live=.assertive"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "name": "ai-chat-ui",
+   "prompt": "Build a chat interface using Vercel AI SDK useChat hook. Show a message list with user and assistant bubbles, streaming assistant replies with a typing indicator, a stop button to cancel generation, an empty state with 4 example prompts, and auto-scroll to the latest message.",
+   "expected_output": "React component with useChat, role-based message bubbles (user/assistant), streaming indicator, stop() handler, example prompt chips, autoscroll via useEffect, aria-live on message list",
+   "assertions": [
+    {
+     "text": "useChat hook from Vercel AI SDK",
+     "type": "regex",
+     "pattern": "useChat|ai/react|@ai-sdk/react"
+    },
+    {
+     "text": "Message role branching (user vs assistant)",
+     "type": "regex",
+     "pattern": "role === .user|role === .assistant|message\\.role"
+    },
+    {
+     "text": "Streaming/loading state indicator",
+     "type": "regex",
+     "pattern": "isLoading|isStreaming|status.*streaming"
+    },
+    {
+     "text": "Stop button calls stop()",
+     "type": "regex",
+     "pattern": "stop\\(\\)|handleStop|abort"
+    },
+    {
+     "text": "aria-live on message list for screen readers",
+     "type": "regex",
+     "pattern": "aria-live|role=.log|aria-atomic"
+    },
+    {
+     "text": "Autoscroll to latest message",
+     "type": "regex",
+     "pattern": "scrollIntoView|scrollTop|scrollTo"
+    },
+    {
+     "text": "prefers-reduced-motion respected",
+     "type": "regex",
+     "pattern": "prefers-reduced-motion|useReducedMotion"
+    },
+    {
+     "text": "Empty state with example prompts",
+     "type": "regex",
+     "pattern": "example|suggest|prompt|placeholder.*message"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "name": "animation-recipes",
+   "prompt": "Build a marketing section showcasing three animation recipes: (1) a number counter that animates from 0 to a target on scroll into view, (2) a magnetic button that tilts toward the cursor using spring physics, (3) a stagger list that reveals items one by one with a fade+slide. All must respect prefers-reduced-motion.",
+   "expected_output": "React component with Framer Motion useMotionValue/animate for counter, useSpring + onMouseMove for magnetic, variants+staggerChildren for list reveal, useReducedMotion guard disabling all three",
+   "assertions": [
+    {
+     "text": "Scroll-triggered counter animation",
+     "type": "regex",
+     "pattern": "IntersectionObserver|useInView|whileInView|onViewportEnter"
+    },
+    {
+     "text": "Stagger animation on list items",
+     "type": "regex",
+     "pattern": "stagger|staggerChildren|delayChildren|staggerFrom"
+    },
+    {
+     "text": "Magnetic/cursor-tracking effect",
+     "type": "regex",
+     "pattern": "onMouseMove|mousemove|pointermove|useMotionValue"
+    },
+    {
+     "text": "Spring physics used",
+     "type": "regex",
+     "pattern": "useSpring|spring|stiffness|damping"
+    },
+    {
+     "text": "useReducedMotion guard disables animations",
+     "type": "regex",
+     "pattern": "useReducedMotion|prefers-reduced-motion"
+    },
+    {
+     "text": "Organic counter target value (not round number)",
+     "type": "regex",
+     "pattern": "12[,.]\\d{3}|1[0-9][,.]\\d{3}|\\d+\\.\\d+k"
+    },
+    {
+     "text": "Animations enter with ease-out (not ease-in)",
+     "type": "semantic",
+     "prompt": "Check that animated elements entering the viewport or appearing use ease-out or spring physics rather than bare ease-in. Framer Motion spring presets, ease-out cubic-bezier values, or explicit transition: ease-out are all acceptable. Fail if entrance animations use ease-in without a matching ease-out enter."
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "name": "react-hook-form-zod",
+   "prompt": "Build a multi-step user signup form using React Hook Form with zodResolver. Step 1: profile info (name, email, password). Step 2: preferences (role dropdown, team size). Step 3: review and confirm. Include per-field validation, step back navigation, submission loading state, and success screen.",
+   "expected_output": "React component with useForm + zodResolver, z.object schema per step, field-level errors linked via aria-describedby, step state machine, back button, submit loading state, success screen",
+   "assertions": [
+    {
+     "text": "React Hook Form useForm hook",
+     "type": "regex",
+     "pattern": "useForm|react-hook-form"
+    },
+    {
+     "text": "Zod resolver configured",
+     "type": "regex",
+     "pattern": "zodResolver|@hookform/resolvers"
+    },
+    {
+     "text": "Zod schema defined",
+     "type": "regex",
+     "pattern": "z\\.object|z\\.string|z\\.enum|z\\.infer"
+    },
+    {
+     "text": "Field registration or Controller used",
+     "type": "regex",
+     "pattern": "register\\(|<Controller|Controller "
+    },
+    {
+     "text": "aria-describedby links input to error",
+     "type": "regex",
+     "pattern": "aria-describedby"
+    },
+    {
+     "text": "Multi-step state present",
+     "type": "regex",
+     "pattern": "step|Step|currentStep|activeStep"
+    },
+    {
+     "text": "Submission loading state",
+     "type": "regex",
+     "pattern": "isSubmitting|isLoading|submitting"
+    },
+    {
+     "text": "Success screen on completion",
+     "type": "regex",
+     "pattern": "success|Success|complete|Complete|submitted"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "name": "tanstack-query",
+   "prompt": "Build a SaaS metrics dashboard that fetches KPI data via TanStack Query useQuery, shows a loading skeleton while pending, handles errors with a retry button, uses useMutation for an optimistic mark-as-read on notifications, and implements infinite scroll on an activity feed with useInfiniteQuery.",
+   "expected_output": "React component with QueryClientProvider, useQuery for metrics, useInfiniteQuery for feed, useMutation with onMutate optimistic update, isPending skeleton, isError retry button",
+   "assertions": [
+    {
+     "text": "TanStack Query hooks used",
+     "type": "regex",
+     "pattern": "useQuery|useInfiniteQuery|useMutation"
+    },
+    {
+     "text": "QueryClient or QueryClientProvider present",
+     "type": "regex",
+     "pattern": "QueryClient|QueryClientProvider|@tanstack/react-query"
+    },
+    {
+     "text": "Loading state while fetching",
+     "type": "regex",
+     "pattern": "isPending|isLoading|isFetching"
+    },
+    {
+     "text": "Error state with retry",
+     "type": "regex",
+     "pattern": "isError|error\\.message|refetch"
+    },
+    {
+     "text": "Optimistic update or cache mutation",
+     "type": "regex",
+     "pattern": "onMutate|setQueryData|invalidateQueries"
+    },
+    {
+     "text": "Infinite scroll or pagination",
+     "type": "regex",
+     "pattern": "fetchNextPage|hasNextPage|useInfiniteQuery"
+    },
+    {
+     "text": "Loading skeleton with animate-pulse",
+     "type": "regex",
+     "pattern": "animate-pulse|skeleton|Skeleton"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "name": "perf-optimization",
+   "prompt": "Build a product listing page with 100 items that must be performant: virtualize the list with react-virtual or @tanstack/react-virtual, lazy-load all images with loading='lazy', code-split the filter sidebar with React.lazy + Suspense, use useMemo for filtered results and useCallback for handlers, and prefetch the detail route on card hover.",
+   "expected_output": "React component with useVirtualizer or FixedSizeList, loading=lazy on images, React.lazy + Suspense for filter panel, useMemo + useCallback + memo(), link prefetch on hover, aria-busy during transitions",
+   "assertions": [
+    {
+     "text": "List virtualization used",
+     "type": "regex",
+     "pattern": "useVirtualizer|FixedSizeList|react-window|react-virtual|@tanstack/react-virtual"
+    },
+    {
+     "text": "Images lazy loaded",
+     "type": "regex",
+     "pattern": "loading=.lazy|loading={.lazy|decoding=.async"
+    },
+    {
+     "text": "Code splitting with React.lazy or dynamic()",
+     "type": "regex",
+     "pattern": "React\\.lazy|lazy\\(|dynamic\\("
+    },
+    {
+     "text": "Suspense boundary present",
+     "type": "regex",
+     "pattern": "Suspense|<Suspense"
+    },
+    {
+     "text": "useMemo or useCallback for optimization",
+     "type": "regex",
+     "pattern": "useMemo|useCallback|memo\\("
+    },
+    {
+     "text": "Prefetch on hover",
+     "type": "regex",
+     "pattern": "onMouseEnter|prefetch|rel=.prefetch"
+    },
+    {
+     "text": "aria-busy or role=status during loading",
+     "type": "regex",
+     "pattern": "aria-busy|role=.status|aria-live"
+    },
+    {
+     "text": "No artificial mount-time loading delay (skeletons must be driven by real loading state, not setTimeout)",
+     "type": "regex_absent",
+     "pattern": "useEffect\\([\\s\\S]{0,160}?setTimeout\\([\\s\\S]{0,100}?set\\w*([Ll]oading|[Mm]ounted)\\w*\\((false|true)\\)"
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "name": "react-native-patterns",
+   "prompt": "Build a React Native Expo screen with gesture-handler pan gesture, Reanimated animated style, FlatList with ListEmptyComponent, SafeAreaView, and dark mode via useColorScheme.",
+   "expected_output": "A single JSX file demonstrating React Native / Expo patterns: Reanimated useSharedValue/useAnimatedStyle, gesture-handler GestureDetector, FlatList with empty state, SafeAreaView, dark/light mode.",
+   "assertions": [
+    {
+     "text": "Reanimated useSharedValue or useAnimatedStyle used",
+     "type": "regex",
+     "pattern": "useSharedValue|useAnimatedStyle|withSpring|withTiming"
+    },
+    {
+     "text": "Gesture handler present",
+     "type": "regex",
+     "pattern": "GestureDetector|Gesture\\.Pan|Gesture\\.Tap|PanGestureHandler"
+    },
+    {
+     "text": "FlatList or SectionList used",
+     "type": "regex",
+     "pattern": "FlatList|SectionList"
+    },
+    {
+     "text": "SafeAreaView present",
+     "type": "regex",
+     "pattern": "SafeAreaView|useSafeAreaInsets"
+    },
+    {
+     "text": "Dark mode handling present",
+     "type": "regex",
+     "pattern": "useColorScheme|colorScheme|Appearance\\.getColorScheme"
+    },
+    {
+     "text": "Pressable or TouchableOpacity used",
+     "type": "regex",
+     "pattern": "Pressable|TouchableOpacity"
+    },
+    {
+     "text": "Real organic content (no lorem ipsum)",
+     "type": "semantic",
+     "prompt": "Verify the component uses real, organic content rather than lorem ipsum or placeholder text. Look for realistic workout names (e.g., HIIT Circuit, Trail Run, Strength Training), real metric values (e.g., 47.3 min, 2,847 calories), and diverse realistic names. Fail if lorem ipsum or \"placeholder\" text appears."
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "name": "storybook-stories",
+   "prompt": "Generate a Storybook 8 story file for a Button component with Default, Hover, Disabled, and Loading stories using CSF3 format, typed Meta and StoryObj, args, argTypes, and a play function.",
+   "expected_output": "A .stories.tsx file with typed Meta<typeof Button>, StoryObj stories, argTypes controls, decorators, and a play function using userEvent.",
+   "assertions": [
+    {
+     "text": "Meta type annotation present",
+     "type": "regex",
+     "pattern": "Meta<|satisfies Meta"
+    },
+    {
+     "text": "StoryObj type used",
+     "type": "regex",
+     "pattern": "StoryObj"
+    },
+    {
+     "text": "args or argTypes defined",
+     "type": "regex",
+     "pattern": "args:|argTypes:"
+    },
+    {
+     "text": "play function with userEvent",
+     "type": "regex",
+     "pattern": "play.*async|userEvent\\.|await.*userEvent"
+    },
+    {
+     "text": "Multiple stories defined",
+     "type": "regex",
+     "pattern": "export const \\w+.*Story|export const \\w+.*StoryObj|export const Default|export const Primary"
+    },
+    {
+     "text": "Decorator wrapping context provider",
+     "type": "regex",
+     "pattern": "decorators|decorator"
+    },
+    {
+     "text": "autodocs or docs tag present",
+     "type": "semantic",
+     "prompt": "Check that the Storybook file includes autodocs configuration or a docs tag. Look for: tags: [\"autodocs\"], parameters: { docs: { ... } }, or a MDX import from @storybook/addon-docs. Pass if any autodocs/docs configuration is present."
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "name": "playwright-tests",
+   "prompt": "Generate a Playwright component test file for a login form: test successful login, validation errors, keyboard navigation, and accessibility with axe-core.",
+   "expected_output": "A .spec.ts file with Playwright tests using getByRole/getByLabel selectors, expect assertions, axe-core checkA11y, keyboard Tab navigation test, and network mocking.",
+   "assertions": [
+    {
+     "text": "Role-based selectors used",
+     "type": "regex",
+     "pattern": "getByRole|getByLabel|getByText|getByTestId"
+    },
+    {
+     "text": "Accessibility check present",
+     "type": "regex",
+     "pattern": "checkA11y|injectAxe|axe|@axe-core"
+    },
+    {
+     "text": "Keyboard navigation tested",
+     "type": "regex",
+     "pattern": "keyboard\\.press|press.*Tab|focus.*assert|toBeFocused"
+    },
+    {
+     "text": "Network mocking present",
+     "type": "regex",
+     "pattern": "page\\.route|route\\.fulfill|route\\.abort"
+    },
+    {
+     "text": "Multiple test cases",
+     "type": "regex",
+     "pattern": "test\\(.*async|it\\(.*async"
+    },
+    {
+     "text": "beforeEach or fixture used",
+     "type": "regex",
+     "pattern": "beforeEach|test\\.use|test\\.extend"
+    },
+    {
+     "text": "Error states tested",
+     "type": "semantic",
+     "prompt": "Verify that the Playwright test spec (embedded in the file) includes test cases that verify error states \u2014 such as network failures, form validation errors, or 4xx/5xx responses. Look for test cases that assert error messages, role=\"alert\" elements, or error boundary content appear after a failure. Pass if at least one error-state test is present."
+    }
+   ]
+  }
+ ]
+}

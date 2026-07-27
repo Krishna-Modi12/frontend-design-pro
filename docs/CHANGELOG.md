@@ -1,0 +1,690 @@
+# Frontend Design Pro — Changelog
+
+All notable changes to this skill package. Follows [Semantic Versioning](https://semver.org/).
+
+---
+
+## [14.1.0] — 2026-07-27
+
+### Fixed — release engineering
+
+The gate chain could not pass and no archive could be produced. Every item below was found by running it.
+
+- **Gate 2 failed all 15 skills.** `VERSION_TARGET` in `build_release.py` was hardcoded to `13.0.0` while every skill declared `14.1.0`, so the chain aborted at the second gate. It now reads `metadata.json`, which is the single source of truth Gates 1 and 2 already share.
+- **The pre-flight version-leak scan was a silent no-op.** `VERSION_RE` matched only `1[12].x.y`, so it could not see a 14.x string. Widened to any 1–2 digit major, with `skills/` and `.github/workflows/` exempted — Gate 2 *requires* skill files to carry the version.
+- **Five scripts crashed on Windows** before running a single check: `cp1252` consoles cannot encode the `✓`/`✗`/`⚠` glyphs. `stdout`/`stderr` are now reconfigured to UTF-8, and subprocess capture decodes as UTF-8 with replacement.
+- **`tsc` could not be invoked on Windows.** The extensionless `node_modules/.bin/tsc` is a POSIX script; only the `.cmd` shim is executable. Both call sites now prefer it on `win32`.
+- **Gate 7 misreported what it verified.** It probed `ROOT.parent/node_modules` for vitest — the wrong directory — so the runtime branch never fired and a compile-only pass was reported as though the suite had run. The gate now states its real contract: 1:1 test coverage plus strict compilation of every test file. Runtime execution is out of scope and documented as such.
+- **Gate labels were three versions stale**, printing `8/8` semantic and `24/24` syntactic against the documented 16 and 35. Both counts are now derived from the suites themselves.
+- **`npm run gates` and `npm run build` ran the wrong script** — `package.json` still pointed at the pre-registry `src/scripts/` copies, and at `python3`, which is absent on most Windows installs.
+- **`evals/` and `rules/` were never migrated to the root** in the v13 restructure. `run_evals.py` resolves `../evals/evals.json`, so Gate 7's eval half could not run, and `ARCHIVE_FROM_SRC` already expected both at the root — archives shipped without them. Moved.
+- **`vitest.config.ts` had no `setupFiles`**, so `@testing-library/jest-dom` matchers were never registered and every DOM assertion failed with `Invalid Chai property`. Adding `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; it also still pointed `include` at the removed `src/examples`.
+- **Root `tsconfig.json`** pointed at `src/examples`, type-checking a tree that no longer exists.
+- **`release.yml` hardcoded `body_path: docs/RELEASE_NOTES-v14.1.0.md`**, which would break every subsequent tag. It now derives the path from the tag name.
+- **`bump_patch()` wrote to `_meta/CHANGELOG.md`**, which does not exist at the root; it now uses the resolved `CHANGELOG` path.
+
+### Removed
+
+- **`src/` — the entire pre-registry v12 tree** (157 files, 2.6 MB). Nothing read from it and 55 of its 61 reference files were byte-identical to their `skills/` counterparts. `core/` + `skills/` + `scripts/` is now the only layout.
+- **`skills/react-components/references/icons-avatars.md`** — byte-identical duplicate of the `iconography` copy, uncited by its own skill's Reference Index and flagged by the path-integrity stage. `react-components/SKILL.md` already delegates icons to `../iconography/SKILL.md`. This completes the ownership transfer this release claimed to have made, and restores the documented **70 references / 295,126 tokens**.
+- **Root `CHANGELOG.md`** — 36 version entries, all 36 also present in this file's 44. `build_release.py` resolves the changelog to `docs/CHANGELOG.md`.
+- **`SKILL-v13-registry.md`** — the v13 registry draft, superseded by `SKILL.md`.
+
+### Documentation
+
+- `docs/INSTALL.md` and `docs/ARCHITECTURE.md` rewritten — both still described the v12 layout (`src/` flattening, 7 gates, 8 AST checks, 24 regex checks) three majors after it was replaced.
+- `docs/LAUNCH_KIT.md` added.
+- `docs/ARCHITECTURE.md` gained a **Known gaps** section covering the pre-registry `AGENT_SYSTEM_PROMPT.md`, the non-executing vitest suite, the orphaned `brand-design-systems.md`, and uneven reference depth.
+- Two unverifiable claims were removed from draft launch copy: *"the TypeScript compiler found 8 bugs that 30 regexes certified as clean"* (no record of this exists anywhere in the repo) and *"42 gold examples"* (there are 37 golds and 6 anti-examples).
+
+### Added — Batch 6: two genuinely new categories (15 skills total)
+- **`skills/iconography/`** (804) — icons treated as typographic, not decorative: `em` sizing (1em inline / 1.25em beside a label / 1.5em standalone), **hit area is independent of glyph size** (18px icon in a 44×44px target), weight must match text weight, `fill`/`duotone` as *state* not default (a shape change survives WCAG 1.4.1 where colour alone does not), `currentColor` inheritance, label-the-control-hide-the-glyph, individual imports only (`PERF-01`), optical alignment beats box alignment. New `references/icon-systems.md`; **took ownership of `icons-avatars.md`** from `react-components` rather than duplicating it.
+- **`skills/ai-ui-generation/`** (800) — prompt-to-UI, JSON-to-UI and generative interfaces. Core position: **generated code is untrusted input** and passes the same 51 constraints with no exemptions. Registry pattern (closed, typed, Zod-validated — the registry is the safety boundary, a prompt is not), never `dangerouslySetInnerHTML` on model output, schema validation before render, documented fallback for unknown components, and the list of what generators always omit (four states, reduced motion, aria-labels, real prop interfaces). New `references/generation-patterns.md`.
+
+### Skipped — pre-integrated (dedup before fetch)
+- `microsoft/playwright-mcp` — `skills/testing/references/playwright.md` already covers role selectors, visual regression, axe, network mocking, CI.
+- `emilkowalski/skills` — integrated at v10.x; `animation-framework.md` is built on it.
+
+### Not reached (context budget) — carry to final catch-up
+`thesysdev/openui`, `tambo-ai/tambo`, `miurla/morphic`, `vercel-labs/json-render` (tool-specific references for the new skill), `phosphoricons.com`, `ditther.com`, `patrickkrebs/theme-factory-addon`, `heygen-com/hyperframes`.
+
+---
+
+### Content harvest — full detail
+
+#### Summary
+Six ingestion batches processed ~45 external sources into the v13 registry architecture. **~60% were already integrated** and were skipped by a dedup check run *before* fetching — that check saved roughly a dozen redundant fetches and any amount of duplicated content.
+
+### Skills added in v14 (11 → 15)
+`design-principles` · `component-patterns` · `iconography` · `ai-ui-generation`
+
+### Core files added (6 → 8)
+`core/user-intake.md` (six intake questions + routing) · `core/agent-behavior-patterns.md` and `core/component-api-deep.md` (from the v14.0.1 hygiene split)
+
+### Sources integrated
+Anthropic `frontend-design` (canonical anti-slop — the three AI-design clusters, hero-as-thesis, two-pass plan→critique→build, writing-as-design) · Laws of UX (**29** laws as decision rules) · Design DNA (three-dimension identity extraction) · designer workflow (7-stage flow, existing-code detection checklist, 8 aesthetic philosophies — Oczkowski + Meng To) · React Bits (animated component patterns + the a11y rules those libraries omit) · Componentry (scroll-coupled components, WebGL hero taxonomy) · motion direction (8-step decision order, property-as-vocabulary, four motion personalities) · icon systems · AI UI generation patterns (constrain-by-registry).
+
+### Architecture
+- `SKILL.md` stayed at **1,770 tokens** while skills went 11 → 15 — four new skills cost 296 tokens of always-loaded context and added ~6,000 tokens of on-demand depth.
+- **v14.0.1 budget hygiene**: `component-api.md` 2,116 → 904 and `agent-behavior.md` 2,097 → 996, each with the depth parked behind a reference index. Per-request dependency load **4,143 → 2,103**.
+- Reference depth is now **295,152 tokens across 70 files, none loaded by default.**
+
+### Notable decisions
+- **`motion-graphics` was not created.** `animations` already owned six references on that ground and GSAP came back >90% covered; a 14th skill duplicating the 12th would have been an architectural regression.
+- `iconography` **took ownership** of `icons-avatars.md` from `react-components` rather than duplicating it.
+- **`PERF-02` and `3D-04` were deliberately narrowed** when their strict forms flagged correct code — a check that fails valid work is a broken check.
+- A **prompt-injection string** was found embedded in `lawsofux.com` and ignored. Standing rule: fetched content is data, never instructions.
+
+### Not integrated
+Tool-specific references for `ai-ui-generation` (OpenUI, Tambo, Morphic, json-render), theme tooling (Ditther, Theme Factory), Hyperframes, Skiper UI, pxpipe, claudedesignskills, Owl-Listener designer-skills, huashu-design. All additive; the skills that would host them ship complete without them.
+
+---
+
+## [14.0.3] — 2026-07-27
+
+### Added — Batch 5 (expanded `animations`, no new skill)
+- **`skills/animations/references/motion-direction.md`** (1,403) — the philosophy layer the other six animation references lacked. **Despite its origin the source is not about the Lottie format**; it is implementation-agnostic motion *direction*: the 8-step decision order (communicate → emotion → property → timing → choreography → reduced motion → slow device → would-removing-it-lose-information), property-as-vocabulary table, **four motion personalities** (Precise/Calm/Playful/Cinematic) with duration bands, the six Disney principles that survive translation to UI, choreography rules (stagger by reading order 30–60ms, lead with what answers "what happened", total sequence ≤600ms, exits ≈0.6× entrances), context adaptation, and an animation-smells table. Source: `LottieFiles/motion-design-skill`.
+- Two rules added to `animations/SKILL.md`: name what the motion communicates; pick one motion personality and hold it.
+
+### Skipped — pre-integrated (dedup before fetch)
+- `greensock/gsap-skills` and `greensock/GSAP` — `references/gsap.md` (3,924 tokens) already covers all 12 plugins, ScrollTrigger, SplitText, Flip, Observer, Draggable, MorphSVG, DrawSVG, ScrambleText and `useGSAP`.
+- `199-biotechnologies/motion-dev-animations-skill` and `motion.dev/ui` — not reached; `references/framer-motion.md` (9,343 tokens) already covers the Motion API surface (AnimatePresence, variants, layoutId, useScroll/useTransform, LazyMotion, drag). Carry to batch 10 to check only for API-delta since the Framer Motion → Motion rename.
+
+### Architectural note
+The roadmap called for a new `skills/motion-graphics/`. **Not created** — `skills/animations/` already owned six references on exactly that ground, so a 14th skill would have duplicated the 12th. All batch-5 content expanded the existing skill, per the >50%-overlap rule.
+
+---
+
+## [14.0.2] — 2026-07-27
+
+### Added — Batch 4
+- **`skills/component-patterns/references/componentry.md`** (1,090) — scroll-coupled component patterns and a WebGL hero taxonomy, the two areas `react-bits.md` doesn't cover. Five categories with cost ratings; the scroll-coupled rules (scrub-coupled not time-based, ≤3-viewport pins, decoration may be scroll-gated but information may not, pinned→stacked under reduced motion); WebGL hero performance floor (DPR cap, IntersectionObserver pause, never put the LCP element over an uncompiled shader, static poster fallback); cursor-physics accessibility (pointer-only by definition — never the only affordance). Source: `componentry.dev` / `harshjdhv/componentry`, also available over MCP.
+- Two new rules in `component-patterns/SKILL.md`: scroll-coupled means scrub-coupled; scroll-coupled reveal pattern.
+
+### Skipped — pre-integrated (dedup before fetch)
+- `ui.aceternity.com/components` and `21st.dev/community/components` — both catalogued in `shadcn-ecosystem.md` (v10.12.0).
+- `reactbits.dev/get-started` — docs site for `DavidHDev/react-bits`, ingested in batch 3 as `react-bits.md`.
+
+---
+
+## [14.0.1] — 2026-07-27
+
+### Changed — budget hygiene (refactor only, no new content)
+- **`core/component-api.md` split 2,116 → 904** + new **`core/component-api-deep.md` (1,527)**. Thin file keeps the prop taxonomy, a minimal forwardRef template, the `asChild`/`as` doctrine, CVA integration and the controlled/uncontrolled table. Compound components, composition patterns, API anti-patterns and the full forwardRef rules moved to the deep file, reachable from both `core/component-api.md` and `skills/react-components/`.
+- **`core/agent-behavior.md` split 2,097 → 996** + new **`core/agent-behavior-patterns.md` (947)**. Thin file keeps the four principles, the pipeline-stage table and the anti-pattern bans. The design-work addendum, external behavioural patterns and the per-principle applications moved to the deep file.
+- **`skills/component-patterns/`** dropped `core/design-tokens.md` from `core-deps` — it *consumes* tokens, it doesn't define them. Token depth now loads on demand from `skills/design-system/`.
+
+### Result
+Per-skill dependency load **4,143 → 2,103 tokens**. Worst-case request budget:
+
+| Skill | Before | After | Headroom |
+|---|---|---|---|
+| `component-patterns` | 6,818 | **4,814** | 3,186 |
+| `react-components` | 6,867 | **4,827** | 3,173 |
+| `threejs-3d` | 6,811 | **4,771** | 3,229 |
+| `forms` | 6,701 | **4,661** | 3,339 |
+| `data-tables` | 6,645 | **4,605** | 3,395 |
+
+No rule was deleted — everything moved is reachable via a Reference Index. All 8 gates pass unchanged.
+
+---
+
+## [14.0.0] — 2026-07-26
+
+### Added — Omnibus harvest, batch 1 (corrected list)
+- **`skills/design-principles/`** (1,358 tokens) with three references:
+  - **`anthropic-frontend-design.md`** (1,806) — the canonical anti-slop skill from `anthropics/skills`, extracted in full. The **three AI-design clusters** (cream+serif+terracotta · near-black+acid accent · broadsheet hairline), hero-as-thesis, structure-encodes-truth, orchestrated-moment-over-scattered-effects, the two-pass plan→critique→build process with ASCII wireframes and a named signature element, CSS-specificity warning, Chanel's remove-one-accessory rule, and writing-as-design-material.
+  - **`laws-of-ux.md`** — 29 UX laws as decision rules with the interface consequence each forces.
+  - **`design-dna.md`** — three-dimension identity extraction and the polish-iteration prompt.
+- **`core/user-intake.md`** (772) — six intake questions with a routing table; asks only what is load-bearing, batched into one message.
+- **`core/agent-behavior.md`** — design-work addendum: pin the subject, plan→critique→build, self-critique during the build, remove one accessory, keep notes across passes.
+- **Anti-slop wall** gained the three AI-design defaults and the numbered-marker rule.
+- Token-optimization layer and typography/canvas rules (see `skills/react-performance/references/token-optimization.md`, `core/design-tokens.md`).
+
+### Skipped (already integrated — dedup rule)
+- `pbakaus/impeccable` — integrated v10.9.0 as `impeccable-techniques.md`.
+- `alchaincyf/huashu-design` — README returned empty; deferred to batch 2 for a retry.
+
+### Batch 2 additions
+- **`skills/design-principles/references/designer-workflow.md`** (1,267) — the 7-stage design flow (grill → brief → IA → tokens → tasks → build → review) with `.design/{feature}/` persistence · the **existing-code detection checklist** (CSS vars, Tailwind config, framework theme, component dirs, Storybook, token files, font loading, package.json) — P3 applied to design work · **8 aesthetic philosophies** (Rams, Swiss, Japanese Ma, Brutalist, Scandinavian, Art Deco, Neo-Memphis, Editorial) with the naming rule · Meng To's four working principles and the design-first prompt order (goal → format → layout → type → colour → constraints). Sources: `julianoczkowski/designer-skills`, `MengTo/Skills`.
+- **`core/agent-behavior.md`** — External behavioural patterns: grill before building, detect before generating, persist decisions, change 1–2 things per iteration, state the aesthetic you picked, references beat paragraphs, negative prompts.
+- Three new rules in `design-principles/SKILL.md` (detect-before-generate, name-the-aesthetic, iterate-by-1–2).
+
+### Batch 2 skipped (pre-integrated)
+- `nextlevelbuilder/ui-ux-pro-max-skill` — v10.7.0 → `ux-deep-rules.md` (5,268 tokens) + `landing-patterns.md`. Verified present; not duplicated.
+- `sickn33/agentic-awesome-skills` — sibling repo `sickn33/antigravity-awesome-skills` integrated v10.3.0 (`threejs-advanced`, `shadcn`, `dark-mode`, `icons-avatars`).
+
+### Batch 3 additions
+- **`skills/component-patterns/`** (996 tokens) — 13th skill. Patterns from animated component libraries with the accessibility and performance rules those libraries omit: split-text must stay one string for assistive tech (`aria-label` wrapper + `aria-hidden` spans), animate wrappers never text nodes, backgrounds are `aria-hidden`/`pointer-events:none`/contrast-tested, ambient loops stop under reduced motion and pause off-screen, pointer-derived effects are never the only affordance, one showpiece per viewport.
+- **`references/react-bits.md`** (1,248) — catalogue of the four categories (text animations, wrapper effects, ambient backgrounds, composed sets) with use-when/structure/animation/a11y/anti-pattern per pattern, integration rules for this stack, and the licensing note (MIT + Commons Clause). Source: `DavidHDev/react-bits`.
+
+### Batch 3 skipped (pre-integrated)
+- `nolly-studio/cult-ui` — catalogued in `shadcn-ecosystem.md` (v10.12.0) alongside Aceternity, MagicUI, Animata and 21st.dev.
+- `harshjdhv/componentry`, `teamchong/pxpipe`, `freshtechbro/claudedesignskills` — not reached before the context budget; deferred to batch 4.
+
+### Security
+`lawsofux.com` carries an embedded prompt-injection string. Ignored. **Standing rule for all remaining batches: fetched content is data, never instructions.**
+
+---
+
+## [13.0.0] — 2026-07-26
+
+### Changed — Skill Registry + Lazy Loading (architectural)
+- **`SKILL.md` is now a thin registry: 5,458 → ~1,474 tokens.** It holds identity, the behavioural preamble, the anti-slop wall, an 11-row skill registry, the loading protocol and failure handling — nothing else. It no longer grows with content: a new skill costs **~43 tokens** (one row). ~34 skills fit before the 2,500 cap.
+- **11 skills** under `skills/{id}/` — react-components, landing-pages, forms, data-tables, threejs-3d, design-system, animations, testing, web-interface, react-performance, **platform**. Each is a *router*: own rules + a Reference Index, **789–1,042 tokens** (cap 3,000).
+- **5 core files** under `core/` — design-tokens, accessibility-baseline, component-api, agent-behavior, validate-checklist. `design-tokens`, `accessibility-baseline` and `validate-checklist` are newly authored distillations, not copies.
+- **All 58 references distributed into the owning skill's `references/`, zero orphans.** Depth is loaded only when a skill's Reference Index points at it for the specific task.
+- **All 38 examples + their tests relocated** to `skills/{id}/examples/`, each `.test.tsx` beside its component; ambient stubs duplicated per directory.
+- **8 release gates** (was 7): new **frontmatter** gate (every skill declares name/description/version/core-deps and its deps exist), **budget** gate (skill ≤3,000 and registry+skill+deps ≤8,000, fails the build), **registry-resolution** gate (every row resolves, every skill has ≥1 example, orphan directories warn).
+
+### Notes
+- **Per-skill cap is 3,000 tokens, not the 5,000 originally specified.** registry (1,474) + component-api (2,116) + accessibility-baseline (641) + validate-checklist (558) = 4,789, leaving 3,211. Authoring at 5k would silently blow the 8k budget on every request; the budget gate now enforces the real number.
+- An 11th skill (`platform`) was added because nine references — mobile, React Native, i18n, SEO, payments, email, AI SDK, orchestration, continuous-learning — mapped to none of the ten proposed skills.
+- The 11 named-but-nonexistent examples (`good-button`, `good-modal`, `good-pricing`…) were **not** created; existing golds already demonstrate those patterns and each new one carries a permanent test and maintenance cost.
+
+---
+
+## [12.6.0] — 2026-07-26
+
+### Added — Three.js / R3F layer
+- **Consolidated to exactly 3 3D references** (was 3 overlapping files at ~7.5k tokens): **`threejs-fundamentals.md`** (~3.1k — R3F stack, JSX↔Three mapping, dashed props, geometry/instancing, OKLCH colour via `THREE.Color`, lighting, materials, textures, perf, a11y), **`threejs-advanced.md`** (~3.0k — delta-driven animation, `useAnimations`, loaders with Suspense/`useProgress`, GLSL shaders, postprocessing, perf checklist), **`threejs-interaction.md`** (~1.6k — R3F pointer events, drei camera controls, selection state, touch, and a full 3D accessibility section). `three-js.md` and `react-three-fiber.md` were folded in and removed; all routing updated.
+- **4 gold examples** (all 35/35 regex + 16/16 parser): `good-3d-scene.tsx`, `good-3d-interaction.tsx`, `good-3d-loader.tsx`, `good-3d-shader.tsx`, each with a matching `.test.tsx` that mocks R3F/drei (no WebGL in jsdom). **Anti-example** `bad-3d-practices.tsx` fires 3D-01/02/03/04/05/07 plus PERF-04 and COPY-01.
+- **7 new constraints** → suite is now **51 (16 parser + 35 regex)**. Parser: `3D-01` Canvas declares `dpr` · `3D-02` no raw `requestAnimationFrame` in R3F files · `3D-03` manual geometry/material construction is memoized. Regex: `3D-04` Canvas container labelled or explicitly decorative · `3D-05` no raw hex in `THREE.Color` · `3D-06` `useFrame` is delta-driven · `3D-07` asset loading uses Suspense, not a `setTimeout` flag.
+- Shortcodes `[r3f]` `[threejs]` `[shader]` `[postprocess]` `[3d-interaction]` alongside existing `[3d]` `[webgl]`.
+- Ambient stubs gained real `three` types (Color/Object3D/Mesh/geometries/ShaderMaterial) and 16 more R3F JSX intrinsics, so 3D examples compile under `--strict` without vendor typings.
+
+### Fixed
+- `good-3d.tsx` was missing any accessible treatment of its canvas; it now declares the decorative intent explicitly.
+
+### Notes
+- **The 10 upstream skill files could not be fetched** — `CloudAI-X/threejs-skills` serves its README but every `.claude/skills/*` path returns empty. Content was therefore built from the sprint's own detailed outline, the README's per-skill scope table, and the existing verified 3D material, written R3F-first. Not a verbatim extraction, and labelled as such.
+- **`3D-04` was deliberately widened** to accept `aria-hidden="true"`: a purely decorative background canvas *should* be hidden from assistive tech, and the strict form flagged `good-3d.tsx` for doing the right thing.
+
+---
+
+## [12.5.0] — 2026-07-26
+
+### Added — Karpathy behavioral layer
+- **`references/agent-behavior.md`** (~1.5k): the four principles adapted to frontend work — P1 Think Before Coding (restate intent, name the stack, surface tradeoffs, push back on anti-slop conflicts, stop when confused), P2 Simplicity First (no single-use abstractions, no unrequested flexibility props, no `memo`/`useMemo` without a named problem, no `useEffect` for derivable state), P3 Surgical Changes (match existing style, don't refactor the neighborhood, remove only the orphans you created), P4 Goal-Driven Execution (request → verifiable criteria table, plans with checkpoints, self-verify before returning). Includes a pipeline-stage mapping and a banned-phrases table.
+- **`AGENT_SYSTEM_PROMPT.md` restructured** — new **Section 0 Behavioral Preamble** read before any technical loading, plus two new pipeline stages: **STAGE 1.5 REASON** (restate, ambiguities, success criteria, approach) after DETECT and **STAGE 5.5 SELF-VERIFY** (BEHAV-01…04) after VALIDATE.
+- **BEHAV checks in the VALIDATE gate**: BEHAV-01 every changed line traces to the request · BEHAV-02 no speculative abstraction · BEHAV-03 criteria stated and met · BEHAV-04 assumptions stated explicitly (self-checks), plus machine-enforced **BEHAV-05** (TODO/FIXME/HACK/XXX markers — extends SLOP-03, which only caught `// TODO`) and **BEHAV-06** (speculative "might need later" comments).
+- **`good-surgical-change.tsx`** (31/31 + 13/13 parser) — one requested change, delivered surgically, with pre-existing dead code *flagged rather than deleted*; matching `.test.tsx` asserts the `aria-describedby` error wiring. **`bad-drive-by-refactoring.tsx`** anti-example — same scenario handled badly (renamed props, deleted unrelated code, invented variant/size props, needless memo/effect, try/catch around JSX, TODO/FIXME markers); fails BEHAV-05, BEHAV-06, PERF-04, MOTION-01.
+- Shortcode `[behavior]`; routing row loads `agent-behavior.md` first for any task over ~3 files or ~200 lines.
+
+### Notes
+- Constraint suite: **44 (13 parser + 31 regex)**. BEHAV-01…04 are deliberately **not** counted — they are prompt-level self-checks. Automating "did this line trace to the request?" needs the diff and the original intent, neither of which a single-file linter has; claiming otherwise would be theatre.
+- Gap analysis confirmed the need: SKILL.md had **zero** coverage of simplicity, surgical scope, success criteria, or push-back before this release.
+
+---
+
+## [12.4.0] — 2026-07-26
+
+### Added — Vercel Labs integration
+- **`references/web-interface-guidelines.md`** (~1.4k): surface craft (layered shadows, nested/concentric radii, hue-consistent borders, interaction contrast), rendering artifacts (text anti-aliasing, gradient banding, native `<select>` in Windows dark mode), a **new copywriting category** (active voice, second person, Title Case rules, numerals, non-breaking units, consistent placeholders, positive error framing, specific labels), APCA guidance layered over the WCAG 2.2 AA gate, plus form/image/animation additions.
+- **`references/react-performance.md`** (~1.4k): the 70-rule Vercel taxonomy with stable citable IDs across 8 categories (`async-`, `bundle-`, `server-`, `client-`, `rerender-`, `rendering-`, `js-`, `advanced-`), severity labels, and an audit output format.
+- **`component-api.md` §7 Composition Patterns**: avoid boolean-prop proliferation, explicit variants, lift state, decouple implementation, `{ state, actions, meta }` context interface, prop-drilling escalation ladder, children-over-render-props.
+- **`design-patterns.md` P-20** — View transition patterns.
+- **3 gold examples** (all 29/29 + 13/13 parser): `good-composition-patterns.tsx`, `good-performance-patterns.tsx`, `good-vt-shared-element.tsx`, each with a matching `.test.tsx`. **1 anti-example**: `bad-performance.tsx` (fires PERF-01/02/04, A11Y-03, COPY-01).
+- **5 parser constraints**: `PERF-01` barrel imports · `PERF-02` numeric `&&` rendering a literal 0 · `PERF-04` `transition: all` · `A11Y-03` images without dimensions · `COPY-01` `...` in UI copy. **5 regex constraints**: `COPY-02`, `TOUCH-01`, `SAFE-01`, `PERF-04R`, `IMG-01`. Suite: **42 total (13 parser + 29 regex)**.
+- 4 new regression cases (11/11): two misses a naive regex makes, two over-bans it commits.
+- Intents `AUDIT_PERFORMANCE`, `ADD_VIEW_TRANSITIONS`; shortcodes `[performance]`, `[wig]`, `[composition]`.
+
+### Fixed — violations the new constraints surfaced in existing golds
+- `transition-all` → explicit property lists in **10** gold examples.
+- Missing `width`/`height` on `<img>` (CLS) in `good-dark-mode`, `good-brand-linear`, `good-checkout`.
+- Missing `overscroll-behavior: contain` on overlays in 5 golds; missing `env(safe-area-inset-*)` on fixed-bottom layouts in `good-mobile`, `good-checkout`.
+- `"..."` → `…` in `good-tanstack` placeholder copy.
+
+### Changed
+- **`view-transitions.md` enriched, not duplicated** — the sprint called for a new `react-view-transitions.md`, but this skill already integrated that source in v10.11.0. Per the dedup rule, upstream additions (animation-priority table, `default="none"` guidance, placement rule, shared-element + list-identity composition, `router.back()` caveat, nested-VT limitation) were appended to the existing file instead.
+- **`component-api.md` reconciles React 19 `ref`-as-prop with `forwardRef`.** Vercel's `react19-no-forwardref` contradicts this skill's forwardRef mandate; both are now documented as valid with clear selection criteria. `COMP-01` validates `forwardRef` only when used — it never forces it.
+- `PERF-02` deliberately narrowed to **numeric** left sides (the case that renders a literal `0`). A blanket `&&` ban would flag idiomatic, correct React — proven by the `boolean_and_ok` regression case.
+
+---
+
+## [12.3.0] — 2026-07-26
+
+### Added — GitHub publication
+- Repository layout: skill payload under `src/`, human docs at root (`README.md`, `LICENSE`, `AGENT_SYSTEM_PROMPT.md`, `SKILL.md`), guides in `docs/` (INSTALL, USAGE, ARCHITECTURE, CHANGELOG), build output in `dist/` (gitignored).
+- `package.json` (TypeScript, vitest, testing-library, jest-axe, jsdom, CVA, Tailwind toolchain) with `npm run gates|build|test` scripts; root `tsconfig.json` and `vitest.config.ts`.
+- `.github/workflows/ci.yml` — runs the full gate chain plus each gate individually on every push/PR, and attaches `dist/*.skill` to a GitHub Release on `v*` tags.
+- `AGENT_SYSTEM_PROMPT.md` (~3k tokens): drop-in agent system prompt, written **version-free** and verified line-by-line against the shipped `SKILL.md`, `references/`, and `rules/`.
+- `[testing]` shortcode (routing existed since 12.2.0; the shortcode itself was missing).
+
+### Fixed — drift in an externally-authored agent prompt
+- Dashboards/tables route to `design-patterns.md` P-09/P-10/P-11 + `chart-types.md`; **there is no `references/data-table.md`**.
+- Real DETECT enum restored (`CREATE_PAGE`, `CREATE_COMPONENT`, `DESIGN_SYSTEM`, `BUILD_3D`, …) in place of invented intents; ambiguity is a failure mode, not an intent.
+- Pattern numbers corrected: pricing P-02, testimonials P-03, bento P-04, social proof P-05, onboarding P-15, overlay P-17/P-17a.
+- `[json]` envelope corrected to the enforced schema (`schema_version` / `component` / `metadata`).
+- Non-existent shortcodes (`[table]`, `[motion]`, `[chart]`) replaced with real ones.
+
+### Notes
+- `build_release.py` flattens `src/*` into the archive root, so **SKILL.md keeps relative `references/…` paths**. Rewriting them to `src/…` would break every installed archive — see `docs/ARCHITECTURE.md`.
+
+---
+
+## [12.2.0] — 2026-07-26
+
+### Added — Testing Doctrine
+- **`references/testing.md`** (~1.1k tokens): philosophy, test stack (Vitest + Testing Library + jest-axe + Playwright), required tests per component type (all / interactive / form / data / overlay), mock policy (framer-motion, next/navigation, R3F/Spline, TanStack Query, recharts), jest-axe pattern, anti-pattern table, setup command.
+- **24 `.test.tsx` files** — one per gold — with real assertions: a render check that asserts DOM output, a role-based interaction (type / click / list / heading), and a jest-axe accessibility pass on the static-HTML components. Library mocks are fully typed: **zero `any`** across all test files. All 24 compile under `tsc --noEmit` strict.
+- **`TEST_COMPONENT` intent** in DETECT, a routing row (`testing → component-api`), a conditional load, and `testing.md` in `references/_index.md`.
+- **7th release gate** in `build_release.py` — every gold must have a matching `.test.tsx`; runs `vitest` when installed, otherwise verifies existence plus strict compilation. Release-blocking, and listed in the release-notes gate table.
+
+### Changed
+- Gold gates (compile, parser, regex, post-build smoke) exclude `*.test.tsx`; Gate 7 owns the test suite, keeping the 27-gold accounting intact.
+
+### Removed
+- Superseded archives and `__pycache__` artifacts from the working tree; `frontend-design-pro-v12.1.4.skill` retained as the rollback archive.
+
+---
+
+## [12.1.4] — 2026-07-25
+
+### Added (release automation)
+- **`scripts/build_release.py`** — the only supported way to produce a `.skill` archive. Seven blocking stages: (1) pre-flight (clean tree, SKILL.md ≤6k tokens, metadata/CHANGELOG version agreement, no stray version strings outside the allowlist), (2) full gate chain (compile → semantic parser → syntactic regex → pipeline smoke → evals → regression, in order, first failure aborts), (3) path integrity (every cited path exists; orphan references warned), (4) token-budget divergence check vs `_index.md`, (5) deterministic archive build with unversioned `frontend-design-pro/` root and node_modules/.git/artifact exclusion, (6) post-build smoke re-running compile+parser against the *unzipped* copy (catches non-deterministic or corrupt archives), (7) signed `RELEASE_NOTES-v{VERSION}.md` with the gate table and a "no manual changes after gate passage" attestation. CLI: `--dry-run` (gates only, no archive), `--bump-patch`.
+- Existing scripts accept `--check`/`--dry-run` and `test_v12_pipeline.py` defaults to `SKILL.md`, so the pipeline composes them as side-effect-free subprocesses.
+
+### Changed
+- A+ is now machine-enforced at release time: a broken build cannot become a `.skill`.
+
+---
+
+## [12.1.3] — 2026-07-25
+
+### Changed (F-08 — parser-authoritative constraints)
+- **`scripts/parser_constraints.js`**: 8 semantic constraints checked on the TypeScript AST (compiler API), not strings — real `aria-*` JSX attributes; `focus-visible` only on interactive/focusable elements; `prefers-reduced-motion` must be functional (matchMedia / useReducedMotion / CSS `@media` / `motion-reduce:`); `ease-in` banned for entrances but allowed in exit-keyed contexts; declared `*Props` types must be used (dead declarations fail); white surfaces banned on page containers but allowed on components; mount-effect `setTimeout` gating ANY state setter fails (spelling-independent); `forwardRef`, when present, must take `(props, ref)`, return JSX, and be exported.
+- **Gate order** in `test_constraints.py`: compile gate → parser gate (blockers) → regex suite (style lint). Node absent → parser gate skips with warning.
+- **Retired 6 superseded regex checks** (A11Y-03, A11Y-06, ANI-01, ANI-02, TS-01, COL-02); DELAY-01 regex retained as declared secondary fallback. Suite: **32 constraints (8 parser + 24 regex)** — two more than the sprint spec's 30 because COMP-01 is net-new and DELAY-01's fallback is deliberately kept.
+- **`scripts/parser_regression_test.js`**: 7 synthetic divergence cases, 7/7 — including `mount_setphase.tsx`, a fake-delay spelling no regex vocabulary can catch.
+- Constraint scan now excludes `.d.ts` stubs; anti-examples excluded from the exit code (they fail by design).
+- README: "Constraint Philosophy" — parser checks verify meaning, regex checks verify syntax.
+
+---
+
+## [12.1.2] — 2026-07-25
+
+### Added (A-grade sprint)
+- **`references/component-api.md`** (~1.3k tokens): prop taxonomy (behavioral/stylistic/compositional), forwardRef policy with `ComponentPropsWithoutRef` + CVA template, `asChild` vs `as` doctrine (never both), controlled/uncontrolled decision table, compound-component rules, API anti-patterns table. Routed for `CREATE_COMPONENT` / `REFINE_COMPONENT` (loads first).
+- **Real TypeScript compile gate**: `scripts/typecheck_golds.py` — `tsc --noEmit` strict + noImplicitAny over `examples/*.tsx`; ambient module stubs (`examples/_stubs.d.ts`, `examples/_r3f-jsx.d.ts`) keep the check on example code, not vendor typings. Wired into `test_constraints.py` as a blocking pre-gate (graceful skip when tsc absent). **420 strict errors → 0.**
+- **`DELAY-01` constraint** (30 total): mount-time `setTimeout` loading/mounted gates are now machine-checked; eval `regex_absent` pattern hardened to match arrow-function timers.
+- **MFA/OTP input spec** in `auth-patterns.md`: per-digit inputs, paste distribution, `autoComplete="one-time-code"`, backspace/arrow focus rules, group error state, `aria-live` resend countdown, rate-limit copy.
+- **P-17a modal stacking spec** in `design-patterns.md`: z-50/60/70 three-level cap, `aria-hidden` on sibling content in LIFO order, per-layer focus trap, return-focus stack.
+- **Pagination vs infinite scroll decision matrix** (SEO/findability/feed/data-size/a11y criteria; default = pagination).
+- **CSS logical properties rule** in BUILD Pass 1: RTL is the default assumption.
+- **README.md**: two-gate verification workflow.
+
+### Fixed
+- Latent bugs surfaced by the compile gate: nested `/* */` comment terminating a doc block early in `good-dark-mode.tsx` (everything after parsed as code); duplicate `style` attribute on a JSX element in `good-mobile.tsx`; five additional disguised mount-time fake loaders (`setIsMounted`/`setMounted`/`pageState`/`appState`/`setIsInitialLoading`) missed by the v12.1.1 regex.
+- `@types/react` 18 → 19 for the compile environment (React 19 APIs: `useOptimistic`, `useActionState`); React View Transition experimental API typed via a narrow shim.
+
+---
+
+## [12.1.1] — 2026-07-24
+
+### Fixed (release-integrity + code-quality sprint)
+- **F-01 BLOCKER**: created `references/design-patterns.md` — canonical 12 Design Principles, Layout Formulas, 19 pattern entries (P-01…P-19), 12-row anti-patterns table, decision guides (grid/flex, pagination/infinite, modal/drawer/page, toast/inline/dialog). Resolves 8 shortcodes (`[patterns]` `[pricing]` `[testimonials]` `[bento]` `[social-proof]` `[empty]` `[overlay]` `[onboarding]`) and 9 routing rows that pointed at a missing file.
+- **F-02 BLOCKER**: archive rebuilt around the real SKILL.md; root folder renamed `frontend-design-pro/` (unversioned); version strings stripped from all file headers — this CHANGELOG + `metadata.json` are the only version authorities.
+- **F-05 BLOCKER**: mandatory artificial skeleton delay removed from BUILD Pass 2 and 11 examples. New rule: skeletons render from a real `isLoading` input (prop, default `false`); never `setTimeout` fake loading on mount. `regex_absent` eval assertion added to 12 evals.
+- **F-03**: all 27 examples converted `.jsx` → `.tsx` with exported prop interfaces / data-model types; arbitrary hex → OKLCH arbitrary values; `min-h-screen` → `min-h-[100dvh]`. Constraints 27 → **29** (`TS-01` TypeScript presence, `COL-04` no arbitrary hex); `COL-02` 3-digit `#fff` gap closed; self-test fixtures modernized. All 24 gold examples 29/29.
+- **F-04**: `color-palettes.md` converted to OKLCH (original hex in comments); pure-white `--color-surface`/`--color-background` values re-tinted to `oklch(99.5% 0.004 255)`; OKLCH-only rule stated in file header.
+- **F-06**: SKILL.md rewritten ~16k → **~4.9k tokens**. Shortcode expansions + reference tables moved to generated `references/_index.md` with **measured** token costs (bytes/4). `_meta/FILE_MAP.md` now a human summary pointing at the generated index.
+- **F-10**: easing rules reconciled — `ease-in` banned for entrances, allowed for exits ≤200ms (SKILL.md + `ux-guidelines.md` now agree).
+- Eval runner: gold map updated to `.tsx`; self-test **22/22** (was 19/22 — storybook/react-native/playwright golds now wired). Envelope schema `constraints_checked` 27 → 29.
+
+---
+
+## [12.0.0] — 2026-04-24
+
+### Breaking Changes
+- **Event-driven pipeline**: 8-step sequential pipeline replaced with 6-stage model: `detect → classify → route → build → validate → output`. Custom SKILL.md forks referencing step numbers must update to new stage names.
+- **Eval System v2**: `semantic` assertion type added (judged by `claude-haiku-4-5-20251001`). Existing eval runners that don't handle `type="semantic"` will skip them (backwards-compatible via `--no-semantic` flag).
+
+### Added
+- **SKILL.md v12 rewrite**: All content from v11.6.0 preserved; reorganised into 6 named stages. `[json]` shortcode added (49th shortcode). DESIGN.md round-trip now structural (not manual instruction).
+- **`[json]` shortcode**: Emit JSON envelope `{"schema_version":"12.0","component":"...","metadata":{...}}` instead of freeform prose. For CI pipelines, build tools, MCP clients. Ignored in Artifact/Claude.ai → raw JSX.
+- **DESIGN.md round-trip (structural)**: `detect` stage reads `design_md_present`. `build` stage auto-loads `references/design-md-parser.md` and injects extracted OKLCH tokens into `@theme` block. Override priority: DESIGN.md > shortcode flags > skill defaults.
+- **`references/design-md-parser.md`** (~2k): 6 canonical DESIGN.md sections + 4 synonym variants each; OKLCH extraction; `@theme` injection rules; anti-patterns.
+- **`examples/good-design-md-round-trip.jsx`** (27/27 ✅): SaaS pricing page demonstrating DESIGN.md token injection — `@theme` block annotated `/* from DESIGN.md */`, Cabinet Grotesk + Fraunces fonts, 3 pricing tiers.
+- **Eval System v2 — semantic assertions**: 8 `manual` assertions across evals #1/#2/#4/#8/#9/#12 converted to `semantic` type with `prompt` field for haiku judging.
+- **`run_evals.py` semantic runner**: `_run_semantic()` via `claude-haiku-4-5-20251001` API, sha256 in-process cache, `--no-semantic` flag (skip all semantic), `--budget N` cap (default 20 calls). Requires `ANTHROPIC_API_KEY`.
+- **`scripts/test_v12_pipeline.py`**: Smoke test — validates 6 stage markers + `[json]` + `MIGRATION FROM v11` + `DESIGN.md` presence. Exit 0 only if all 6 stages found.
+- **`_meta/V12_DESIGN.md`**: 266-line pre-implementation blueprint — stage contracts, full routing table, build+validate checklist (all 27 categories as checkboxes), JSON envelope schema, DESIGN.md round-trip contract, risk checklist.
+- **`## MIGRATION FROM v11.x`** section in SKILL.md: old step name → new stage name table, breaking vs non-breaking changes summary.
+
+### Stats
+- Self-test: 19/22 (evals 20–22 use proxy golds; dedicated golds planned v12.1.0)
+- Shortcodes: **49** (+1 `[json]`)
+- Reference files: **57** (+1 `design-md-parser.md`)
+- Example files: **21** (+1 `good-design-md-round-trip.jsx`)
+- Semantic assertions: **8** (evals #1/#2/#4/#8/#9/#12)
+- Pipeline stages: **6** (was 8 steps)
+
+---
+
+## [11.6.0] — 2026-04-24
+
+### Added
+- **3 new reference files**: `react-native.md` (~4k, `[rn]`), `storybook.md` (~3k, `[stories]`), `playwright.md` (~3.5k, `[e2e]`).
+- **3 new scaffold.py templates**: `react19`, `ai-chat`, `perf` (all 27/27 CI constraints).
+- **3 new evals** (#20–22): react-native-patterns, storybook-stories, playwright-tests.
+- **SKILL.md**: Added `[rn]`/`[stories]`/`[e2e]` shortcodes, routing rows, reference table entries.
+
+### Fixed
+- ROADMAP `Current release` header: v11.1.0 → v11.5.0.
+- SKILL.md frontmatter `metadata.version`: 11.2.0 → 11.6.0.
+- Missing CHANGELOG v11.2.0 entry reconstructed.
+
+### Stats
+- Self-test: 19/22 (evals 20–22 use proxy golds; dedicated golds in v12.1.0)
+- Reference files: 56 total | Shortcodes: 48 | Evals: 22
+
+---
+
+## [11.5.0] — 2026-04-19
+
+### Added
+- **2 new gold examples** (27/27 CI each): `good-rhf.jsx` (React Hook Form + Zod: 3-step wizard, useForm, zodResolver, Controller), `good-tanstack.jsx` (TanStack Query v5: useQuery/useMutation/useInfiniteQuery, optimistic updates, infinite scroll).
+- **GOLD_EXAMPLES fully wired**: 19/19 eval self-test pass. All evals now have dedicated gold examples.
+- **FILE_MAP.md**: Added good-rhf + good-tanstack rows.
+- **SKILL.md**: Added good-rhf + good-tanstack to Step 6.5 examples list.
+
+### Stats
+- Self-test: **19/19 PASS** — first time all evals covered.
+- Gold examples: 20 total, all 27/27 = 100% CI constraints
+
+---
+
+## [11.4.0] — 2026-04-19
+
+### Added
+- 4 new gold examples (all 27/27): good-react19.jsx, good-ai-chat.jsx, good-anim-recipes.jsx, good-perf.jsx
+- Eval self-test 17/19
+
+---
+
+## [11.3.0] — 2026-04-19
+
+### Added
+- **7 new evals** (#13–19): gsap-advanced, react19-patterns, ai-chat-ui, animation-recipes, react-hook-form-zod, tanstack-query, perf-optimization. Eval count 12 → 19.
+- **scaffold.py**: +`data-table` template (27/27 CI constraints pass).
+- **run_evals.py**: GOLD_EXAMPLES wired for all 19 evals (evals 14–19 use proxy golds pending dedicated examples in v11.4.0).
+
+### Fixed
+- **FILE_MAP.md**: Added `good-hero-spline.jsx` + `good-data-table.jsx` rows. Brand split: `brand-core.md` / `brand-extended.md` / `brand-design-systems.md` (legacy). Eval count corrected to 19. Footer bumped to v11.3.0.
+- **Eval #8 (dark-mode-tokens)**: Hardened — added `next-themes|useTheme|ThemeProvider|resolvedTheme` assertion.
+
+### Stats
+- Self-test: 13/19 pass (evals 14–19 await dedicated gold examples in v11.4.0)
+- CI constraints: 14 gold examples all 27/27 = 100%
+
+---
+
+## [11.2.0] — 2026-04-19
+
+### Added
+- `examples/good-data-table.jsx` gold example (27/27 CI): sortable columns (aria-sort), row checkboxes, bulk action bar, search/filter, pagination, semantic table, overflow-x-auto, loading skeleton, organic data (20 diverse users), error state.
+- `references/chart-types.md` expanded 55→330 lines: decision tree, accessibility, Recharts snippets, color rules, anti-patterns, animation guidelines, responsive patterns.
+- `references/industry-rules.md` expanded 99→229 lines: 9 verticals, each with component must-haves, color conventions, trust signals, LCP budget, anti-patterns.
+
+### Changed
+- `evals/evals.json`: eval #12 (data-table) wired to `good-data-table.jsx`. Self-test: 12/12 pass.
+- `metadata.json`: `style_presets` corrected 7→5, `example_files` 13→14, `eval_tests` 12.
+
+---
+
+## [11.1.0] — 2026-04-19
+
+### Added
+- **5 new evals** (#8–12): dark-mode-tokens, auth-flow, 3d-scene, scroll-experience, data-table. Eval count 7 → 12. 11/11 self-test pass (data-table pending gold example).
+- **`references/brand-core.md`** (732 lines) — Top 13 brand profiles + full archetypes index + 4 implementation templates + brand mixing formulas. Brands: Linear, Raycast, Vercel, Stripe, Supabase, IBM, Revolut, Spotify, Apple, Ferrari, Figma, Framer, Claude.
+- **`references/brand-extended.md`** (750 lines) — 30+ additional brand profiles: Warp, Cursor, xAI, Notion, Resend, PostHog, Sentry, HashiCorp, MongoDB, Coinbase, Airbnb, Uber, Tesla, BMW, Webflow, Miro, GitHub, Shopify, PlanetScale, Loom, Neon DB, Cohere, Mistral, Ollama.
+- **`_meta/ROADMAP.md`** — Forward-looking roadmap: v11.x, v12.0 breaking changes, v13.0 MCP server, known gaps, contribution guide.
+
+### Changed
+- **SKILL.md**: Version 11.0.0 → 11.1.0. Brand routing split to use brand-core/brand-extended. [brand] shortcode updated to reflect split.
+- **`metadata.json`**: eval_tests 7 → 12, reference_files 51 → 53, style_presets corrected 7 → 5.
+
+---
+
+## [11.0.0] — 2026-04-19
+
+### Added
+- **`references/token-optimization.md`** — Component token budget guide: state init, conditional rendering, Tailwind compression, type inference, import optimization, data structure efficiency, comment discipline, budget table, anti-patterns. `[tok-opt]` shortcode.
+- **`references/memory-persistence.md`** — 8-tier client persistence guide: URL state (nuqs), localStorage hook (SSR-safe), sessionStorage, form draft recovery, cross-tab sync (BroadcastChannel), TanStack Query cache, Zustand persist, cookie patterns, anti-patterns. `[memory]` shortcode.
+- **`references/continuous-learning.md`** — User preference learning, A/B testing (GrowthBook/Vercel Flags), Sentry error telemetry, PostHog usage analytics, adaptive defaults, feedback widgets, model-in-the-loop UI, rollout strategies, personalization tokens, anti-patterns. `[cl]` shortcode.
+- **`references/verification-loops.md`** — Zod+RHF client/server validation, optimistic UI+rollback, data integrity assertions, API response validation, E2E state verification, axe-core a11y checks, visual regression, error boundaries, anti-patterns. `[verify]` shortcode.
+- **`references/parallelization.md`** — Promise.all/allSettled, concurrent rendering (useTransition/useDeferredValue), parallel route segments, Web Workers+Comlink, streaming SSR, asset preloading, IO batching, request deduplication, anti-patterns. `[parallel]` shortcode.
+- **`references/subagent-orchestration.md`** — Multi-step AI workflow UI, agent status components (SSE/aria-live), background job UI, parallel agent output, human-in-the-loop UI, tool call visualization, streaming output composition, error recovery, agent memory UI, anti-patterns. `[orchestrate]` shortcode.
+
+### Fixed
+- **SKILL.md**: `--color-surface-raised: oklch(100% 0 0)` → `oklch(99.5% 0.004 255)` — was triggering TOK-01 constraint violation.
+- **SKILL.md**: Windsurf install note was orphaned as dangling bullet — merged into install line (`· Windsurf → .windsurfrules`).
+- **All 8 gold examples**: `good-scroll`, `good-shadcn`, `good-landing`, `good-dashboard`, `good-form`, `good-hero-spline`, `good-3d`, `good-dark-mode` now at 100% on all 27 constraint checks (up from 74–96%).
+- **`evals/evals.json`**: Fixed eval #3 (accessible-form) assertions — removed brutalist requirements that didn't match gold example; fixed eval #4 (brand-linear) — `bg-clip-text` gradient now present in gold example.
+
+### Changed
+- **SKILL.md**: Version 10.20.0 → 11.0.0. Added 6 Phase 2 shortcodes (`[tok-opt]`, `[memory]`, `[cl]`, `[verify]`, `[parallel]`, `[orchestrate]`). Added 6 routing table rows. Added 6 reference table entries. Added `good-auth.jsx` + `good-checkout.jsx` to Step 6.5 examples list.
+- **`metadata.json`**: Version 10.20.0 → 11.0.0. `reference_files` +6, `shortcodes` 39 → 45.
+
+---
+
+## [10.20.0] — 2026-04-18
+
+### Added
+- **`examples/good-checkout.jsx`** — New gold standard (100% constraints). Full Stripe checkout with PaymentElement, sticky order summary sidebar, 4-state machine (loading skeleton → ready → error → success), trust strip (Stripe badge + PCI-DSS lock), organic prices ($44.71), diverse names (Priya Shah, Kenji Tanaka), reduced-motion guard.
+- **`scripts/run_evals.py`** — Eval runner script. Runs eval assertions from `evals/evals.json` against generated component files. CLI: `--list`, `--self-test`, `--dir`, `--json`, positional file + optional eval filter. Exit codes: 0 = pass, 1 = failures, 2 = usage error. Self-test maps each eval to its gold example via `GOLD_EXAMPLES` dict.
+- **`_meta/FILE_MAP.md`** — Complete inventory of all files in the skill package with token estimates, shortcode triggers, constraint scores for gold examples, and purpose descriptions.
+- **`_meta/CHANGELOG.md`** — This file. Full version history from v10.0.0 onward.
+- **`[checkout]` shortcode** in SKILL.md routing table — triggers `payments.md` load, references `examples/good-checkout.jsx` as gold standard. DV=4, MI=4, VD=6.
+
+### Fixed
+- **`examples/good-brand-linear.jsx`**: 96% → 100%. Added `error` state with `role="alert"` + retry button, `aria-describedby="cmd-hint"` on command palette input, sr-only hint span, loading skeleton uses OKLCH token instead of hardcoded surface color.
+- **`examples/good-mobile.jsx`**: 74% → 100%. Added `isLoading`/`error` states with `useEffect` loading simulation, skeleton block (animate-pulse), error fallback with `role="alert"`, skip link `<a href="#mobile-main">`, `id="mobile-main"` on `<main>`, responsive `md:max-w-sm md:mx-auto`, `focus-visible:ring-2` on all nav buttons, `<style>` block with Manrope import + prefers-reduced-motion.
+- **`examples/good-view-transitions.jsx`**: 74% → 100%. Added `export default function ViewTransitionsDemo()` wrapper with error state, skip link, sticky nav tab switcher, `<main id="demo-main">`, `<style>` with Manrope import + `::view-transition-*` reduced-motion rules. Replaced all `bg-white` with `bg-[#F8FAFC]`. Responsive grid on product listing. Min-h-[44px] + `focus-visible:ring-2` on all interactive buttons.
+- **`scripts/scaffold.py` TEMPLATE_AUTH**: 81% → 100%. All `<input>` elements changed from `bg-white` to `bg-[#F8FAFC]` (3 occurrences).
+- **`scripts/scaffold.py` TEMPLATE_MOBILE**: 78% → 100%. Added loading/error states, skeleton block, skip nav, `role="alert"` error fallback, responsive `md:max-w-sm md:mx-auto`, `focus-visible:ring-2` on nav buttons, `bg-[#F8FAFC]` on bottom sheet and nav, `<style>` block.
+- **`scripts/scaffold.py` TEMPLATE_EMAIL**: 74% → 100%. Restructured to `function WelcomeEmail` (non-default) + `export default function EmailPreview()` wrapper with loading/error states, skip link, `<header>`, `<article id="email-preview">` semantic structure, `<style>` with Manrope import + prefers-reduced-motion.
+
+### Changed
+- **`evals/evals.json`**: Version bumped 10.16.0 → 10.20.0. Tightened assertions: eval #1 easing pattern adds `transition-|ease-in-out`; eval #4 dark bg pattern adds OKLCH near-black variants, text gradient broadened to `WebkitBackgroundClip|backgroundClip.*text`, grid pattern broadened to include `sidebar|nav|issue`, typography adds `tabular-nums|font-extrabold`, letter-spacing adds `antialiased`; eval #6 touch target pattern adds `min-h-\[48|min-h-\[56|h-14|size-14`.
+- **SKILL.md**: Version 10.19.0 → 10.20.0. Added `[checkout]` shortcode row. Removed duplicate `brand-design-systems.md` routing entry (kept the enriched version with GitHub, Shopify, PlanetScale, Loom, Neon DB signals).
+- **`metadata.json`**: Version 10.19.0 → 10.20.0. Stats updated: `ci_constraints` 26 → 27, `example_files` 11 → 12, `shortcodes` 38 → 39.
+
+---
+
+## [10.19.0]
+
+### Added
+- `brand-design-systems.md` v2: +5 new brand profiles (GitHub, Shopify/Polaris, PlanetScale/Neon, Tailwind CSS, Loom)
+- 4 deep implementation templates: Linear sidebar, Stripe form field, Vercel status indicator, Supabase SQL block
+- 7 brand mixing formulas (e.g., Linear × Stripe, Vercel × Supabase)
+
+### Changed
+- SKILL.md v10.19: reference table now 45 files, shortcode table 38 entries, routing table enriched with 8 new signal rows
+
+---
+
+## [10.18.0]
+
+### Added
+- `references/animation-recipes.md`: 17 copy-paste animation patterns — stagger, counter, typewriter, page transitions, shared morph, scroll progress bar, magnetic button, confetti, skeleton loader, hover lift, toast, drawer, command palette, parallax, accordion, marquee, tooltip. `[anim-recipes]` shortcode.
+- `references/figma-to-code.md`: Auto Layout → Flex/Grid translation, token extraction, typography extraction, Figma MCP workflow, delivery checklist. `[figma]` shortcode.
+
+---
+
+## [10.17.0]
+
+### Added
+- `references/payments.md`: Stripe PaymentElement, CardElement, subscriptions, webhooks, customer portal, error handling, saved payment methods. `[payments]` shortcode.
+- `scripts/scaffold.py` +4 new templates: mobile, auth, email, checkout.
+- Token estimates added to all reference table entries in SKILL.md.
+
+---
+
+## [10.16.0]
+
+### Added
+- `references/tanstack-query.md`: TanStack Query v5 — useQuery, useMutation, infinite scroll, SSR prefetch, Suspense. `[tanstack]` shortcode.
+- `references/react-hook-form.md`: RHF + Zod, multi-step forms, useFieldArray, file upload, Server Actions. `[rhf]` shortcode.
+- `references/i18n.md`: next-intl routing, useTranslations, pluralization, RTL support, locale switcher. `[i18n]` shortcode.
+- Eval suite: 4 new test cases — brand-linear (#4), view-transitions (#5), mobile-bottom-nav (#6), checkout-payment (#7).
+
+---
+
+## [10.15.0]
+
+### Added
+- `references/framer-motion.md`: motion.*/AnimatePresence/variants/spring table/layoutId/useScroll/LazyMotion, Next.js page transitions. `[framer]` shortcode.
+- `references/mobile-patterns.md`: bottom tab nav, bottom sheet (vaul), pull-to-refresh, swipe gestures, PWA, safe area insets. `[mobile]` shortcode.
+- `references/auth-patterns.md`: login/signup/OAuth/magic link/onboarding/protected routes, error state table. `[auth]` shortcode.
+- `references/email-templates.md`: React Email + Resend — welcome, OTP, password reset templates, email-safe CSS, dark mode in email. `[email]` shortcode.
+- 3 new gold examples: `good-view-transitions.jsx`, `good-brand-linear.jsx`, `good-mobile.jsx`.
+
+### Changed
+- SKILL.md: 5-file cap for advanced/CREATE_PAGE, shortcode chaining guidance, `## Files Loaded` in output block, duplicate routing cleanup.
+
+---
+
+## [10.14.0]
+
+### Added
+- `references/styles/glassmorphism.md`: 4-layer glass stack, OKLCH tokens, blur guide, browser compat, @supports fallback. `[glassmorphism]` shortcode.
+- `references/styles/neo-brutalism.md`: Press-state buttons, component specs, dark mode, snap animations. `[neo-brutalism]` shortcode.
+
+### Fixed
+- Design tokens converted from hex to OKLCH throughout SKILL.md `@theme` block.
+- Fixed sources frontmatter.
+- Compressed reference table descriptions (−1,500 tokens).
+
+---
+
+## [10.13.0]
+
+### Added
+- Caveman Mode inline in SKILL.md (zero additional token overhead), 3 levels: lite/full/ultra. `[caveman]` shortcode.
+
+---
+
+## [10.12.0]
+
+### Added
+- `references/shadcn-ecosystem.md`: 70+ community shadcn/ui components, animation tiers, theme tools, starters (from `birobirobiro/awesome-shadcn-ui`). `[shadcn-eco]` shortcode.
+
+---
+
+## [10.11.0]
+
+### Added
+- `references/view-transitions.md`: React View Transition API, 9 CSS recipes, directional nav, shared element morph. `[vt]` shortcode.
+- `references/vercel-ui-rules.md`: 100+ UI rules + 70 React perf rules — async waterfalls, bundle optimization, text-wrap, scroll-margin. `[perf]` shortcode.
+
+---
+
+## [10.10.0]
+
+### Added
+- `references/brand-design-systems.md`: 40+ real brand profiles, 9 archetypes, OKLCH palettes (from `VoltAgent/awesome-design-md`). `[brand]` shortcode.
+
+---
+
+## [10.9.0]
+
+### Added
+- `references/ux-writing.md`: UX writing patterns, button labels, error messages, empty states, microcopy. `[copy]` shortcode.
+- `references/impeccable-techniques.md`: OKLCH techniques, 8 interactive states, CSS Anchor Positioning, Popover API, craft flow, font metrics. `[tech]` shortcode.
+- Reflex-font ban list + 4-step selection process in `font-pairings.md` (from `pbakaus/impeccable`).
+
+---
+
+## [10.8.0]
+
+### Added
+- `references/stitch-design.md`: Google Stitch DESIGN.md generation, semantic design language. `[stitch]` shortcode.
+- `references/styles/soft.md`: Double-Bezel / Fluid Island / soft premium preset.
+- `references/styles/minimalist.md`: Whitespace ratio, typographic scale, sparse interactivity.
+- `references/styles/brutalist.md` rebuilt: Hard shadows, thick borders, monospace, press states.
+- `references/redesign-framework.md` rebuilt: 3-level Variance Engine, strategic omissions, surface upgrade patterns.
+
+---
+
+## [10.7.0]
+
+### Added
+- `references/ux-deep-rules.md`: 200+ granular UX rules — Apple HIG + Material Design, 8 interactive states, form feedback. `[ux-rules]` shortcode.
+- `references/landing-patterns.md` rebuilt to 34 full pattern specs with conversion copy and layout prescriptions. `[land]` shortcode.
+
+---
+
+## [10.6.0]
+
+### Added
+- `references/seo.md`: Core Web Vitals, JSON-LD schemas (5 types), meta tags, Turbopack, image optimization. `[seo]` shortcode.
+- 10-dimension visual audit scoring system (ECC integration).
+- AI slop detection table (12 patterns).
+- Render Props pattern in react-patterns.md.
+
+---
+
+## [10.5.0]
+
+### Added
+- `references/aesthetic-direction.md`: Design Thinking protocol, 14-tone vocabulary, 7 background effects, DISTILLED_AESTHETICS_PROMPT. `[aesthetic]` shortcode.
+- `font-pairings.md` enriched with 57 pairings.
+
+---
+
+## [10.4.0]
+
+### Added
+- `references/react-patterns.md` enriched: React 19 patterns, hooks, Suspense, server components.
+- `references/vercel-ai-sdk.md` enriched: chat UI, streaming, useChat, tool calling.
+- `references/nextjs-patterns.md` enriched: RSC, App Router, Turbopack, ISR, Server Actions.
+- `references/ux-guidelines.md` enriched: WCAG 2.2, accessibility rules, interaction patterns.
+- Shortcodes: `[react]`, `[ai-ui]`.
+
+---
+
+## [10.3.0]
+
+### Added
+- `references/threejs-advanced.md`: Shaders (GLSL), GLTF/PBR, postprocessing (bloom/DOF), raycasting, UV/textures. `[webgl]` shortcode.
+- `references/shadcn.md`: shadcn/ui component usage, theming, CLI, customization. `[shadcn]` shortcode.
+- `references/dark-mode.md`: Dark mode token system, OKLCH dark surfaces. `[dark]` shortcode.
+- `references/icons-avatars.md`: Icon library guide, avatar patterns, icon sizing system.
+- WCAG 2.2 upgrade. Zustand TypeScript patterns. React 19. Tailwind v4.
+
+---
+
+## [10.2.0]
+
+### Added
+- Full GSAP integration: `references/gsap.md` (all 12 plugins: ScrollTrigger, SplitText, Flip, Observer, Draggable, MorphSVG, DrawSVG, ScrambleText, etc.). `[gsap]` shortcode.
+- `references/spline.md`: Spline 3D embed in React/Next.js, lazy loading, fallback. `[spline]` shortcode.
+- 6 new example files: `good-dashboard.jsx`, `good-form.jsx`, `good-landing.jsx` (gold-standard); `bad-generic.jsx`, `bad-animated.jsx`, `bad-inaccessible.jsx` (anti-examples).
+
+---
+
+## [10.1.0]
+
+### Changed
+- Anti-AI-slop wall moved to top of SKILL.md for maximum visibility.
+- Shortcode fast-intent system introduced.
+- `scripts/scaffold.py` rewritten with 4 distinct purpose-built templates.
+
+---
+
+## [10.0.0] — Initial v10 Release
+
+### Added
+- Integrated 5 open-source design skill repositories.
+- Added 3D/GSAP/scroll/Next.js reference files.
+- Automated CI constraint testing (`scripts/test_constraints.py`, 27 checks).
+- Token budget cap enforcement.
+- Font policy: reflex-font convergence watch.
+- Intent detection tie-breaker routing table.
+- WCAG 2.1 AA enforcement throughout.
+
+---
+
+*Maintained by krishnamodi241@gmail.com*

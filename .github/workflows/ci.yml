@@ -1,0 +1,64 @@
+name: A+ Gate Chain
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+
+      - name: Install dependencies
+        run: npm install
+
+      # The release pipeline runs all 8 gates in order and fails fast.
+      - name: Full gate chain (dry run — no archive)
+        run: python3 scripts/build_release.py --dry-run
+
+      # Individual gates below, for readable CI output on failure.
+      - name: Gate 3 — TypeScript strict compile
+        run: python3 scripts/typecheck_golds.py
+
+      - name: Gate 4 — Semantic AST constraints
+        run: |
+          for f in skills/*/examples/good-*.tsx; do
+            case "$f" in *.test.tsx) continue;; esac
+            node scripts/parser_constraints.js "$f"
+          done
+
+      - name: Gate 5 — Syntactic constraints
+        run: python3 scripts/test_constraints.py --dir skills
+
+      - name: Gate 6 — Pipeline smoke test
+        run: python3 scripts/test_v12_pipeline.py
+
+      - name: Gate 7a — Eval self-test
+        run: python3 scripts/run_evals.py --self-test --no-semantic
+
+      # Gold examples import ~25 peer libraries that exist only as ambient
+      # declarations in _stubs.d.ts, so the suite cannot be executed at runtime.
+      # Gate 7b asserts the contract that is actually enforceable: every gold has a
+      # 1:1 test file, and every test file compiles under strict TypeScript.
+      - name: Gate 7b — Test coverage (1:1 + strict compile)
+        run: |
+          missing=0
+          for gold in skills/*/examples/good-*.tsx; do
+            case "$gold" in *.test.tsx) continue;; esac
+            test -f "${gold%.tsx}.test.tsx" || { echo "missing test for $gold"; missing=1; }
+          done
+          [ "$missing" = 0 ] || exit 1
+          npx tsc --noEmit --strict --noImplicitAny --jsx react-jsx \
+            --moduleResolution bundler --target ES2022 --module ESNext \
+            --esModuleInterop --skipLibCheck --types react,react-dom \
+            skills/*/examples/*.test.tsx skills/*/examples/*.d.ts
+
+      - name: Parser regression proof
+        run: node scripts/parser_regression_test.js

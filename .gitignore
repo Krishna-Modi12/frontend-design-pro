@@ -1,0 +1,20 @@
+# Build output — archives are attached to GitHub Releases, not committed
+dist/
+*.skill
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Generated / transient
+tsconfig.tests.json
+tsconfig.golds.*.json
+.DS_Store
+*.tmp
+*.bak
+*.draft

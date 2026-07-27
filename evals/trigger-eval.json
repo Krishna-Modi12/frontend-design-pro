@@ -1,0 +1,22 @@
+[
+  {"query": "Build me a SaaS dashboard with metric cards, revenue graphs, and user activity feed", "should_trigger": true},
+  {"query": "Fix this React button component's alignment and spacing issues", "should_trigger": true},
+  {"query": "Create a responsive navigation menu that works on mobile devices", "should_trigger": true},
+  {"query": "Add smooth animations and transitions to my page hero section", "should_trigger": true},
+  {"query": "Audit this contact form for WCAG 2.1 AA accessibility compliance", "should_trigger": true},
+  {"query": "Design a landing page for our new developer tool with hero, features, and CTA", "should_trigger": true},
+  {"query": "Improve the rendering performance of my React dashboard component", "should_trigger": true},
+  {"query": "Build a notification center component with unread badge and animations", "should_trigger": true},
+  {"query": "Create an accessible modal dialog with focus trap and keyboard navigation", "should_trigger": true},
+  {"query": "Review this form's touch targets and keyboard accessibility for mobile", "should_trigger": true},
+  {"query": "Set up a REST API endpoint for user authentication with JWT tokens", "should_trigger": false},
+  {"query": "Design the database schema for our e-commerce platform", "should_trigger": false},
+  {"query": "Optimize the Node.js server performance for handling 10k concurrent users", "should_trigger": false},
+  {"query": "Create a Python script to process and clean CSV data", "should_trigger": false},
+  {"query": "Set up Docker containerization and compose files for our microservices", "should_trigger": false},
+  {"query": "Write the backend logic for the payment checkout flow", "should_trigger": false},
+  {"query": "Configure the CI/CD pipeline using GitHub Actions workflows", "should_trigger": false},
+  {"query": "Design a scalable microservices architecture for our platform", "should_trigger": false},
+  {"query": "Write SQL queries to fetch user data with complex joins", "should_trigger": false},
+  {"query": "Set up Kubernetes cluster configuration and deploy manifests", "should_trigger": false}
+]

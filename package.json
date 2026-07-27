@@ -1,0 +1,31 @@
+{
+  "name": "frontend-design-pro",
+  "private": true,
+  "description": "Machine-enforced skill package for AI agents generating production-grade React/TypeScript UI",
+  "license": "MIT",
+  "scripts": {
+    "gates": "python scripts/build_release.py --dry-run",
+    "build": "python scripts/build_release.py",
+    "typecheck": "python scripts/typecheck_golds.py",
+    "constraints": "python scripts/test_constraints.py --dir skills",
+    "evals": "python scripts/run_evals.py --self-test --no-semantic",
+    "regression": "node scripts/parser_regression_test.js",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.0",
+    "class-variance-authority": "^0.7.0",
+    "jest-axe": "^9.0.0",
+    "jsdom": "^25.0.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

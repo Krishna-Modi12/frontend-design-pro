@@ -1,0 +1,99 @@
+# frontend-design-pro
+
+A machine-enforced frontend UI/UX skill pack for AI agents.
+
+**8 release-blocking gates · 16 semantic AST checks · 35 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
+
+Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
+
+## Quick start
+
+1. Download the latest `.skill` from [Releases](../../releases)
+2. Unzip into your agent's skills directory ([docs/INSTALL.md](docs/INSTALL.md))
+3. Ask: *"Create a landing page for a SaaS product"*
+
+`SKILL.md` is self-contained — no system-prompt setup required. (The legacy [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) predates the registry and points at paths this layout no longer has; see [Known gaps](docs/ARCHITECTURE.md#known-gaps).)
+
+The agent reads the registry, matches your request to one skill, and loads only that skill plus its dependencies. **No slash commands** — routing is on natural-language trigger keywords. Full guide: [docs/USAGE.md](docs/USAGE.md).
+
+## Architecture — registry + lazy loading
+
+| Layer | What it is | Cost |
+|---|---|---|
+| `SKILL.md` | Registry, routing table, anti-slop wall | **1,770 tokens** — always loaded |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | ~2,100 tokens — the deps one skill declares |
+| `skills/{id}/SKILL.md` | One skill file | 800–1,600 tokens — one per request |
+| `skills/{id}/references/` | Deep material | **295,000 tokens** — loaded only when a skill points at it |
+
+**A typical request loads 4,600–5,200 tokens, not 300,000.** Adding a skill costs ~43 tokens of always-loaded context — the registry grew just 296 tokens while going from 11 skills to 15.
+
+## Skills (15)
+
+| Skill | Covers |
+|---|---|
+| `design-principles` | UX laws, Gestalt, hierarchy, the three AI-design clusters, design DNA extraction |
+| `component-patterns` | Animated text, wrapper effects, ambient backgrounds, scroll-coupled components |
+| `react-components` | shadcn/Radix, compound components, CVA, forwardRef, prop taxonomy |
+| `landing-pages` | Hero, pricing, testimonials, bento, social proof, empty states |
+| `forms` | RHF + Zod, validation, auth, OTP/MFA, checkout |
+| `data-tables` | Tables, sorting, pagination, charts, KPI cards, dashboards |
+| `animations` | Framer Motion, GSAP, scroll, view transitions, **motion direction** |
+| `threejs-3d` | R3F, drei, shaders, post-processing, loaders, raycasting |
+| `design-system` | OKLCH tokens, dark mode, typography, brand systems, style presets |
+| `iconography` | Icon sizing, weight matching, colour inheritance, SVG a11y, avatars |
+| `ai-ui-generation` | Prompt-to-UI, JSON-to-UI, component registries, generation guardrails |
+| `react-performance` | Waterfalls, bundle size, RSC, memoization, virtualization |
+| `testing` | Vitest, Testing Library, jest-axe, Playwright, Storybook |
+| `web-interface` | Vercel WIG, copywriting, contrast, typography detail, audit rules |
+| `platform` | Mobile/PWA, React Native, i18n, SEO, payments, email, AI chat |
+
+## Core files (8)
+
+| File | Purpose |
+|---|---|
+| `core/design-tokens.md` | OKLCH tokens, 4pt spacing, typography, canvas rules |
+| `core/accessibility-baseline.md` | WCAG 2.2 AA floor — structure, keyboard, focus, contrast, states |
+| `core/component-api.md` | Prop taxonomy, forwardRef, CVA, controlled/uncontrolled |
+| `core/component-api-deep.md` | Compound components, composition patterns, API anti-patterns |
+| `core/agent-behavior.md` | The four principles — think, simplify, stay surgical, verify |
+| `core/agent-behavior-patterns.md` | Design-work addendum, external behavioural patterns |
+| `core/validate-checklist.md` | All 51 constraints with pass criteria |
+| `core/user-intake.md` | Six questions to ask before building a site — and when not to ask them |
+
+## Verification
+
+Every release is produced by `scripts/build_release.py` with 8 blocking gates:
+
+1. **Pre-flight** — clean tree, token budget, version consistency, no version-string leaks
+2. **Frontmatter** — every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist
+3. **Compile** — `tsc --noEmit` strict + `noImplicitAny` over every example
+4. **Semantic** — 16 AST constraints via the TypeScript compiler API
+5. **Syntactic** — 35 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy)
+6. **Pipeline** — structural smoke test
+7. **Evals + coverage** — 22 eval cases; every gold has a test
+8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
+
+Then: path integrity, reference-depth audit, deterministic archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive.
+
+```bash
+npm install
+npm run gates    # all 8 gates, no archive
+npm run build    # gated archive → dist/
+```
+
+## For contributors
+
+- All changes must pass the 8 gates — CI runs them on every push and PR
+- New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
+- New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
+- New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
+
+## Docs
+
+[Install](docs/INSTALL.md) · [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Changelog](docs/CHANGELOG.md)
+
+## License
+
+MIT — see [LICENSE](LICENSE).
