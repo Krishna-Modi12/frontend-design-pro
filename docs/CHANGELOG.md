@@ -4,6 +4,51 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.1.1] — 2026-07-27
+
+### Fixed — `AGENT_SYSTEM_PROMPT.md` rewritten for the registry architecture
+
+The drop-in system prompt was pre-v13 and was the last launch blocker. It has been rewritten rather than patched.
+
+- **28 of the 31 paths it cited did not exist.** Only `SKILL.md`, `metadata.json` and `rules/v12-envelope.schema.json` resolved. It routed to a flat `references/` directory that v13 replaced with `core/` + `skills/{id}/references/` — so an agent following it would fail to load `references/agent-behavior.md`, `references/component-api.md`, `references/testing.md`, `references/_index.md`, and every one of the 20 bare reference filenames in its shortcode table.
+- **It had no concept of the registry.** Zero mentions of `skills/`, `core/`, or routing. It told the agent to read `SKILL.md` as a ~5.1k-token monolith containing the pipeline and checklist, then load references against an ≤8,000-token reference budget. The registry is 1,770 tokens and the budget is ≤8,000 for *everything*.
+- **Its shortcode fast-path table is gone.** 20 bracket aliases (`[patterns]`, `[dash]`, `[rhf]`, …) mapped to files at paths that no longer exist. Routing is now trigger-keyword matching against the registry table, which is the single source of truth for keywords — the prompt no longer duplicates them and so cannot drift from them.
+- **Its `[json]` envelope example violated its own schema.** `rules/v12-envelope.schema.json` requires `eval_ids_applicable` in `metadata`; the documented example omitted it, so a compliant agent would emit an invalid envelope.
+- The prompt now references `core/agent-behavior.md` instead of restating its four principles, per the core-file split — behaviour has one home.
+- Added: registry loading protocol, user-intake trigger, per-pass core-file citations, the four `BEHAV` self-checks, and the two v14 anti-slop bans (never silently default to an aesthetic; never put the LCP element behind a shader that must compile first).
+
+### Fixed — the `[json]` envelope schema was stale and unvalidated
+
+Found by validating the documented envelope against the schema it names. Nothing had ever done that, which is how the same drift recurred twice.
+
+- **`constraints_passed`'s item pattern was `^[A-Z]+-[0-9]+$`, which rejects every ID the pack actually uses.** `[A-Z]+` cannot match the digits in `A11Y`, and there was no room for the `-AST` suffix — so `A11Y-01`, `3D-01`, `COL-02-AST`, `TS-01-AST` and `PERF-04R` all failed. The schema's own embedded example failed its own pattern in six places.
+- **`constraints_checked` was capped at `maximum: 29`**, a v12 figure. The pack enforces 51. Raised.
+- **`skills_loaded` was missing.** The registry routes to exactly one skill per request and the envelope had no way to report which — and `metadata.additionalProperties` is `false`, so adding it to the example without adding it to the schema made the documented output invalid. Added as a required property with a `^skills/[a-z0-9-]+/SKILL\.md$` pattern.
+- **`intent` had no `TEST_COMPONENT`**, though the prompt has a whole test-generation mode. Added.
+- **The schema's example used pre-v13 `references/…` paths** in `files_loaded` and ten constraint IDs that exist nowhere else in the repo. Regenerated against `core/validate-checklist.md`.
+- **`$id` pointed at a username that does not own this repo.** Corrected.
+
+**Gate 6 now validates both the envelope documented in `AGENT_SYSTEM_PROMPT.md` and every example embedded in the schema**, using a dependency-free JSON Schema subset validator (`type`/`required`/`additionalProperties`/`properties`/`items`/`enum`/`const`/`pattern`/`minimum`/`maximum`/`minLength`). Verified by negative test: injecting a forbidden key reports `metadata: additional property 'bogus_key' not allowed`, and an out-of-range value reports `metadata/constraints_checked: 99 > maximum 51`.
+
+### Fixed — Gate 6 now verifies what it claims
+
+- **Gate 6 reported `9/9 stage markers` while actually scoring 7/9.** Two of its three extra checks had been failing silently: it required a `MIGRATION FROM v11` heading, and a `DESIGN.md` mention. The count was a hardcoded string in `build_release.py`, the same defect class as the `8/8` and `24/24` labels fixed in 14.1.0. Counts are now derived from the checker's own output.
+- **The obsolete `MIGRATION FROM v11` requirement was replaced** with checks that match the current architecture: the prompt must describe registry loading, cite `core/` dependencies, and carry the anti-slop wall.
+- **Gate 6 now resolves every path the prompt cites** — and rejects pre-registry `references/`/`_meta/` prefixes and bare reference filenames, because the rot took all three forms and an existence test on `skills/…`-rooted paths alone catches *none* of them. Verified by running the new check against the old file before trusting it: it fails with 5 checks red and names all 28 dead paths. A guardrail nobody has watched fail is not a guardrail.
+- **Every Gate 6 check is now blocking.** Previously only the six stage markers gated the exit code, so architecture and path rot could not fail a build even when detected.
+
+### Fixed — measured token figures
+
+- **`SKILL.md`'s own loading protocol overstated its costs by 2–3×** — it told agents a skill file is `~3–5k` and each core dep `~2k`, against measured 0.8–1.6k and 0.6–0.9k. An agent doing the arithmetic would conclude every code-producing request breaches the 8,000-token budget. Corrected to measured values.
+- Registry is **1,800 tokens** (was documented as 1,770 before this release's edits); per-request load is **4,643–5,415**; skill files **801–1,588**. Every figure in `README.md`, `docs/USAGE.md`, `docs/ARCHITECTURE.md` and `docs/LAUNCH_KIT.md` re-derived from a green run.
+- **`min-h-screen` and equal-card grids were described as regex-enforced** in the prompt's VALIDATE section and in `ARCHITECTURE.md`. Neither appears in `scripts/test_constraints.py` — they are anti-slop wall items the agent enforces, not tooling. Replaced with the real IDs (`TOK-01`, `TYP-01`, `SLOP-01`–`04`, `QUA-02`, `QUA-03`, `RES-01`, `TOUCH-01`).
+
+### Known — two constraint IDs are ambiguous
+
+`A11Y-01` and `A11Y-02` each name one parser rule **and** a different regex rule, so the headline 51 is **51 checks across 49 distinct IDs**. All 51 checks run; the collision only makes a bare ID ambiguous about which layer flagged it. Renaming touches both suites, `core/validate-checklist.md` and the skill files that cite them, so it is deferred and documented in `docs/ARCHITECTURE.md`.
+
+---
+
 ## [14.1.0] — 2026-07-27
 
 ### Fixed — release engineering

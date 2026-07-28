@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/krishnamodi241/frontend-design-pro/rules/v12-envelope.schema.json",
-  "title": "Frontend Design Pro v12 JSON Envelope",
-  "description": "Schema for structured output emitted when [json] shortcode is used. schema_version: 12.0",
+  "$id": "https://github.com/Krishna-Modi12/frontend-design-pro/rules/v12-envelope.schema.json",
+  "title": "Frontend Design Pro JSON Envelope",
+  "description": "Schema for structured output emitted when the [json] shortcode is used. schema_version tracks the ENVELOPE CONTRACT ('12.0'), not the package version — the package version lives in metadata.json. Validated on every build by scripts/test_v12_pipeline.py against both the example below and the envelope documented in AGENT_SYSTEM_PROMPT.md Section 7.",
   "type": "object",
   "required": ["schema_version", "component", "metadata"],
   "additionalProperties": false,
@@ -10,7 +10,7 @@
     "schema_version": {
       "type": "string",
       "const": "12.0",
-      "description": "Envelope schema version. Always '12.0' for this release."
+      "description": "Envelope contract version. Independent of the package version."
     },
     "component": {
       "type": "string",
@@ -19,7 +19,7 @@
     },
     "metadata": {
       "type": "object",
-      "required": ["intent", "mode", "files_loaded", "shortcodes_detected", "design_md_tokens_overridden", "dials", "eval_ids_applicable", "constraints_passed", "constraints_checked"],
+      "required": ["intent", "mode", "files_loaded", "skills_loaded", "shortcodes_detected", "design_md_tokens_overridden", "dials", "eval_ids_applicable", "constraints_passed", "constraints_checked"],
       "additionalProperties": false,
       "properties": {
         "intent": {
@@ -27,20 +27,25 @@
           "enum": [
             "CREATE_PAGE", "CREATE_COMPONENT", "FIX_UI", "IMPROVE_UX",
             "DEBUG_LAYOUT", "OPTIMIZE_PERFORMANCE", "HARDEN_ACCESSIBILITY",
-            "REFINE_COMPONENT", "BUILD_3D", "SCROLL_EXPERIENCE",
+            "REFINE_COMPONENT", "TEST_COMPONENT", "BUILD_3D", "SCROLL_EXPERIENCE",
             "ANIMATE", "DESIGN_SYSTEM", "REDESIGN"
           ],
-          "description": "Primary intent classified in DETECT stage."
+          "description": "Primary intent classified in the DETECT stage."
         },
         "mode": {
           "type": "string",
           "enum": ["Quick", "Full"],
-          "description": "Execution mode selected in CLASSIFY stage."
+          "description": "Execution mode selected in the CLASSIFY stage."
         },
         "files_loaded": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Reference files loaded in ROUTE stage (relative paths from skill root)."
+          "description": "Every file actually read, relative to the skill root — e.g. SKILL.md, skills/forms/SKILL.md, core/component-api.md."
+        },
+        "skills_loaded": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^skills/[a-z0-9-]+/SKILL\\.md$" },
+          "description": "The skills/{id}/SKILL.md routed to. Normally exactly one — the registry loads a single skill per request."
         },
         "shortcodes_detected": {
           "type": "array",
@@ -48,11 +53,11 @@
             "type": "string",
             "pattern": "^\\[.+\\]$"
           },
-          "description": "Shortcodes parsed from user prompt in DETECT stage."
+          "description": "Shortcodes parsed from the user prompt. Routing is keyword-based; [json] is the only shortcode the registry still honours."
         },
         "design_md_tokens_overridden": {
           "type": "boolean",
-          "description": "Whether DESIGN.md token injection ran in BUILD stage."
+          "description": "Whether a user-supplied DESIGN.md token file overrode defaults in CLASSIFY."
         },
         "dials": {
           "type": "object",
@@ -76,21 +81,21 @@
         "eval_ids_applicable": {
           "type": "array",
           "items": { "type": "integer", "minimum": 1 },
-          "description": "IDs of evals.json entries applicable to this component type."
+          "description": "IDs of evals/evals.json entries applicable to this component type."
         },
         "constraints_passed": {
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^[A-Z]+-[0-9]+$"
+            "pattern": "^[A-Z0-9]{2,6}-[0-9]{2}[A-Za-z-]*$"
           },
-          "description": "Constraint IDs that passed VALIDATE stage (e.g. TYP-01, COL-01)."
+          "description": "Constraint IDs that passed VALIDATE. The pattern admits digit-bearing prefixes (A11Y-01, 3D-01) and suffixed variants (COL-02-AST, PERF-04R) — the previous ^[A-Z]+-[0-9]+$ could express neither, and rejected the schema's own example."
         },
         "constraints_checked": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 29,
-          "description": "Total number of constraints checked in VALIDATE stage."
+          "maximum": 51,
+          "description": "Total constraints checked in VALIDATE. Ceiling is the 51 machine-enforced constraints in core/validate-checklist.md (16 parser + 35 regex); was capped at 29 against a retired v12 registry."
         }
       }
     }
@@ -98,17 +103,18 @@
   "examples": [
     {
       "schema_version": "12.0",
-      "component": "export default function MyComponent() { return <main>...</main> }",
+      "component": "export default function ContactForm() { return <form>…</form> }",
       "metadata": {
         "intent": "CREATE_COMPONENT",
         "mode": "Full",
-        "files_loaded": ["references/ux-guidelines.md", "references/industry-rules.md"],
-        "shortcodes_detected": ["[form]"],
+        "files_loaded": ["SKILL.md", "skills/forms/SKILL.md", "core/component-api.md", "core/accessibility-baseline.md", "core/validate-checklist.md"],
+        "skills_loaded": ["skills/forms/SKILL.md"],
+        "shortcodes_detected": ["[json]"],
         "design_md_tokens_overridden": false,
         "dials": { "dv": 7, "mi": 5, "vd": 4 },
         "eval_ids_applicable": [3],
-        "constraints_passed": ["TYP-01", "TYP-02", "COL-01", "COL-02", "COL-03", "A11Y-01", "A11Y-02", "A11Y-03", "A11Y-04", "A11Y-05", "A11Y-06", "ANI-01", "ANI-02", "ANI-03", "STA-01", "STA-02", "SLOP-01", "SLOP-02", "SLOP-03", "SLOP-04", "RES-01", "RES-02", "TOK-01", "TOK-02", "QUA-01", "QUA-02", "QUA-03"],
-        "constraints_checked": 29
+        "constraints_passed": ["A11Y-01", "A11Y-02", "A11Y-03", "MOTION-01", "TS-01-AST", "COL-02-AST", "DELAY-01-AST", "COMP-01", "PERF-01", "TYP-01", "COL-01", "STA-01", "STA-02", "TOK-01", "QUA-01", "RES-01", "TOUCH-01", "COPY-02"],
+        "constraints_checked": 51
       }
     }
   ]

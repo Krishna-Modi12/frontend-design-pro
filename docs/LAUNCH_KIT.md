@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Replace `[link]` with the repo URL before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 15 skills · 8 core files · 70 references · 295,126 tokens of lazy depth · 43 examples (37 gold + 6 anti-examples) · 37 tests · 16 semantic + 35 syntactic = 51 constraints · 22 evals · 11 regression cases · registry 1,770 tokens · heaviest request 5,369 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 15 skills · 8 core files · 70 references · 295,126 tokens of lazy depth · 43 examples (37 gold + 6 anti-examples) · 37 tests · 16 semantic + 35 syntactic = 51 constraints · 22 evals · 11 regression cases · registry 1,800 tokens · heaviest request 5,415 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 11 regression cases where AST and regex disagree, in both directions.
@@ -21,14 +21,14 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 1,770
+frontend-design-pro is a registry instead of a document. SKILL.md is 1,800
 tokens — identity, an anti-slop wall, and a 15-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 295,000 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 5,369 tokens.
-The lightest loads 4,601. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 5,415 tokens.
+The lightest loads 4,643. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Going from 11 skills to
 15 grew the always-loaded registry by 296 tokens.
 
@@ -48,12 +48,18 @@ What's enforced, rather than asserted:
   own extracted copy before release. No manual builds.
 
 Known gaps are in docs/ARCHITECTURE.md rather than left for you to find. The
-biggest: the legacy AGENT_SYSTEM_PROMPT.md predates the registry and points at
-paths that no longer exist — SKILL.md supersedes it. And the vitest suite
-doesn't run end-to-end, because examples import ~25 peer libraries that exist
-only as ambient type stubs. That's what makes strict compilation cheap and
-it's also why runtime execution can't resolve them, so the test gate asserts
-1:1 coverage plus strict compilation and says exactly that.
+biggest: the vitest suite doesn't run end-to-end, because examples import ~25
+peer libraries that exist only as ambient type stubs. That's what makes strict
+compilation cheap and it's also why runtime execution can't resolve them, so
+the test gate asserts 1:1 coverage plus strict compilation and says exactly
+that, instead of implying the suite ran.
+
+One thing I'd flag as a lesson rather than a feature: the drop-in system prompt
+sat three architecture versions out of date for months. 28 of the 31 file paths
+it cited didn't exist. The gate that was supposed to guard it checked that its
+section headings were present — which they were, the whole time. Structural
+checks don't catch semantic rot. The gate now resolves every path the prompt
+cites, and I verified it fails against the old file before trusting it.
 
 MIT. Feedback from anyone building agent tooling very welcome — particularly
 on the routing table, which is where this lives or dies.
@@ -73,12 +79,12 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 1,770 tokens. That's all that's always loaded.
+2/ SKILL.md is 1,800 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 5,369 tokens.
+Heaviest possible request: 5,415 tokens.
 Reference material available: 295,126 tokens.
 
 3/ The economics of this are the whole point.
@@ -117,14 +123,25 @@ Constraints that cry wolf get turned off. Precision is a feature.
   changes the architecture more than any other answer
 · icons as typography: hit area independent of glyph size
 
-8/ The known gaps are documented in the repo, not left as a surprise.
+8/ A lesson that cost me a release:
 
-The legacy system-prompt file predates the registry. The vitest suite doesn't
-execute end-to-end, and ARCHITECTURE.md explains precisely why.
+The drop-in system prompt was 3 architecture versions stale. 28 of the 31 paths
+it cited didn't exist.
 
-Shipping the caveats is part of shipping.
+The gate guarding it checked that its section HEADINGS existed. They did — the
+whole time.
 
-9/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+Structural checks don't catch semantic rot.
+
+9/ So the gate now resolves every path the prompt cites.
+
+And I verified it FAILS against the old file before trusting it. A guardrail you
+haven't seen fail is a guardrail you haven't tested.
+
+Remaining known gaps are all in ARCHITECTURE.md. Shipping the caveats is part
+of shipping.
+
+10/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
 
 [link]
 ```
@@ -146,13 +163,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 1,770 tokens, always loaded. Routing table + anti-slop wall.
-- 15 skills, 789–1,572 tokens each. **One** loads per request.
+- `SKILL.md` — 1,800 tokens, always loaded. Routing table + anti-slop wall.
+- 15 skills, 801–1,588 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 70 references, 295,126 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **4,601 to 5,369 tokens.** A gate fails the build
+Measured per-request load: **4,643 to 5,415 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
@@ -181,8 +198,6 @@ Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments).
 
 **Known limitations, up front**
 
-- The legacy `AGENT_SYSTEM_PROMPT.md` predates the registry and references
-  paths that no longer exist. `SKILL.md` supersedes it — you don't need it.
 - The vitest suite doesn't execute end-to-end. Examples import ~25 peer libs
   that exist only as ambient type stubs; that's what makes strict compilation
   cheap and it's also why runtime resolution fails. The test gate asserts 1:1
@@ -201,8 +216,6 @@ All of this is in `docs/ARCHITECTURE.md`. MIT licensed, contributions welcome.
 
 - [ ] `npm run gates` green on a clean checkout
 - [ ] `[link]` replaced in the post you're using
-- [ ] `YOUR_USERNAME` replaced in `docs/INSTALL.md`
 - [ ] `.skill` archive attached to the GitHub release
 - [ ] CI green on `main` before the post goes up — a red badge on an HN front page is unrecoverable
-- [ ] Decide the `AGENT_SYSTEM_PROMPT.md` question before launch: update it, or drop step 3 from the README
 - [ ] Free for the first 3 hours to answer comments

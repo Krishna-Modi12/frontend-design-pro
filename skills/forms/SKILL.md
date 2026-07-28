@@ -1,7 +1,7 @@
 ---
 name: forms
 description: Forms and auth — validation, RHF + Zod, error states, checkout, login/signup, OTP/MFA, payments.
-version: "14.1.0"
+version: "14.1.1"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md

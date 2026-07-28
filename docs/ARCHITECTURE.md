@@ -12,31 +12,32 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 15-row routing table, loading protocol, failure table | **1,770 tokens** | always |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 15-row routing table, loading protocol, failure table | **1,800 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,027 or 2,103 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **789–1,572 tokens** | exactly one per request |
+| `skills/{id}/SKILL.md` | One skill router | **801–1,588 tokens** | exactly one per request |
 | `skills/{id}/references/*.md` | 70 deep references | **295,126 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```
-iconography       4,601   ← lightest
-landing-pages     4,652
-testing           4,662
-web-interface     4,690
-data-tables       4,696
-design-system     4,738
-forms             4,752
-react-performance 4,768
-threejs-3d        4,862
-animations        4,867
-platform          4,915
-react-components  4,917
-component-patterns 5,024
-design-principles 5,369   ← heaviest
+iconography       4,643   ← lightest
+landing-pages     4,695
+testing           4,704
+ai-ui-generation  4,715
+web-interface     4,732
+data-tables       4,738
+design-system     4,782
+forms             4,795
+react-performance 4,811
+threejs-3d        4,905
+animations        4,910
+platform          4,958
+react-components  4,960
+component-patterns 5,067
+design-principles 5,415   ← heaviest
 ```
 
-**Ceiling is 5,369 tokens against 295,126 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 5,415 tokens against 295,126 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 The registry is the reason adding skills is cheap: it went from 11 skills to 15 while `SKILL.md` grew 296 tokens. Marginal cost of a skill is **~43 tokens** of always-loaded context, plus however much on-demand depth you give it.
 
@@ -57,7 +58,7 @@ One layout. `src/` — the pre-registry v12 tree — has been removed; nothing r
 
 ```
 SKILL.md                 registry — copied to archive root
-AGENT_SYSTEM_PROMPT.md   legacy, pre-registry (see Known gaps)
+AGENT_SYSTEM_PROMPT.md   optional drop-in system prompt (registry-native)
 core/                    8 shared primitives
 skills/{id}/
   ├── SKILL.md           router: rules, patterns, reference index
@@ -78,12 +79,12 @@ dist/                    build output, gitignored
 
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
-| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,770 tokens; version consistent; no leaks |
+| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,800 tokens; version consistent; no leaks |
 | 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 15/15 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example | 43/43 |
 | 4 | Semantic | 16 AST constraints via the TypeScript compiler API, on every gold | 37/37 golds × 16/16 |
 | 5 | Syntactic | 35 regex constraints; golds must be clean **and** anti-examples must fail | 35/35 |
-| 6 | Pipeline | 9 stage markers present in `AGENT_SYSTEM_PROMPT.md` | 9/9 |
+| 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 37/37 |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 15/15 |
 
@@ -107,7 +108,7 @@ Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby
 
 Note the bottom two: half the value is **removing false positives**. A blanket `...` ban flags every rest-spread in the pack; a blanket `&&` ban flags correct React. Constraints that cry wolf get switched off, so precision is a feature and not a nicety.
 
-The two suites are complementary, not redundant — 16 semantic + 35 syntactic = **51 constraints**. Regex still owns what regex is good at: banned font names, raw hex, `min-h-screen`, placeholder copy.
+The two suites are complementary, not redundant — 16 semantic + 35 syntactic = **51 constraints**. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
 
 ## Adding to the pack
 
@@ -129,12 +130,16 @@ The two suites are complementary, not redundant — 16 semantic + 35 syntactic =
 
 Honest list, all verified against the current release.
 
-1. **`AGENT_SYSTEM_PROMPT.md` is pre-registry.** Zero mentions of `skills/`, `core/`, or the registry; it points at `references/component-api.md`, `references/agent-behavior.md`, `references/testing.md`, `references/_index.md` — none of which exist in this layout. Gate 6 validates its *stage markers*, not its paths, so the chain stays green over a stale file. It ships in the archive and `README.md` step 3 still tells users to paste it. **`SKILL.md` supersedes it; treat it as the highest-priority content fix.**
+1. **The vitest suite does not execute end-to-end.** Gold examples import ~25 peer libraries (`three`, `framer-motion`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is also why `vitest run` cannot resolve them: 28 of 37 test files fail at import time. Registering `@testing-library/jest-dom` via `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; the rest need real dependencies. Gate 7 therefore asserts the enforceable contract — 1:1 coverage plus strict compilation — and says so. Closing this means either adding the peer dependencies or shipping runtime stubs.
 
-2. **The vitest suite does not execute end-to-end.** Gold examples import ~25 peer libraries (`three`, `framer-motion`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is also why `vitest run` cannot resolve them: 28 of 37 test files fail at import time. Registering `@testing-library/jest-dom` via `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; the rest need real dependencies. Gate 7 therefore asserts the enforceable contract — 1:1 coverage plus strict compilation — and says so. Closing this means either adding the peer dependencies or shipping runtime stubs.
+2. **`design-system/references/brand-design-systems.md` is orphaned** — present on disk, absent from its skill's Reference Index, so nothing can route to it. Warning, not a failure.
 
-3. **`design-system/references/brand-design-systems.md` is orphaned** — present on disk, absent from its skill's Reference Index, so nothing can route to it. Warning, not a failure.
+3. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
 
-4. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
+4. **Two constraint IDs are ambiguous.** `A11Y-01` and `A11Y-02` each name *one parser rule and a different regex rule*. So the headline **51 is 51 checks across only 49 distinct IDs** — 16 parser + 35 regex, with two IDs counted in both suites. The checks are real and all 51 run; the collision means a bare ID in a report is ambiguous about which layer flagged it. Fixing it means renaming the regex pair, which touches `scripts/test_constraints.py`, `core/validate-checklist.md` and every skill file that cites them, so it is deliberately deferred.
 
-5. **`rules/v12-envelope.schema.json` is named for an architecture two majors old** and is not referenced by any gate.
+5. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
+
+### Recently closed
+
+**`AGENT_SYSTEM_PROMPT.md` was pre-registry** — 28 of the 31 paths it cited did not exist, and it had no concept of the registry. Rewritten. The lesson is worth keeping: **Gate 6 had been guarding it the whole time by checking that its section headings were present**, which they were. Structural checks do not catch semantic rot. Gate 6 now resolves every path the prompt cites, rejects pre-registry `references/` and `_meta/` prefixes, and rejects bare reference filenames — and that check was verified to *fail* against the old file before it was trusted.

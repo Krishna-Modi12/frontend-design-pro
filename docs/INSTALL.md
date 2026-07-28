@@ -34,14 +34,14 @@
 
    > Create a landing page for a SaaS product
 
-   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~4,600–5,400 tokens). See [USAGE.md](USAGE.md).
+   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~4,643–5,415 tokens). See [USAGE.md](USAGE.md).
 
-> **On `AGENT_SYSTEM_PROMPT.md`:** you do not need it. It predates the registry architecture and still refers to the flat v12 reference layout (`references/component-api.md` and similar), which no longer exists. `SKILL.md` is self-contained — identity, behavioural preamble, anti-slop wall, routing table, loading protocol and failure handling. Pasting the old system prompt on top will point the agent at files that are not in the archive. Tracked as the top item in [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps).
+> **Optional — `AGENT_SYSTEM_PROMPT.md`:** if your host has a system-prompt field, paste it in. `SKILL.md` alone is sufficient (it carries the identity, behavioural preamble, anti-slop wall, routing table and failure handling), but the system prompt makes the loading protocol, the intake trigger, the per-pass core-file citations and the validation contract explicit. It is version-free and every path it cites is verified by Gate 6 on each build.
 
 ## Contributor setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/frontend-design-pro.git
+git clone https://github.com/Krishna-Modi12/frontend-design-pro.git
 cd frontend-design-pro
 npm install          # typescript, vitest, testing-library, jest-axe
 npm run gates        # every gate, no archive — must be green before you change anything

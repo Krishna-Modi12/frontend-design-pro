@@ -12,7 +12,7 @@ Most prompt packs tell an agent what good UI looks like. This one proves it: eve
 2. Unzip into your agent's skills directory ([docs/INSTALL.md](docs/INSTALL.md))
 3. Ask: *"Create a landing page for a SaaS product"*
 
-`SKILL.md` is self-contained — no system-prompt setup required. (The legacy [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) predates the registry and points at paths this layout no longer has; see [Known gaps](docs/ARCHITECTURE.md#known-gaps).)
+`SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit.
 
 The agent reads the registry, matches your request to one skill, and loads only that skill plus its dependencies. **No slash commands** — routing is on natural-language trigger keywords. Full guide: [docs/USAGE.md](docs/USAGE.md).
 
@@ -20,12 +20,12 @@ The agent reads the registry, matches your request to one skill, and loads only 
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **1,770 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **1,800 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | ~2,100 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 800–1,600 tokens — one per request |
+| `skills/{id}/SKILL.md` | One skill file | 801–1,588 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **295,000 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,600–5,200 tokens, not 300,000.** Adding a skill costs ~43 tokens of always-loaded context — the registry grew just 296 tokens while going from 11 skills to 15.
+**A typical request loads 4,643–5,415 tokens, not 300,000.** Adding a skill costs ~43 tokens of always-loaded context — the registry grew just 296 tokens while going from 11 skills to 15.
 
 ## Skills (15)
 
@@ -69,7 +69,7 @@ Every release is produced by `scripts/build_release.py` with 8 blocking gates:
 3. **Compile** — `tsc --noEmit` strict + `noImplicitAny` over every example
 4. **Semantic** — 16 AST constraints via the TypeScript compiler API
 5. **Syntactic** — 35 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy)
-6. **Pipeline** — structural smoke test
+6. **Pipeline** — `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves
 7. **Evals + coverage** — 22 eval cases; every gold has a test
 8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
 

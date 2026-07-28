@@ -55,10 +55,10 @@ Every skill also inherits `core/accessibility-baseline.md` and `core/validate-ch
 
 ## Loading protocol
 
-1. Read this file — always (~2k).
+1. Read this file — always (1.8k).
 2. Match trigger keywords → pick one skill.
-3. Load `skills/{id}/SKILL.md` (~3–5k).
-4. Load its listed core deps (~2k each) plus the accessibility baseline when producing code.
+3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated).
+4. Load its listed core deps (0.6–0.9k each) plus the accessibility baseline when producing code.
 5. Each skill has its own `references/` for depth — load a reference **only** when the skill file points you there for the specific task.
 6. **Budget ≤8,000 tokens.** Over budget: drop the deepest reference first, note the omission.
 7. No keyword match → ask ONE clarifying question. Never guess.

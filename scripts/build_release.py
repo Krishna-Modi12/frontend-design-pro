@@ -241,7 +241,12 @@ def gate_chain() -> tuple[bool, list]:
     if r.returncode: print(r.stdout[-1500:], r.stderr[-500:])
 
     r = run([PY, str(SCRIPTS / "test_v12_pipeline.py"), str(REPO / "AGENT_SYSTEM_PROMPT.md")])
-    all_ok &= record("Pipeline", r.returncode == 0, "9/9 stage markers" if r.returncode == 0 else "stage markers missing")
+    # The label was hardcoded "9/9 stage markers" while the checker actually
+    # scored 7/9 — two extra checks had been failing silently for three majors.
+    pl = re.search(r"RESULT: (\d+/\d+) checks passed", r.stdout)
+    pl_detail = f"{pl.group(1)} checks (stages · architecture · cited paths)" if pl else "checker produced no RESULT line"
+    all_ok &= record("Pipeline", r.returncode == 0, pl_detail)
+    if r.returncode: print(r.stdout[-1200:])
 
     r = run([PY, str(SCRIPTS / "run_evals.py"), "--self-test", "--no-semantic"])
     ev = re.search(r"(\d+/\d+) evals passed", r.stdout)
@@ -461,10 +466,10 @@ Plus pre-flight, frontmatter, path integrity, and per-skill budget gates — all
 
 ## Known gaps
 
-See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: `AGENT_SYSTEM_PROMPT.md`
-predates the registry and `SKILL.md` supersedes it; the vitest suite does not execute
-end-to-end because examples stub ~25 peer libraries, so Gate 7 asserts 1:1 coverage
-plus strict compilation rather than implying more.
+See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: the vitest suite does not
+execute end-to-end because examples stub ~25 peer libraries, so Gate 7 asserts 1:1
+coverage plus strict compilation rather than implying more; one reference is orphaned;
+and reference depth is unevenly distributed across skills.
 
 ## Install
 
