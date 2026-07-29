@@ -160,8 +160,12 @@ CONSTRAINTS: List[Constraint] = [
         description="Loading skeleton or animate-pulse present",
         severity="high",
         check=lambda c: (
-            _has(r'animate-pulse|isLoading|skeleton|Skeleton', c),
-            "No loading state (animate-pulse / skeleton) found"
+            # isSubmitting/isPending are the idiomatic names react-hook-form and
+            # React 19 transitions give the same state; aria-busy is how it reaches
+            # a screen reader. A form that disables its button and says "Sending…"
+            # has a loading state whether or not it renders a grey rectangle.
+            _has(r'animate-pulse|isLoading|isSubmitting|isPending|aria-busy|skeleton|Skeleton', c),
+            "No loading state (animate-pulse / skeleton / isSubmitting / aria-busy) found"
         )
     ),
     Constraint(
@@ -684,11 +688,16 @@ def main():
         sys.exit(1)
 
     all_results = []
-    # demo/showcase is a real, standalone Next.js app (own package.json/tsconfig/
-    # installed deps), not this repo's stub-typed demo convention — it is never
-    # in scope for these constraint suites.
-    files_to_check = [f for f in files_to_check if not str(f).endswith(".d.ts") and not str(f).endswith(".test.tsx")
-                       and "showcase" not in f.parts]
+    # demo/showcase differs from the other demos only in how it is COMPILED (real
+    # installed deps vs demo/_stubs.d.ts). The rules below are about content —
+    # OKLCH tokens, banned fonts, placeholder copy, states, touch targets — and
+    # apply to it exactly as they do to everything else. Its vendored and
+    # generated trees are skipped: they are not authored code.
+    _GENERATED = {"node_modules", ".next", "out", "dist", ".turbo"}
+    files_to_check = [f for f in files_to_check
+                      if not str(f).endswith(".d.ts") and not str(f).endswith(".test.tsx")
+                      and not _GENERATED & set(f.parts)
+                      and f.name != "next-env.d.ts"]
     if not parser_check(files_to_check):
         sys.exit(1)
 

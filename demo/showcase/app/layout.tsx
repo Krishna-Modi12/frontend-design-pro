@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     "Nexus ingests every event your product emits and surfaces the three anomalies that actually matter before your dashboard even loads.",
 };
 
-export default function RootLayout({
-  children,
-}: {
+export interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={`${manrope.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>

@@ -96,7 +96,7 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **The route it takes.** The registry matches *WebGL*, *bento*, *pricing*, *form* and *carousel* against the trigger-keyword column and loads `landing-pages`, `threejs-3d` and `forms` in turn, each pulling `core/design-tokens.md` and `core/component-api.md` from its declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read. The bans in the prompt — no Inter, no purple gradient, no `min-h-screen`, no equal-weight card grid — are not politeness: they are the anti-slop wall restated, and the constraint suite fails the build if the output violates them.
 
-**It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. A "runnable demo" that nobody runs is a claim with a shelf life.
+**It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 16 AST checks on every authored file, the 35 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
 
 ## What's new in v14.2.0
 

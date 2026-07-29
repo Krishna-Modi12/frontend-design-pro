@@ -110,6 +110,23 @@ const testimonials: Testimonial[] = [
   },
 ];
 
+/** The two hero actions. One solid, one ghost — never two competing primaries. */
+interface HeroCta {
+  href: string;
+  label: string;
+  tone: "solid" | "ghost";
+}
+
+const heroCtas: HeroCta[] = [
+  { href: "#contact", label: "Talk to the team", tone: "solid" },
+  { href: "#pricing", label: "See pricing", tone: "ghost" },
+];
+
+const CTA_TONE: Record<HeroCta["tone"], string> = {
+  solid: "bg-accent text-bg-base hover:bg-accent-dim",
+  ghost: "border border-border text-text-primary hover:border-accent",
+};
+
 export default function HomePage() {
   return (
     <main className="min-h-[100dvh]">
@@ -129,18 +146,15 @@ export default function HomePage() {
             matter — ranked, explained, and routed to the right engineer.
           </p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <a
-              href="#contact"
-              className="rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-bg-base hover:bg-accent-dim"
-            >
-              Talk to the team
-            </a>
-            <a
-              href="#pricing"
-              className="rounded-lg border border-border px-6 py-3 text-sm font-semibold text-text-primary hover:border-accent"
-            >
-              See pricing
-            </a>
+            {heroCtas.map((cta: HeroCta) => (
+              <a
+                key={cta.href}
+                href={cta.href}
+                className={`inline-flex min-h-11 items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold ${CTA_TONE[cta.tone]}`}
+              >
+                {cta.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
