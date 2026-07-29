@@ -59,7 +59,14 @@ ALLOWED_VERSION_FILENAMES = {"package-lock.json"}
 
 # Single source of truth for the version every skill must declare. Previously
 # hardcoded, which silently failed Gate 2 for every skill on each minor bump.
-VERSION_TARGET = json.loads((ROOT / "metadata.json").read_text(encoding="utf-8"))["version"]
+def _version() -> str:
+    """
+    Read at call time, not at import. `--bump-patch` rewrites metadata.json inside
+    the same process, so a module-level constant would hold the pre-bump value and
+    fail Gate 2 against the files the bump just rewrote — the bump could never
+    pass its own gate chain.
+    """
+    return json.loads((ROOT / "metadata.json").read_text(encoding="utf-8"))["version"]
 # Matches any 1–2 digit major so the leak scan keeps working past v12.
 VERSION_RE = re.compile(r"\bv?\d{1,2}\.\d{1,2}\.\d{1,3}\b")
 
@@ -188,8 +195,9 @@ def gate_frontmatter():
         if not fm: bad(f"{sk.parent.name}: no YAML frontmatter"); ok = False; continue
         for k in ("name", "description", "version", "core-deps"):
             if k not in fm: bad(f"{sk.parent.name}: missing '{k}'"); ok = False
-        if fm.get("version", "").strip('"') != VERSION_TARGET:
-            bad(f"{sk.parent.name}: version {fm.get('version')} != {VERSION_TARGET}"); ok = False
+        target = _version()
+        if fm.get("version", "").strip('"') != target:
+            bad(f"{sk.parent.name}: version {fm.get('version')} != {target}"); ok = False
         for dep in fm.get("core-deps", []):
             if not (ROOT / dep).exists(): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
     if ok: ok_(f"all {len(list(ROOT.glob('skills/*/SKILL.md')))} skill files declare valid frontmatter")
@@ -614,7 +622,7 @@ def main():
     dry = "--dry-run" in args
     if "--bump-patch" in args:
         bump_patch()
-    version = json.loads((ROOT / "metadata.json").read_text(encoding="utf-8"))["version"]
+    version = _version()
     t0 = time.time()
 
     print(f"\n{'#'*64}\n# RELEASE PIPELINE — frontend-design-pro v{version}"

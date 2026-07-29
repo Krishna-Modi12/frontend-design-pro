@@ -4,6 +4,32 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.2.1] — 2026-07-29
+
+Verification pass over the v14.2.0 artifact. Everything below is a defect that existed in v14.2.0 and was found by making a check real rather than by reading the code again.
+
+### Fixed — `demo/showcase/` was exempt from the content rules
+
+It had been skipped by `test_constraints.py` on the same reasoning that justifies its compile exemption. That reasoning does not carry. OKLCH tokens, banned fonts, placeholder copy, state coverage and touch targets are properties of authored code, not of how it is type-checked — only the *compile* regime is special about this app. It is now the fourth demo project in the regex suite, and its nine authored `.tsx` files run through the parser. Vendored and generated trees (`node_modules/`, `.next/`, `next-env.d.ts`) are skipped, since those are not authored code.
+
+**Four real defects surfaced on the first run**, which is the whole argument for running it:
+- `app/layout.tsx` typed its props with an inline object literal rather than a named interface (`TS-01-AST`) — now `RootLayoutProps`.
+- `app/page.tsx` declared no types at all and hand-repeated two nearly identical CTA anchors (`TS-01-AST`) — now a typed `HeroCta[]` with a tone map.
+- `BentoGrid.tsx` had a `transition-opacity duration-300` with no `motion-reduce` escape (`MOTION-01`).
+- `Footer.tsx` declared no types at all (`TS-01-AST`).
+
+### Fixed — `STA-01` scored working forms as stateless
+
+The check looked for `animate-pulse|isLoading|skeleton`, so a form that disables its submit button and renders "Sending…" counted as having no loading state. `isSubmitting` (react-hook-form), `isPending` (React 19 transitions) and `aria-busy` name the same state and now count. Still 51 checks across 51 distinct IDs; 38/38 golds and 4/4 demo projects pass, and the self-test's negative fixtures still fail as designed.
+
+### Fixed — a reference nothing could reach
+
+`skills/design-system/references/brand-design-systems.md` (68 public design systems across 9 categories) was on disk but absent from its own skill's Reference Index. Under lazy loading that is not cosmetic: a reference no skill file points at can never be loaded, so ~22k tokens shipped as dead weight. **76/76 references now resolve, none orphaned** — the reference-depth audit had been reporting 75.
+
+### Fixed — `--bump-patch` could never pass its own gate chain
+
+`VERSION_TARGET` was read at import time, so a run that bumped `metadata.json` and all 16 skill files mid-process then compared them against the *pre-bump* string and failed Gate 2 on every skill. Version is now read at call time. The flag has presumably never worked; every release to date was cut with the version bumped by hand beforehand.
+
 ## [14.2.0] — 2026-07-29
 
 ### Added — `skills/agent-ops/`
@@ -29,13 +55,8 @@ A deliberate, one-time departure from this repo's stub-typed demo convention (`d
 
 - **`gate_showcase()` runs `next build`** against the app's real installed dependencies and blocks the release on failure. It cannot use the stub tsconfig the other demos share: `demo/_stubs.d.ts` exists to declare *absent* libraries as `any`, so type-checking an app whose dependencies are genuinely installed reported errors about packages that were sitting in `node_modules`. That misdiagnosis is what `demo/tsconfig.json`'s new `exclude: ["showcase"]` fixes.
 - **A dedicated `showcase` CI job** installs those dependencies on a clean runner and runs `tsc --noEmit` + `next build`. Locally the gate skips with a warning when `node_modules` is absent rather than pretending to have checked — a fresh clone has no showcase dependencies, and a gate that silently passes on missing input is worse than one that says why it abstained.
-- The showcase is **not** exempt from the content rules. It had been skipped by `test_constraints.py` entirely, on the same reasoning that justified the compile exemption — but that reasoning does not carry: OKLCH tokens, banned fonts, placeholder copy, state coverage and touch targets are properties of authored code, not of how it is type-checked. It is now the fourth demo project in the regex suite and its nine authored `.tsx` files run through the parser. Its vendored and generated trees (`node_modules/`, `.next/`, `next-env.d.ts`) are skipped, since those are not authored code. Only the compile regime differs.
-- **Four real defects surfaced the moment it was actually checked**, which is the argument for checking it: `BentoGrid.tsx` had a `transition-opacity duration-300` with no `motion-reduce` escape (MOTION-01); `Footer.tsx` declared no types at all, and `app/layout.tsx` typed its props with an inline object literal rather than a named interface (TS-01-AST ×2); `app/page.tsx` hand-repeated two nearly identical CTA anchors, now a typed `HeroCta[]`. All fixed.
-- **`STA-01` was too narrow and this caught it.** It looked for `animate-pulse|isLoading|skeleton`, so it scored a form that disables its submit button and renders "Sending…" as having no loading state. `isSubmitting` (react-hook-form), `isPending` (React 19 transitions) and `aria-busy` name the same state and now count. The suite still holds at 51 checks across 51 distinct IDs; 38/38 golds and 4/4 demo projects pass.
 
-### Fixed — an unreachable reference
-
-`skills/design-system/references/brand-design-systems.md` (68 public design systems across 9 categories) was on disk but absent from its own skill's Reference Index. Under lazy loading that is not a cosmetic omission: a reference no skill file points at can never be loaded, so 22k tokens of material were shipped and unreachable. Now cited — **76/76 references resolve, with none orphaned.**
+At this point the gate verified only that the app *builds*; holding it to the content rules came in 14.2.1, and immediately found four defects.
 
 ### Fixed — stale counts across the docs
 
