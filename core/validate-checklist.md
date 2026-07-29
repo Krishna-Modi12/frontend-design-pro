@@ -25,7 +25,7 @@ Constraint IDs enforced by `scripts/` on every gold example. Self-check output a
 
 ## Regex-enforced (35)
 
-Typography `TYP-01/02` · Colour `COL-01/03/04` · Accessibility `A11Y-01/02/04/05` · Animation `ANI-03` · States `STA-01/02` · Anti-slop `SLOP-01/02/03/04` · Responsive `RES-01/02` · Tokens `TOK-01/02` · Quality `QUA-01/02/03` · Delay `DELAY-01` · Copy `COPY-02` · Touch `TOUCH-01`, `SAFE-01` · Perf `PERF-04R`, `IMG-01` · Behaviour `BEHAV-05/06` · 3D `3D-04/05/06/07`.
+Typography `TYP-01/02` · Colour `COL-01/03/04` · Accessibility `A11Y-04/05/07/08` · Animation `ANI-03` · States `STA-01/02` · Anti-slop `SLOP-01/02/03/04` · Responsive `RES-01/02` · Tokens `TOK-01/02` · Quality `QUA-01/02/03` · Delay `DELAY-01` · Copy `COPY-02` · Touch `TOUCH-01`, `SAFE-01` · Perf `PERF-04R`, `IMG-01` · Behaviour `BEHAV-05/06` · 3D `3D-04/05/06/07`.
 
 ## Self-checks (not machine-enforceable)
 
@@ -36,4 +36,4 @@ Typography `TYP-01/02` · Colour `COL-01/03/04` · Accessibility `A11Y-01/02/04/
 | `BEHAV-03` | Success criteria were stated and are met |
 | `BEHAV-04` | Any assumption was stated explicitly in the output |
 
-**Total: 51 machine-enforced (16 parser + 35 regex) + 4 self-checks.**
+**Total: 51 machine-enforced (16 parser + 35 regex) + 4 self-checks.** Every ID is unique to one suite — the regex `A11Y-01`/`A11Y-02` were renumbered to `A11Y-07`/`A11Y-08` because they named different rules from the parser checks of the same number.

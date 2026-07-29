@@ -88,7 +88,7 @@ dist/                    build output, gitignored
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 37/37 |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 15/15 |
 
-Then, non-negotiable but not numbered: **path integrity** (69 skill-cited references resolve), **reference-depth audit**, **deterministic archive build**, and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+Then, non-negotiable but not numbered: **path integrity** (69 skill-cited references resolve), **reference-depth audit**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
 
 A parser-regression proof runs alongside gate 4: 11 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 
@@ -108,7 +108,7 @@ Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby
 
 Note the bottom two: half the value is **removing false positives**. A blanket `...` ban flags every rest-spread in the pack; a blanket `&&` ban flags correct React. Constraints that cry wolf get switched off, so precision is a feature and not a nicety.
 
-The two suites are complementary, not redundant — 16 semantic + 35 syntactic = **51 constraints**. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
+The two suites are complementary, not redundant — 16 semantic + 35 syntactic = **51 checks across 51 distinct IDs**. Every ID belongs to exactly one suite, so a bare ID in a report is unambiguous about which layer flagged it. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
 
 ## Adding to the pack
 
@@ -136,9 +136,7 @@ Honest list, all verified against the current release.
 
 3. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
 
-4. **Two constraint IDs are ambiguous.** `A11Y-01` and `A11Y-02` each name *one parser rule and a different regex rule*. So the headline **51 is 51 checks across only 49 distinct IDs** — 16 parser + 35 regex, with two IDs counted in both suites. The checks are real and all 51 run; the collision means a bare ID in a report is ambiguous about which layer flagged it. Fixing it means renaming the regex pair, which touches `scripts/test_constraints.py`, `core/validate-checklist.md` and every skill file that cites them, so it is deliberately deferred.
-
-5. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
+4. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
 
 ### Recently closed
 

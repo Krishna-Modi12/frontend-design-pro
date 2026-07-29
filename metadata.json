@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro",
-  "version": "14.1.1",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 15 auto-routing skills, 8 core files, 70 references (295k tokens of on-demand depth), 42 gold examples, 51 constraints, 8 release-blocking gates. A typical request loads ~5k tokens, not 300k.",
+  "version": "14.1.2",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 15 auto-routing skills, 8 core files, 70 references (295k tokens of on-demand depth), 42 gold examples, 51 machine-enforced constraints, 8 release-blocking gates. A typical request loads ~5k tokens, not 300k.",
   "author": "krishnamodi241@gmail.com",
   "license": "MIT",
   "tags": [
@@ -134,7 +134,8 @@
     "skills": 15,
     "core_files": 8,
     "reference_depth_tokens": 295152,
-    "registry_tokens": 1770
+    "registry_tokens": 1770,
+    "ci_constraints_detail": "51 checks across 51 distinct IDs (16 parser AST + 35 regex)"
   },
   "changelog": {
     "12.0.0": "BREAKING: 8-step sequential pipeline replaced with 6-stage event-driven model (detect/classify/route/build/validate/output). SKILL.md v12 rewrite preserves all content from v11.6.0. New: [json] shortcode (structured output envelope schema_version:12.0), DESIGN.md structural round-trip via design-md-parser.md, eval semantic assertions (8 manual→semantic conversions across evals 1/2/4/8/9/12, claude-haiku judge), run_evals.py semantic runner (--no-semantic/--budget/sha256 cache), test_v12_pipeline.py smoke test, good-design-md-round-trip.jsx gold example (27/27), MIGRATION FROM v11.x section in SKILL.md. Stats: shortcodes 49, reference_files 57, example_files 21, pipeline_stages 6, semantic_assertions 8.",

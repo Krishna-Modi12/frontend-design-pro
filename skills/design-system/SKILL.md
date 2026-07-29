@@ -1,7 +1,7 @@
 ---
 name: design-system
 description: Design tokens, OKLCH palettes, typography scales, spacing, theming, dark mode, brand systems, Figma handoff.
-version: "14.1.1"
+version: "14.1.2"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

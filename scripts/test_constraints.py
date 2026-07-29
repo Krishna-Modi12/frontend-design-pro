@@ -96,7 +96,7 @@ CONSTRAINTS: List[Constraint] = [
 
     # ── Accessibility ────────────────────────────────────────────────────────
     Constraint(
-        id="A11Y-01",
+        id="A11Y-07",
         category="Accessibility",
         description="aria-label on icon-only interactive elements",
         severity="critical",
@@ -108,7 +108,7 @@ CONSTRAINTS: List[Constraint] = [
         )
     ),
     Constraint(
-        id="A11Y-02",
+        id="A11Y-08",
         category="Accessibility",
         description="All form inputs have associated labels (htmlFor/for)",
         severity="critical",
@@ -648,7 +648,12 @@ def main():
         sys.exit(0)
 
     json_output = "--json" in args
-    args = [a for a in args if a != "--json"]
+    # Demos nest as demo/<name>/<layer>/*.tsx, which neither of the flat --dir
+    # globs below reaches; --recursive walks the whole tree instead.
+    recursive = "--recursive" in args
+    # --project judges each immediate subdirectory as one unit (see below).
+    project_mode = "--project" in args
+    args = [a for a in args if a not in ("--json", "--recursive", "--project")]
 
     files_to_check: List[Path] = []
 
@@ -661,8 +666,11 @@ def main():
             print(f"Error: {d} is not a directory")
             sys.exit(1)
         for ext in ("*.jsx", "*.tsx", "*.html", "*.js", "*.ts"):
-            files_to_check.extend(d.glob(ext))
-            files_to_check.extend(d.glob(f"*/examples/{ext}"))   # v13: skills/*/examples
+            if recursive:
+                files_to_check.extend(d.rglob(ext))
+            else:
+                files_to_check.extend(d.glob(ext))
+                files_to_check.extend(d.glob(f"*/examples/{ext}"))   # v13: skills/*/examples
     else:
         for path in args:
             p = Path(path)
@@ -679,11 +687,34 @@ def main():
     files_to_check = [f for f in files_to_check if not str(f).endswith(".d.ts") and not str(f).endswith(".test.tsx")]
     if not parser_check(files_to_check):
         sys.exit(1)
-    for filepath in sorted(files_to_check):
-        code = filepath.read_text(encoding="utf-8")
-        results = run_constraints(code)
-        r = report(str(filepath), results, json_out=json_output)
-        all_results.append({"file": str(filepath), **r})
+
+    if project_mode:
+        # A gold example is one self-contained file, so every constraint can be
+        # answered from it. A demo is a project: the font lives in the shell, the
+        # error branch in one component, the touch targets in another. Checking
+        # each file alone would demand that lib/data.ts declare a font. The unit
+        # of judgement is therefore the project — one report per immediate
+        # subdirectory, over its concatenated sources.
+        groups: dict = {}
+        base = Path(args[1])
+        for f in files_to_check:
+            try:
+                name = f.relative_to(base).parts[0]
+            except ValueError:
+                name = f.parent.name
+            groups.setdefault(name, []).append(f)
+        for name in sorted(groups):
+            code = "\n".join(p.read_text(encoding="utf-8") for p in sorted(groups[name]))
+            label = f"{base}/{name} ({len(groups[name])} files)"
+            results = run_constraints(code)
+            r = report(label, results, json_out=json_output)
+            all_results.append({"file": label, **r})
+    else:
+        for filepath in sorted(files_to_check):
+            code = filepath.read_text(encoding="utf-8")
+            results = run_constraints(code)
+            r = report(str(filepath), results, json_out=json_output)
+            all_results.append({"file": str(filepath), **r})
 
     if json_output:
         print(json.dumps(all_results, indent=2))
@@ -691,7 +722,8 @@ def main():
     gold = [r for r in all_results if "bad-" not in r["file"]]
     gold_clean = sum(1 for r in gold if r["rate"] == 100)
     n_regex = len(CONSTRAINTS)
-    print(f"\n[REGEX]  {gold_clean}/{len(gold)} gold examples passed {n_regex}/{n_regex} syntactic checks")
+    unit = "demo projects" if project_mode else "gold examples"
+    print(f"\n[REGEX]  {gold_clean}/{len(gold)} {unit} passed {n_regex}/{n_regex} syntactic checks")
     print(f"TOTAL: {n_regex + len(PARSER_CHECK_IDS)} constraints ({len(PARSER_CHECK_IDS)} parser + {n_regex} regex, incl. DELAY-01 string fallback)")
 
     # Exit code: 0 if all pass at 90%+, else 1

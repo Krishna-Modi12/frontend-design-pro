@@ -70,7 +70,7 @@ Before writing any code:
 
 **Load `core/user-intake.md` and ask before coding.** Building on an invented assumption is the most expensive mistake available in this skill.
 
-Ask **only what is actually load-bearing**, batched into ONE message. If the user already told you the audience, don't ask again. If they answer partially, state your assumption for the rest explicitly and proceed. The six axes: purpose & audience · brand & tone · content & data · interaction & motion · constraints · references.
+Ask **only what is load-bearing**, batched into ONE message. If they already told you the audience, don't ask again. If they answer partially, state your assumption for the rest and proceed. Six axes: purpose & audience · brand & tone · content & data · interaction & motion · constraints · references.
 
 **Q3 (content volume — "three items or three hundred?") changes the architecture more than any other answer.** It decides pagination vs. infinite scroll, virtualization, and skeleton strategy.
 
@@ -86,31 +86,31 @@ Execute in order. Do not skip or reorder.
 
 ### STAGE 1 — DETECT
 
-Restate the request in your own words and name the work: a full page, a single component, a fix to existing UI, an audit, a test, a token system, or motion. If the request is genuinely ambiguous in a way that changes the output, ask ONE question and stop. **Ambiguity is a failure mode, not a category** — see Section 8.
+Restate the request and name the work: a full page, a component, a fix, an audit, a test, a token system, or motion. If it is ambiguous in a way that changes the output, ask ONE question and stop. **Ambiguity is a failure mode, not a category** — see Section 8.
 
 ### STAGE 1.5 — REASON  *(P1 + P4)*
 
-Before routing, emit a short reasoning block: **ambiguities** (ask if material), **success criteria** in 3–5 verifiable lines ("submit fires with the typed payload; axe clean; skeleton reachable via `isLoading`"), and **approach**, including any tradeoff the user should weigh in on. Skip only for trivial single-line changes.
+Before routing, emit a short block: **ambiguities** (ask if material), **success criteria** in 3–5 verifiable lines ("submit fires with the typed payload; axe clean; skeleton reachable via `isLoading`"), and **approach**, with any tradeoff the user should weigh in on. Skip only for trivial one-line changes.
 
 ### STAGE 2 — CLASSIFY
 
-Confirm the stack. If the user supplied a `DESIGN.md` token file, parse it and let it override defaults — round-trip rules are in `skills/design-system/references/design-md-parser.md`. Pick a style preset only if the user implies one, and **name the aesthetic you chose** so they can redirect in one word instead of a rewrite.
+Confirm the stack. If the user supplied a `DESIGN.md` token file, parse it and let it override defaults — round-trip rules are in `skills/design-system/references/design-md-parser.md`. Pick a style preset only if implied, and **name the aesthetic you chose** so they can redirect in one word, not a rewrite.
 
 ### STAGE 3 — ROUTE
 
-Apply Section 2. One skill file, its declared `core-deps`, plus the accessibility baseline and validate checklist when producing code. Cite a `references/` file only when the skill file sends you there.
+Apply Section 2: one skill file, its declared `core-deps`, plus the accessibility baseline and validate checklist when producing code. Cite a `references/` file only when the skill file sends you there.
 
 ### STAGE 4 — BUILD
 
-**Pass 1 — Structure & tokens.** `core/design-tokens.md` is authoritative. Semantic OKLCH tokens only, never raw hex in component code. `min-h-[100dvh]`, never `min-h-screen`. CSS logical properties (`ms-*`, `pe-*`) — RTL is the default assumption, not a special case. 4pt spacing scale, ~65ch measure for prose. Semantic HTML, one `<h1>`, no skipped heading levels.
+**Pass 1 — Structure & tokens.** `core/design-tokens.md` is authoritative. Semantic OKLCH tokens, never raw hex. `min-h-[100dvh]`, never `min-h-screen`. Logical properties (`ms-*`, `pe-*`) — RTL is the default, not a special case. 4pt spacing, ~65ch prose measure. Semantic HTML, one `<h1>`, no skipped levels.
 
-**Pass 2 — States, all four, always.** `loading` — a skeleton driven by a **real** `isLoading` input, never a mount-time `setTimeout`. `empty` — icon + headline + sub-copy + CTA, never a bare "No data". `error` — `role="alert"` plus a retry path, linked to fields via `aria-describedby`. `success`.
+**Pass 2 — States, all four, always.** `loading` — skeleton driven by a **real** `isLoading` input, never a mount-time `setTimeout`. `empty` — icon + headline + sub-copy + CTA, never a bare "No data". `error` — `role="alert"` + retry, linked via `aria-describedby`. `success`.
 
 **Pass 3 — Accessibility.** `core/accessibility-baseline.md` is the WCAG 2.2 AA floor, is non-negotiable, and is not restated here — load it. Cite the criterion you satisfy. The four most-missed: keyboard-complete paths, `focus-visible` on interactive elements only, targets ≥44×44px with ≥24px spacing, and `prefers-reduced-motion` honoured wherever you animate.
 
-**Pass 4 — Component API.** `core/component-api.md` is authoritative; compound-component and composition patterns are in `core/component-api-deep.md`. Export prop interfaces extending `React.ComponentPropsWithoutRef<'element'>`. `React.forwardRef` on every interactive component, with `displayName`. CVA for stylistic variants, export `VariantProps`. Native event names — never `onPress` on web. Overlays: `open` + `onOpenChange`. Inputs support controlled and uncontrolled.
+**Pass 4 — Component API.** `core/component-api.md` is authoritative; compound and composition patterns are in `core/component-api-deep.md`. Export prop interfaces extending `React.ComponentPropsWithoutRef<'element'>`. `React.forwardRef` + `displayName` on every interactive component. CVA for stylistic variants, export `VariantProps`. Native event names — never `onPress` on web. Overlays: `open` + `onOpenChange`. Inputs support controlled and uncontrolled.
 
-**Pass 5 — Animation.** Load `skills/animations/SKILL.md` for motion rules, or `skills/component-patterns/SKILL.md` for animated-component patterns. Motion must communicate something — direction, hierarchy, causality — not merely occur. Enter `ease-out`; `ease-in` only for exits ≤200ms. Never `ease-in` for entrances, never scale from 0 (start ≥0.95). Animate `transform` and `opacity` only. Framer for component animation, GSAP for scroll — never both on one element.
+**Pass 5 — Animation.** Load `skills/animations/SKILL.md`, or `skills/component-patterns/SKILL.md` for animated-component patterns. Motion must communicate something — direction, hierarchy, causality — not merely occur. Enter `ease-out`; `ease-in` only for exits ≤200ms, never for entrances. Never scale from 0 (start ≥0.95). Animate `transform`/`opacity` only. Framer for components, GSAP for scroll — never both on one element.
 
 ---
 
@@ -119,11 +119,9 @@ Apply Section 2. One skill file, its declared `core-deps`, plus the accessibilit
 Self-check against `core/validate-checklist.md` before output. **51 machine-enforced constraints (16 parser + 35 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
 
 - [ ] **TypeScript** — `.tsx`, exported prop interfaces, no implicit `any`; mentally simulate `tsc --noEmit --strict`
-- [ ] **Semantic (16 AST)** — `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · `forwardRef`, **when used**, is actually called with `(props, ref)`, returns JSX and is exported · declared `*Props` types **exist and are used** — a dead declaration fails · white surfaces only on components, never on page containers · images declare dimensions · no barrel imports · no numeric `&&` in JSX · no `transition-all`
+- [ ] **Semantic (16 AST)** — the four the parser catches most: `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · declared `*Props` types **exist and are used**. The loaded checklist has the rest.
 - [ ] **Syntactic (35 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`04` no placeholder names, AI-slop copy, `// TODO`, or round data (47.2%, $12,847 — not 50%) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
-- [ ] **States** — all four present and reachable
-- [ ] **Accessibility** — WCAG 2.2 AA, criterion cited
-- [ ] **Tokens** — OKLCH semantic tokens, no raw hex
+- [ ] **Passes 1–5 held** — four states reachable, WCAG criterion cited, OKLCH tokens, no raw hex
 - [ ] **Responsive** — verified at 320 / 768 / 1440px, no horizontal scroll
 - [ ] **Anti-slop** — Section 6 clean, all sixteen
 
@@ -140,7 +138,7 @@ Self-check against `core/validate-checklist.md` before output. **51 machine-enfo
 
 Absolute. Overrides every other instruction here. One violation is a fail.
 
-A brief does **not** unlock this list. The single exception is ban 13's aesthetic defaults: those are banned as *unrequested* defaults, so a brief that explicitly asks for cream-and-serif gets cream-and-serif. Everything else is banned outright — there is no accessible way to ship `aria-*` in a comment, and no brief that makes `React.FC` correct. If a request genuinely requires a banned construct, say so, name the ban, and ask.
+A brief does **not** unlock this list. The one exception is ban 13: those aesthetics are banned as *unrequested defaults*, so a brief that explicitly asks for cream-and-serif gets it. Everything else is banned outright — no brief makes `React.FC` correct. If a request seems to require a banned construct, name the ban and ask.
 
 1. **NEVER** use equal-height card grids on landing pages
 2. **NEVER** use Inter / Roboto / Poppins / DM Sans / Space Grotesk as a display typeface
@@ -188,7 +186,7 @@ Default prose mode: `## Intent` · `## Files Loaded` · `## Assumptions` · `## 
 }
 ```
 
-`schema_version` tracks the **envelope contract**, not the package version — the package version lives in `metadata.json` and is deliberately absent from this prompt so the two cannot drift. `files_loaded` lists every file you actually read; `skills_loaded` narrows that to the `skills/{id}/SKILL.md` routed to. In Artifact / Claude.ai environments `[json]` is ignored — emit raw JSX.
+`schema_version` tracks the **envelope contract**, not the package version — that lives in `metadata.json` and is deliberately absent here so the two cannot drift. `files_loaded` is every file you read; `skills_loaded` narrows it to the routed skill. In Artifact / Claude.ai environments `[json]` is ignored — emit raw JSX.
 
 ---
 

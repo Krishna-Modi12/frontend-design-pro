@@ -65,6 +65,16 @@ def run(cmd, **kw):
                           encoding="utf-8", errors="replace", **kw)
 
 
+def _find_tsc():
+    """Local tsc, preferring the Windows .cmd shim (the bare file is a POSIX script)."""
+    names = ("tsc.cmd", "tsc") if sys.platform == "win32" else ("tsc",)
+    for base in [ROOT, *ROOT.parents]:
+        for n in names:
+            c = base / "node_modules/.bin" / n
+            if c.exists(): return str(c)
+    return None
+
+
 def constraint_counts() -> tuple[int, int]:
     """Read the live constraint counts from the suites themselves.
 
@@ -223,22 +233,54 @@ def gate_chain() -> tuple[bool, list]:
     all_ok = True
     n_sem, n_syn = constraint_counts()
 
-    r = run([PY, str(SCRIPTS / "typecheck_golds.py")])
-    all_ok &= record("Compile", r.returncode == 0, (r.stdout + r.stderr).strip().splitlines()[-1] if (r.stdout+r.stderr).strip() else "tsc")
-    if r.returncode: print(r.stdout, r.stderr)
+    # The demo/ projects are held to the SAME suites as the gold examples, inside
+    # the same gates. README claims they pass the 51 constraints; a claim checked
+    # only by a script somebody remembers to run is the exact rot that left the
+    # pre-v13 system prompt broken for three majors.
+    demo_tsx = sorted(p for p in ROOT.glob("demo/*/**/*.tsx") if not p.name.endswith(".test.tsx"))
+    demo_cfg = ROOT / "demo/tsconfig.json"
 
-    # Semantic: parser on every gold, all checks must pass on each
+    r = run([PY, str(SCRIPTS / "typecheck_golds.py")])
+    compile_detail = (r.stdout + r.stderr).strip().splitlines()[-1] if (r.stdout+r.stderr).strip() else "tsc"
+    compile_ok = r.returncode == 0
+    if r.returncode: print(r.stdout, r.stderr)
+    if demo_cfg.exists() and demo_tsx:
+        tsc = _find_tsc()
+        if tsc:
+            dr = run([tsc, "-p", str(demo_cfg)])
+            if dr.returncode:
+                compile_ok = False
+                compile_detail += f" · demos FAILED"
+                print(dr.stdout[-1500:])
+            else:
+                compile_detail += f" · {len(demo_tsx)} demo files clean"
+        else:
+            compile_detail += " · demos skipped (tsc absent)"
+    all_ok &= record("Compile", compile_ok, compile_detail)
+
+    # Semantic: parser on every gold and every demo file, all checks must pass on each
     sem_pass = 0; sem_fail = []
-    for f in golds:
+    for f in golds + demo_tsx:
         pr = run(["node", str(SCRIPTS / "parser_constraints.js"), str(f)])
         if pr.returncode == 0: sem_pass += 1
         else: sem_fail.append(f.name)
-    all_ok &= record("Semantic", not sem_fail, f"{sem_pass}/{len(golds)} golds pass {n_sem}/{n_sem} parser checks" + (f" (fail: {sem_fail})" if sem_fail else ""))
+    sem_total = len(golds) + len(demo_tsx)
+    all_ok &= record("Semantic", not sem_fail,
+        f"{sem_pass}/{sem_total} files ({len(golds)} golds + {len(demo_tsx)} demo) pass {n_sem}/{n_sem} parser checks"
+        + (f" (fail: {sem_fail})" if sem_fail else ""))
 
     r = run([PY, str(SCRIPTS / "test_constraints.py"), "--dir", "skills"])
-    gold_clean = f"{n_syn}/{n_syn}" if r.returncode == 0 else "FAIL"
-    all_ok &= record("Syntactic", r.returncode == 0, f"gold examples clean, anti-examples fail as designed ({gold_clean})")
+    syn_ok = r.returncode == 0
     if r.returncode: print(r.stdout[-1500:], r.stderr[-500:])
+    syn_detail = f"gold examples clean, anti-examples fail as designed ({f'{n_syn}/{n_syn}' if syn_ok else 'FAIL'})"
+    if demo_tsx:
+        dr = run([PY, str(SCRIPTS / "test_constraints.py"), "--dir", "demo", "--recursive", "--project"])
+        if dr.returncode:
+            syn_ok = False; syn_detail += " · demos FAILED"
+            print(dr.stdout[-1500:])
+        else:
+            syn_detail += " · demos clean"
+    all_ok &= record("Syntactic", syn_ok, syn_detail)
 
     r = run([PY, str(SCRIPTS / "test_v12_pipeline.py"), str(REPO / "AGENT_SYSTEM_PROMPT.md")])
     # The label was hardcoded "9/9 stage markers" while the checker actually
@@ -340,7 +382,7 @@ def token_budget() -> bool:
 
 
 # ── Stage 5 — Archive build ──────────────────────────────────────────────────
-ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules"]
+ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo"]
 ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE"]
 EXCLUDE_TOP = {"src"}
 EXCLUDE_PATTERNS = re.compile(r"(^|/)(\.git|node_modules|__pycache__|test_outputs)(/|$)|\.(tmp|bak|draft|pyc)$")
