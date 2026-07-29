@@ -51,7 +51,11 @@ ALLOWED_VERSION_FILES = {"metadata.json", "README.md", "package.json",
                          "_meta/CHANGELOG.md", "_meta/ROADMAP.md"}
 # Exempt by design: Gate 2 *requires* every skill file to declare the current
 # version in its frontmatter, and CI/release workflows pin the release notes path.
-ALLOWED_VERSION_GLOBS = ("skills/", ".github/workflows/")
+# Lockfiles are exempt too: they pin arbitrary third-party package versions that
+# can coincidentally collide with this pack's own version string, which is not
+# a leak of this pack's own version.
+ALLOWED_VERSION_GLOBS = ("skills/", ".github/workflows/", "demo/showcase/")
+ALLOWED_VERSION_FILENAMES = {"package-lock.json"}
 
 # Single source of truth for the version every skill must declare. Previously
 # hardcoded, which silently failed Gate 2 for every skill on each minor bump.
@@ -61,7 +65,8 @@ VERSION_RE = re.compile(r"\bv?\d{1,2}\.\d{1,2}\.\d{1,3}\b")
 
 
 def run(cmd, **kw):
-    return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT,
+    kw.setdefault("cwd", ROOT)          # callers may override (gate_showcase runs in demo/showcase)
+    return subprocess.run(cmd, capture_output=True, text=True,
                           encoding="utf-8", errors="replace", **kw)
 
 
@@ -132,10 +137,13 @@ def preflight(version: str) -> bool:
     # 4. no stray version strings outside the allowlist
     leaks = []
     for p in ROOT.rglob("*"):
-        if not p.is_file() or "node_modules" in p.parts or ".git" in p.parts: continue
+        # .next is Next.js build output for demo/showcase — generated, gitignored,
+        # never shipped, and full of version strings the scan has no business reading.
+        if not p.is_file() or {"node_modules", ".git", ".next"} & set(p.parts): continue
         rel = p.relative_to(ROOT).as_posix()
         if rel in ALLOWED_VERSION_FILES: continue
         if rel.startswith(ALLOWED_VERSION_GLOBS): continue
+        if p.name in ALLOWED_VERSION_FILENAMES: continue
         if "RELEASE_NOTES-" in rel: continue  # generated, version by design
         if rel.endswith(".skill"): continue
         if p.suffix not in (".md", ".json", ".py", ".js", ".ts", ".tsx"): continue
@@ -237,7 +245,17 @@ def gate_chain() -> tuple[bool, list]:
     # the same gates. README claims they pass the 51 constraints; a claim checked
     # only by a script somebody remembers to run is the exact rot that left the
     # pre-v13 system prompt broken for three majors.
-    demo_tsx = sorted(p for p in ROOT.glob("demo/*/**/*.tsx") if not p.name.endswith(".test.tsx"))
+    # demo/showcase/ is excluded from the STUB COMPILE only. It is a standalone
+    # Next.js app with its own package.json, tsconfig and installed dependencies;
+    # type-checking it against demo/_stubs.d.ts — a file whose entire purpose is
+    # to declare absent libraries as `any` — would report errors about packages
+    # that are genuinely present. Its compile is verified by `next build` in
+    # gate_showcase() instead, against the real vendor typings. It is NOT exempt
+    # from the content rules: the regex suite below judges it like any other demo.
+    demo_tsx = sorted(
+        p for p in ROOT.glob("demo/*/**/*.tsx")
+        if not p.name.endswith(".test.tsx") and "showcase" not in p.relative_to(ROOT / "demo").parts[:1]
+    )
     demo_cfg = ROOT / "demo/tsconfig.json"
 
     r = run([PY, str(SCRIPTS / "typecheck_golds.py")])
@@ -382,10 +400,45 @@ def token_budget() -> bool:
 
 
 # ── Stage 5 — Archive build ──────────────────────────────────────────────────
+def gate_showcase() -> bool:
+    """
+    demo/showcase/ is the one demo that claims to RUN, not merely to type-check.
+    The README says so, so something has to check it — otherwise the claim rots
+    exactly like the pre-v13 system prompt did.
+
+    It cannot be verified by the stub tsconfig the other demos share: it has real
+    installed dependencies, so `next build` against the real vendor typings is the
+    only meaningful check. That needs its node_modules, which a fresh clone does
+    not have. Rather than pretend, this gate reports honestly:
+      · deps present  → build must pass, or the release is blocked
+      · deps absent   → skipped with a warning; the ci.yml `showcase` job installs
+                        them and runs the same build on every push
+    """
+    hdr("GATE 9 — SHOWCASE BUILD (demo/showcase)")
+    app = ROOT / "demo/showcase"
+    if not (app / "package.json").exists():
+        warn("demo/showcase absent — nothing to build")
+        return True
+    if not (app / "node_modules").exists():
+        warn("demo/showcase/node_modules absent — build skipped here; ci.yml 'showcase' job covers it")
+        return True
+    npx = shutil.which("npx.cmd") if sys.platform == "win32" else shutil.which("npx")
+    if not npx:
+        warn("npx not found — showcase build skipped")
+        return True
+    r = run([npx, "next", "build"], cwd=app)
+    if r.returncode:
+        bad("demo/showcase failed `next build`")
+        print((r.stdout + r.stderr)[-2500:])
+        return False
+    ok_("demo/showcase builds clean under `next build` (real deps, real vendor typings)")
+    return True
+
+
 ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo"]
 ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE"]
 EXCLUDE_TOP = {"src"}
-EXCLUDE_PATTERNS = re.compile(r"(^|/)(\.git|node_modules|__pycache__|test_outputs)(/|$)|\.(tmp|bak|draft|pyc)$")
+EXCLUDE_PATTERNS = re.compile(r"(^|/)(\.git|node_modules|__pycache__|test_outputs|\.next|out)(/|$)|\.(tmp|bak|draft|pyc)$")
 
 def build_archive(version: str) -> Path:
     hdr("STAGE 5 — ARCHIVE BUILD")
@@ -575,6 +628,7 @@ def main():
     token_budget()
     if not gate_budget(): print(f"\n{C_NO}BUDGET GATE FAILED.{C_END}"); sys.exit(1)
     if not gate_registry(): print(f"\n{C_NO}REGISTRY GATE FAILED.{C_END}"); sys.exit(1)
+    if not gate_showcase(): print(f"\n{C_NO}SHOWCASE GATE FAILED.{C_END}"); sys.exit(1)
 
     if dry:
         print(f"\n{C_OK}DRY RUN — all gates passed. No archive built.{C_END}  ({time.time()-t0:.1f}s)")

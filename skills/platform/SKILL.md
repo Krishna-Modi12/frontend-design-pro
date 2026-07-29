@@ -1,7 +1,7 @@
 ---
 name: platform
 description: Platform surfaces — mobile/PWA, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI.
-version: "14.1.2"
+version: "14.2.0"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md

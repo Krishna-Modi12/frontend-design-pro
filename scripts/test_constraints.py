@@ -684,7 +684,11 @@ def main():
         sys.exit(1)
 
     all_results = []
-    files_to_check = [f for f in files_to_check if not str(f).endswith(".d.ts") and not str(f).endswith(".test.tsx")]
+    # demo/showcase is a real, standalone Next.js app (own package.json/tsconfig/
+    # installed deps), not this repo's stub-typed demo convention — it is never
+    # in scope for these constraint suites.
+    files_to_check = [f for f in files_to_check if not str(f).endswith(".d.ts") and not str(f).endswith(".test.tsx")
+                       and "showcase" not in f.parts]
     if not parser_check(files_to_check):
         sys.exit(1)
 

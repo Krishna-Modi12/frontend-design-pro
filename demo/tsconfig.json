@@ -18,5 +18,9 @@
     "**/*.tsx",
     "**/*.ts",
     "_stubs.d.ts"
+  ],
+  "exclude": [
+    "showcase",
+    "**/node_modules"
   ]
 }

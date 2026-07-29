@@ -4,6 +4,23 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.2.0] — 2026-07-29
+
+### Added — `skills/agent-ops/`
+A 16th skill covering agent operating discipline rather than UI patterns: token/context budgeting, cross-session memory persistence, incorporating feedback without being told twice, self-verification before returning work, safe parallelization, and subagent dispatch/integration. Six references (`token-optimization.md`, `memory-persistence.md`, `continuous-learning.md`, `verification-loops.md`, `parallelization.md`, `subagent-orchestration.md`), one gold example (`good-agent-status-panel.tsx` — a token-budget meter + subagent task-queue status panel, all four states, 16/16 parser + 35/35 regex constraints) with its 1:1 test, and a router `SKILL.md` (`core-deps: core/agent-behavior.md, core/validate-checklist.md`). New registry row added to `SKILL.md`. Not to be confused with the pre-existing, unrelated UI-pattern references of the same base filenames under `data-tables/`, `forms/`, `platform/`, and `react-performance/` — those are about building interfaces *for* memory/orchestration/etc. concepts; this skill is about the agent's own operating discipline.
+
+### Added — cross-agent setup docs
+Five new docs alongside the existing `docs/CLAUDE_SETUP.md` and `docs/CURSOR_SETUP.md`: `docs/CHATGPT_SETUP.md`, `docs/OPENAI_API_SETUP.md`, `docs/COPILOT_SETUP.md`, `docs/GEMINI_SETUP.md`, and `docs/AGENT_COMPATIBILITY.md` (a matrix across all 8 surfaces: filesystem/tool access, true-lazy-loading-vs-degraded, whether the agent can run this repo's own gate scripts, and a caveat per row). Every doc is explicit about the one fact that actually matters for this pack: whether the target agent has real on-demand file access (true lazy loading) or must front-load everything (a Custom GPT's Knowledge search, Copilot's single instructions file, a large-context paste) — no numeric platform limit is asserted without hedging, since those change independent of this pack's own releases.
+
+### Added — `demo/showcase/`
+A deliberate, one-time departure from this repo's stub-typed demo convention (`demo/_stubs.d.ts`, never installed, never run): a real, standalone Next.js 15 + React 19 + TypeScript + Tailwind v4 app with its own `package.json`, real installed dependencies (`@react-three/fiber`/`@react-three/drei` on their React-19-native majors, `react-hook-form` + `zod`, real Tailwind v4), `npm install` actually run, `tsc --noEmit` actually clean against real package types (not ambient stubs), and a dev server actually started and curl-verified (200, real server-rendered HTML, no hydration errors). It's a cinematic dark-mode landing page for a fictional "Nexus" AI analytics product — OKLCH-only near-black + single acid-green accent, Manrope + JetBrains Mono, asymmetric bento grid, WebGL particle hero (R3F), tabular-nums pricing with a working annual toggle, a View-Transitions testimonial carousel, and an RHF+Zod contact form with real `aria-describedby` wiring. `demo/showcase/README.md` documents the exact prompt that generated it — the trust-building "copy this and try it yourself" artifact this release exists to ship.
+
+### Changed
+- `SKILL.md` registry: 16th row for `agent-ops`.
+- All 16 skill files bumped to `version: "14.2.0"`.
+- `metadata.json`: version, description, and stats recomputed against the actual current build (skills 15→16, new reference/example counts, showcase demo noted separately from the three gate-checked stub demos since it isn't part of the constraint-checked demo suite).
+- `README.md`: new "See It In Action" section linking the showcase and its prompt; per-agent setup links extended to all six docs.
+
 ## [14.1.2] — 2026-07-28
 
 ### Fixed — the four issues carried from 14.1.1

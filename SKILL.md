@@ -48,6 +48,7 @@ Match the request against trigger keywords. Load **one** skill. Most specific wi
 | `web-interface` | `skills/web-interface/SKILL.md` | review, audit, guidelines, wig, copywriting, microcopy, contrast, a11y audit, ux rules | `core/design-tokens.md` |
 | `react-performance` | `skills/react-performance/SKILL.md` | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `core/component-api.md` |
 | `platform` | `skills/platform/SKILL.md` | mobile, pwa, react native, expo, i18n, locale, rtl, seo, metadata, email, stripe, ai chat, streaming | `core/component-api.md` |
+| `agent-ops` | `skills/agent-ops/SKILL.md` | agent ops, token budget, context window, memory persistence, subagent, orchestration, verification loop, parallelization, continuous learning, self-check | `core/agent-behavior.md` |
 
 Every skill also inherits `core/accessibility-baseline.md` and `core/validate-checklist.md` — load them whenever the task produces code.
 

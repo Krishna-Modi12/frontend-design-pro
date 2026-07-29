@@ -12,7 +12,7 @@ Most prompt packs tell an agent what good UI looks like. This one proves it: eve
 2. Unzip into your agent's skills directory
 3. Ask: *"Create a landing page for a SaaS product"*
 
-Per-agent setup: **[Claude](docs/CLAUDE_SETUP.md)** · **[Cursor](docs/CURSOR_SETUP.md)** · **[any other agent](docs/INSTALL.md)**
+Per-agent setup: **[Claude](docs/CLAUDE_SETUP.md)** · **[Cursor](docs/CURSOR_SETUP.md)** · **[ChatGPT](docs/CHATGPT_SETUP.md)** · **[OpenAI API](docs/OPENAI_API_SETUP.md)** · **[Copilot](docs/COPILOT_SETUP.md)** · **[Gemini](docs/GEMINI_SETUP.md)** · **[any other agent](docs/INSTALL.md)** · **[compatibility matrix](docs/AGENT_COMPATIBILITY.md)**
 
 `SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit.
 
@@ -81,6 +81,18 @@ bash demo/validate.sh dashboard    # one
 
 Demos are proof, not doctrine. Where a demo and a skill rule disagree, **the rule wins and the demo is the bug.**
 
+## See It In Action
+
+[`demo/showcase/`](demo/showcase/) is the one project in `demo/` that breaks the stub-typed convention above on purpose: a real, standalone Next.js 15 + React 19 + Tailwind v4 app — its own `package.json`, real installed dependencies (React Three Fiber + drei, React Hook Form + Zod), a dev server that actually boots. It's a cinematic dark-mode landing page for a fictional AI analytics product, "Nexus" — near-black OKLCH surface, single acid-green accent, an asymmetric bento grid, a WebGL particle hero, and a validated contact form.
+
+```bash
+cd demo/showcase
+npm install
+npm run dev   # http://localhost:3000
+```
+
+The exact prompt that generates it is documented in [`demo/showcase/README.md`](demo/showcase/README.md#the-prompt-that-would-generate-this) — copy it into any agent set up per the docs above and compare the output.
+
 ## Verification
 
 Every release is produced by `scripts/build_release.py` with 8 blocking gates:
@@ -113,7 +125,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
 
 ## Docs
 
-**Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [Generic](docs/INSTALL.md)
+**Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [ChatGPT](docs/CHATGPT_SETUP.md) · [OpenAI API](docs/OPENAI_API_SETUP.md) · [Copilot](docs/COPILOT_SETUP.md) · [Gemini](docs/GEMINI_SETUP.md) · [Generic](docs/INSTALL.md) · [Compatibility matrix](docs/AGENT_COMPATIBILITY.md)
 
 **Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Changelog](docs/CHANGELOG.md)
 

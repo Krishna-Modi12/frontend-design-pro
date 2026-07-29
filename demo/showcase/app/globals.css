@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg-base: oklch(12% 0.01 260);
+  --color-bg-surface: oklch(17% 0.012 260);
+  --color-bg-raised: oklch(21% 0.014 260);
+  --color-border: oklch(28% 0.014 260);
+  --color-text-primary: oklch(96% 0.005 260);
+  --color-text-muted: oklch(70% 0.012 260);
+  --color-text-faint: oklch(52% 0.012 260);
+  --color-accent: oklch(70% 0.25 145);
+  --color-accent-dim: oklch(58% 0.2 145);
+  --color-accent-glow: oklch(70% 0.25 145 / 0.35);
+  --color-danger: oklch(62% 0.19 25);
+
+  --font-manrope: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@theme inline {
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-surface: var(--color-bg-surface);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-border: var(--color-border);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-faint: var(--color-text-faint);
+  --color-accent: var(--color-accent);
+  --color-accent-dim: var(--color-accent-dim);
+  --color-accent-glow: var(--color-accent-glow);
+  --color-danger: var(--color-danger);
+
+  --font-display: var(--font-manrope);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html,
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+}
+
+body {
+  font-family: var(--font-display);
+}
+
+.testimonial-fade {
+  animation: testimonial-fade-in 0.4s ease-out both;
+}
+
+@keyframes testimonial-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
