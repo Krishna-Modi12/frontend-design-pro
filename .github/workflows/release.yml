@@ -17,7 +17,7 @@ jobs:
         with: { python-version: '3.11' }
       - run: npm install
 
-      - name: Build gated archive (all 8 gates must pass)
+      - name: Build gated archive (all 9 gates must pass)
         run: python3 scripts/build_release.py
 
       # build_release.py writes docs/RELEASE_NOTES-v<version>.md in Stage 7.

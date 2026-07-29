@@ -4,7 +4,7 @@ Every number on this page was read off a green `python scripts/build_release.py 
 
 ## The problem this solves
 
-A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 295k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
+A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 305k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
 
 So the pack is not a document. It is a **registry that routes**.
 
@@ -12,15 +12,15 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 15-row routing table, loading protocol, failure table | **1,800 tokens** | always |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 16-row routing table, loading protocol, failure table | **1,857 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,027 or 2,103 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **801–1,588 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 70 deep references | **295,126 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 76 deep references | **305,784 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```
-iconography       4,643   ← lightest
+iconography       4,744   ← lightest
 landing-pages     4,695
 testing           4,704
 ai-ui-generation  4,715
@@ -34,12 +34,12 @@ animations        4,910
 platform          4,958
 react-components  4,960
 component-patterns 5,067
-design-principles 5,415   ← heaviest
+design-principles 5,512   ← heaviest
 ```
 
-**Ceiling is 5,415 tokens against 295,126 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 5,512 tokens against 305,784 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-The registry is the reason adding skills is cheap: it went from 11 skills to 15 while `SKILL.md` grew 296 tokens. Marginal cost of a skill is **~43 tokens** of always-loaded context, plus however much on-demand depth you give it.
+The registry is the reason adding skills is cheap: it went from 11 skills to 16 while `SKILL.md` grew 353 tokens. Marginal cost of a skill is **~71 tokens** of always-loaded context, plus however much on-demand depth you give it.
 
 ### Core file splitting
 
@@ -75,20 +75,21 @@ dist/                    build output, gitignored
 
 ## The gate chain
 
-`scripts/build_release.py` is the only supported way to produce a `.skill`. Eight named gates, all blocking, plus four stages around them. Runtime ~45s.
+`scripts/build_release.py` is the only supported way to produce a `.skill`. Nine named gates, all blocking, plus four stages around them. Runtime ~2min (the ninth gate installs and builds a real Next.js app).
 
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
-| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,800 tokens; version consistent; no leaks |
-| 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 15/15 |
-| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example | 43/43 |
-| 4 | Semantic | 16 AST constraints via the TypeScript compiler API, on every gold | 37/37 golds × 16/16 |
-| 5 | Syntactic | 35 regex constraints; golds must be clean **and** anti-examples must fail | 35/35 |
+| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,857 tokens; version consistent; no leaks |
+| 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 16/16 |
+| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 44/44 golds · 14/14 demo files |
+| 4 | Semantic | 16 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 52/52 files × 16/16 |
+| 5 | Syntactic | 35 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 35/35 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
-| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 37/37 |
-| 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 15/15 |
+| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 38/38 |
+| 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 16/16 |
+| 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
 
-Then, non-negotiable but not numbered: **path integrity** (69 skill-cited references resolve), **reference-depth audit**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+Then, non-negotiable but not numbered: **path integrity** (75 skill-cited references resolve), **reference-depth audit**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
 
 A parser-regression proof runs alongside gate 4: 11 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 

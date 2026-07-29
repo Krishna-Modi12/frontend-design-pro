@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # The release pipeline runs all 8 gates in order and fails fast.
+      # The release pipeline runs all 9 gates in order and fails fast.
       - name: Full gate chain (dry run — no archive)
         run: python3 scripts/build_release.py --dry-run
 

@@ -29,7 +29,7 @@ file via search, say so rather than improvising generic advice.
 
 ## Plain ChatGPT (no Custom GPT)
 
-Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 295k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
+Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 305k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
 
 ## Verifying it took
 

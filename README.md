@@ -2,7 +2,7 @@
 
 A machine-enforced frontend UI/UX skill pack for AI agents.
 
-**8 release-blocking gates · 16 semantic AST checks · 35 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
+**9 release-blocking gates · 16 semantic AST checks · 35 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
 
 Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
 
@@ -22,17 +22,18 @@ The agent reads the registry, matches your request to one skill, and loads only 
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **1,800 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **1,857 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | ~2,100 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 801–1,588 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **295,000 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **305,784 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,643–5,415 tokens, not 300,000.** Adding a skill costs ~43 tokens of always-loaded context — the registry grew just 296 tokens while going from 11 skills to 15.
+**A typical request loads 4,744–5,512 tokens, not 300,000.** Adding a skill costs ~71 tokens of always-loaded context — the registry grew just 353 tokens while going from 11 skills to 16.
 
-## Skills (15)
+## Skills (16)
 
 | Skill | Covers |
 |---|---|
+| `agent-ops` | Token/context budgeting, memory persistence, continuous learning, verification loops, parallelization, subagent orchestration |
 | `design-principles` | UX laws, Gestalt, hierarchy, the three AI-design clusters, design DNA extraction |
 | `component-patterns` | Animated text, wrapper effects, ambient backgrounds, scroll-coupled components |
 | `react-components` | shadcn/Radix, compound components, CVA, forwardRef, prop taxonomy |
@@ -91,11 +92,22 @@ npm install
 npm run dev   # http://localhost:3000
 ```
 
-The exact prompt that generates it is documented in [`demo/showcase/README.md`](demo/showcase/README.md#the-prompt-that-would-generate-this) — copy it into any agent set up per the docs above and compare the output.
+The exact prompt that generates it is documented in [`demo/showcase/README.md`](demo/showcase/README.md#the-prompt-that-would-generate-this) — copy it into any agent set up per the docs below and compare the output.
+
+**The route it takes.** The registry matches *WebGL*, *bento*, *pricing*, *form* and *carousel* against the trigger-keyword column and loads `landing-pages`, `threejs-3d` and `forms` in turn, each pulling `core/design-tokens.md` and `core/component-api.md` from its declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read. The bans in the prompt — no Inter, no purple gradient, no `min-h-screen`, no equal-weight card grid — are not politeness: they are the anti-slop wall restated, and the constraint suite fails the build if the output violates them.
+
+**It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. A "runnable demo" that nobody runs is a claim with a shelf life.
+
+## What's new in v14.2.0
+
+- **`agent-ops` — a 16th skill, about the agent rather than the UI.** Token budgeting, cross-session memory, continuous learning, self-verification, parallelization and subagent orchestration, across six references. It is the first skill whose subject is the agent's own process.
+- **Six agents supported, honestly.** Setup guides for [ChatGPT](docs/CHATGPT_SETUP.md), [OpenAI API](docs/OPENAI_API_SETUP.md), [Copilot](docs/COPILOT_SETUP.md) and [Gemini](docs/GEMINI_SETUP.md) join Claude and Cursor, with a [compatibility matrix](docs/AGENT_COMPATIBILITY.md) that states what *degrades* on each host. Claude Code is the only one with a real filesystem; everywhere else lazy loading becomes retrieval or pasting, and the docs say so rather than implying parity.
+- **A demo that actually runs.** `demo/showcase/` is a standalone Next.js 15 + React 19 + Tailwind v4 app with real dependencies, verified by a ninth gate.
+- **Ninth gate.** `next build` on the showcase now blocks the release, and a dedicated CI job installs its dependencies on a clean runner so the claim holds for a fresh clone too.
 
 ## Verification
 
-Every release is produced by `scripts/build_release.py` with 8 blocking gates:
+Every release is produced by `scripts/build_release.py` with 9 blocking gates:
 
 1. **Pre-flight** — clean tree, token budget, version consistency, no version-string leaks
 2. **Frontmatter** — every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist
@@ -105,18 +117,21 @@ Every release is produced by `scripts/build_release.py` with 8 blocking gates:
 6. **Pipeline** — `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves
 7. **Evals + coverage** — 22 eval cases; every gold has a test
 8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
+9. **Showcase build** — `demo/showcase/` (the real, installed Next.js app) builds clean under `next build` against its actual vendor typings
 
-Then: path integrity, reference-depth audit, deterministic archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive.
+9. **Showcase build** — `demo/showcase/` compiles and builds under `next build` with its real dependencies
+
+Then: path integrity, reference-depth audit, archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive.
 
 ```bash
 npm install
-npm run gates    # all 8 gates, no archive
+npm run gates    # all 9 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
 ## For contributors
 
-- All changes must pass the 8 gates — CI runs them on every push and PR
+- All changes must pass the 9 gates — CI runs them on every push and PR
 - New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
 - New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
 - New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`
