@@ -32,6 +32,17 @@ Type-check with:
 npm run typecheck
 ```
 
+## Screenshot
+
+There isn't one. Every release of this pack was cut by an agent with no browser, so rather than ship a placeholder or an image link pointing at nothing, the gap is left open and documented.
+
+If you run the demo and capture it, a PR is genuinely welcome:
+
+- `demo/showcase/screenshot.png` — 1920×1080, under 500 KB
+- a reference to it from the **See It In Action** section of the root [`README.md`](../../README.md)
+
+Capture notes and the reasoning behind them: [`.github/SCREENSHOT_CONTRIBUTION.md`](../../.github/SCREENSHOT_CONTRIBUTION.md). The short version: reduced motion off so the particle hero actually renders, dark mode, default viewport, and no retouching.
+
 ## What's in here
 
 - `app/layout.tsx`, `app/page.tsx`, `app/globals.css` — App Router entry, Manrope +

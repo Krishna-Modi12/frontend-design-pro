@@ -5,6 +5,8 @@ title: "[BUG] "
 labels: bug
 ---
 
+> Bugs are exempt from the [feature freeze](../../docs/MAINTENANCE.md) — a confirmed defect gets fixed, and five of them lift the freeze entirely. Report it even if you are not sure it is a bug.
+
 ## Which file is wrong?
 
 Path to the skill, reference, or example (e.g. `skills/forms/SKILL.md`, `skills/design-system/references/brand-design-systems.md`, `skills/react-components/examples/good-modal.tsx`):

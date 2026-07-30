@@ -100,6 +100,10 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **There is no screenshot here, deliberately.** These releases were cut by an agent with no browser, and a broken image would say more about the project's health than a missing one does. Run the two commands above and you have the real thing in about a minute — or [contribute the screenshot](.github/SCREENSHOT_CONTRIBUTION.md) and spare the next reader the install.
 
+<!-- Screenshot goes here: demo/showcase/screenshot.png -->
+<!-- To contribute one, see .github/SCREENSHOT_CONTRIBUTION.md -->
+<!-- Do not add the <img> until the file exists — a broken image is worse than none. -->
+
 ## What's new in v14.2.0
 
 - **`agent-ops` — a 16th skill, about the agent rather than the UI.** Token budgeting, cross-session memory, continuous learning, self-verification, parallelization and subagent orchestration, across six references. It is the first skill whose subject is the agent's own process.

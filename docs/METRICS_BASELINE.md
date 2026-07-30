@@ -2,7 +2,7 @@
 
 Snapshot taken before any public distribution (no HN/Twitter/Reddit posts yet). Every number here is a real `gh` query result, not an estimate.
 
-**Taken:** 2026-07-30, via `gh repo view` / `gh issue list` / `gh pr list` / `gh release view v14.2.1`.
+**Taken:** 2026-07-30, via `gh repo view` / `gh issue list` / `gh pr list` / `gh release view`.
 
 | Metric | Value |
 |---|---|
@@ -11,14 +11,47 @@ Snapshot taken before any public distribution (no HN/Twitter/Reddit posts yet). 
 | Watchers | 0 |
 | Open issues | 0 |
 | Open PRs | 0 |
-| `v14.2.1` release published | 2026-07-29T06:23:16Z |
-| `frontend-design-pro-v14.2.1.skill` downloads | 0 |
+| Latest release published | 2026-07-30 |
+| `.skill` archive downloads | 0 |
+| HN post | not posted |
+| Reddit post | not posted |
+| Twitter/X thread | not posted |
+
+Zero across the board is the point. It is the only honest starting line, and it means every later number is attributable to something specific rather than to ambient drift.
+
+## Freeze thresholds
+
+The freeze in [MAINTENANCE.md](MAINTENANCE.md) lifts on the first of these. Update this table weekly while the freeze is active.
+
+| Threshold | Target | Current | As of |
+|---|---|---|---|
+| Distinct feature requests for one capability | 10 | 0 | 2026-07-30 |
+| Confirmed reproducible bugs | 5 | 0 | 2026-07-30 |
+| Days of actively monitored time | 14 | 0 | 2026-07-30 |
+
+Earliest possible lift on the time trigger: **2026-08-13**. "Actively monitored" means issues were read and answered during those days — days where nobody looked do not count toward the 14, so this figure can legitimately lag the calendar.
 
 ## Re-checking
 
 ```bash
-gh repo view Krishna-Modi12/frontend-design-pro --json stargazerCount,forkCount,watchers -q '{stars: .stargazerCount, forks: .forkCount, watchers: .watchers.totalCount}'
+gh repo view Krishna-Modi12/frontend-design-pro --json stargazerCount,forkCount,watchers \
+  -q '{stars: .stargazerCount, forks: .forkCount, watchers: .watchers.totalCount}'
 gh issue list --repo Krishna-Modi12/frontend-design-pro --state open --json number -q 'length'
-gh pr list --repo Krishna-Modi12/frontend-design-pro --state open --json number -q 'length'
-gh release view v14.2.1 --repo Krishna-Modi12/frontend-design-pro --json assets -q '.assets[] | "\(.name): \(.downloadCount)"'
+gh pr list   --repo Krishna-Modi12/frontend-design-pro --state open --json number -q 'length'
+
+# Toward the freeze thresholds — label-based, so counting is a query not a judgement
+gh issue list --repo Krishna-Modi12/frontend-design-pro --state all --label enhancement --json number -q 'length'
+gh issue list --repo Krishna-Modi12/frontend-design-pro --state all --label bug         --json number -q 'length'
+
+# Download counts, latest release
+gh release view --repo Krishna-Modi12/frontend-design-pro --json tagName,assets \
+  -q '"\(.tagName): " + (.assets[] | "\(.name) \(.downloadCount)")'
 ```
+
+The release query deliberately omits a tag so it follows the latest one instead of going stale on the next patch.
+
+## What to watch that these numbers do not show
+
+- **Which skill people actually load.** Stars measure interest; the routing table is where the pack lives or dies. A bug report naming a skill id is worth more than fifty stars.
+- **Whether anyone runs the gates.** A PR with pasted `--dry-run` output means somebody trusted the verification story enough to test it.
+- **Whether the showcase gets a screenshot.** It is the one contribution the maintainer cannot make ([SCREENSHOT_CONTRIBUTION.md](../.github/SCREENSHOT_CONTRIBUTION.md)), so it is a clean signal that someone ran the demo rather than skimming the README.

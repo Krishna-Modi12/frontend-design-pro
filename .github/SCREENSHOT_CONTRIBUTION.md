@@ -4,6 +4,8 @@
 
 So the gap is left open, and documented here instead.
 
+The app's own docs are [`demo/showcase/README.md`](../demo/showcase/README.md) — what each component demonstrates, the Node 25 `localStorage` caveat, and the exact prompt that generated it.
+
 ## Running it
 
 ```bash

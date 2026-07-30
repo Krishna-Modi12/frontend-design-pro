@@ -10,13 +10,22 @@ So the default answer to "should we build X" is **no, not yet**, and the burden 
 
 Any **one** of these:
 
-| Trigger | Threshold |
-|---|---|
-| Users asking for the same specific thing | **10 distinct requests** for one feature |
-| Real defects reported from real use | **5 confirmed bugs** |
-| Time with the project actually being watched | **2 weeks** of active monitoring from the freeze release |
+| Trigger | Threshold | Tracked by |
+|---|---|---|
+| Users asking for the same specific thing | **10 distinct requests** for one feature | GitHub issues labelled `enhancement` |
+| Real defects reported from real use | **5 confirmed bugs** | GitHub issues labelled `bug`, confirmed reproducible |
+| Time with the project actually being watched | **2 weeks** of active monitoring | Freeze began **2026-07-30**; earliest lift **2026-08-13** |
 
-"Active monitoring" means issues are being read and answered. Two weeks of silence because nobody looked does not count and does not lift anything.
+Both labels are applied automatically by the issue templates in [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE), so the count is a query rather than a judgement call:
+
+```bash
+gh issue list --state all --label enhancement --json number --jq 'length'   # toward 10
+gh issue list --state all --label bug         --json number --jq 'length'   # toward 5
+```
+
+"Distinct requests" means ten people wanting the same capability, not ten issues. Three people asking for Svelte support is three; one person filing three issues about Svelte is one. "Confirmed" means reproduced — an unreproducible report does not count against the five, and closing it is not a judgement about the reporter.
+
+"Active monitoring" means issues are being read and answered. Two weeks of silence because nobody looked does not count and does not lift anything: the clock measures attention, not elapsed time.
 
 Counting requires something to count from, so [METRICS_BASELINE.md](METRICS_BASELINE.md) records the pre-launch state — stars, forks, issues, PRs and release downloads, all zero, with the `gh` commands to re-query them. Without a baseline, "10 requests" is a feeling.
 
@@ -27,8 +36,18 @@ Note what is *not* on that list: a good idea, a new library worth supporting, a 
 - **README and doc typo fixes.** Free.
 - **Broken link fixes.** Free, and the link checker should be run before each one.
 - **Critical bug fixes** — but only for a bug someone actually reported, and only with the gate chain green.
+- **Security fixes.** Exempt from the "someone reported it" requirement.
 
-That is the whole list. In particular: no refactors "while we're in there", no dependency bumps without a reported reason, no new gates, no rewording of the anti-slop wall because a better phrasing occurred to someone.
+That is the whole list.
+
+## What is forbidden during the freeze
+
+- New skills, new references, new examples.
+- New constraints, new gates.
+- Any change to `skills/*/SKILL.md` or `core/*.md` that is not tied to a labelled `bug` issue. Those files are the product; editing them on a hunch is the failure mode this policy exists to stop.
+- Refactors "while we're in there". Dependency bumps without a reported reason. Rewording the anti-slop wall because a better phrasing occurred to someone.
+
+Each of those is individually reasonable, which is exactly why the list has to be written down.
 
 ## The bar for a freeze-period commit
 
@@ -49,6 +68,25 @@ python scripts/build_release.py --bump-patch  # bumps, gates, builds, smoke-test
 ```
 
 Write the changelog entry yourself before running it; the bump leaves an existing `## [x.y.z]` header alone and only stubs one when you have not. Then tag and push — CI re-runs every gate on a clean runner and attaches the archive.
+
+## Unattended writers
+
+A freeze is a policy, and a policy only binds the actors who read it. Across the three sprints leading up to the freeze, files kept appearing in this repo that no one in the active session had written: `demo/showcase/`, `skills/agent-ops/`, `docs/METRICS_BASELINE.md`, `docs/RESPONSE_TEMPLATES.md`, `docs/FAQ.md`, `docs/FOLLOWUP_TEMPLATES.md`, and the issue templates in `.github/`. Commits and tags were pushed that the session doing the work had not made.
+
+**Cause, established rather than assumed:** two Claude Code sessions were running against this same working directory at the same time. Every commit here carries a `Co-Authored-By` trailer naming the model that made it, and the history splits cleanly along it — one set from an Opus 5 session, another from a Sonnet 5 session, interleaved minutes apart. Ruled out by inspection: no git hooks (`.git/hooks/` holds only samples), no embedded repositories, no scheduled task invoking git/node/python, no script in the repo that shells out to `git commit`/`push`, and no workflow that writes to the repo — `release.yml` holds `contents: write` but uses it to publish a release and attach the archive, never to commit.
+
+**Why this is worse than it sounds.** Neither session was malicious and both produced good work, but `git add -A` does not know which agent authored a file:
+
+- Commit `695f0f2` swept one session's mid-edit working tree into the other's release commit, and pushed a `v14.2.0` tag while verification was still in progress — publishing an artifact whose showcase carried three `TS-01-AST` violations and an unreachable reference, all of which were being fixed at that moment. `v14.2.1` exists only to correct that.
+- Commit `dbf00b1` did the same in reverse: a one-line launch-kit fix silently carried three `.github/` templates the other session had just written, published under a commit message that did not mention them. They turned out to be good. Nobody had read them.
+
+**Rules while any second writer might be active:**
+
+1. **One session per working directory.** This is the whole mitigation. Everything below is damage limitation for when it is violated.
+2. **Never `git add -A` on a repo another agent may be touching.** Stage explicit paths. The cost of typing them is one minute; the cost of not doing it was a bad release.
+3. **`git fetch` and check `git log --oneline -1` immediately before every commit, tag, and push.** A tag is the expensive one — moving a published tag is not a normal operation.
+4. **Read every file you are about to commit.** If a `git status` line is a file you did not write, read it or unstage it. Publishing unread content is publishing content you cannot vouch for.
+5. **Prune agent worktree branches.** Three `worktree-agent-*` branches survived their deleted worktrees; they held no unique commits and were removed. `.claude/` is gitignored so the worktrees themselves cannot be committed again.
 
 ## Being a maintainer instead of a builder
 
