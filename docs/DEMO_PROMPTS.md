@@ -1,0 +1,72 @@
+# Demo Prompts
+
+Copy any of these into your agent with `frontend-design-pro` loaded to reproduce the corresponding demo.
+
+For the three stub-typed demos below, no verbatim record of the original prompt survives in this repo — subagent prompts aren't part of the committed history. What's here is a prompt that reproduces what's actually in each demo's source today, checked against it rather than reconstructed from memory. `demo/showcase/`'s prompt is different: it's quoted exactly from `demo/showcase/README.md`, which documented it verbatim from the start.
+
+---
+
+## `demo/landing-page/`
+
+**Prompt:**
+
+> Create a dark-mode SaaS landing page: a hero with a live-updating platform metric strip, a features section, a pricing table, and a testimonials section with regional/verification detail in the footer. Handle the whole page as one load state — loading, ready, or failed — rather than letting one section succeed while another shows broken data next to it.
+
+**Skills loaded:** `landing-pages` + `core/design-tokens.md`
+
+**What it demonstrates:** Dark OKLCH surface, asymmetric bento features, tabular-nums pricing, skip link.
+
+---
+
+## `demo/dashboard/`
+
+**Prompt:**
+
+> Create an analytics dashboard with a collapsible sidebar nav, a row of KPI cards, a revenue chart, and a sortable/searchable accounts table. The chart is the heaviest dependency on the page and nothing above the fold needs it — load it as a separate chunk with a reserved-height, accessible loading fallback so the KPI row and table never shift when it arrives.
+
+**Skills loaded:** `data-tables` + `react-performance` + `core/component-api.md`
+
+**What it demonstrates:** Sortable table with all four states, `next/dynamic` chart, `content-visibility`.
+
+---
+
+## `demo/auth-form/`
+
+**Prompt:**
+
+> Create a login page: email/password form with OAuth provider buttons, real client-side validation, and accessible error messages. Include a short explanation of the session model (session length, what "keep me signed in" actually does, new-device notifications) so the security posture isn't a mystery to the user.
+
+**Skills loaded:** `forms` + `core/component-api.md`
+
+**What it demonstrates:** RHF + Zod, `aria-describedby` errors, OAuth, jest-axe test.
+
+---
+
+## `demo/showcase/`
+
+Quoted exactly from [`demo/showcase/README.md`](../demo/showcase/README.md#the-prompt-that-would-generate-this):
+
+> Build a cinematic dark-mode SaaS landing page for a fictional AI analytics platform called "Nexus." Use a near-black background defined as real OKLCH tokens (e.g. `oklch(12% 0.01 260)`) — no pure `#000` or `bg-black` literals, and no ad hoc hex anywhere in components. Use a single accent color, acid green (`oklch(70% 0.25 145)`), sparingly — CTAs and key highlights only, never washed across the whole page. Typography is Manrope for display/body and JetBrains Mono for numbers and data labels — no Inter, Roboto, Poppins, DM Sans, or Space Grotesk. Do not use purple-to-pink-to-blue gradients, equal-height/equal-weight card grids (make the bento grid deliberately asymmetric), `min-h-screen` (use `min-h-[100dvh]` instead), or any placeholder/lorem-ipsum copy or suspiciously round numbers in stats. Design mobile-first.
+>
+> Build these as real React components: a `Hero3D` WebGL particle hero using React Three Fiber and drei with an actual `<Canvas>` scene, that functionally respects `prefers-reduced-motion` (a real matchMedia-based hook, not a comment); a `BentoGrid` asymmetric feature grid with a cursor-tracked spotlight/glow hover effect; a `Pricing` component with a 3-tier table, `tabular-nums` for all numbers, and a working monthly/annual toggle; a `Testimonials` carousel using the View Transitions API (with a documented CSS fallback); a `ContactForm` validated with React Hook Form and Zod, with real `aria-describedby` JSX attributes wiring inputs to their error messages; a `Newsletter` email signup with validation; and a `Footer`. Wire it all together in `app/page.tsx` and `app/layout.tsx`, with design tokens in `lib/tokens.ts`, global styles in `app/globals.css`, and Zod schemas in `lib/validation.ts`.
+>
+> This should be a real, installable, runnable Next.js 15 App Router project — not a stub-typed reference file — with its own `package.json`, real dependency versions, and a dev server I can actually start. Hold the result to this skill pack's full `core/validate-checklist.md`: exported, used `*Props` interfaces (no dead types), correct `forwardRef(props, ref)` usage where applicable, OKLCH-only colors with no raw hex in component files, `min-h-[100dvh]` not `min-h-screen`, no bare `ease-in` on entrance animations, no numeric `&&` in JSX, no `transition-all`, no barrel-file imports, `<Canvas dpr={...}>` declared, no raw `requestAnimationFrame` in R3F files, memoized manual Three.js geometry/materials, `…` instead of `...` in copy, and no placeholder/lorem/AI-slop copy anywhere.
+
+**Skills loaded:** `landing-pages`, `threejs-3d`, `forms` — matched on *WebGL*, *bento*, *pricing*, *form* and *carousel* — each pulling `core/design-tokens.md` and `core/component-api.md` from their declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read.
+
+**What it demonstrates:** A real, installed, dev-server-verified Next.js 15 + React 19 + Tailwind v4 app — R3F particle hero, asymmetric bento grid, tabular-nums pricing with a working toggle, view-transitions testimonials, an RHF+Zod contact form. Not a stub-typed reference file: it builds and runs.
+
+**To run it yourself:**
+
+```bash
+cd demo/showcase
+npm install
+npm run dev
+# http://localhost:3000
+```
+
+---
+
+## On screenshots
+
+`demo/showcase/screenshot.png` exists because that demo is a real running app. The three stub-typed demos above are not — they're `.tsx` files compiled against ambient stubs in `demo/_stubs.d.ts`, never installed, never run (see [`README.md`](../README.md)'s Demos section for that distinction). There's nothing to screenshot without first wiring one into a runnable shell of its own, which isn't part of what these demos are for.
