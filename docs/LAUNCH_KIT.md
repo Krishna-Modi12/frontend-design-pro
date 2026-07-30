@@ -1,6 +1,6 @@
 # Launch Kit
 
-Copy-paste posts for the current release. Replace `[link]` with the repo URL before posting.
+Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
 **Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 22 evals · 11 regression cases · registry 1,857 tokens · heaviest request 5,512 tokens.
 
@@ -252,7 +252,6 @@ https://github.com/Krishna-Modi12/frontend-design-pro
 ## Pre-post checklist
 
 - [ ] `npm run gates` green on a clean checkout
-- [ ] `[link]` replaced in the post you're using
 - [ ] `.skill` archive attached to the GitHub release
 - [ ] CI green on `main` before the post goes up — a red badge on an HN front page is unrecoverable
 - [ ] Free for the first 3 hours to answer comments
