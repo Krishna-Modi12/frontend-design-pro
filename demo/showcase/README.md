@@ -34,14 +34,9 @@ npm run typecheck
 
 ## Screenshot
 
-There isn't one. Every release of this pack was cut by an agent with no browser, so rather than ship a placeholder or an image link pointing at nothing, the gap is left open and documented.
+`screenshot.png` — 1920×1080, above the fold, default viewport, reduced motion off, captured from a headless Chromium driving this dev server. It is linked from the **See It In Action** section of the root [`README.md`](../../README.md).
 
-If you run the demo and capture it, a PR is genuinely welcome:
-
-- `demo/showcase/screenshot.png` — 1920×1080, under 500 KB
-- a reference to it from the **See It In Action** section of the root [`README.md`](../../README.md)
-
-Capture notes and the reasoning behind them: [`.github/SCREENSHOT_CONTRIBUTION.md`](../../.github/SCREENSHOT_CONTRIBUTION.md). The short version: reduced motion off so the particle hero actually renders, dark mode, default viewport, and no retouching.
+**If you change anything under `demo/showcase/`, recapture it.** A stale screenshot is a worse failure than a missing one: a missing image is an honest gap, while a stale one actively misrepresents the app to everybody who never runs it. The capture spec is in [`.github/SCREENSHOT_CONTRIBUTION.md`](../../.github/SCREENSHOT_CONTRIBUTION.md) — reduced motion off so the particle hero actually renders, dark mode, default viewport, no retouching.
 
 ## What's in here
 

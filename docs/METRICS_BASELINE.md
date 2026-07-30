@@ -54,4 +54,4 @@ The release query deliberately omits a tag so it follows the latest one instead 
 
 - **Which skill people actually load.** Stars measure interest; the routing table is where the pack lives or dies. A bug report naming a skill id is worth more than fifty stars.
 - **Whether anyone runs the gates.** A PR with pasted `--dry-run` output means somebody trusted the verification story enough to test it.
-- **Whether the showcase gets a screenshot.** It is the one contribution the maintainer cannot make ([SCREENSHOT_CONTRIBUTION.md](../.github/SCREENSHOT_CONTRIBUTION.md)), so it is a clean signal that someone ran the demo rather than skimming the README.
+- **Whether the showcase screenshot stays current.** One exists now (captured pre-launch — see [SCREENSHOT_CONTRIBUTION.md](../.github/SCREENSHOT_CONTRIBUTION.md)), but it goes stale the moment `demo/showcase`'s UI changes. A PR that touches the showcase without recapturing it is worth flagging.

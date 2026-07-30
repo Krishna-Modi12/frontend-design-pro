@@ -98,11 +98,9 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 16 AST checks on every authored file, the 35 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
 
-**There is no screenshot here, deliberately.** These releases were cut by an agent with no browser, and a broken image would say more about the project's health than a missing one does. Run the two commands above and you have the real thing in about a minute — or [contribute the screenshot](.github/SCREENSHOT_CONTRIBUTION.md) and spare the next reader the install.
+![Nexus showcase — dark-mode analytics landing page with WebGL particle hero, asymmetric bento grid, and acid-green accents](demo/showcase/screenshot.png)
 
-<!-- Screenshot goes here: demo/showcase/screenshot.png -->
-<!-- To contribute one, see .github/SCREENSHOT_CONTRIBUTION.md -->
-<!-- Do not add the <img> until the file exists — a broken image is worse than none. -->
+Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
 ## What's new in v14.2.0
 

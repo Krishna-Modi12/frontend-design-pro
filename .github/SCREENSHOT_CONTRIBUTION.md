@@ -1,8 +1,8 @@
 # Screenshot contribution
 
-`demo/showcase/` is a real Next.js app and renders at `http://localhost:3000`, but this repo ships no screenshot of it. The reason is plain: the releases were cut by an agent with no browser, and a placeholder image or a `![](screenshot.png)` pointing at nothing would be worse than an honest gap — a broken image tells a visitor the project is unmaintained, which is the opposite of what a screenshot is for.
+`demo/showcase/screenshot.png` exists and is linked from the root `README.md`'s **See It In Action** section — captured above-the-fold, default viewport, reduced motion off, via a headless Chromium driving the real dev server on a machine that actually had one available.
 
-So the gap is left open, and documented here instead.
+This doc stays because the screenshot *will* go stale the next time `demo/showcase`'s UI changes, and a stale screenshot is a worse failure mode than a missing one — it actively misrepresents the current app. If you change anything under `demo/showcase/`, recapture it using the spec below.
 
 The app's own docs are [`demo/showcase/README.md`](../demo/showcase/README.md) — what each component demonstrates, the Node 25 `localStorage` caveat, and the exact prompt that generated it.
 
@@ -16,12 +16,9 @@ npm run dev      # http://localhost:3000
 
 You should get a dark, near-black page: a WebGL particle hero that tracks the cursor, an asymmetric six-card bento grid with a spotlight hover, a three-tier pricing table with a working annual toggle, a testimonial carousel, and a validated contact form. Acid green appears only on the primary actions. If it looks like a purple gradient with an even card grid, something is wrong — open an issue.
 
-## Contributing the image
+## Recapturing the image
 
-Open a PR adding:
-
-1. `demo/showcase/screenshot.png` — 1920×1080, under 500 KB. Full page or above-the-fold, either is useful; above-the-fold is generally the more honest one.
-2. A reference to it from the **See It In Action** section of the root `README.md`.
+Open a PR replacing `demo/showcase/screenshot.png` — 1920×1080, under 500 KB, above-the-fold (the current one is; it's the more honest crop than full-page). The `README.md` reference doesn't need to change unless the filename does.
 
 Please capture it with:
 
