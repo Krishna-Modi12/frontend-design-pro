@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Blocks a commit when a DIFFERENT, still-running session holds the lock.
+#
+# Install (per clone — git config is not committable by design):
+#   git config core.hooksPath .githooks
+#
+# Bias: fail CLOSED on a positively identified live foreign owner; fail OPEN on
+# anything unexpected. A convenience guard that blocks legitimate work is worse
+# than the collision it prevents — the freeze permits typo and link fixes, and
+# those must never be hostage to this file.
+set -u
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null || printf '.')" || exit 0
+. ".githooks/session-guard.sh" 2>/dev/null || exit 0
+
+# Documented escape hatch. Deliberate, single-commit override.
+if [ -n "${FDP_ALLOW_CONCURRENT:-}" ]; then
+  printf 'session-guard: FDP_ALLOW_CONCURRENT set — check skipped.\n' >&2
+  exit 0
+fi
+
+ME="$(guard_identity)"
+
+# No lock: the first committer claims it. Self-claiming is what makes this
+# automatic — nobody remembers to run a lock script, so the guard would
+# otherwise never engage.
+if [ ! -f "$LOCKFILE" ]; then
+  guard_write_lock
+  printf 'session-guard: claimed the commit lock for %s\n' "$ME" >&2
+  exit 0
+fi
+
+OWNER="$(guard_read owner)"
+OWNER_PID="$(guard_read pid)"
+SINCE="$(guard_read since)"
+
+[ "$OWNER" = "$ME" ] && exit 0            # our own lock, the common case
+
+# Someone else's lock. If their process is gone it is debris, not a claim.
+if ! guard_alive "$OWNER_PID"; then
+  printf 'session-guard: releasing stale lock from %s (pid %s is gone)\n' "$OWNER" "$OWNER_PID" >&2
+  guard_write_lock
+  exit 0
+fi
+
+cat >&2 <<MSG
+
+  ────────────────────────────────────────────────────────────────────
+  COMMIT BLOCKED — another live session holds this repo's commit lock
+  ────────────────────────────────────────────────────────────────────
+
+  owner : $OWNER
+  pid   : $OWNER_PID  (running)
+  since : $SINCE
+  you   : $ME
+
+  Two agents committing to one working directory is how this project
+  shipped a bad release: 'git add -A' does not know which session
+  authored a file, so one swept the other's mid-edit work into a
+  release commit and pushed a tag mid-verification.
+
+  Do one of these:
+
+    1. Close the other session.  Then commit again — this hook
+       releases the lock automatically once its process is gone.
+
+    2. If you know that session is finished:
+         bash .githooks/session-unlock.sh
+
+    3. To override for exactly one commit:
+         FDP_ALLOW_CONCURRENT=1 git commit ...
+       Stage explicit paths if you do. Never 'git add -A' while a
+       second writer is active.
+
+  Background: docs/MAINTENANCE.md -> "Unattended writers"
+
+MSG
+exit 1

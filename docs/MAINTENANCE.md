@@ -88,6 +88,33 @@ A freeze is a policy, and a policy only binds the actors who read it. Across the
 4. **Read every file you are about to commit.** If a `git status` line is a file you did not write, read it or unstage it. Publishing unread content is publishing content you cannot vouch for.
 5. **Prune agent worktree branches.** Three `worktree-agent-*` branches survived their deleted worktrees; they held no unique commits and were removed. `.claude/` is gitignored so the worktrees themselves cannot be committed again.
 
+### The guard that enforces rule 1
+
+Rules are advice. `.githooks/pre-commit` is the part that actually blocks:
+
+```bash
+git config core.hooksPath .githooks     # once per clone
+```
+
+Git config is per-clone by design and cannot be committed, so this line is the install step. Without it the hook sits inert in the repo.
+
+**Behaviour.** The first session to commit claims `.claude/SESSION_LOCK` automatically — self-claiming, because a guard that needs someone to remember a setup command never engages. Commits from the owning session pass silently. A commit from a *different* session whose process is still alive is blocked, with the owner, its pid, and the three ways out. If the owning process is gone the lock is debris, not a claim, and the next commit takes it over and says so.
+
+**Identity.** Keyed on `CLAUDE_CODE_SESSION_ID`, a stable per-session UUID. Two details that make or break this:
+
+- The variable is `CLAUDE_CODE_SESSION_ID`, **not** `CLAUDE_SESSION_ID` — the latter does not exist. Keying on it would leave both sessions resolving to the same fallback string, and the guard would pass everything while appearing to work.
+- It cannot key on `git config user.name`. Both colliding sessions committed as the same git identity; that is precisely the case it has to catch.
+
+**Liveness.** `kill -0` in Git Bash operates on MSYS pids, not the native Windows pids `CLAUDE_PID` reports, and silently calls every live Windows process dead — which would turn every real lock into a stale one. The guard uses `tasklist` on Windows and `kill -0` elsewhere.
+
+**Escape hatch.** `FDP_ALLOW_CONCURRENT=1 git commit …` skips the check for one commit. It exists because a guard that can block a permitted typo fix is worse than the collision it prevents. If you use it, stage explicit paths.
+
+**Bias.** Fail closed only on a positively identified live foreign owner; fail open on anything unexpected — a missing hook file, an unreadable lock, a repo it cannot locate. CI is unaffected: a clean runner has no `core.hooksPath` set and no lockfile.
+
+The lockfile itself is runtime state under the already-gitignored `.claude/`, so it is never committed. The scripts live in `.githooks/` for the same reason inverted: anything under `.claude/` would be untracked and absent from a fresh clone.
+
+All eight branches of this were tested by watching them behave before the hook was trusted — including the one that matters, a foreign live lock sharing this session's git identity, which blocked as intended.
+
 ## Being a maintainer instead of a builder
 
 The work that actually matters now is not in this repo:
