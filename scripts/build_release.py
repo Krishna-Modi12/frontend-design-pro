@@ -571,8 +571,8 @@ Plus pre-flight, frontmatter, path integrity, and per-skill budget gates — all
 
 See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: the vitest suite does not
 execute end-to-end because examples stub ~25 peer libraries, so Gate 7 asserts 1:1
-coverage plus strict compilation rather than implying more; one reference is orphaned;
-and reference depth is unevenly distributed across skills.
+coverage plus strict compilation rather than implying more; reference depth is
+unevenly distributed across skills.
 
 ## Install
 

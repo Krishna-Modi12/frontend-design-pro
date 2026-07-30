@@ -6,7 +6,7 @@ Copy-paste posts for the current release. Replace `[link]` with the repo URL bef
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 11 regression cases where AST and regex disagree, in both directions.
-> - *"42 gold examples."* There are 37 golds plus 6 deliberate anti-examples = 43 files. Say 37 golds, or 43 examples — not 42 golds.
+> - *"42 gold examples."* There are 38 golds plus 6 deliberate anti-examples = 44 files. Say 38 golds, or 44 examples — not 42 golds.
 >
 > A launch audience fact-checks. Ship the number you can reproduce on demand.
 
@@ -21,7 +21,7 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 1,800
+frontend-design-pro is a registry instead of a document. SKILL.md is 1,857
 tokens — identity, an anti-slop wall, and a 16-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 305,000 tokens of
@@ -30,7 +30,7 @@ reference material on disk.
 Measured, not estimated: the heaviest possible request loads 5,512 tokens.
 The lightest loads 4,744. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Going from 11 skills to
-15 grew the always-loaded registry by 296 tokens.
+16 grew the always-loaded registry by 353 tokens.
 
 What's enforced, rather than asserted:
 
@@ -46,6 +46,15 @@ What's enforced, rather than asserted:
   Constraints that cry wolf get switched off, so precision matters.
 - 9 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
+
+New in this release: a 16th skill, agent-ops, covering the agent's own
+operating discipline rather than UI — token budgeting, cross-session memory,
+verification loops, subagent orchestration. And a demo that actually proves
+the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
+its own package.json, real installed deps (R3F, RHF+Zod), and a dev server
+that boots — not the ambient-stub-typed convention every other demo/ folder
+uses. CI runs a real `next build` against it on every push. The exact prompt
+that generated it is in the repo; copy it into any agent and compare output.
 
 Known gaps are in docs/ARCHITECTURE.md rather than left for you to find. The
 biggest: the vitest suite doesn't run end-to-end, because examples import ~25
@@ -64,7 +73,8 @@ cites, and I verified it fails against the old file before trusting it.
 MIT. Feedback from anyone building agent tooling very welcome — particularly
 on the routing table, which is where this lives or dies.
 
-[link]
+https://github.com/Krishna-Modi12/frontend-design-pro
+Demo prompt: https://github.com/Krishna-Modi12/frontend-design-pro#see-it-in-action
 ```
 
 ---
@@ -141,9 +151,17 @@ haven't seen fail is a guardrail you haven't tested.
 Remaining known gaps are all in ARCHITECTURE.md. Shipping the caveats is part
 of shipping.
 
-10/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+10/ New in this release: agent-ops, a 16th skill — but this one is for the
+agent's own discipline, not UI. Token budgeting, cross-session memory,
+verification loops, subagent orchestration.
 
-[link]
+Plus a showcase demo that's a REAL Next.js app — installed deps, a dev
+server that boots, CI running `next build` against it. Not stub-typed
+fantasy code. Copy the generating prompt from the repo and try it.
+
+11/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+
+https://github.com/Krishna-Modi12/frontend-design-pro
 ```
 
 ---
@@ -178,12 +196,13 @@ if any skill exceeds 8,000 with dependencies.
 
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 16/16 skills declare deps that exist
-3. Compile — 43 examples, `tsc --noEmit` strict + noImplicitAny
+3. Compile — 44 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 16 AST constraints via the TypeScript compiler API
 5. Syntactic — 35 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget
+9. Showcase build — the real Next.js demo builds clean under `next build`
 
 Then the archive gets unzipped and gates 3 and 4 re-run against the extracted
 copy. If that fails the archive is deleted.
@@ -194,7 +213,22 @@ Landing pages · forms (RHF + Zod, auth, OTP, checkout) · data tables and
 dashboards · 3D (R3F, drei, shaders) · animations · design systems (OKLCH
 tokens, dark mode) · iconography · AI UI generation · React performance ·
 testing (Vitest, jest-axe, Playwright) · design principles (29 UX laws,
-Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments).
+Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments) · agent-ops
+(token budgeting, memory persistence, verification loops, subagent
+orchestration — for the agent's own discipline, not UI).
+
+**New in this release**
+
+A demo that's actually installed and run: `demo/showcase` is a real
+Next.js 15 + React 19 app (own `package.json`, real deps — R3F, RHF+Zod),
+not the ambient-stub-typed convention the rest of `demo/` uses. CI runs a
+real `next build` against it on every push (Gate 9 below). The exact prompt
+that generated it is documented in the repo — copy it into any agent and
+compare the output. Setup docs also now cover ChatGPT, the OpenAI API,
+GitHub Copilot, and Gemini alongside the existing Claude/Cursor guides,
+with an honest compatibility matrix (`docs/AGENT_COMPATIBILITY.md`) that
+says plainly which agents get true on-demand loading versus which have to
+front-load everything.
 
 **Known limitations, up front**
 
@@ -207,7 +241,7 @@ Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments).
 
 All of this is in `docs/ARCHITECTURE.md`. MIT licensed, contributions welcome.
 
-[link]
+https://github.com/Krishna-Modi12/frontend-design-pro
 ```
 
 ---

@@ -125,7 +125,7 @@ The two suites are complementary, not redundant — 16 semantic + 35 syntactic =
 
 **A new semantic rule:** a check in `scripts/parser_constraints.js` **and** a divergence case in `scripts/parser_regression_test.js` proving it beats regex. Gate labels read their counts from the suites themselves, so `51` updates on its own.
 
-**A version bump:** `metadata.json`, a new top section in `docs/CHANGELOG.md`, and the `version` field in all 15 skill files. Gates 1 and 2 fail on any of the three being out of step.
+**A version bump:** `metadata.json`, a new top section in `docs/CHANGELOG.md`, and the `version` field in all 16 skill files. Gates 1 and 2 fail on any of the three being out of step.
 
 ## Known gaps
 
@@ -133,12 +133,12 @@ Honest list, all verified against the current release.
 
 1. **The vitest suite does not execute end-to-end.** Gold examples import ~25 peer libraries (`three`, `framer-motion`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is also why `vitest run` cannot resolve them: 28 of 37 test files fail at import time. Registering `@testing-library/jest-dom` via `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; the rest need real dependencies. Gate 7 therefore asserts the enforceable contract — 1:1 coverage plus strict compilation — and says so. Closing this means either adding the peer dependencies or shipping runtime stubs.
 
-2. **`design-system/references/brand-design-systems.md` is orphaned** — present on disk, absent from its skill's Reference Index, so nothing can route to it. Warning, not a failure.
+2. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
 
-3. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
-
-4. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
+3. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
 
 ### Recently closed
+
+**`design-system/references/brand-design-systems.md` was orphaned** — present on disk, absent from its skill's Reference Index, so nothing could route to it. A citation was added; 76/76 references now resolve with none orphaned.
 
 **`AGENT_SYSTEM_PROMPT.md` was pre-registry** — 28 of the 31 paths it cited did not exist, and it had no concept of the registry. Rewritten. The lesson is worth keeping: **Gate 6 had been guarding it the whole time by checking that its section headings were present**, which they were. Structural checks do not catch semantic rot. Gate 6 now resolves every path the prompt cites, rejects pre-registry `references/` and `_meta/` prefixes, and rejects bare reference filenames — and that check was verified to *fail* against the old file before it was trusted.
