@@ -98,6 +98,8 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 16 AST checks on every authored file, the 35 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
 
+**There is no screenshot here, deliberately.** These releases were cut by an agent with no browser, and a broken image would say more about the project's health than a missing one does. Run the two commands above and you have the real thing in about a minute — or [contribute the screenshot](.github/SCREENSHOT_CONTRIBUTION.md) and spare the next reader the install.
+
 ## What's new in v14.2.0
 
 - **`agent-ops` — a 16th skill, about the agent rather than the UI.** Token budgeting, cross-session memory, continuous learning, self-verification, parallelization and subagent orchestration, across six references. It is the first skill whose subject is the agent's own process.
@@ -138,11 +140,13 @@ npm run build    # gated archive → dist/
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
 
+**The pack is under a feature freeze as of v14.2.2** — bug fixes, typo fixes and broken-link fixes only, until 10 people ask for the same feature, 5 real bugs land, or two monitored weeks pass. Rationale and the exact thresholds: [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
+
 ## Docs
 
 **Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [ChatGPT](docs/CHATGPT_SETUP.md) · [OpenAI API](docs/OPENAI_API_SETUP.md) · [Copilot](docs/COPILOT_SETUP.md) · [Gemini](docs/GEMINI_SETUP.md) · [Generic](docs/INSTALL.md) · [Compatibility matrix](docs/AGENT_COMPATIBILITY.md)
 
-**Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Changelog](docs/CHANGELOG.md)
+**Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Maintenance policy](docs/MAINTENANCE.md) · [Changelog](docs/CHANGELOG.md)
 
 ## License
 

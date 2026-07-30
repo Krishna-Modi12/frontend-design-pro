@@ -4,6 +4,42 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.2.2] — 2026-07-30
+
+Last engineering release before the freeze. No features. Three defects, one honesty gap, one policy.
+
+### Fixed — `--bump-patch` mangled the changelog it was editing
+
+The `VERSION_TARGET` half was fixed in 14.2.1 but never exercised end to end, and testing it surfaced a second bug in the same function. `bump_patch()` anchored its insertion on the `#` heading and inserted immediately after it, which put the new release *above* the "All notable changes…" preamble and the `---` rule — stranding the preamble below the newest entry. It now anchors on the rule, which is what actually separates preamble from entries.
+
+It also inserted unconditionally, so a release whose notes were written by hand got a duplicate header plus a "Patch release (auto-bumped)" stub contradicting the real entry directly beneath it. It now skips insertion when the version is already documented, which makes the flag usable for a real release rather than only for a contentless one.
+
+**This release was cut with `--bump-patch` itself** — bump, 9 gates, archive, smoke test, release notes, in one command. That is the test, and it is the first time the flag has been run end to end.
+
+### Fixed — `metadata.json` stats had drifted, and nothing reads them but people
+
+The machine-readable stats block is the one file a consumer would parse to describe the pack, and no gate validates it. Five fields were wrong: `anti_examples` 3→**6**, `test_files` 37→**38**, `release_gates` 8→**9**, `registry_tokens` 1,770→**1,857**, `reference_depth_tokens` 295,152→**305,784**. All recomputed from disk rather than edited by hand.
+
+The depth figure is worth a note: measured on the Windows working tree it comes to 305,801, because `build_release.py` floors `st_size // 4` per file and one reference had picked up CRLF endings. 305,784 is the LF measurement — the git index, and therefore what CI and the archive contain. Same root cause as the archive-size caveat in `docs/ARCHITECTURE.md`.
+
+### Fixed — two stale figures the v14.2.0 sweep missed
+
+`skills/agent-ops/references/token-optimization.md` cited `docs/ARCHITECTURE.md` for "a 1,800-token `SKILL.md` routes to 295,126 tokens" and "per-skill numbers (4,643–5,415 tokens)". Both were true when written and went stale in the same session that re-derived ARCHITECTURE's own numbers — a reference citing a doc is only as fresh as the sweep that touched them together. Now 1,857 / 305,784 / 4,744–5,512. Also `docs/INSTALL.md`: "all 43 examples" → **44**.
+
+Deliberately **not** changed: the figures in `docs/RELEASE_NOTES-v14.1.*` and in historical `CHANGELOG` entries. They were accurate when cut, and editing shipped release notes to match today's build would be falsifying the record rather than correcting it.
+
+### Added — the missing screenshot is documented instead of faked
+
+`demo/showcase/` has no screenshot, because every release here was cut by an agent with no browser. Rather than ship a placeholder or a `![](screenshot.png)` pointing at nothing — a broken image says more about a project's health than a missing one does — the gap is stated in the README and `.github/SCREENSHOT_CONTRIBUTION.md` documents how to close it: 1920×1080, under 500 KB, reduced motion off so the particle hero actually renders, and no retouching, since a staged screenshot would make the whole verification story worthless.
+
+### Added — `docs/MAINTENANCE.md`: feature freeze, effective now
+
+The remaining risk to this project is churn, not missing features. The freeze lifts on **10 distinct requests for one feature**, **5 confirmed bugs**, or **2 weeks of actively monitored silence** — where "actively monitored" means issues are being read, not that nobody looked. Permitted meanwhile: typo fixes, broken-link fixes, and reported-bug fixes that pass the chain. Not permitted: refactors in passing, unprompted dependency bumps, or rewording the anti-slop wall because a better phrasing occurred to someone.
+
+### Verified — no change needed
+
+`docs/LAUNCH_KIT.md` was already accurate: 16 skills · 76 references · 305,784 tokens · 44 examples (38 gold + 6 anti) · 38 tests · 16 + 35 = 51 constraints · 9 gates · registry 1,857 · heaviest request 5,512. It also carries a do-not-say list that pre-emptively rejects two figures circulating in briefs for this sprint — "42 gold examples" and a fabricated claim about the compiler finding 8 bugs. One line was added to its known-limitations block for the absent screenshot.
+
 ## [14.2.1] — 2026-07-29
 
 Verification pass over the v14.2.0 artifact. Everything below is a defect that existed in v14.2.0 and was found by making a check real rather than by reading the code again.

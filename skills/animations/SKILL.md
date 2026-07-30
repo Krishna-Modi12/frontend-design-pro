@@ -1,7 +1,7 @@
 ---
 name: animations
 description: Motion — easing and timing rules, Framer Motion, GSAP, scroll-driven experiences, view transitions, reduced motion.
-version: "14.2.1"
+version: "14.2.2"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

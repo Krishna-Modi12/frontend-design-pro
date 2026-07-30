@@ -238,6 +238,9 @@ front-load everything.
   coverage + strict compilation, and says so rather than implying more.
 - Reference depth is uneven — `design-system` has 14 references, the newest
   skills have 1–2.
+- No screenshot of the showcase. These releases were cut by an agent with no
+  browser, and a broken image would be worse than an honest gap. Two commands
+  and you have it running locally; the repo documents how to contribute one.
 
 All of this is in `docs/ARCHITECTURE.md`. MIT licensed, contributions welcome.
 

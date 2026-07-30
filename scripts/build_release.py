@@ -603,10 +603,33 @@ def bump_patch():
     new = f"{a}.{b}.{int(c)+1}"
     meta["version"] = new
     (ROOT / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    # CHANGELOG insertion, two bugs deep.
+    #
+    # It used to anchor on the H1 and insert immediately after it, which put the
+    # new entry ABOVE the "All notable changes…" intro and the `---` rule —
+    # leaving the intro stranded below the newest release. Anchor on the rule
+    # instead, which is what separates the preamble from the entries.
+    #
+    # And it inserted unconditionally, so a release whose notes were written by
+    # hand first got a duplicate header plus a "Patch release (auto-bumped)"
+    # stub contradicting the real entry directly beneath it. Skip if the version
+    # is already documented — writing the notes yourself is the normal case for
+    # anything worth releasing.
     cl = CHANGELOG
     from datetime import date
-    cl.write_text(cl.read_text(encoding="utf-8").replace("# Frontend Design Pro — Changelog",
-        f"# Frontend Design Pro — Changelog\n\n## [{new}] — {date.today().isoformat()}\n\n### Changed\n- Patch release (auto-bumped by build_release.py).\n", 1), encoding="utf-8")
+    text = cl.read_text(encoding="utf-8")
+    header = f"## [{new}]"
+    if header in text:
+        print(f"CHANGELOG already documents {new} — leaving it alone")
+    else:
+        stub = f"{header} — {date.today().isoformat()}\n\n### Changed\n- Patch release (auto-bumped by build_release.py).\n\n"
+        anchor = "---\n\n"
+        if anchor in text:
+            i = text.index(anchor) + len(anchor)
+            text = text[:i] + stub + text[i:]
+        else:                                   # no preamble rule — fall back to after the H1
+            text = re.sub(r"(^# .*\n\n)", rf"\1{stub}", text, count=1, flags=re.M)
+        cl.write_text(text, encoding="utf-8")
     # Gate 2 requires every skill file to declare the new version too; bumping
     # metadata alone would fail the very next gate run.
     for sk in sorted(ROOT.glob("skills/*/SKILL.md")):

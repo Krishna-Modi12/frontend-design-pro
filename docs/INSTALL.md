@@ -66,7 +66,7 @@ The run prints one line per gate. All of them must read `✓`; a single `✗` ab
 Individual gates, when you want a faster loop:
 
 ```bash
-npm run typecheck    # strict tsc over all 43 examples
+npm run typecheck    # strict tsc over all 44 examples
 npm run constraints  # 35 syntactic constraints
 npm run evals        # 22 eval cases
 npm run regression   # 11 parser-vs-regex divergence cases
