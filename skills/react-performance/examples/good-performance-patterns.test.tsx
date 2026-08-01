@@ -9,7 +9,7 @@ import Component from './good-performance-patterns';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('framer-motion', () => ({
+vi.mock('motion/react', () => ({
   motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
   AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
   useReducedMotion: () => true,

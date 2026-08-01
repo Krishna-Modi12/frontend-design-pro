@@ -14,7 +14,7 @@ Scroll animation needed?
 ## Framer Motion — viewport reveal (most common)
 
 ```tsx
-import { motion, useInView } from "framer-motion";
+import { motion, useInView } from "motion/react";
 import { useRef } from "react";
 
 function RevealSection({ children }: { children: React.ReactNode }) {
@@ -57,7 +57,7 @@ const item = {
 ## Framer Motion — scroll progress bar
 
 ```tsx
-import { useScroll, useSpring, motion } from "framer-motion";
+import { useScroll, useSpring, motion } from "motion/react";
 
 function ScrollProgressBar() {
   const { scrollYProgress } = useScroll();
@@ -75,7 +75,7 @@ function ScrollProgressBar() {
 ## Framer Motion — parallax layers
 
 ```tsx
-import { useScroll, useTransform, motion } from "framer-motion";
+import { useScroll, useTransform, motion } from "motion/react";
 
 function ParallaxHero() {
   const ref = useRef(null);

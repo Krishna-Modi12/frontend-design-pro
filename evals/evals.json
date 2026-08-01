@@ -78,7 +78,7 @@
     {
      "text": "Uses Framer Motion or GSAP for animations",
      "type": "regex",
-     "pattern": "motion\\.|framer-motion|gsap|ScrollTrigger"
+     "pattern": "motion\\.|framer-motion|motion/react|gsap|ScrollTrigger"
     },
     {
      "text": "Has staggered reveal pattern",

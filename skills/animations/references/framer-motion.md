@@ -31,7 +31,7 @@ Every HTML and SVG element has a `motion.*` equivalent. The `motion` object prox
 
 ```tsx
 // Basic usage
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 export function BasicMotion() {
   return (
@@ -152,7 +152,7 @@ transition={{
 ```tsx
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
 // --- mode="wait" (default-ish): exit finishes before next enters ---
@@ -256,7 +256,7 @@ Variants let you define named animation states and propagate them to children au
 ```tsx
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { motion, Variants } from "motion/react";
 
 // --- Basic variants ---
 const cardVariants: Variants = {
@@ -384,7 +384,7 @@ export function DynamicStagger({ items }: { items: string[] }) {
 | Slow | 80 | 20 | 1 | Deliberate, heavy — good for large layout shifts |
 
 ```tsx
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 // Snappy — buttons, toggles, chips
 <motion.div transition={{ type: "spring", stiffness: 400, damping: 30, mass: 1 }} />
@@ -419,7 +419,7 @@ Layout animations automatically interpolate between an element's old and new siz
 ```tsx
 "use client";
 
-import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
+import { motion, LayoutGroup, AnimatePresence } from "motion/react";
 import { useState } from "react";
 
 // --- layout prop: auto-animates size and position changes ---
@@ -545,7 +545,7 @@ export function SynchronizedList() {
 ```tsx
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 // --- whileHover ---
 export function HoverCard() {
@@ -654,7 +654,7 @@ import {
   useSpring,
   useMotionValue,
   useVelocity,
-} from "framer-motion";
+} from "motion/react";
 
 // --- Progress bar: page scroll indicator ---
 export function ScrollProgressBar() {
@@ -769,7 +769,7 @@ export function ScaleOnScroll() {
 "use client";
 
 import { useRef } from "react";
-import { motion, useDragControls } from "framer-motion";
+import { motion, useDragControls } from "motion/react";
 
 // --- Basic drag ---
 export function BasicDrag() {
@@ -883,7 +883,7 @@ import {
   LazyMotion,
   domAnimation,
   m,
-} from "framer-motion";
+} from "motion/react";
 
 // --- MotionConfig: global animation settings ---
 // Wrap your app or a section to apply defaults to all motion.* children
@@ -953,7 +953,7 @@ export function LazyCard() {
 
 // ✅ Correct: mark the file as client component
 "use client";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 // ❌ Wrong: using motion.* in a Server Component
 // app/page.tsx without "use client" will fail
@@ -997,7 +997,7 @@ export default function Page() {
 
 // components/AnimatedHero.tsx (Client Component)
 "use client";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 export function AnimatedHero() {
   return <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Hello</motion.h1>;
 }
@@ -1009,7 +1009,7 @@ export function AnimatedHero() {
 
 // app/layout.tsx
 "use client";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -1033,7 +1033,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```tsx
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -1156,7 +1156,7 @@ export function RemovableList() {
 ```tsx
 "use client";
 
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "motion/react";
 import { useRef, useState } from "react";
 
 // --- FadeIn wrapper ---

@@ -212,6 +212,6 @@ When the intent is a test request, or the user asks for tests: **load `skills/te
 
 Emit `<component>.test.tsx` containing a render assertion, a role-based interaction via `userEvent`, and a `jest-axe` accessibility check. Query by role first: `getByRole` > `getByLabelText` > `getByText` > `getByTestId`.
 
-Mock heavy dependencies with **typed** stubs — `framer-motion`, R3F / Spline, `gsap`, `recharts`, TanStack Query, `next/navigation`. Never mock the component under test. **Zero `any`. Zero placeholder assertions.** Reference implementations: any `skills/testing/examples/good-*.test.tsx`.
+Mock heavy dependencies with **typed** stubs — `motion/react`, R3F / Spline, `gsap`, `recharts`, TanStack Query, `next/navigation`. Never mock the component under test. **Zero `any`. Zero placeholder assertions.** Reference implementations: any `skills/testing/examples/good-*.test.tsx`.
 
 Every gold example in this pack ships with a 1:1 test, so "with tests" is the default expectation, not an extra.

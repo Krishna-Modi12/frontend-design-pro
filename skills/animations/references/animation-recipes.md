@@ -13,7 +13,7 @@ Curated, production-ready animation patterns for React/Next.js. Each recipe is c
 **Use case:** Feature lists, team cards, pricing tiers — elements that appear one-by-one on scroll.
 
 ```tsx
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'motion/react'
 
 const container = {
   hidden: {},
@@ -53,7 +53,7 @@ function StaggerList({ items }: { items: string[] }) {
 
 ```tsx
 import { useEffect, useRef } from 'react'
-import { useInView, useMotionValue, useSpring, animate } from 'framer-motion'
+import { useInView, useMotionValue, useSpring, animate } from 'motion/react'
 
 function AnimatedNumber({
   value,
@@ -210,7 +210,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 ```tsx
 // Framer Motion layoutId approach
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
 interface Item { id: string; title: string; image: string }
@@ -272,7 +272,7 @@ function Gallery({ items }: { items: Item[] }) {
 **Use case:** Article pages, long docs — thin progress bar at the top of the viewport.
 
 ```tsx
-import { useScroll, useSpring, motion } from 'framer-motion'
+import { useScroll, useSpring, motion } from 'motion/react'
 
 function ScrollProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -295,8 +295,8 @@ function ScrollProgressBar() {
 
 ```tsx
 import { useRef, useState } from 'react'
-import { motion } from 'framer-motion'
-import { useReducedMotion } from 'framer-motion'
+import { motion } from 'motion/react'
+import { useReducedMotion } from 'motion/react'
 
 function MagneticButton({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   const ref = useRef<HTMLButtonElement>(null)
@@ -407,7 +407,7 @@ function CardSkeleton() {
 **Use case:** Feature cards, product cards — subtle elevation on hover.
 
 ```tsx
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 function LiftCard({ children }: React.PropsWithChildren) {
   return (
@@ -518,7 +518,7 @@ function BottomSheet({ trigger, children }: { trigger: React.ReactNode; children
 // RULE: No animation on palette open/close — it's used 100+/day
 // DO animate the ⌘K badge on first discovery
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState, useEffect } from 'react'
 
 function CommandBadge() {
@@ -554,7 +554,7 @@ function CommandBadge() {
 **Use case:** Marketing heroes, about pages — image moves slower than scroll.
 
 ```tsx
-import { useScroll, useTransform, motion } from 'framer-motion'
+import { useScroll, useTransform, motion } from 'motion/react'
 import { useRef } from 'react'
 
 function ParallaxHero({ src }: { src: string }) {
@@ -587,7 +587,7 @@ function ParallaxHero({ src }: { src: string }) {
 **Use case:** FAQs, settings sections, expandable content.
 
 ```tsx
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 
 function Accordion({ items }: { items: { q: string; a: string }[] }) {
@@ -668,7 +668,7 @@ function Marquee({ items, speed = 30 }: { items: React.ReactNode[]; speed?: numb
 **Use case:** Tooltips, dropdown menus — scale from the trigger point, not center.
 
 ```tsx
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
 function Tooltip({ label, children }: { label: string; children: React.ReactNode }) {

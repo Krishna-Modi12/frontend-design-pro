@@ -105,7 +105,10 @@ walk(sf, (n) => { if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)
     // string value of a JSX className with motion-reduce: variant (Tailwind)
   });
   if (sourceText.includes("motion-reduce:")) functional = true;
-  const animationPresent = /animate-|framer-motion|<motion\.|gsap|transition-|animation:/.test(sourceText);
+  // `framer-motion` is retained alongside `motion/react`: the package was renamed, but
+  // detection must still fire on code written against either specifier. Additive only —
+  // dropping the old token would silently stop MOTION-01 firing on existing sources.
+  const animationPresent = /animate-|framer-motion|motion\/react|<motion\.|gsap|transition-|animation:/.test(sourceText);
   // Mirror ANI-01 conditionality: required only when animation exists; and if mentioned, must be functional.
   checks["MOTION-01"] = functional || (raw ? false : !animationPresent);
   if (!checks["MOTION-01"]) fail("MOTION-01", sf, raw

@@ -324,7 +324,7 @@ def gate_chain() -> tuple[bool, list]:
     # test file compiles under strict TypeScript.
     #
     # Runtime execution is deliberately NOT asserted. Gold examples import ~25 peer
-    # libraries (three, framer-motion, react-hook-form, react-native, @playwright/test…)
+    # libraries (three, motion/react, react-hook-form, react-native, @playwright/test…)
     # that exist only as ambient declarations in `_stubs.d.ts`, so `vitest run` cannot
     # resolve them. The previous implementation probed `ROOT.parent/node_modules` — the
     # wrong directory — so the vitest branch never fired and the gate silently reported
