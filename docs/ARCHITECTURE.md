@@ -12,32 +12,35 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 16-row routing table, loading protocol, failure table | **1,857 tokens** | always |
-| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,027 or 2,103 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **801–1,588 tokens** | exactly one per request |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 16-row routing table, loading protocol, failure table | **1,837 tokens** | always |
+| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,073, 2,149 or 2,241 tokens** | the 3–4 a matched skill declares |
+| `skills/{id}/SKILL.md` | One skill router | **789–1,572 tokens** | exactly one per request |
 | `skills/{id}/references/*.md` | 76 deep references | **305,784 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```
-iconography       4,744   ← lightest
-landing-pages     4,695
-testing           4,704
-ai-ui-generation  4,715
-web-interface     4,732
-data-tables       4,738
-design-system     4,782
-forms             4,795
-react-performance 4,811
-threejs-3d        4,905
-animations        4,910
-platform          4,958
-react-components  4,960
-component-patterns 5,067
-design-principles 5,512   ← heaviest
+iconography        4,714   ← lightest
+landing-pages      4,765
+testing            4,775
+ai-ui-generation   4,786
+web-interface      4,803
+data-tables        4,809
+forms              4,865
+react-performance  4,881
+design-system      4,883
+threejs-3d         4,975
+animations         4,980
+platform           5,028
+react-components   5,030
+component-patterns 5,137
+agent-ops          5,176
+design-principles  5,482   ← heaviest
 ```
 
-**Ceiling is 5,512 tokens against 305,784 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 5,482 tokens against 305,784 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,857 there, 1,837 here — exactly the 82 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 305,784 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
 The registry is the reason adding skills is cheap: it went from 11 skills to 16 while `SKILL.md` grew 353 tokens. Marginal cost of a skill is **~71 tokens** of always-loaded context, plus however much on-demand depth you give it.
 
@@ -50,7 +53,7 @@ Two core files were over budget and got split into a thin essential plus a deep 
 | `core/component-api.md` (904) | `core/component-api-deep.md` (1,527) |
 | `core/agent-behavior.md` (996) | `core/agent-behavior-patterns.md` (947) |
 
-That split cut the per-request dependency load from **4,143 → 2,103 tokens** without losing any content — the depth simply stopped being mandatory.
+That split cut the per-request dependency load from **4,143 → 2,073–2,241 tokens** without losing any content — the depth simply stopped being mandatory.
 
 ## Repo layout
 

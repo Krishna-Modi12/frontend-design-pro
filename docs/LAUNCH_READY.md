@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 9 gates · registry 1,857 tokens · heaviest request 5,512 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 9 gates · registry 1,837 tokens · heaviest request 5,482 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 38 golds plus 6 deliberate anti-examples = 44 files). A launch audience fact-checks.
 
@@ -25,14 +25,14 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 1,857
+frontend-design-pro is a registry instead of a document. SKILL.md is 1,837
 tokens — identity, an anti-slop wall, and a 16-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 305,000 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 5,512 tokens.
-The lightest loads 4,744. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 5,482 tokens.
+The lightest loads 4,714. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Going from 11 skills to
 16 grew the always-loaded registry by 353 tokens.
 
@@ -95,12 +95,12 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 1,857 tokens. That's all that's always loaded.
+2/ SKILL.md is 1,837 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 5,512 tokens.
+Heaviest possible request: 5,482 tokens.
 Reference material available: 305,784 tokens.
 
 3/ The economics of this are the whole point.
@@ -193,13 +193,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 1,857 tokens, always loaded. Routing table + anti-slop wall.
-- 16 skills, 801–1,588 tokens each. **One** loads per request.
+- `SKILL.md` — 1,837 tokens, always loaded. Routing table + anti-slop wall.
+- 16 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 76 references, 305,784 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **4,744 to 5,512 tokens.** A gate fails the build
+Measured per-request load: **4,714 to 5,482 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
@@ -250,9 +250,11 @@ front-load everything.
   coverage + strict compilation, and says so rather than implying more.
 - Reference depth is uneven — `design-system` has 14 references, the newest
   skills have 1–2.
-- No screenshot of the showcase. These releases were cut by an agent with no
-  browser, and a broken image would be worse than an honest gap. Two commands
-  and you have it running locally; the repo documents how to contribute one.
+- The showcase screenshot is captured by hand, not in CI. It is committed and
+  current as of this release, but a change to `demo/showcase` could make it
+  stale before anyone notices. `.github/SCREENSHOT_CONTRIBUTION.md` has the
+  exact recapture spec; the app itself is verified on every push by Gate 9,
+  which runs a real `next build` against its real dependencies.
 
 All of this is in `docs/ARCHITECTURE.md`. MIT licensed, contributions welcome.
 

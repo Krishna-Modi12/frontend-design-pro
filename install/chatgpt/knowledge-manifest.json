@@ -13,7 +13,7 @@
     "registry": [
       {
         "path": "SKILL.md",
-        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,857 tokens. Never omit this one."
+        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,837 tokens. Never omit this one."
       }
     ],
     "core_typical_request": [

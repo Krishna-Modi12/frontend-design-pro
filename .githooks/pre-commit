@@ -19,6 +19,53 @@ if [ -n "${FDP_ALLOW_CONCURRENT:-}" ]; then
   exit 0
 fi
 
+# ── Bulk-capture check ───────────────────────────────────────────────────────
+# The lock logic below answers one question: "is the committer the lock owner?"
+# The owner is waved through unconditionally. That is the hole — commit 30d7a90
+# swept 22 files a second session had written and not yet committed, and no check
+# applied, because the sweeper held the lock.
+#
+# What this CANNOT do: ask "did I write this file?". Git records no authorship for
+# a working-tree change, and detecting a second live session by process is not
+# viable either — one Claude Code session spawns ~11 `claude.exe` processes and
+# leaves ~2 without a `claude.exe` parent, so any process count either fires
+# constantly or not at all. Measured, not assumed; see docs/MAINTENANCE.md.
+#
+# What it CAN do: refuse to turn a large set of NEW files into a commit without
+# putting the list in front of whoever is committing. That is rule 4 of
+# MAINTENANCE.md ("read every file you are about to commit") mechanized instead
+# of left as advice.
+#
+# Only newly-added paths (`--diff-filter=A`) count. Both incidents were untracked
+# files being swept in; editing tracked files is ordinary work, and gating that
+# would make this fire on every normal commit — which is how guards get disabled.
+ADDED="$(git diff --cached --name-only --diff-filter=A 2>/dev/null || true)"
+N_ADDED="$(printf '%s\n' "$ADDED" | grep -c . || true)"
+if [ "${N_ADDED:-0}" -ge 5 ]; then
+  {
+    printf '\n  ────────────────────────────────────────────────────────────────────\n'
+    printf '  %s NEW file(s) staged — confirm you wrote them\n' "$N_ADDED"
+    printf '  ────────────────────────────────────────────────────────────────────\n\n'
+    printf '%s\n' "$ADDED" | sed 's/^/    /'
+    cat <<'MSG'
+
+  This is not a foreign-lock block. It fires for the lock owner too, because
+  the owner is exactly who swept another session's work into commit 30d7a90.
+
+  If every path above is yours, re-run with:
+
+      FDP_ALLOW_CONCURRENT=1 git commit ...
+
+  If any path is not, unstage it. Never 'git add -A' while a second writer
+  may be active — stage explicit paths instead.
+
+  Background: docs/MAINTENANCE.md -> "Unattended writers"
+
+MSG
+  } >&2
+  exit 1
+fi
+
 ME="$(guard_identity)"
 
 # No lock: the first committer claims it. Self-claiming is what makes this

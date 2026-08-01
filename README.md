@@ -39,12 +39,12 @@ The agent reads the registry, matches your request to one skill, and loads only 
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **1,857 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | ~2,100 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 801–1,588 tokens — one per request |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **1,837 tokens** — always loaded |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,073–2,241 tokens — the deps one skill declares |
+| `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **305,784 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,744–5,512 tokens, not 300,000.** Adding a skill costs ~71 tokens of always-loaded context — the registry grew just 353 tokens while going from 11 skills to 16.
+**A typical request loads 4,714–5,482 tokens, not 300,000.** Adding a skill costs ~71 tokens of always-loaded context — the registry grew just 353 tokens while going from 11 skills to 16.
 
 ## Skills (16)
 

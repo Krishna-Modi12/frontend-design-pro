@@ -1,20 +1,30 @@
-# Launch Kit
+# Launch Final — post these
 
-Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
+The four posts, final wording, nothing to substitute. Paste and send.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 22 evals · 11 regression cases · registry 1,837 tokens · heaviest request 5,482 tokens.
+Flat derivative of [LAUNCH_KIT.md](LAUNCH_KIT.md), which stays **canonical** — it carries the rationale, the verified-figures line, and the do-not-say list. If the two disagree, that file wins, and a numbers change has to touch both. [LAUNCH_READY.md](LAUNCH_READY.md) is the earlier extraction this supersedes; it differs only in the two edits below.
 
-> **Two claims to avoid.** They circulated in draft copy and neither survives checking:
-> - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 11 regression cases where AST and regex disagree, in both directions.
-> - *"42 gold examples."* There are 38 golds plus 6 deliberate anti-examples = 44 files. Say 38 golds, or 44 examples — not 42 golds.
->
-> A launch audience fact-checks. Ship the number you can reproduce on demand.
+**What changed from LAUNCH_READY.md**
+
+- **Token figures are the LF/git-index measurement**, which is what CI measures and what a reader who downloads the archive can reproduce. The earlier copy quoted a Windows working-tree measurement that reads marginally higher — registry 1,857 vs 1,837, ceiling 5,512 vs 5,482. The published release notes already print the LF numbers, so the old copy contradicted them in public. See the measurement note in [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Every post now names the installer.** One command, ten agents, each in its own native rules format — the most concrete adoption story the pack has, and it appeared in none of the four posts.
+- The "no screenshot of the showcase" limitation was **false** and is replaced with the caveat that is real: the screenshot is captured by hand, not in CI, so it can go stale.
+
+Figures below were verified against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 9 gates · registry 1,837 tokens · heaviest request 5,482 tokens.
+
+**Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 38 golds plus 6 deliberate anti-examples = 44 files). A launch audience fact-checks.
 
 ---
 
-## Hacker News
+## 1 · Hacker News
 
-**Title:** `Show HN: frontend-design-pro – a registry-routed frontend skill pack for AI agents`
+**Title**
+
+```
+Show HN: frontend-design-pro – a registry-routed frontend skill pack for AI agents
+```
+
+**Body**
 
 ```
 Most agent skill packs are one big markdown file. That design has a hard
@@ -47,7 +57,20 @@ What's enforced, rather than asserted:
 - 9 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
-New in this release: a 16th skill, agent-ops, covering the agent's own
+Installing it is one command. Ten agents get their own native rules file —
+Cursor's .cursor/rules/*.mdc, Copilot's .github/copilot-instructions.md,
+Windsurf, Continue.dev, Aider — written out in the format that agent actually
+reads, rather than a paragraph of setup instructions you follow by hand:
+
+    unzip frontend-design-pro-v*.skill -d ./
+    bash frontend-design-pro/setup.sh
+
+It detects the agent from the project, refuses to guess when two match, and
+never overwrites a file you already have without --force. The four hosts that
+need a web UI instead (Claude Desktop, ChatGPT, Gemini, Codex CLI) get a card
+with the real steps rather than a script pretending to automate one.
+
+It also includes agent-ops, a 16th skill covering the agent's own
 operating discipline rather than UI — token budgeting, cross-session memory,
 verification loops, subagent orchestration. And a demo that actually proves
 the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
@@ -79,7 +102,9 @@ Demo prompt: https://github.com/Krishna-Modi12/frontend-design-pro#see-it-in-act
 
 ---
 
-## Twitter / X
+## 2 · Twitter / X
+
+Post as a thread — each numbered block is one tweet.
 
 ```
 1/ Most AI agent skill packs are one giant markdown file.
@@ -151,7 +176,7 @@ haven't seen fail is a guardrail you haven't tested.
 Remaining known gaps are all in ARCHITECTURE.md. Shipping the caveats is part
 of shipping.
 
-10/ New in this release: agent-ops, a 16th skill — but this one is for the
+10/ Also in there: agent-ops, a 16th skill — but this one is for the
 agent's own discipline, not UI. Token budgeting, cross-session memory,
 verification loops, subagent orchestration.
 
@@ -159,16 +184,30 @@ Plus a showcase demo that's a REAL Next.js app — installed deps, a dev
 server that boots, CI running `next build` against it. Not stub-typed
 fantasy code. Copy the generating prompt from the repo and try it.
 
-11/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+11/ Install is one command:
+
+unzip frontend-design-pro-v*.skill -d ./
+bash frontend-design-pro/setup.sh
+
+It detects your agent and writes its native rules file — Cursor, Copilot,
+Windsurf, Continue.dev, Aider. Won't overwrite anything without --force.
+
+MIT licensed.
 
 https://github.com/Krishna-Modi12/frontend-design-pro
 ```
 
 ---
 
-## Reddit — r/ClaudeAI or r/webdev
+## 3 · Reddit — r/webdev
 
-**Title:** `frontend-design-pro — a registry-routed frontend skill pack for AI agents (MIT)`
+**Title**
+
+```
+frontend-design-pro — a registry-routed frontend skill pack for AI agents (MIT)
+```
+
+**Body** (Reddit accepts the markdown as-is)
 
 ```
 **The problem**
@@ -217,7 +256,22 @@ Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments) · agent-ops
 (token budgeting, memory persistence, verification loops, subagent
 orchestration — for the agent's own discipline, not UI).
 
-**New in this release**
+**Install**
+
+```
+unzip frontend-design-pro-v*.skill -d ./
+bash frontend-design-pro/setup.sh
+```
+
+Ten agents get their own native rules file, written in the format that agent
+actually reads — `.cursor/rules/*.mdc` for Cursor, `.github/copilot-instructions.md`
+for Copilot, plus Windsurf, Continue.dev and Aider. `setup.sh` detects which one
+from the project, refuses to guess when two match, and never overwrites a file you
+already have without `--force`. `setup.ps1` is the PowerShell port. The hosts that
+need a web UI (Claude Desktop, ChatGPT, Gemini, Codex CLI) get a card with the real
+steps instead of a script pretending to automate one.
+
+**Also in there**
 
 A demo that's actually installed and run: `demo/showcase` is a real
 Next.js 15 + React 19 app (own `package.json`, real deps — R3F, RHF+Zod),
@@ -251,9 +305,34 @@ https://github.com/Krishna-Modi12/frontend-design-pro
 
 ---
 
-## Pre-post checklist
+## 4 · Reddit — r/ClaudeAI
 
-- [ ] `npm run gates` green on a clean checkout
-- [ ] `.skill` archive attached to the GitHub release
-- [ ] CI green on `main` before the post goes up — a red badge on an HN front page is unrecoverable
-- [ ] Free for the first 3 hours to answer comments
+Same title and body as r/webdev above. The pack is agent-agnostic, so there is no Claude-specific variant to maintain — but do read each subreddit's self-promotion rules before posting, and consider leading the r/ClaudeAI comment with the Claude Code setup path (`docs/CLAUDE_SETUP.md`), since that is the host where lazy loading actually works.
+
+Do not cross-post the two within minutes of each other. Space them, and reply to comments on the first before opening the second.
+
+---
+
+## Posting checklist
+
+- [ ] CI green on `main` — a red badge on an HN front page is unrecoverable
+- [ ] Latest release page loads and the `.skill` archive is attached
+- [ ] Links in the body resolve (the repo URL and the `#see-it-in-action` anchor)
+- [ ] Figures in the posts match the latest release notes. This is the one that
+      bit before launch: the posts said 1,857 / 5,512 while the published notes
+      said 1,837 / 5,482, and "Measured, not estimated" is the first line a
+      reader checks. `grep 'Registry' docs/RELEASE_NOTES-v*.md | tail -1`
+- [ ] `bash setup.sh` works from the *published* archive, not just the repo —
+      unzip a release download into a scratch project and run it
+- [ ] Hacker News posted
+- [ ] Twitter/X thread posted
+- [ ] Reddit r/webdev posted
+- [ ] Reddit r/ClaudeAI posted
+- [ ] First 3 hours free to answer replies
+- [ ] Broken links fixed immediately if reported — permitted under the freeze
+
+## While the posts are live
+
+Answer with what the repo can prove. `docs/RESPONSE_TEMPLATES.md` has prepared replies for the common incoming cases, `docs/FAQ.md` covers the questions answerable from the current build, and `docs/AGENT_COMPATIBILITY.md` is the honest per-host matrix — reach for that one rather than claiming parity across agents.
+
+The most likely hostile question is why the vitest suite does not execute end to end. The answer is in the known-limitations block of every post above, which is why it is there rather than buried: examples import ~25 peer libraries that exist only as ambient type stubs, that is what makes strict compilation cheap, and the test gate asserts 1:1 coverage plus strict compilation instead of implying the suite ran.

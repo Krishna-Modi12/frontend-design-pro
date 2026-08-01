@@ -115,6 +115,22 @@ The lockfile itself is runtime state under the already-gitignored `.claude/`, so
 
 All eight branches of this were tested by watching them behave before the hook was trusted — including the one that matters, a foreign live lock sharing this session's git identity, which blocked as intended.
 
+### The hole that guard had, and the third incident
+
+It happened again on 2026-08-01, and the guard above could not have stopped it. Commit `30d7a90` swept 22 files a second session had written and had not yet committed, then `8c009d2` bumped, tagged and pushed the release — all while the session that authored those 22 files was still working and had not been asked.
+
+**Why the guard was silent.** It answers exactly one question: *is the committer the lock owner?* The owner is waved through unconditionally. The sweeping session **held the lock**, so no check applied to it. The guard was built to stop a foreign session from committing; the failure mode is the lock holder committing a foreign session's files, which is the mirror image and was never covered.
+
+**What was rejected, with the measurement.** The obvious fix — detect a second live session by counting Claude Code processes — does not work, and the numbers are recorded here so nobody spends an afternoon rediscovering it. One session spawns **11 `claude.exe` processes**, of which **2** have no `claude.exe` parent. A threshold of "more than one process" blocks every commit; "more than one root process" false-positives on a single session. Nothing readable from outside a process identifies which session it belongs to — `CLAUDE_CODE_SESSION_ID` lives in its environment, not in anything the hook can query.
+
+**What was implemented.** Git records no authorship for a working-tree change, so the hook cannot ask *"did I write this?"* It asks the answerable question instead: **five or more newly-added files (`--diff-filter=A`) block the commit and print the full list**, requiring `FDP_ALLOW_CONCURRENT=1` to proceed. That turns rule 4 above — *read every file you are about to commit* — from advice into a step you cannot skip by accident. It fires for the lock owner too, which is the entire point.
+
+Only added files count. Editing tracked files is ordinary work, and gating it would make the hook fire on every normal commit, which is how guards end up disabled.
+
+**Its limits, stated rather than discovered later.** A sweep of four or fewer new files passes silently — `dbf00b1`, which carried three unread `.github/` templates, would still get through. It also cannot distinguish a legitimate 22-file feature commit from a 22-file sweep; both stop and show you the list, and that is the intended cost. This narrows the failure, it does not close it. **Rule 1 — one session per working directory — is still the only real mitigation.**
+
+Five branches were tested by watching them behave: four new files commits cleanly; five blocks and lists them; the escape hatch overrides; a foreign live lock still blocks; a stale lock still reclaims.
+
 ## Being a maintainer instead of a builder
 
 The work that actually matters now is not in this repo:

@@ -134,7 +134,7 @@
     "skills": 16,
     "core_files": 8,
     "reference_depth_tokens": 305784,
-    "registry_tokens": 1857,
+    "registry_tokens": 1837,
     "ci_constraints_detail": "51 checks across 51 distinct IDs (16 parser AST + 35 regex)"
   },
   "changelog": {
