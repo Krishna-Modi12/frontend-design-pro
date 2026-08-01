@@ -5,7 +5,7 @@
  * - Bottom sheet (vaul) with snap points
  * - Pull-to-refresh with state machine
  * - Swipe-to-dismiss list item (Framer Motion)
- * Stack: React 19, Next.js, Tailwind v4, vaul, motion/react
+ * Stack: React 19, Next.js, Tailwind v4, vaul, motion
  */
 
 'use client'
