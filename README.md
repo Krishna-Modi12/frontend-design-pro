@@ -8,7 +8,16 @@ Most prompt packs tell an agent what good UI looks like. This one proves it: eve
 
 ## Install in 30 seconds
 
-Pick your agent — each row is the real setup path, not an approximation. Detail and troubleshooting: click through to the per-agent doc.
+If your agent keeps its rules in a file — Cursor, Copilot, Windsurf, Continue.dev, Aider — the installer writes it for you:
+
+```bash
+unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
+bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
+```
+
+`setup.sh --list` names every adapter, `setup.sh cursor` skips detection, `--dry-run` shows what it would write, and nothing is overwritten without `--force`. `setup.ps1` is the PowerShell port. The files it copies live in [`install/`](install/) if you would rather place them yourself.
+
+The remaining hosts need a web UI or a merge into a file your repo owns, so they stay manual. Every row below is the real setup path, not an approximation — click through for detail and troubleshooting.
 
 | Agent | Steps |
 |---|---|
@@ -20,7 +29,7 @@ Pick your agent — each row is the real setup path, not an approximation. Detai
 | **[GitHub Copilot](docs/COPILOT_SETUP.md)** | 1. Unzip into the repo <br> 2. Create `.github/copilot-instructions.md` with a *short* routing instruction (not the full `AGENT_SYSTEM_PROMPT.md`) <br> 3. Optional: path-scoped `.github/instructions/*.instructions.md` with `applyTo` <br> ⚠️ Always-loaded in full, not fetch-on-demand — the 76 references are out of reach unless pasted by hand |
 | **[Gemini](docs/GEMINI_SETUP.md)** | 1. Put `SKILL.md` in the system instruction (add `core/*.md` + skill routers too for a broad integration — the large context window absorbs it) <br> 2. For true on-demand loading, wire function-calling to fetch pack files by path <br> ⚠️ Static context by default, not lazy loading — a big window makes the cost affordable, not free |
 
-**Don't see your agent?** [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
+**Don't see your agent?** [`install/`](install/) adds adapters for Windsurf, Continue.dev, Aider and OpenAI Codex CLI — untested against the matrix, but following each host's documented rules format. [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
 
 `SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit.
 
@@ -133,8 +142,6 @@ Every release is produced by `scripts/build_release.py` with 9 blocking gates:
 7. **Evals + coverage** — 22 eval cases; every gold has a test
 8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
 9. **Showcase build** — `demo/showcase/` (the real, installed Next.js app) builds clean under `next build` against its actual vendor typings
-
-9. **Showcase build** — `demo/showcase/` compiles and builds under `next build` with its real dependencies
 
 Then: path integrity, reference-depth audit, archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive.
 

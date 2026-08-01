@@ -443,8 +443,12 @@ def gate_showcase() -> bool:
     return True
 
 
-ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo"]
-ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE"]
+# `install/` and the two setup scripts ship because the archive IS the transport
+# layer for every host that is not Claude Code. An adapter that exists only in
+# the git repo is unreachable to someone who downloaded a .skill from Releases —
+# exactly the audience the adapters were written for.
+ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo", "install"]
+ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE", "setup.sh", "setup.ps1"]
 EXCLUDE_TOP = {"src"}
 EXCLUDE_PATTERNS = re.compile(r"(^|/)(\.git|node_modules|__pycache__|test_outputs|\.next|out)(/|$)|\.(tmp|bak|draft|pyc)$")
 

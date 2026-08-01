@@ -1,0 +1,78 @@
+{
+  "name": "frontend-design-pro — ChatGPT knowledge curation guide",
+  "kind": "suggested-file-list",
+  "note": "A starting point you adjust per use case, not a distributed bundle. There is no slim pack artifact: you unzip the one .skill archive and upload a subset of its files by hand. A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT, and the pack has 8 core files, 16 skill routers and 76 references — so pick for the work you actually do and swap entries as that work changes. A GPT scoped to landing pages and design systems beats one trying to cover all 16 skills.",
+  "host": "ChatGPT Custom GPT",
+  "knowledge_file_cap": 20,
+  "pack_totals": {
+    "core_files": 8,
+    "skill_routers": 16,
+    "references": 76
+  },
+  "suggested_start": {
+    "registry": [
+      {
+        "path": "SKILL.md",
+        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,857 tokens. Never omit this one."
+      }
+    ],
+    "core_typical_request": [
+      {
+        "path": "core/design-tokens.md",
+        "why": "Declared core dep of the design/layout-facing skills."
+      },
+      {
+        "path": "core/component-api.md",
+        "why": "Declared core dep of the component/data/form-facing skills."
+      },
+      {
+        "path": "core/accessibility-baseline.md",
+        "why": "Universal dep — inherited by every skill that produces code."
+      },
+      {
+        "path": "core/validate-checklist.md",
+        "why": "Universal dep — the 51 constraints the model self-checks against by inspection."
+      }
+    ],
+    "skill_routers_example": [
+      {
+        "path": "skills/landing-pages/SKILL.md",
+        "why": "Example pick. Replace with the routers your requests actually hit."
+      },
+      {
+        "path": "skills/design-system/SKILL.md",
+        "why": "Example pick. Replace with the routers your requests actually hit."
+      },
+      {
+        "path": "skills/forms/SKILL.md",
+        "why": "Example pick. Replace with the routers your requests actually hit."
+      }
+    ],
+    "references_example": [
+      {
+        "path": "skills/landing-pages/references/landing-patterns.md",
+        "why": "Example depth pick. Only useful if it matches the work this GPT does."
+      },
+      {
+        "path": "skills/design-system/references/color-palettes.md",
+        "why": "Example depth pick. Only useful if it matches the work this GPT does."
+      },
+      {
+        "path": "skills/design-system/references/dark-mode.md",
+        "why": "Example depth pick. Only useful if it matches the work this GPT does."
+      }
+    ]
+  },
+  "slots": {
+    "used_by_suggested_start": 11,
+    "left_for_your_own_picks": 9
+  },
+  "adjusting_this_list": [
+    "Swap the three example skill routers for the ones matching your requests — check the registry table in SKILL.md for the trigger keywords.",
+    "Spend the 9 free slots on the references/*.md your skills actually point at, not on more routers.",
+    "core/agent-behavior.md and core/user-intake.md are worth a slot if you want the behavioural preamble and the intake questions to survive retrieval.",
+    "More files does not mean more depth: retrieval is chunked semantic search, so extra uploads mostly add chunks competing for the same slots."
+  ],
+  "not_covered_here": "The 20-file cap and per-file size limits are OpenAI's and can move; docs/CHATGPT_SETUP.md links the current source. The gate scripts cannot run inside ChatGPT — a recited constraint ID is a claim, not a verified result.",
+  "full_setup": "docs/CHATGPT_SETUP.md"
+}
