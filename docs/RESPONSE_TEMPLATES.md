@@ -202,3 +202,110 @@ place instead of split across two.
 Happy to help narrow down a specific failure if the output isn't
 self-explanatory — paste the relevant chunk and name the file it's pointing at.
 ````
+
+---
+
+# Public thread replies
+
+Templates A–F answer people who have already found the repo. These answer people who have not —
+HN, Reddit, X — where the reply is read by hundreds who will never comment, and an overclaim is
+permanent. Same rule as above: every number here is measured, and the honest caveat ships with
+the number rather than after someone finds it.
+
+Figures below are gate-reported and re-checkable with `python scripts/build_release.py --dry-run`.
+
+---
+
+## Template G: "How is this different from <other skill pack>?"
+
+````text
+Mainly the loading model. Most packs are one large file you load in full. This one
+loads a 1,837-token registry that does nothing but route, then pulls in the single
+skill your request matched — measured 4,714–5,482 tokens all-in, including that
+skill's shared core dependencies. Reference depth sits behind that and is only read
+when the skill file points at it for your specific task.
+
+That is enforced rather than intended: a gate fails the build if any skill exceeds
+3,000 tokens on its own or 8,000 with its dependencies, so the budget can't quietly
+rot as content gets added.
+
+The other difference is that the quality claims are machine-checked — 51 constraints
+(16 AST checks through the TypeScript compiler API, 35 regex) across 9 release-blocking
+gates. If a gate fails, no archive is produced.
+
+Whether that's better for you depends on your host. Real lazy loading needs an agent
+that can open a file mid-conversation, and Claude Code is the only one that genuinely
+does. Elsewhere it degrades to retrieval or pasting — the routing and the constraints
+survive, the on-demand depth doesn't. Full per-host matrix is in
+docs/AGENT_COMPATIBILITY.md.
+````
+
+---
+
+## Template H: "Why would I trust AI-generated code?"
+
+````text
+You shouldn't, and the pack doesn't ask you to. It is a constraint system, not a
+quality guarantee.
+
+What's actually verified on every release: gold examples compile under `tsc --noEmit`
+with strict and noImplicitAny; 16 semantic constraints run over the AST; 35 regex
+constraints run over the source; the showcase demo gets a real `next build` against
+its actually-installed dependencies. Nine gates, all release-blocking — a failure
+means no archive gets built at all.
+
+What is not verified, stated plainly because you'd find it anyway: the vitest suite
+does not execute end to end. The examples import ~25 peer libraries that exist only as
+ambient type stubs — that's what makes strict compilation cheap — so the test gate
+asserts 1:1 test coverage plus strict compilation rather than implying the suite ran.
+That gap is written into docs/ARCHITECTURE.md rather than left for you to discover.
+
+An agent telling you code "passes A11Y-01" without running anything is a claim, not a
+result. Run the gates yourself if enforcement matters to you.
+````
+
+---
+
+## Template I: "Does this work with Cursor / <my agent>?"
+
+````text
+Yes for Cursor, with one caveat worth knowing up front.
+
+Install: run `setup.sh` (or `setup.ps1` on Windows) from the repo — it detects Cursor
+from `.cursor/` and drops in `.cursor/rules/frontend-design-pro.mdc`. It won't
+overwrite an existing file without `--force`. Manual steps and troubleshooting are in
+docs/CURSOR_SETUP.md.
+
+The caveat: Cursor does lazy loading only partially — you get full reference depth if
+you `@`-reference the file you want, but it won't reach for one on its own the way
+Claude Code does. Routing and the anti-slop rules work regardless.
+
+Adapters also exist for Copilot, Windsurf, Continue.dev, Aider, Claude, ChatGPT,
+Gemini and Codex CLI, under `install/`. Four of those (Windsurf, Continue, Aider,
+Codex CLI) follow each host's documented rules format but are not in the tested
+matrix, and are marked untested wherever they're mentioned — docs/AGENT_COMPATIBILITY.md
+is the honest version, and I'd rather you trust that than this comment.
+````
+
+---
+
+## Template J: "Is this free? What's the catch?"
+
+````text
+MIT licensed, and that's the whole story — the repo and the `.skill` archive attached
+to each release are both free. There's no paid tier, no account, no telemetry in the
+pack.
+
+The only thing it costs you is whatever your agent already charges for tokens, and the
+loading model is built to keep that small: ~1,800 tokens to route, ~5k for a typical
+request rather than pulling the entire pack into context.
+````
+
+---
+
+## Template K: "Link?" / one-line reply
+
+````text
+https://github.com/Krishna-Modi12/frontend-design-pro — MIT, and the README's claims
+are the ones the gate chain actually checks.
+````
