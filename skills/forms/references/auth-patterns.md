@@ -745,7 +745,7 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 const step1Schema = z.object({ name: z.string().min(2, "Name must be at least 2 characters") });
 const step2Schema = z.object({ role: z.enum(["engineer", "designer", "manager", "other"], { required_error: "Select a role" }) });

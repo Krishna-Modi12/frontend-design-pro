@@ -27,7 +27,7 @@ Vitest + jsdom · `@testing-library/react` + `user-event` · `jest-axe` · Playw
 9. **Per component type:** forms assert error wiring via `aria-describedby`; data components assert the empty state; overlays assert focus return and `aria-hidden` on siblings; interactive components assert keyboard activation.
 
 ## Patterns
-- **Mock policy** — `framer-motion` → passthrough proxy; `next/navigation` → stub router; R3F/drei/`three` → `Canvas` becomes a `<div>` (no WebGL in jsdom); TanStack Query → real provider, mocked fetch; recharts → sized `<div>`.
+- **Mock policy** — `motion/react` → passthrough proxy; `next/navigation` → stub router; R3F/drei/`three` → `Canvas` becomes a `<div>` (no WebGL in jsdom); TanStack Query → real provider, mocked fetch; recharts → sized `<div>`.
 - **axe pass** — `expect(await axe(container)).toHaveNoViolations()` on mounted DOM; open overlays first.
 - **Play functions** — Storybook CSF3 `play` with `userEvent` doubles as an interaction test.
 - **e2e** — Playwright with role selectors, `checkA11y`, network mocking, keyboard/focus assertions.

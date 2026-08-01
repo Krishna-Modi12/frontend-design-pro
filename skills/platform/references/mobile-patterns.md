@@ -340,7 +340,7 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
 
 ## 5. Swipe Gestures (Framer Motion)
 
-Install: `npm install framer-motion`
+Install: `npm install motion`
 
 ### Swipe-to-Delete List Item
 
@@ -348,7 +348,7 @@ Install: `npm install framer-motion`
 // components/SwipeToDelete.tsx
 "use client";
 
-import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useTransform, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 
@@ -428,7 +428,7 @@ export function SwipeToDeleteList() {
 // components/SwipeNavigator.tsx
 "use client";
 
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
@@ -913,7 +913,7 @@ export default function OfflinePage() {
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 

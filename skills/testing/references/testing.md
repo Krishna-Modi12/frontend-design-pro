@@ -32,14 +32,14 @@ Query priority (Testing Library): `getByRole` > `getByLabelText` > `getByText` >
 ## 4. Mock Policy
 
 Mock the dependency, never the component under test.
-- `framer-motion` → mock so `motion.*` renders a plain element and `AnimatePresence` is a passthrough; real animation breaks fake timers and async assertions.
+- `motion/react` → mock so `motion.*` renders a plain element and `AnimatePresence` is a passthrough; real animation breaks fake timers and async assertions.
 - `next/navigation` / `next/router` → mock `useRouter`, `usePathname`, `useSearchParams`.
 - Three.js / `@react-three/fiber` / Spline → mock `Canvas` to a `<div>`; WebGL has no jsdom backend.
 - TanStack Query → wrap in a real `QueryClientProvider` with a `createMockQueryClient()` (retries off, `gcTime: Infinity`); mock the fetch layer, not the hooks.
 - Heavy charts (recharts) → mock `ResponsiveContainer` to a fixed-size `<div>` so children render.
 
 ```tsx
-vi.mock('framer-motion', () => ({
+vi.mock('motion/react', () => ({
   motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
   AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
   useReducedMotion: () => true,

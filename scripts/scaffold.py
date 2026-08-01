@@ -204,7 +204,7 @@ export default function Dashboard() {{
 # Asymmetric hero (8/12 text + 4/12 visual), social proof, feature grid, testimonial, dark CTA
 # ─────────────────────────────────────────────
 TEMPLATE_LANDING = '''\
-import {{ motion, useReducedMotion }} from "framer-motion";
+import {{ motion, useReducedMotion }} from "motion/react";
 // @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap')
 
 // Intent: CREATE_PAGE · Product: marketing · Dials: DV=8 MI=6 VD=3

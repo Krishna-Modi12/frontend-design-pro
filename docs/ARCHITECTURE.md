@@ -134,7 +134,7 @@ The two suites are complementary, not redundant — 16 semantic + 35 syntactic =
 
 Honest list, all verified against the current release.
 
-1. **The vitest suite does not execute end-to-end.** Gold examples import ~25 peer libraries (`three`, `framer-motion`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is also why `vitest run` cannot resolve them: 28 of 37 test files fail at import time. Registering `@testing-library/jest-dom` via `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; the rest need real dependencies. Gate 7 therefore asserts the enforceable contract — 1:1 coverage plus strict compilation — and says so. Closing this means either adding the peer dependencies or shipping runtime stubs.
+1. **The vitest suite does not execute end-to-end.** Gold examples import ~25 peer libraries (`three`, `motion/react`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is also why `vitest run` cannot resolve them: 28 of 37 test files fail at import time. Registering `@testing-library/jest-dom` via `vitest.setup.ts` took the suite from 32 to **43 of 50 tests passing**; the rest need real dependencies. Gate 7 therefore asserts the enforceable contract — 1:1 coverage plus strict compilation — and says so. Closing this means either adding the peer dependencies or shipping runtime stubs.
 
 2. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
 

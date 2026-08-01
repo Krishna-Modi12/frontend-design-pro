@@ -5,13 +5,13 @@
  * - Bottom sheet (vaul) with snap points
  * - Pull-to-refresh with state machine
  * - Swipe-to-dismiss list item (Framer Motion)
- * Stack: React 19, Next.js, Tailwind v4, vaul, framer-motion
+ * Stack: React 19, Next.js, Tailwind v4, vaul, motion/react
  */
 
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react'
 import { Drawer } from 'vaul'
 
 // --- Bottom Tab Navigation ---

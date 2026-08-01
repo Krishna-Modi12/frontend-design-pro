@@ -283,7 +283,7 @@ export default function HeroSection() {
 ```jsx
 'use client'
 import { Suspense, lazy, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 const Spline = lazy(() => import('@splinetool/react-spline'))
 

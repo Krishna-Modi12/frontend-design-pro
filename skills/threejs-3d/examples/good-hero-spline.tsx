@@ -15,7 +15,7 @@
 'use client'
 
 import { Suspense, lazy, useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 
 const Spline = lazy(() => import('@splinetool/react-spline'))
 

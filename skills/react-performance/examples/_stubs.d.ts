@@ -16,7 +16,7 @@ declare module "@storybook/testing-library";
 declare module "@tanstack/react-query";
 declare module "@tanstack/react-table";
 declare module "@tanstack/react-virtual";
-declare module "framer-motion";
+declare module "motion/react";
 declare module "gsap";
 declare module "gsap/ScrollTrigger";
 declare module "gsap/SplitText";

@@ -13,7 +13,7 @@
 //   • Realistic testimonial names with country context
 
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 const EASE_OUT = [0.23, 1, 0.32, 1];
 
