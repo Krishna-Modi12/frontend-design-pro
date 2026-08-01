@@ -1,7 +1,7 @@
 ---
 name: iconography
 description: Icon systems — sizing, weight matching, colour inheritance, hit areas, SVG accessibility, and avatar patterns.
-version: "14.2.2"
+version: "14.2.3"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

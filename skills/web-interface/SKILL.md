@@ -1,7 +1,7 @@
 ---
 name: web-interface
 description: UI review and audit — Vercel Web Interface Guidelines, copywriting, typography detail, contrast, touch targets, safe areas.
-version: "14.2.2"
+version: "14.2.3"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

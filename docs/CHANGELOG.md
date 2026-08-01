@@ -4,6 +4,26 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.2.3] — 2026-08-01
+
+`## [14.2.2]` below called itself "last engineering release before the freeze. No features." This one ships a feature anyway — `install/` and `setup.sh`/`setup.ps1` were already substantially built, uncommitted, before the freeze took effect. Rather than let real, already-audited work rot uncommitted or discard it on a technicality, it ships once as a deliberate, explicit exception. The freeze resumes immediately after: no further features until it lifts on its own documented terms in `docs/MAINTENANCE.md`.
+
+### Added — native per-agent adapters and a one-line installer
+
+`install/` — one directory per agent, holding the file you'd otherwise write by hand after reading a setup doc: Cursor (`.cursor/rules/*.mdc`), Copilot (`copilot-instructions.md` + path-scoped instructions), Windsurf, Continue.dev and Aider (all four auto-installable). Claude, ChatGPT, Gemini and Codex CLI stay manual — there's no file an installer can safely drop in for a web-UI knowledge upload or a system-instruction field, so their cards give the real steps instead of pretending to automate one.
+
+`setup.sh` / `setup.ps1` detect the agent from marker files already in the target directory (`.cursor/`, `.windsurf/`, `.continue/`, `.aider.conf.yml`, `.github/copilot-instructions.md`), refuse to guess when more than one matches, and never overwrite an existing file without `--force`/`-Force` — these are filenames other tools legitimately own.
+
+Windsurf, Continue.dev, Aider and Codex CLI are marked **untested** everywhere they're mentioned: each adapter follows that host's own documented rules format, but none of the four is in `docs/AGENT_COMPATIBILITY.md`'s tested matrix. Honest about the gap rather than silently claiming parity with the six hosts that are.
+
+`install/`, `setup.sh` and `setup.ps1` now ship inside the `.skill` archive itself (`scripts/build_release.py`'s `ARCHIVE_FROM_SRC`/`ARCHIVE_FROM_REPO`) — the archive is the transport layer for every host that isn't Claude Code, so an adapter that exists only in the git repo is unreachable to someone who downloaded the archive from Releases.
+
+### Fixed
+
+`metadata.json`'s top-level description still said "8 release-blocking gates" — the `stats.release_gates` field itself already said 9; only the prose had drifted.
+
+---
+
 ## [14.2.2] — 2026-07-30
 
 Last engineering release before the freeze. No features. Three defects, one honesty gap, one policy.
