@@ -306,6 +306,5 @@ request rather than pulling the entire pack into context.
 ## Template K: "Link?" / one-line reply
 
 ````text
-https://github.com/Krishna-Modi12/frontend-design-pro — MIT, and the README's claims
-are the ones the gate chain actually checks.
+https://github.com/Krishna-Modi12/frontend-design-pro — MIT, and the README's claims are the ones the gate chain actually checks.
 ````
