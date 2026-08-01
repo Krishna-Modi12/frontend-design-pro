@@ -37,11 +37,13 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | Deciding what to load/skip, measuring cost, avoiding re-reads, caching | `references/token-optimization.md` |
+| Token-efficient wire format for bulk structured data in prompts | `references/toon-format.md` |
 | What to persist across sessions, memory file shape, staleness/invalidation | `references/memory-persistence.md` |
 | Incorporating feedback durably without overfitting to one correction | `references/continuous-learning.md` |
 | Self-verification before reporting done — compile/lint/test, diff re-reads | `references/verification-loops.md` |
 | Identifying independent work, batching tool calls, avoiding shared-state races | `references/parallelization.md` |
 | Decomposing tasks across subagents, grounding prompts, owning integration | `references/subagent-orchestration.md` |
+| Packaging a pack for cross-agent discovery — depth-2 walk, portable frontmatter, transport caps | `references/skill-packaging.md` |
 
 ## Constraints
 No claim of "done" without a run/compile/test step actually executed · no persisted memory fact without a staleness signal · no parallel dispatch across tasks that share a file or mutable state · no subagent prompt that omits facts already known to the dispatcher · no re-reading a file already fully in context without a stated reason.

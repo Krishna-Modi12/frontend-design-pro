@@ -52,3 +52,47 @@ Suppose a task decomposes into: (1) write reference content for topic A, (2) wri
 3. Identify any shared/integration file up front and reserve its edits for the dispatcher alone.
 4. After each subagent returns, read its actual changed files and re-run the task's real verification steps before relying on its summary.
 5. Apply shared-file integration personally, reviewing the combined result, not just each individual contribution.
+
+## Review in two passes, not one
+
+Reviewing delegated work in a single pass conflates two different questions and reliably lets
+one of them through:
+
+1. **Spec compliance** — does this do what the task said? Judged against the written task
+   only, ignoring style entirely. Fails here mean the work is wrong, not merely rough.
+2. **Code quality** — is it well made? Judged only once pass 1 is clean.
+
+Running them together produces the familiar failure: a reviewer polishes naming and structure
+on a change that does not implement the requested behaviour. Separate the passes and pass 1
+becomes cheap to answer and hard to skip.
+
+Report issues **by severity**, not in file order. A reviewer listing findings top-to-bottom
+buries the blocking one among nits.
+
+## Size the unit before dispatching
+
+Delegated tasks should be **small enough to state in one sentence and finish in a few minutes**
+of agent work. The forcing function matters more than the exact number: a task that cannot be
+described in a sentence has not been decomposed yet, and a task that runs long accumulates
+context the reviewer does not have.
+
+The reason is verification, not throughput. A small unit's output can be checked against its
+own task statement; a large one has to be checked against the whole plan, which is when
+reviewers start trusting summaries — the failure the rest of this file exists to prevent.
+
+## Dispatch fresh, not continued
+
+Give each unit a **fresh agent with the facts it needs**, rather than continuing one long-lived
+agent through a sequence of tasks. A continued agent carries prior context that makes its
+output harder to attribute — when something is wrong, you cannot tell whether the task was
+misstated or an earlier turn poisoned it. Fresh dispatch keeps the input to each unit explicit
+and therefore auditable, which is the same reason the existing file insists on grounding
+prompts with concrete facts rather than references to earlier conversation.
+
+## Check for an applicable process before starting
+
+Before a non-trivial task, check whether an established procedure already covers it and follow
+that instead of improvising. Improvised process is where verification steps get quietly
+dropped — not through disagreement, but because nobody wrote them down at the moment they were
+due. This is the orchestration-level form of the same discipline `verification-loops.md`
+applies to individual changes.

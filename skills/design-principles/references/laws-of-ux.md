@@ -35,6 +35,7 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Flow** | Immersion requires uninterrupted focus | No unprompted modals, no layout shift, no focus theft |
 | **Postel's Law** | Liberal in what you accept, conservative in what you send | Accept "(555) 123-4567", " 555 1234567 " and normalise. Never reject a phone number for formatting |
 | **Paradox of the Active User** | Nobody reads the manual | The interface must teach itself in place. Empty states are the documentation |
+| **Goal Gradient Effect** | Motivation increases as a goal gets closer | Show progress against a finite target and make early progress visible. A stepped form completes better than the same steps unlabelled; a bar starting at 0% converts worse than one showing a step already banked |
 
 ## Perception (Gestalt)
 
@@ -56,6 +57,7 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Pareto Principle** | ~80% of effects from ~20% of causes | Find the 20% of flows carrying 80% of traffic and make those excellent first |
 | **Parkinson's Law** | Work expands to fill available time | Show a realistic completion estimate; artificial delay ("verifying…") is dishonest, not reassuring |
 | **Cognitive Bias** | Systematic errors of judgement | Beware anchoring in pricing tables and confirmation bias in your own design reviews |
+| **Design for Extremes** | Design for the least and most capable users, not the median | The novice path completes without prior knowledge; the expert path is not gated behind it. Shortcuts, bulk actions and dense views coexist with the guided flow rather than replacing it |
 
 ## How to apply in review
 

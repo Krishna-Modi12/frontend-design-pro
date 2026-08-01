@@ -49,6 +49,7 @@ Load only for the specific task:
 | motion.*, AnimatePresence, variants, layoutId, springs | `references/framer-motion.md` |
 | All 12 GSAP plugins, useGSAP, timelines | `references/gsap.md` |
 | Scroll-driven patterns, parallax, pinning | `references/scroll-experience.md` |
+| Smooth/momentum scroll — Lenis options, RAF loop, GSAP ticker handoff, reduced-motion gating | `references/lenis-smooth-scroll.md` |
 | React View Transition API, CSS recipes, Next.js integration | `references/view-transitions.md` |
 
 ## Constraints
