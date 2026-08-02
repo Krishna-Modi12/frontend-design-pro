@@ -111,6 +111,25 @@ That means every registered component must tolerate **partially-populated props*
 skeleton for absent fields rather than throwing. Design each one to accept its own props as
 incomplete, and never gate the mount on a field the model has not finished emitting.
 
+## Render-once vs. persistent
+
+Tambo splits registered components in two, and the distinction is architectural rather than
+cosmetic. A **generative** component renders once per message — a chart, a summary, output.
+An **interactable** one persists across turns and can be revised by either side:
+
+```ts
+const InteractableNote = withInteractable(Note, {
+  componentName: "Note",
+  description: "A note supporting title, content and colour changes",
+  propsSchema: z.object({ title: z.string(), content: z.string() }),
+})
+```
+
+Decide which a component is *before* registering it. A persistent component needs an identity
+the model can refer back to and a merge rule for when the user edits a field the model is also
+writing; a render-once component needs neither and is much cheaper to reason about. Defaulting
+everything to persistent is how a generative surface turns into an unowned two-writer state bug.
+
 ## Hooks worth mirroring
 
 `TamboProvider` takes `components`, `tools`, `mcpServers`, `contextHelpers`.

@@ -24,7 +24,7 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Peak-End Rule** | Experience is judged by its peak and its end | Invest in the success state and the error recovery — those are the peaks people carry |
 | **Zeigarnik Effect** | Interrupted tasks are remembered | Progress indicators and saved drafts create productive tension; use for onboarding completion |
 | **Selective Attention** | Users filter to goal-relevant stimuli | Banner blindness is real — never put critical info in something that looks like an ad |
-| **Goal-Gradient Effect** | Motivation rises near the goal | Show endowed progress ("Step 2 of 4", pre-filled first step) to pull users forward |
+| **Goal-Gradient Effect** | Motivation rises near the goal | Show endowed progress ("Step 2 of 4", pre-filled first step) to pull users forward — a bar starting at 0% converts worse than one showing a step already banked |
 
 ## Interaction & speed
 
@@ -35,7 +35,6 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Flow** | Immersion requires uninterrupted focus | No unprompted modals, no layout shift, no focus theft |
 | **Postel's Law** | Liberal in what you accept, conservative in what you send | Accept "(555) 123-4567", " 555 1234567 " and normalise. Never reject a phone number for formatting |
 | **Paradox of the Active User** | Nobody reads the manual | The interface must teach itself in place. Empty states are the documentation |
-| **Goal Gradient Effect** | Motivation increases as a goal gets closer | Show progress against a finite target and make early progress visible. A stepped form completes better than the same steps unlabelled; a bar starting at 0% converts worse than one showing a step already banked |
 
 ## Perception (Gestalt)
 

@@ -8,6 +8,7 @@ Scroll animation needed?
 ├── Scroll-scrubbed timeline (element moves with scroll) → GSAP ScrollTrigger
 ├── Parallax depth layers → GSAP ScrollTrigger or CSS scroll-timeline
 ├── Sticky pin sequence (step-through storytelling) → GSAP pin + scrub
+├── Cinematic fly-through hero → scroll-scrubbed video (see below)
 └── CSS-only scroll progress → CSS scroll-timeline (modern browsers)
 ```
 
@@ -188,6 +189,56 @@ tl.fromTo(".step-1", { opacity: 0 }, { opacity: 1, duration: 0.25 })
   animation-range: entry 0% entry 30%;
 }
 ```
+
+## Scroll-scrubbed video
+
+Driving `video.currentTime` from scroll position — the cinematic "fly through" hero. Reach for
+it when the shot exceeds a WebGL budget. Three details decide whether it locks to the finger:
+
+- **Seek a blob, not the network.** A streamed `<video>` seeks to whatever keyframe it has
+  buffered, so scrubbing stalls or snaps. Fetch once, seek an object URL.
+- **Never assign `currentTime` from the scroll event.** Lerp toward it in a RAF loop — the
+  discipline `lenis-smooth-scroll.md` applies to scroll position, applied to time.
+- **Encode short GOPs**, or seeks land on the wrong frame. Ship separate 16:9 and 9:16 encodes
+  rather than `object-cover` cropping one.
+
+```tsx
+function ScrubVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const target = useRef(0);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let url = "";
+    fetch(src).then(r => r.blob()).then(b => { url = URL.createObjectURL(b); v.src = url; });
+
+    const onScroll = () => {
+      const { top, height } = v.parentElement!.getBoundingClientRect();
+      target.current = Math.min(Math.max(-top / (height - innerHeight), 0), 1);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+
+    let raf = 0;
+    const tick = () => {
+      if (v.duration) v.currentTime += (target.current * v.duration - v.currentTime) * 0.1;
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => { removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); URL.revokeObjectURL(url); };
+  }, [src]);
+
+  return (
+    <div className="relative h-[400vh]">
+      <video ref={ref} muted playsInline preload="auto" poster="/hero-poster.jpg"
+             className="sticky top-0 h-screen w-full object-cover" />
+    </div>
+  );
+}
+```
+
+`muted` and `playsInline` are load-bearing — iOS refuses programmatic seeking without them.
+Under reduced motion the effect returns early and `poster` stands in.
 
 ## prefers-reduced-motion — scroll animations
 

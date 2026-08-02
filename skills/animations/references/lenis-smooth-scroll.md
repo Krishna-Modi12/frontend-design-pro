@@ -34,6 +34,7 @@ animations skill applied to the scroll container.
 | `autoRaf` | `false` | you must drive the frame loop yourself unless you set this |
 | `anchors` | `false` | set `true` (or pass `{ offset, onComplete }`) or in-page `#` links stop working |
 | `allowNestedScroll` | `false` | set `true`, or nested scrollers (modals, code blocks) will not scroll |
+| `stopInertiaOnNavigate` | `false` | set `true` in any SPA — otherwise momentum from the last flick carries into the next route and scrolls the new page |
 
 ## The RAF requirement
 

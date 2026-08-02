@@ -47,6 +47,7 @@ Before animating ANYTHING, answer in order:
 | Frequency | Animate? | Examples |
 |-----------|----------|----------|
 | High (100+/day) | NEVER | Keyboard shortcuts, command palette, toggles, tab switches |
+| Moderate (tens/day) | Reduced — shorten and simplify | Sidebar expand, filter apply, inline save, row select |
 | Occasional | Standard timing | Modals, toasts, dropdowns, page transitions |
 | Rare/first-time | Can be elaborate | Onboarding, empty state → content, celebration |
 
@@ -119,6 +120,22 @@ Use CSS transitions (not keyframes) for interactive elements. Transitions can be
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 ```
 
+For an element entering the DOM, `@starting-style` gives the entry a transition rather than a
+keyframe, so it stays interruptible and needs no JS mount flag:
+
+```css
+.popover {
+  opacity: 1;
+  transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@starting-style {
+  .popover { opacity: 0; }
+}
+```
+
+Pair it with `transition-behavior: allow-discrete` when animating out of `display: none`.
+Unsupported browsers skip the starting state and the element simply appears — degrade, not break.
+
 ### Blur Crossfade Bridge
 ```css
 .element.transitioning {
@@ -164,6 +181,22 @@ animation-duration: 0.5s;
 // Keep bounce subtle (0.1–0.3)
 // Avoid bounce in most UI contexts
 ```
+
+A **named spring scale** beats picking numbers per component. Motion UI (`motion.dev/ui`)
+publishes one worth copying — five springs spanning the range rather than one reused at
+different durations:
+
+| Name | stiffness / damping | Use |
+|---|---|---|
+| `snap` | 1218 / 70 | Immediate feedback — toggles, checkboxes |
+| `ui` | 305 / 33 | The default for most interface motion |
+| `gentle` | 110 / 20 | Larger surfaces — sheets, drawers |
+| `lively` | 622 / 17 | Playful accents; the low damping *is* the bounce |
+| `ambient` | 43 / 13 | Slow background drift |
+
+Pair it with a travel scale — hover `4px`, enter `24px`, section `48px` — and a stagger scale —
+tight `0.04s`, base `0.08s`, relaxed `0.15s`. Systematising all three is what stops each
+component inventing its own distance and delay.
 
 ---
 
