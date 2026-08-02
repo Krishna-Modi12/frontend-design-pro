@@ -42,7 +42,7 @@ design-principles  5,482   ← heaviest
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,857 there, 1,837 here — exactly the 82 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 305,771 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
-The registry is the reason adding skills is cheap: it went from 11 skills to 16 while `SKILL.md` grew 353 tokens. Marginal cost of a skill is **~71 tokens** of always-loaded context, plus however much on-demand depth you give it.
+The registry is the reason adding skills is cheap: the 16th skill grew `SKILL.md` from 1,779 to 1,837 tokens. Marginal cost of a skill is **~58 tokens** of always-loaded context, plus however much on-demand depth you give it.
 
 ### Core file splitting
 

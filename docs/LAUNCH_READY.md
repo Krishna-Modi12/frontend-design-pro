@@ -33,8 +33,8 @@ reference material on disk.
 
 Measured, not estimated: the heaviest possible request loads 5,482 tokens.
 The lightest loads 4,714. A gate fails the build if any skill exceeds 8,000
-with its dependencies, so it can't quietly regress. Going from 11 skills to
-16 grew the always-loaded registry by 353 tokens.
+with its dependencies, so it can't quietly regress. Adding the 16th skill
+grew the always-loaded registry by 58 tokens.
 
 What's enforced, rather than asserted:
 
@@ -105,9 +105,9 @@ Reference material available: 305,771 tokens.
 
 3/ The economics of this are the whole point.
 
-11 skills → 16 skills grew the always-loaded registry by 353 tokens.
+Adding the 16th skill grew the always-loaded registry by 58 tokens.
 
-Marginal cost of a new skill: ~71 tokens of permanent context.
+Marginal cost of a new skill: ~58 tokens of permanent context.
 Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
