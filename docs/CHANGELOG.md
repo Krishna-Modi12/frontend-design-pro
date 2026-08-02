@@ -4,6 +4,42 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.4.0] — 2026-08-02
+
+**The feature freeze declared in `14.2.2` was overridden by owner directive on 2026-08-02.** None of its three lift thresholds — 10 distinct enhancement requests, 5 confirmed bugs, or 2026-08-13 — had been reached. Three branches of completed, gate-green work were held back by policy alone and were judged ready. The override, including what it cost, is recorded in [MAINTENANCE.md](MAINTENANCE.md#feature-freeze--overridden).
+
+The version jumps 14.2.3 → 14.4.0 rather than 14.3.0 because the ingestion sprint had already claimed 14.3.0 on its staging branch; both merged here.
+
+### Added — `design-research`, the seventeenth skill
+
+Agents were already being handed URLs — "build it like this site", a Dribbble link, an Aceternity component. There was no protocol for that, so the behaviour was improvised: copy the pixels, or ignore the reference. `skills/design-research/` makes it a discipline. Research happens *before* the build, produces typed constraints rather than screenshots, and every finding lands as an OKLCH token, a grid definition, a `cubic-bezier`, or a step on the spacing scale. A finding that cannot be written as one of those was decoration, not a constraint.
+
+Nine sources are registered with per-source extraction *and* rejection rules. Five references carry the depth: `source-extraction-protocol.md` (per-source-type rules, a fill-in template, failure modes), `dribbble-adaptation.md` (an artboard has no breakpoints — what survives translation and what does not), `mobbin-web-mapping.md` (native patterns to web primitives, and the five that should not be ported at all), `motion-easing-catalog.md` (easings, durations and stagger read off live sources), and `mcp-integration.md`.
+
+That last one is deliberately unflattering: most design sites have **no MCP server**. Playwright MCP and browser-use are real and described accurately; 21st.dev, React Bits, Dribbble and Mobbin are documented as having none, with Playwright-DOM workarounds and, where the site is authenticated or bot-protected, an honest "the user has to do this part". When no browsing tool exists at all, the skill emits a research prompt and stops rather than inventing a palette and attributing it to a page it never opened.
+
+Routing note: `component-patterns` already owned `aceternity`, `react bits` and `cult ui`. It still does. `design-research` fires on *referencing* intent — "inspired by", "like this site", a pasted URL — and hands off to `component-patterns` to build.
+
+### Added — 50-source knowledge ingestion
+
+Five new references, three appends to existing ones, six audit fixes from a second pass over the corpus, across `agent-ops`, `ai-ui-generation`, `animations`, `design-principles` and `design-system`. `reference_files` 76 → 86 across both merges.
+
+### Fixed
+
+- **`framer-motion` → `motion` package rename** across 71 files — 14 stub updates, 40 test mocks, 8 references (Issue #1). The upstream package was renamed and the pack still documented the dead import path.
+- Two UX laws missing from `laws-of-ux.md` — Goal Gradient Effect, Design for Extremes (Issue #2).
+- Skiper UI added to the component registry list in `shadcn-ecosystem.md` (Issue #3).
+
+### Changed — every published figure re-derived
+
+The three issues above were all "the docs claim something that stopped being true". Shipping a 17th skill while ~19 files still said "16 skills · 76 references · 305,771 tokens" would have manufactured the same defect at scale, so every count in every live document was recomputed from the git index — the LF measurement CI and the archive see, not the Windows working tree — and swept in the same commit series.
+
+Current, verified against a green gate chain: **17 skills · 8 core files · 86 references (320,375 tokens of on-demand depth) · 45 examples (39 gold + 6 anti-examples) · 39 tests · 51 constraints · 9 gates · registry 1,888 tokens · heaviest request 6,075 tokens.**
+
+`docs/RELEASE_NOTES-v14.2.*` and the changelog entries below are untouched — they are snapshots, correct as of their own dates.
+
+---
+
 ## [14.2.3] — 2026-08-01
 
 `## [14.2.2]` below called itself "last engineering release before the freeze. No features." This one ships a feature anyway — `install/` and `setup.sh`/`setup.ps1` were already substantially built, uncommitted, before the freeze took effect. Rather than let real, already-audited work rot uncommitted or discard it on a technicality, it ships once as a deliberate, explicit exception. The freeze resumes immediately after: no further features until it lifts on its own documented terms in `docs/MAINTENANCE.md`.

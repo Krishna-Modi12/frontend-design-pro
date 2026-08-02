@@ -2,7 +2,7 @@
 
 **Status: FREEZE OVERRIDDEN by owner directive on 2026-08-02** — see [Feature Freeze — OVERRIDDEN](#feature-freeze--overridden) below, and the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped. The policy below is retained in full because it is what the project returns to, not a historical curiosity. Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway.
 
-The pack is 17 skills, 86 references, 318,818 tokens of on-demand depth, 51 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 17 skills, 86 references, 320,375 tokens of on-demand depth, 51 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
@@ -14,7 +14,9 @@ So the default answer to "should we build X" remains **no, not yet**, and the bu
 
 **Override reason:** Owner directive. Three branches of completed work were held back by freeze policy alone and were judged ready to ship: the 50-source knowledge ingestion, the `design-research` skill, and the `framer-motion` → `motion` package rename. See the top entry in [CHANGELOG.md](CHANGELOG.md) for the contents.
 
-**Merged:** `fix/framer-motion-rename` (already in `main` via PR #4 before the override), `v14.3.0-staging`, `v14.4.0-staging`. Merged sequentially with `--no-ff`; no conflicts.
+**Merged:** `fix/framer-motion-rename` (already in `main` via PR #4 before the override), plus the ingestion and design-research staging branches. Merged sequentially with `--no-ff`. Two conflicts, both in the ingestion merge and both resolved toward `main`: `metadata.json` (a depth figure, recomputed from the index afterwards either way) and `docs/METRICS_BASELINE.md`, where the branch still described three issues as unfiled drafts and `main` correctly recorded them as filed — verified against `gh issue list` before resolving rather than judged by commit date.
+
+Branch names are omitted above on purpose: this file sits outside the version-leak allowlist in `scripts/build_release.py`, and a branch named after the release would fail pre-flight here. That gate caught exactly this line once already.
 
 **What this cost, stated plainly:** the freeze existed because the three sprints before it produced two bad releases from stale figures and unread files. Overriding it on a directive rather than on the evidence thresholds is the exact pattern the policy was written to interrupt. The mitigation applied here was to re-derive every published count from a green gate chain in the same commit series, rather than to trust the prose.
 

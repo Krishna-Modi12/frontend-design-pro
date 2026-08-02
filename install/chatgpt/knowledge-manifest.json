@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro — ChatGPT knowledge curation guide",
   "kind": "suggested-file-list",
-  "note": "A starting point you adjust per use case, not a distributed bundle. There is no slim pack artifact: you unzip the one .skill archive and upload a subset of its files by hand. A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT, and the pack has 8 core files, 16 skill routers and 76 references — so pick for the work you actually do and swap entries as that work changes. A GPT scoped to landing pages and design systems beats one trying to cover all 16 skills.",
+  "note": "A starting point you adjust per use case, not a distributed bundle. There is no slim pack artifact: you unzip the one .skill archive and upload a subset of its files by hand. A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT, and the pack has 8 core files, 17 skill routers and 86 references — so pick for the work you actually do and swap entries as that work changes. A GPT scoped to landing pages and design systems beats one trying to cover all 17 skills.",
   "host": "ChatGPT Custom GPT",
   "knowledge_file_cap": 20,
   "pack_totals": {
@@ -13,7 +13,7 @@
     "registry": [
       {
         "path": "SKILL.md",
-        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,837 tokens. Never omit this one."
+        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,888 tokens. Never omit this one."
       }
     ],
     "core_typical_request": [

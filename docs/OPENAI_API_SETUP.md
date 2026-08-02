@@ -6,7 +6,7 @@ Neither approach gives you what Claude Code gets natively: an agent with real fi
 
 ## Option A — static context (simplest, fine for small integrations)
 
-Put `SKILL.md` (~1,837 tokens) in the system/developer message, plus whichever `skills/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
+Put `SKILL.md` (~1,888 tokens) in the system/developer message, plus whichever `skills/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
 
 ```python
 from openai import OpenAI
@@ -46,7 +46,7 @@ print(response.choices[0].message.content)
 
 ## Option B — tool-based retrieval (approximates lazy loading)
 
-If your integration spans many of the 16 skills, define a function/tool the model can call to fetch a specific file by path, and only put `SKILL.md` in the system prompt up front. This is the closest an API integration gets to the real registry behavior: the model reads the routing table, decides which skill applies, and calls your tool to fetch exactly that file — then, if the skill file's own reference index points deeper, it can call the tool again for a `references/*.md` file.
+If your integration spans many of the 17 skills, define a function/tool the model can call to fetch a specific file by path, and only put `SKILL.md` in the system prompt up front. This is the closest an API integration gets to the real registry behavior: the model reads the routing table, decides which skill applies, and calls your tool to fetch exactly that file — then, if the skill file's own reference index points deeper, it can call the tool again for a `references/*.md` file.
 
 ```python
 from openai import OpenAI
