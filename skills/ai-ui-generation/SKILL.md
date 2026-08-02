@@ -39,6 +39,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | Generation shapes, registry pattern, guardrails, prompt shape, when to avoid | `references/generation-patterns.md` |
+| Registry/catalog mechanics, Zod-as-tool-definitions, streamed spec shape, partial-prop rendering | `references/generative-ui-runtimes.md` |
 | The constraint list generated output must satisfy | `core/validate-checklist.md` |
 | Prop/schema design for registered components | `core/component-api.md` |
 | Behavioural discipline when accepting generated work | `core/agent-behavior.md` |

@@ -58,3 +58,48 @@ Practical discipline:
 - **Merge, don't append, when a new entry supersedes an old one.** An append-only memory store that never reconciles contradictions is worse than no memory, because a reader can no longer tell which entry is authoritative.
 - **Weigh the cost of storing against the cost of re-deriving.** A fact that takes ten seconds to re-derive by reading a file doesn't need a permanent memory entry; a fact that took an entire investigation (or a user's explicit correction) to establish does.
 - **Keep entries actionable, not archival.** A memory file is a working reference for future behavior, not a diary of everything that happened — the "why" belongs when it changes what a future agent should do, not as a complete history for its own sake.
+
+## Retrieval in tiers, not in one read
+
+The failure mode a memory store hits at scale is not storing too much — it is being forced to
+read everything to find one thing. The fix is to make lookup and hydration separate steps with
+very different costs:
+
+| Tier | Returns | Cost per result |
+|---|---|---|
+| Search | matching IDs plus a one-line label | ~50–100 tokens |
+| Timeline | what happened around a point in time, chronologically | ~50–100 tokens |
+| Fetch | the full stored observation | ~500–1,000 tokens |
+
+Search first, decide from the labels, then hydrate only the entries that survived. Filtering
+before fetching is roughly a **10× reduction** against reading full entries to find the
+relevant ones — the same eager-vs-lazy discipline `references/token-optimization.md` applies
+to reference files, applied to memory.
+
+The rule that follows: **never expose a memory store that can only be read whole.** If the only
+retrieval operation returns full entries, the store's cost grows linearly with everything ever
+written, and the practical response is to stop writing to it.
+
+## Capture points and exclusion
+
+Persistence is worth wiring to specific moments rather than done ad hoc. The lifecycle points
+that carry signal:
+
+| Point | What is worth capturing |
+|---|---|
+| Session start | load prior context before the first action, not after a mistake |
+| User prompt submitted | the stated intent, which is the thing most often lost by the next session |
+| After a tool call | outcomes and corrections — the observations with the most durable value |
+| Stop / session end | what was concluded, what was left unfinished |
+
+Two mechanics matter more than the storage engine:
+
+- **Explicit exclusion.** Sensitive content needs a way to be marked non-persistable at the
+  point it appears (`<private>`-style tagging), not filtered afterwards. A memory store that
+  can only be cleaned retroactively has already written the secret to disk.
+- **Hybrid lookup.** Keyword search alone misses paraphrased recall; semantic search alone
+  returns plausible-but-wrong neighbours. Running both and merging is what makes tier-1 search
+  cheap enough to trust as a filter.
+
+Storage engine is an implementation detail — the contract that matters is: cheap search, exact
+IDs, hydrate on demand, exclude at capture time.

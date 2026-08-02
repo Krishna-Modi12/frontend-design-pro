@@ -28,10 +28,12 @@ The parser matches headings case-insensitively and trims surrounding whitespace.
 | **Typography** | `Typography`, `Fonts`, `Type Scale`, `Typeface`, `Font Stack` |
 | **Spacing** | `Spacing`, `Layout`, `Grid`, `Space Scale`, `Spacing Scale` |
 | **Motion** | `Motion`, `Animation`, `Transitions`, `Timing`, `Motion Design` |
-| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules` |
+| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules`, `Responsive Behavior`, `Agent Prompt Guide`, `Depth & Elevation` |
 | **Atmosphere** | `Atmosphere`, `Tone`, `Mood`, `Aesthetic`, `Dials` |
 
 Matching logic: strip leading `#` characters (any Markdown heading level), lowercase, strip punctuation, compare against the synonym list. First match wins.
+
+The last three Rules variants are extended sections in wide use across the ecosystem — `VoltAgent/awesome-design-md` catalogues 73+ real-world files carrying them. They hold prose rather than token declarations, so they route to **Rules**, the natural-language channel that reaches the generation prompt verbatim. A heading that matches nothing is dropped in silence, which is the failure this prevents. One caveat worth stating: `Depth & Elevation` often carries literal shadow values, and there is no elevation extraction rule — those arrive as text for the model to honour, not as `--shadow-*` tokens.
 
 ---
 
@@ -246,6 +248,25 @@ Density: 7/10
 The hex values `#0F172A`, `#6366F1`, `#F8FAFC`, and `#1E293B` were converted to OKLCH at parse time and are never emitted raw.
 
 ---
+
+## The inverse direction — deriving DESIGN.md from existing code
+
+Everything above consumes a DESIGN.md. `google-labs-code/stitch-skills` exposes the opposite
+(`stitch::extract-design-md`), which walks frontend source and emits one. Worth having as a
+procedure whenever the brief is "match what is already there" and no spec exists:
+
+1. **Read the token source before the components** — `tailwind.config`, the `@theme` block, or
+   the `:root` custom properties. Declared tokens beat values inferred from usage.
+2. **Count, do not sample.** Tally every colour, font size, radius and duration across the
+   codebase and keep the frequent ones. A value used twice is an accident; one used forty times
+   is the system.
+3. **Record the scale, not the instances** — `4px base, ×1–×16` rather than every padding found.
+4. **Emit the headings this parser accepts**, so the result round-trips back through it.
+5. **Report conflicts rather than averaging them.** Three near-identical greys is a finding
+   about the codebase, not a token to emit.
+
+`designer-workflow.md`'s detection checklist answers *what stack is this*; this answers *what
+are its design values*.
 
 ## Anti-Patterns
 

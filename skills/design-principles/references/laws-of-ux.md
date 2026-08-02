@@ -24,7 +24,7 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Peak-End Rule** | Experience is judged by its peak and its end | Invest in the success state and the error recovery — those are the peaks people carry |
 | **Zeigarnik Effect** | Interrupted tasks are remembered | Progress indicators and saved drafts create productive tension; use for onboarding completion |
 | **Selective Attention** | Users filter to goal-relevant stimuli | Banner blindness is real — never put critical info in something that looks like an ad |
-| **Goal-Gradient Effect** | Motivation rises near the goal | Show endowed progress ("Step 2 of 4", pre-filled first step) to pull users forward |
+| **Goal-Gradient Effect** | Motivation rises near the goal | Show endowed progress ("Step 2 of 4", pre-filled first step) to pull users forward — a bar starting at 0% converts worse than one showing a step already banked |
 
 ## Interaction & speed
 
@@ -56,6 +56,7 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 | **Pareto Principle** | ~80% of effects from ~20% of causes | Find the 20% of flows carrying 80% of traffic and make those excellent first |
 | **Parkinson's Law** | Work expands to fill available time | Show a realistic completion estimate; artificial delay ("verifying…") is dishonest, not reassuring |
 | **Cognitive Bias** | Systematic errors of judgement | Beware anchoring in pricing tables and confirmation bias in your own design reviews |
+| **Design for Extremes** | Design for the least and most capable users, not the median | The novice path completes without prior knowledge; the expert path is not gated behind it. Shortcuts, bulk actions and dense views coexist with the guided flow rather than replacing it |
 
 ## How to apply in review
 
