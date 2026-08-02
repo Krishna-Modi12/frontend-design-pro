@@ -2,7 +2,7 @@
 
 **Status: FEATURE FREEZE.** In effect from the release that introduced this file — see the top entry in [CHANGELOG.md](CHANGELOG.md). Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway.
 
-The pack is done. 16 skills, 76 references, 305,784 tokens of on-demand depth, 51 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. Adding a 17th skill would grow the always-loaded registry for a routing target almost nobody asks for; adding a 77th reference would add depth nobody has hit the bottom of. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is done. 16 skills, 76 references, 305,771 tokens of on-demand depth, 51 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. Adding a 17th skill would grow the always-loaded registry for a routing target almost nobody asks for; adding a 77th reference would add depth nobody has hit the bottom of. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" is **no, not yet**, and the burden is on evidence.
 

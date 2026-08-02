@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,784 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 9 gates · registry 1,837 tokens · heaviest request 5,482 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 16 skills · 8 core files · 76 references · 305,771 tokens of lazy depth · 44 examples (38 gold + 6 anti-examples) · 38 tests · 16 semantic + 35 syntactic = 51 constraints · 9 gates · registry 1,837 tokens · heaviest request 5,482 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 38 golds plus 6 deliberate anti-examples = 44 files). A launch audience fact-checks.
 
@@ -101,7 +101,7 @@ It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 5,482 tokens.
-Reference material available: 305,784 tokens.
+Reference material available: 305,771 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -197,7 +197,7 @@ A registry rather than a document:
 - 16 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 76 references, 305,784 tokens. Loaded only when a skill routes to one.
+- 76 references, 305,771 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **4,714 to 5,482 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
