@@ -42,9 +42,9 @@ The agent reads the registry, matches your request to one skill, and loads only 
 | `SKILL.md` | Registry, routing table, anti-slop wall | **1,837 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,073–2,241 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **305,784 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **305,771 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,714–5,482 tokens, not 300,000.** Adding a skill costs ~71 tokens of always-loaded context — the registry grew just 353 tokens while going from 11 skills to 16.
+**A typical request loads 4,714–5,482 tokens, not 300,000.** Adding a skill costs about 58 tokens of always-loaded context — that is what the 16th cost, taking the registry from 1,779 to 1,837.
 
 ## Skills (16)
 
@@ -122,12 +122,13 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.2.0
+## What's new in v14.2.3
 
-- **`agent-ops` — a 16th skill, about the agent rather than the UI.** Token budgeting, cross-session memory, continuous learning, self-verification, parallelization and subagent orchestration, across six references. It is the first skill whose subject is the agent's own process.
-- **Six agents supported, honestly.** Setup guides for [ChatGPT](docs/CHATGPT_SETUP.md), [OpenAI API](docs/OPENAI_API_SETUP.md), [Copilot](docs/COPILOT_SETUP.md) and [Gemini](docs/GEMINI_SETUP.md) join Claude and Cursor, with a [compatibility matrix](docs/AGENT_COMPATIBILITY.md) that states what *degrades* on each host. Claude Code is the only one with a real filesystem; everywhere else lazy loading becomes retrieval or pasting, and the docs say so rather than implying parity.
-- **A demo that actually runs.** `demo/showcase/` is a standalone Next.js 15 + React 19 + Tailwind v4 app with real dependencies, verified by a ninth gate.
-- **Ninth gate.** `next build` on the showcase now blocks the release, and a dedicated CI job installs its dependencies on a clean runner so the claim holds for a fresh clone too.
+- **Native adapters, not a setup doc you follow by hand.** [`install/`](install/) holds ten directories — nine hosts plus a generic card for anything else — each containing the rules file you would otherwise write yourself. Five install themselves: `bash setup.sh` detects Cursor, Copilot, Windsurf, Continue.dev or Aider from marker files already in your project, refuses to guess when two match, and overwrites nothing without `--force`. The rest stay manual, because a web-UI knowledge upload is not something an installer can honestly automate.
+- **They ship inside the archive now, not just the repo.** `install/`, `setup.sh` and `setup.ps1` are part of the `.skill` file itself. The archive is the transport layer for every host that isn't Claude Code, so an adapter you could only get by cloning was an adapter most people could not get.
+- **Four of them are untested, and say so.** Windsurf, Continue.dev, Aider and Codex CLI each follow that host's own documented rules format, but none is in the [tested matrix](docs/AGENT_COMPATIBILITY.md) — the format is right, nobody has run the matrix against it. Marked untested everywhere they appear rather than absorbed into a bigger "supported" count.
+
+This one shipped as an explicit, one-time exception to the freeze stated below — the work was built and audited before the freeze took effect. The freeze resumed the moment it landed; [docs/CHANGELOG.md](docs/CHANGELOG.md) carries the full reasoning.
 
 ## Verification
 
@@ -151,7 +152,11 @@ npm run gates    # all 9 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
-## For contributors
+## Issues & contributing
+
+Bugs first: a confirmed defect is exempt from the freeze, and five of them lift it. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 9 gates should have caught it. Feature requests are counted rather than closed — ten distinct ones for the same thing also lifts the freeze. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
+
+Sending code:
 
 - All changes must pass the 9 gates — CI runs them on every push and PR
 - New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
