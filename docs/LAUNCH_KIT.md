@@ -2,10 +2,10 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,375 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 16 semantic + 35 syntactic = 51 constraints · 22 evals · 11 regression cases · registry 1,888 tokens · heaviest request 6,075 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,375 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 17 semantic + 36 syntactic = 53 constraints · 22 evals · 13 regression cases · registry 1,888 tokens · heaviest request 6,075 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
-> - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 11 regression cases where AST and regex disagree, in both directions.
+> - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
 > - *"42 gold examples."* There are 39 golds plus 6 deliberate anti-examples = 45 files. Say 39 golds, or 45 examples — not 42 golds.
 >
 > A launch audience fact-checks. Ship the number you can reproduce on demand.
@@ -35,12 +35,12 @@ grew the always-loaded registry by 51 tokens.
 What's enforced, rather than asserted:
 
 - 45 examples compile under `tsc --noEmit` strict + noImplicitAny
-- 16 semantic constraints run through the TypeScript compiler API, on every
+- 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
-- 35 regex constraints for what regex is genuinely good at: banned display
+- 36 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
-- 11 regression cases where the AST check and the regex it replaced disagree.
+- 13 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.
@@ -106,8 +106,8 @@ Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
 
-9 blocking gates. 45 examples compile under tsc strict. 16 semantic
-constraints run through the TypeScript compiler API. 35 regex constraints.
+9 blocking gates. 45 examples compile under tsc strict. 17 semantic
+constraints run through the TypeScript compiler API. 36 regex constraints.
 22 evals.
 
 No gate passes → no archive exists.
@@ -128,7 +128,7 @@ Constraints that cry wolf get turned off. Precision is a feature.
 7/ Things in here that most packs skip:
 
 · motion direction — what an animation *communicates*, not just how to write it
-· AI-generated UI treated as untrusted input, same 51 constraints, no exemptions
+· AI-generated UI treated as untrusted input, same 53 constraints, no exemptions
 · a 6-question intake protocol, because content volume (3 items or 300?)
   changes the architecture more than any other answer
 · icons as typography: hit area independent of glyph size
@@ -197,8 +197,8 @@ if any skill exceeds 8,000 with dependencies.
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 17/17 skills declare deps that exist
 3. Compile — 45 examples, `tsc --noEmit` strict + noImplicitAny
-4. Semantic — 16 AST constraints via the TypeScript compiler API
-5. Syntactic — 35 regex constraints; anti-examples must FAIL
+4. Semantic — 17 AST constraints via the TypeScript compiler API
+5. Syntactic — 36 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget

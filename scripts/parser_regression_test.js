@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Regression proof: parser checks catch what regexes miss (and stop over-banning).
- * Generates 6 synthetic files in /tmp/parser_test/ and asserts parser-vs-regex divergence.
- * Exit 0 only if all 6 behave as specified.
+ * Generates one synthetic file per case in /tmp/parser_test/ and asserts parser-vs-regex divergence.
+ * Exit 0 only if every case behaves as specified.
  */
 "use strict";
 const fs = require("fs");
@@ -27,6 +27,7 @@ const LEGACY = {
   "A11Y-03":   (s) => /<img\b/.test(s) ? /\bwidth\b/.test(s) : true, // naive: any "width" anywhere in file
   "COPY-01":   (s) => !/\.\.\./.test(s),                        // naive: bans "..." incl. code spread
                                   // pass if string appears anywhere
+  "ANI-04":    (s) => !/addEventListener\(\s*["']scroll["']/.test(s), // naive: bans every scroll listener
 };
 
 const CASES = [
@@ -146,6 +147,39 @@ export default function Chip() {
     code: `type P = { label: string }
 export default function Card({ label }: P) {
   return <div className="focus-visible:ring-2 p-4" aria-label={label}>{label}</div>
+}
+`,
+  },
+  {
+    name: "scroll_state_storm.tsx",
+    parserCheck: "ANI-04", parserExpected: false, legacy: "ANI-04", legacyExpected: false,
+    why: "scroll listener calling setState re-renders on every frame of a scroll — both layers catch this one, it is the baseline the next case diverges from",
+    code: `import { useState, useEffect } from "react"
+export default function Progress() {
+  const [y, setY] = useState(0)
+  useEffect(() => {
+    const onScroll = () => { setY(window.scrollY) }
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+  return <div aria-label="progress">{y}</div>
+}
+`,
+  },
+  {
+    name: "scroll_throttled_ok.tsx",
+    parserCheck: "ANI-04", parserExpected: true, legacy: "ANI-04", legacyExpected: false,
+    why: "a throttled scroll handler does not re-render every frame and is legitimate; banning the string 'addEventListener(\"scroll\"' over-bans correct code, the AST only flags an un-batched setState inside the handler",
+    code: `import { useState, useEffect } from "react"
+declare function throttle<T>(fn: T, ms: number): T
+export default function Progress() {
+  const [y, setY] = useState(0)
+  useEffect(() => {
+    const onScroll = throttle(() => setY(window.scrollY), 100)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+  return <div aria-label="progress">{y}</div>
 }
 `,
   },

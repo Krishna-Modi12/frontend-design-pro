@@ -31,7 +31,7 @@
       },
       {
         "path": "core/validate-checklist.md",
-        "why": "Universal dep — the 51 constraints the model self-checks against by inspection."
+        "why": "Universal dep — the 53 constraints the model self-checks against by inspection."
       }
     ],
     "skill_routers_example": [

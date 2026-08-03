@@ -88,8 +88,8 @@ dist/                    build output, gitignored
 | 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,888 tokens; version consistent; no leaks |
 | 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 17/17 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 45/45 golds · 14/14 demo files |
-| 4 | Semantic | 16 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 53/53 files × 16/16 |
-| 5 | Syntactic | 35 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 35/35 · 3/3 demo projects |
+| 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 53/53 files × 17/17 |
+| 5 | Syntactic | 36 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 36/36 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 39/39 |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 17/17 |
@@ -97,13 +97,13 @@ dist/                    build output, gitignored
 
 Then, non-negotiable but not numbered: **path integrity** (87 skill-cited references resolve), **reference-depth audit**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
 
-A parser-regression proof runs alongside gate 4: 11 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
+A parser-regression proof runs alongside gate 4: 13 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 
 ### Why parser checks
 
 Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby` is not accessibility. `bg-white` on a `<button>` is not a design violation. A fake loading delay spelled `setPhase` instead of `setLoading` has no regex vocabulary at all.
 
-`scripts/parser_regression_test.js` holds **11 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
+`scripts/parser_regression_test.js` holds **13 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
 
 | Case | Regex | Parser | Why the parser is right |
 |---|---|---|---|
@@ -112,10 +112,11 @@ Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby
 | `img_no_dims.tsx` | pass | **fail** | matching `<img` cannot check whether `width`/`height` are present |
 | `boolean_and_ok.tsx` | **fail** | pass | `isOpen && <Panel/>` is idiomatic; only a numeric left side renders a literal `0` |
 | `spread_not_copy.tsx` | **fail** | pass | `...props` is code, not UI copy — the AST scopes the rule to JSX text |
+| `scroll_throttled_ok.tsx` | **fail** | pass | a throttled scroll handler is correct code; only an un-batched `setState` inside one re-renders every frame |
 
 Note the bottom two: half the value is **removing false positives**. A blanket `...` ban flags every rest-spread in the pack; a blanket `&&` ban flags correct React. Constraints that cry wolf get switched off, so precision is a feature and not a nicety.
 
-The two suites are complementary, not redundant — 16 semantic + 35 syntactic = **51 checks across 51 distinct IDs**. Every ID belongs to exactly one suite, so a bare ID in a report is unambiguous about which layer flagged it. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
+The two suites are complementary, not redundant — 17 semantic + 36 syntactic = **53 checks across 53 distinct IDs**. Every ID belongs to exactly one suite, so a bare ID in a report is unambiguous about which layer flagged it. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
 
 ## Adding to the pack
 

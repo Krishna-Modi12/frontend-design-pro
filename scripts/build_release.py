@@ -250,7 +250,7 @@ def gate_chain() -> tuple[bool, list]:
     n_sem, n_syn = constraint_counts()
 
     # The demo/ projects are held to the SAME suites as the gold examples, inside
-    # the same gates. README claims they pass the 51 constraints; a claim checked
+    # the same gates. README claims they pass the 53 constraints; a claim checked
     # only by a script somebody remembers to run is the exact rot that left the
     # pre-v13 system prompt broken for three majors.
     # demo/showcase/ is excluded from the STUB COMPILE only. It is a standalone

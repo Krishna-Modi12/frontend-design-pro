@@ -94,8 +94,8 @@
         "constraints_checked": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 51,
-          "description": "Total constraints checked in VALIDATE. Ceiling is the 51 machine-enforced constraints in core/validate-checklist.md (16 parser + 35 regex); was capped at 29 against a retired v12 registry."
+          "maximum": 53,
+          "description": "Total constraints checked in VALIDATE. Ceiling is the 53 machine-enforced constraints in core/validate-checklist.md (17 parser + 36 regex); was capped at 29 against a retired v12 registry."
         }
       }
     }
@@ -114,7 +114,7 @@
         "dials": { "dv": 7, "mi": 5, "vd": 4 },
         "eval_ids_applicable": [3],
         "constraints_passed": ["A11Y-01", "A11Y-02", "A11Y-03", "MOTION-01", "TS-01-AST", "COL-02-AST", "DELAY-01-AST", "COMP-01", "PERF-01", "TYP-01", "COL-01", "STA-01", "STA-02", "TOK-01", "QUA-01", "RES-01", "TOUCH-01", "COPY-02"],
-        "constraints_checked": 51
+        "constraints_checked": 53
       }
     }
   ]

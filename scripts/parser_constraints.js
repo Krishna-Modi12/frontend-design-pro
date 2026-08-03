@@ -385,5 +385,63 @@ walk(sf, (n) => { if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)
   checks["3D-03"] = ok;
 }
 
+// ── ANI-04 — no scroll listener driving React state ───────────────────────
+// A `scroll` listener that calls a setState fires on every frame of a scroll and
+// re-renders the component each time. Throttled/debounced/rAF-batched handlers are
+// fine; so is anything that never touches state. The declarative routes —
+// useScroll(), ScrollTrigger, IntersectionObserver, animation-timeline: view() —
+// are what skills/animations/references/scroll-experience.md teaches.
+// Scoped to the "scroll" event on purpose: keydown, resize and mq "change"
+// listeners are legitimate and must not trip this.
+{
+  let ok = true;
+  const SETTER = /^set[A-Z]/;
+  const BATCHED = /^(throttle|debounce|rafThrottle|requestAnimationFrame)$/;
+  walk(sf, (n) => {
+    if (!ts.isCallExpression(n)) return;
+    if (!/(^|\.)addEventListener$/.test(n.expression.getText(sf))) return;
+    // window/document target only — element scroll containers are a different problem
+    if (ts.isPropertyAccessExpression(n.expression)) {
+      const target = n.expression.expression.getText(sf);
+      if (target !== "window" && target !== "document") return;
+    }
+    const [evt, handler] = n.arguments;
+    if (!evt || !ts.isStringLiteralLike(evt) || evt.text !== "scroll") return;
+    if (!handler) return;
+
+    // Named handler → resolve to its declaration so we can look inside it.
+    let body = handler;
+    if (ts.isIdentifier(handler)) {
+      const name = handler.text;
+      walk(sf, (d) => {
+        if (ts.isVariableDeclaration(d) && d.name.getText(sf) === name && d.initializer) body = d.initializer;
+        else if (ts.isFunctionDeclaration(d) && d.name && d.name.text === name) body = d;
+      });
+    }
+
+    // Wrapped in throttle/debounce/rAF → the re-render storm is already solved.
+    if (ts.isCallExpression(body) && BATCHED.test(body.expression.getText(sf).replace(/^.*\./, ""))) return;
+
+    let callsSetter = false;
+    walk(body, (b) => {
+      if (!ts.isCallExpression(b)) return;
+      const callee = b.expression.getText(sf);
+      if (BATCHED.test(callee.replace(/^.*\./, ""))) return;
+      if (SETTER.test(callee.replace(/^.*\./, ""))) callsSetter = true;
+    });
+    // rAF anywhere inside the handler counts as batching too
+    let batchedInside = false;
+    walk(body, (b) => {
+      if (ts.isCallExpression(b) && /(^|\.)(requestAnimationFrame|throttle|debounce)$/.test(b.expression.getText(sf))) batchedInside = true;
+    });
+
+    if (callsSetter && !batchedInside) {
+      ok = false;
+      fail("ANI-04", n, "scroll listener calls setState directly — re-renders every frame. Use useScroll()/ScrollTrigger/IntersectionObserver, or throttle the handler");
+    }
+  });
+  checks["ANI-04"] = ok;
+}
+
 console.log(JSON.stringify({ file, checks, errors }, null, 1));
 process.exit(errors.length ? 1 : 0);

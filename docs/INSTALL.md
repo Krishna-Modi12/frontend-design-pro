@@ -67,7 +67,7 @@ Individual gates, when you want a faster loop:
 
 ```bash
 npm run typecheck    # strict tsc over all 45 examples
-npm run constraints  # 35 syntactic constraints
+npm run constraints  # 36 syntactic constraints
 npm run evals        # 22 eval cases
 npm run regression   # 11 parser-vs-regex divergence cases
 npm test             # vitest — see the caveat in ARCHITECTURE.md

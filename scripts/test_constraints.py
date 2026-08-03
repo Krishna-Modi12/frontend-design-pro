@@ -343,6 +343,23 @@ CONSTRAINTS: List[Constraint] = [
         check=lambda c: (_lacks(r"(Loading|Saving|Uploading|Processing|Deleting)\.\.\.", c),
                          "Use 'Loading…' (U+2026), not 'Loading...'")),
     Constraint(
+        id="MOTION-02R", category="Animation",
+        description="[widens MOTION-02 AST] No bounce/elastic/back easing — overshoot reads dated",
+        severity="medium",
+        # Anchored on the easing PROPERTY, never the bare word: `animate-bounce` is a
+        # legitimate Tailwind utility (typing-indicator dots) and `dragElastic` is a
+        # Framer drag-physics prop. Neither is an easing curve.
+        check=lambda c: (
+            # (?![a-z]) instead of \b so camelCase `backOut` is caught while
+            # `background` / `backdrop` are not. Deliberately case-SENSITIVE:
+            # under re.IGNORECASE the [a-z] class also matches the uppercase O in
+            # `backOut`, which would defeat the lookahead. GSAP and Framer both
+            # write these keywords lowercase.
+            _lacks(r"""\b(?:ease|easing)\s*[:=]\s*["'`][^"'`]*\b(?:bounce|elastic|back)(?![a-z])""", c)
+            and _lacks(r"""\bbounce\s*:\s*(?:0?\.[4-9]\d*|[1-9])""", c),
+            "Bounce/elastic/back easing (or spring bounce > 0.4) — use power/expo/cubic-bezier easing; overshoot reads dated"
+        )),
+    Constraint(
         id="TOUCH-01", category="Touch",
         description="Modals/drawers/sheets contain overscroll (overscroll-behavior: contain)",
         severity="medium",
@@ -604,7 +621,7 @@ def compile_check() -> bool:
     return False
 
 
-PARSER_CHECK_IDS = ["A11Y-01", "A11Y-02", "A11Y-03", "MOTION-01", "MOTION-02", "TS-01-AST",
+PARSER_CHECK_IDS = ["A11Y-01", "A11Y-02", "A11Y-03", "MOTION-01", "MOTION-02", "ANI-04", "TS-01-AST",
                     "COL-02-AST", "DELAY-01-AST", "COMP-01", "PERF-01", "PERF-02", "PERF-04", "COPY-01",
                     "3D-01", "3D-02", "3D-03"]
 

@@ -34,4 +34,4 @@ Please capture it with:
 
 ## Why this matters more than it looks
 
-Everything else in this repository is machine-checked: 9 release-blocking gates, 51 constraints, a `next build` on this very app in CI. None of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.
+Everything else in this repository is machine-checked: 9 release-blocking gates, 53 constraints, a `next build` on this very app in CI. None of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.

@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro",
   "version": "14.4.0",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 17 auto-routing skills, 8 core files, 86 references (~320k tokens of on-demand depth), 45 examples, 51 machine-enforced constraints, 9 release-blocking gates. A typical request loads ~5k tokens, not 320k. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 5 rules-file hosts, and a real, runnable Next.js showcase app.",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 17 auto-routing skills, 8 core files, 86 references (~320k tokens of on-demand depth), 45 examples, 53 machine-enforced constraints, 9 release-blocking gates. A typical request loads ~5k tokens, not 320k. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 5 rules-file hosts, and a real, runnable Next.js showcase app.",
   "author": "krishnamodi241@gmail.com",
   "license": "MIT",
   "tags": [
@@ -98,7 +98,7 @@
     "landing_patterns": 34,
     "style_presets": 5,
     "validation_checks": 25,
-    "ci_constraints": 51,
+    "ci_constraints": 53,
     "reference_files": 86,
     "gsap_plugins": 12,
     "shortcodes": 57,
@@ -135,11 +135,11 @@
     "core_files": 8,
     "reference_depth_tokens": 320375,
     "registry_tokens": 1888,
-    "ci_constraints_detail": "51 checks across 51 distinct IDs (16 parser AST + 35 regex)"
+    "ci_constraints_detail": "53 checks across 53 distinct IDs (17 parser AST + 36 regex)"
   },
   "changelog": {
     "14.2.3": "Native per-agent adapters: install/ (Cursor, Copilot, Windsurf, Continue.dev, Aider auto-installable via setup.sh/setup.ps1; Claude, ChatGPT, Gemini, Codex CLI manual) + install/ and both setup scripts now ship inside the .skill archive. Windsurf/Continue/Aider/Codex marked untested (not in docs/AGENT_COMPATIBILITY.md's tested matrix). Shipped as a one-time, explicit exception to the feature freeze declared in 14.2.2 \u2014 already built and audited before the freeze took effect; the freeze resumes immediately after. Fixed: top-level description said 8 release-blocking gates, stats.release_gates already said 9.",
-    "14.2.0": "New skill: agent-ops (16th skill) \u2014 agent operating discipline (token budgeting, memory persistence, continuous learning, verification loops, parallelization, subagent orchestration), 6 references + 1 gold example (good-agent-status-panel.tsx, 51/51 constraints) + registry row. New cross-agent setup docs: CHATGPT_SETUP.md, OPENAI_API_SETUP.md, COPILOT_SETUP.md, GEMINI_SETUP.md, AGENT_COMPATIBILITY.md (joins existing CLAUDE_SETUP.md/CURSOR_SETUP.md). New demo/showcase/: a real, installed, dev-server-verified Next.js 15 + React 19 + Tailwind v4 app (not the stub-typed convention used elsewhere in demo/) \u2014 a dark-mode 'Nexus' AI analytics landing page with R3F particle hero, asymmetric bento grid, RHF+Zod contact form, View Transitions testimonials. README documents the exact prompt that generated it. Stats: skills 15\u219216, reference_files 70\u219276, example_files 42\u219244.",
+    "14.2.0": "New skill: agent-ops (16th skill) \u2014 agent operating discipline (token budgeting, memory persistence, continuous learning, verification loops, parallelization, subagent orchestration), 6 references + 1 gold example (good-agent-status-panel.tsx, 51/53 constraints) + registry row. New cross-agent setup docs: CHATGPT_SETUP.md, OPENAI_API_SETUP.md, COPILOT_SETUP.md, GEMINI_SETUP.md, AGENT_COMPATIBILITY.md (joins existing CLAUDE_SETUP.md/CURSOR_SETUP.md). New demo/showcase/: a real, installed, dev-server-verified Next.js 15 + React 19 + Tailwind v4 app (not the stub-typed convention used elsewhere in demo/) \u2014 a dark-mode 'Nexus' AI analytics landing page with R3F particle hero, asymmetric bento grid, RHF+Zod contact form, View Transitions testimonials. README documents the exact prompt that generated it. Stats: skills 15\u219216, reference_files 70\u219276, example_files 42\u219244.",
     "12.0.0": "BREAKING: 8-step sequential pipeline replaced with 6-stage event-driven model (detect/classify/route/build/validate/output). SKILL.md v12 rewrite preserves all content from v11.6.0. New: [json] shortcode (structured output envelope schema_version:12.0), DESIGN.md structural round-trip via design-md-parser.md, eval semantic assertions (8 manual\u2192semantic conversions across evals 1/2/4/8/9/12, claude-haiku judge), run_evals.py semantic runner (--no-semantic/--budget/sha256 cache), test_v12_pipeline.py smoke test, good-design-md-round-trip.jsx gold example (27/27), MIGRATION FROM v11.x section in SKILL.md. Stats: shortcodes 49, reference_files 57, example_files 21, pipeline_stages 6, semantic_assertions 8.",
     "11.6.0": "3 new reference files: react-native.md (~4k, [rn] shortcode), storybook.md (~3k, [stories] shortcode), playwright.md (~3.5k, [e2e] shortcode). 3 new scaffold.py templates: react19, ai-chat, perf (all 27/27 CI). 3 new evals (#20-22): react-native-patterns, storybook-stories, playwright-tests. SKILL.md: [rn]/[stories]/[e2e] shortcodes + routing rows + reference table entries. Stale docs fixed: ROADMAP current release v11.1.0\u2192v11.5.0, SKILL.md frontmatter version, missing CHANGELOG v11.2.0 entry. Self-test: 19/22 (evals 20-22 use proxy golds, dedicated golds planned v12.1.0).",
     "10.0.0": "v10 release: integrated 5 open-source design skill repos, added 3D/GSAP/scroll/Next.js reference files, automated CI constraint testing, token budget cap, font policy clarification, intent detection tie-breaker, WCAG 2.1 AA enforcement",
