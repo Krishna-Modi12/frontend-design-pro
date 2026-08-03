@@ -7,6 +7,8 @@
 
 Lucide React is the default icon library. Consistent stroke width, tree-shakeable, accessible.
 
+**The default is overridable per aesthetic, and the reflex metaphor matters more than the set.** `skills/design-system/references/styles/minimalist.md` and `styles/soft.md` route to Phosphor or Radix within those directions — follow the style file when one is in play. What reads as AI-generated is not Lucide itself but the stock metaphor pulled from it (rocket for Launch, shield for Security); see the iconography row in `skills/landing-pages/references/redesign-framework.md`.
+
 ```bash
 npm install lucide-react
 ```

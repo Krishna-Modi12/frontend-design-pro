@@ -109,7 +109,7 @@ Rules:
 
 ## Icons & Imagery
 
-- Phosphor Icons (Bold or Fill weight) or Radix UI Icons — never Lucide or Feather
+- Phosphor Icons (Bold or Fill weight) or Radix UI Icons — never Lucide or Feather **within this style**. This overrides the pack default in `skills/iconography/`, which is Lucide; the override applies only to work in the minimalist direction
 - Illustrations: monochromatic line sketches with single muted pastel shape (from palette above)
 - Photography: desaturated, warm-toned, `filter: saturate(0.6) brightness(1.05)`
 - Backgrounds: subtle radial gradients at `opacity: 0.03`, minimal patterns
@@ -133,7 +133,7 @@ Follow in order:
 ## Banned Elements
 
 - Inter, Roboto, Open Sans — any generic system font as primary
-- Lucide, Feather, Heroicons — default AI icon choices
+- Lucide, Feather, Heroicons — default AI icon choices, banned **in this style only** (Lucide is the pack default elsewhere)
 - `shadow-md`, `shadow-lg`, `shadow-xl` — heavy Tailwind shadow utilities
 - Colored section backgrounds (any non-neutral background)
 - Gradients, neon colors, glassmorphism, any blur effect

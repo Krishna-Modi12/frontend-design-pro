@@ -123,7 +123,7 @@ Self-check against `core/validate-checklist.md` before output. **51 machine-enfo
 - [ ] **Syntactic (35 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`04` no placeholder names, AI-slop copy, `// TODO`, or round data (47.2%, $12,847 — not 50%) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
 - [ ] **Passes 1–5 held** — four states reachable, WCAG criterion cited, OKLCH tokens, no raw hex
 - [ ] **Responsive** — verified at 320 / 768 / 1440px, no horizontal scroll
-- [ ] **Anti-slop** — Section 6 clean, all seventeen
+- [ ] **Anti-slop** — Section 6 clean, all sixteen
 
 **BEHAV self-checks** — not machine-enforceable, so they are on you:
 

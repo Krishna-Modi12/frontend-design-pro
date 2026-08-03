@@ -129,7 +129,7 @@ Score each area 1–10. Prioritize improvements from lowest-scoring areas first.
 **Iconography:**
 | Problem | Fix |
 |---------|-----|
-| Lucide or Feather exclusively | **Default AI icon choice.** Use Phosphor, Heroicons, or custom set |
+| Stock Lucide metaphors, unvaried | The library is not the tell — the reflex metaphor is. Vary the metaphor first (see next row); switch sets (Phosphor, Radix, Tabler) when the aesthetic calls for it. Lucide remains the pack default — see `skills/iconography/` |
 | Rocketship for "Launch", shield for "Security" | Replace clichéd metaphors with less obvious icons (bolt, fingerprint, spark, vault) |
 | Inconsistent stroke widths | Standardize to one stroke weight (1.5 or 2.0) throughout |
 | Missing favicon | Always include a branded favicon |

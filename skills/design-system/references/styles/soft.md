@@ -27,7 +27,7 @@ Before writing any code, select ONE from each group:
 - High-contrast variable serif fonts for massive headings
 - CSS noise/film-grain overlay at `opacity-[0.03]`
 - Physical paper texture feel; warm ink tones
-- Typography: PP Editorial New, Fraunces, or Instrument Serif for headers
+- Typography: PP Editorial New, Fraunces, or Instrument Serif for headers — Fraunces and Instrument Serif are on the Convergence Watch (`font-pairings.md`); this archetype is the editorial brand reason that clears them, so name it rather than defaulting to them
 
 **3. Soft Structuralism (Consumer / Health / Portfolio)**
 - Background: silver-grey or pure white `#FFFFFF`

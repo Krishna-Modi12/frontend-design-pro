@@ -107,7 +107,7 @@ These fonts are identifiers of AI-generated design. Using them signals zero crea
 | Category | Fonts |
 |---|---|
 | **Code / terminal aesthetic** | JetBrains Mono, Fira Code, IBM Plex Mono, Geist Mono |
-| **Editorial / literary** | Playfair Display, Crimson Pro, Fraunces, Newsreader, Libre Baskerville |
+| **Editorial / literary** | Playfair Display, Crimson Pro, Fraunces, Newsreader, Libre Baskerville — all but Libre Baskerville are on the Convergence Watch in `font-pairings.md`; usable here with a stated brand reason, not by reflex |
 | **Startup / contemporary** | Clash Display, Satoshi, Cabinet Grotesk, Bricolage Grotesque |
 | **Technical / neutral** | IBM Plex Sans, IBM Plex Serif, Source Sans 3, Instrument Sans |
 | **Distinctive / unexpected** | Obviously, Zodiak, Neue Montreal, General Sans, Syne |

@@ -153,16 +153,20 @@ Caption: text-xs (12px) leading-normal font-500 uppercase tracking-wider
 | Pairing type | Tension | Example |
 |---|---|---|
 | Display + Monospace | Authority ↔ precision | Clash Display + JetBrains Mono |
-| Serif + Geometric Sans | Warmth ↔ modernity | Fraunces + Instrument Sans |
+| Serif + Geometric Sans | Warmth ↔ modernity | Fraunces + Instrument Sans † |
 | Condensed + Expanded | Motion ↔ stillness | Barlow Condensed + Source Serif 4 |
 | Script/Decorative + Grotesque | Personality ↔ readability | Zodiak + Satoshi |
 | Slab + Humanist | Authority ↔ approachability | Bitter + Lora |
 
 **Rule:** both fonts in a pair should be different on every axis — weight feel, era, x-height, and form. Similar fonts make a pair, not a contrast.
 
+† Both faces are on the Convergence Watch above. The pairing is genuinely good — that is why it converged — so it stays listed, but it is a carve-out, not a default: reach for it only with a stated brand reason, per the rule at the end of that section. Editorial and creative work usually has one; a B2B SaaS landing usually does not.
+
 ---
 
 ## Additional Distinctive Fonts (Anthropic Cookbook)
+
+Three of these four — Fraunces, Newsreader, Crimson Pro — also sit on the Convergence Watch. Distinctive and over-reached-for are not opposites; a face earns its place here on character and its place there on frequency. Treat this table as a description of what each face *does*, and the Convergence Watch rule as the test for whether you may use it: state the brand reason, or pick something off-list.
 
 | Font | Category | Character |
 |---|---|---|

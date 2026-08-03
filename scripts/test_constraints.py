@@ -60,15 +60,19 @@ CONSTRAINTS: List[Constraint] = [
     Constraint(
         id="TYP-02",
         category="Typography",
-        description="No banned display font (Inter/Roboto/Arial/Poppins as sole display font)",
+        description="No banned display font (Inter/Roboto/Arial/Poppins/DM Sans/Space Grotesk as sole display font)",
         severity="high",
         check=lambda c: (
-            # Allowed as fallback in font stacks, banned as only/primary font
+            # Allowed as fallback in font stacks, banned as only/primary font.
+            # The banned set matches the prose: AGENT_SYSTEM_PROMPT.md §6, core/design-tokens.md,
+            # skills/design-system/SKILL.md and font-pairings.md all name Space Grotesk.
+            # Plus Jakarta Sans is NOT an escape hatch — aesthetic-direction.md and
+            # font-pairings.md's Convergence Watch both ban it.
             not bool(re.search(
-                r"""font[-_]?family\s*[:=]\s*["']?(Inter|Roboto|Arial|Poppins|DM Sans)["']?\s*[,;)]?\s*(?!.*Manrope|.*Geist|.*Satoshi|.*Plus Jakarta)""",
+                r"""font[-_]?family\s*[:=]\s*["']?(Inter|Roboto|Arial|Poppins|DM Sans|Space Grotesk)["']?\s*[,;)]?\s*(?!.*Manrope|.*Geist|.*Satoshi)""",
                 c, re.IGNORECASE
             )),
-            "Banned font used as sole display font (Inter/Roboto/Arial/Poppins/DM Sans without a premium fallback)"
+            "Banned font used as sole display font (Inter/Roboto/Arial/Poppins/DM Sans/Space Grotesk without a premium fallback)"
         )
     ),
 
