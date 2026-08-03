@@ -46,7 +46,7 @@ The agent reads the registry, matches your request to one skill, and loads only 
 
 **A typical request loads 4,775–6,075 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888.
 
-## Skills (16)
+## Skills (17)
 
 | Skill | Covers |
 |---|---|
@@ -66,6 +66,7 @@ The agent reads the registry, matches your request to one skill, and loads only 
 | `testing` | Vitest, Testing Library, jest-axe, Playwright, Storybook |
 | `web-interface` | Vercel WIG, copywriting, contrast, typography detail, audit rules |
 | `platform` | Mobile/PWA, React Native, i18n, SEO, payments, email, AI chat |
+| `design-research` | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev and convert inspiration into typed constraints |
 
 ## Core files (8)
 
@@ -122,13 +123,15 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.2.3
+## What's new in v14.4.0
 
-- **Native adapters, not a setup doc you follow by hand.** [`install/`](install/) holds ten directories — nine hosts plus a generic card for anything else — each containing the rules file you would otherwise write yourself. Five install themselves: `bash setup.sh` detects Cursor, Copilot, Windsurf, Continue.dev or Aider from marker files already in your project, refuses to guess when two match, and overwrites nothing without `--force`. The rest stay manual, because a web-UI knowledge upload is not something an installer can honestly automate.
-- **They ship inside the archive now, not just the repo.** `install/`, `setup.sh` and `setup.ps1` are part of the `.skill` file itself. The archive is the transport layer for every host that isn't Claude Code, so an adapter you could only get by cloning was an adapter most people could not get.
-- **Four of them are untested, and say so.** Windsurf, Continue.dev, Aider and Codex CLI each follow that host's own documented rules format, but none is in the [tested matrix](docs/AGENT_COMPATIBILITY.md) — the format is right, nobody has run the matrix against it. Marked untested everywhere they appear rather than absorbed into a bigger "supported" count.
-
-This one shipped as an explicit, one-time exception to the freeze stated below — the work was built and audited before the freeze took effect. The freeze resumed the moment it landed; [docs/CHANGELOG.md](docs/CHANGELOG.md) carries the full reasoning.
+- **Live design research.** [`skills/design-research/`](skills/design-research/SKILL.md) is the seventeenth skill. Agents were already being handed URLs — "build it like this site", a Dribbble link, an Aceternity component — with no protocol for what to do next, so the behaviour was improvised: copy the pixels, or ignore the reference. This makes it a discipline. Nine sources with per-source extraction *and* rejection rules, an MCP integration guide that is honest about which sites have no MCP server at all, and a rule that every finding must land as an OKLCH token, a grid, a `cubic-bezier` or a step on the spacing scale. A finding that cannot be written as one of those was decoration, not a constraint.
+- **50-source knowledge ingestion.** Five new references, three appends and six audit fixes across `agent-ops`, `ai-ui-generation`, `animations`, `design-principles` and `design-system`. 76 → 86 references, 320,375 tokens of on-demand depth.
+- **Two more enforced constraints.** `ANI-04` (AST) catches a `scroll` listener whose handler calls `setState` — a re-render every frame, which the pack taught against without enforcing. `MOTION-02R` widens motion checking from easing *direction* to easing *quality*: no bounce, elastic or back easing. 51 → 53.
+- **`framer-motion` → `motion`.** The upstream package was renamed and the pack still documented the dead import path. Fixed across 71 files — 14 stubs, 40 test mocks, 8 references ([#1](https://github.com/Krishna-Modi12/frontend-design-pro/issues/1)).
+- **Native install adapters.** [`install/`](install/) holds ten host directories, each with the rules file you would otherwise write by hand; `bash setup.sh` auto-detects five of them and overwrites nothing without `--force`. Windsurf, Continue.dev, Aider and Codex CLI follow their host's documented format but are **not** in the [tested matrix](docs/AGENT_COMPATIBILITY.md), and say so everywhere they appear.
+- **Every published figure re-derived.** Shipping a 17th skill while ~30 documents still read "16 skills · 76 references · 305,771 tokens" would have manufactured at scale the exact defect issues [#1](https://github.com/Krishna-Modi12/frontend-design-pro/issues/1)–[#3](https://github.com/Krishna-Modi12/frontend-design-pro/issues/3) reported. Counts were recomputed from the git index and swept. Historical release notes and changelog entries were left alone — they were accurate when cut.
+- **The feature freeze was overridden.** Declared at v14.2.2, lifted by owner directive on 2026-08-02 to ship the accumulated staging work. None of the three lift thresholds had been reached; the override and what it cost are recorded in [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
 
 ## Verification
 
@@ -154,7 +157,7 @@ npm run build    # gated archive → dist/
 
 ## Issues & contributing
 
-Bugs first: a confirmed defect is exempt from the freeze, and five of them lift it. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 9 gates should have caught it. Feature requests are counted rather than closed — ten distinct ones for the same thing also lifts the freeze. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
+Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 9 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
 
 Sending code:
 
@@ -165,7 +168,7 @@ Sending code:
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
 
-**The pack is under a feature freeze as of v14.2.2** — bug fixes, typo fixes and broken-link fixes only, until 10 people ask for the same feature, 5 real bugs land, or two monitored weeks pass. Rationale and the exact thresholds: [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
+**The pack was under a feature freeze from v14.2.2 through 2026-08-02**, when it was overridden by owner directive to ship the accumulated staging work. Future freezes observe the thresholds in [docs/MAINTENANCE.md](docs/MAINTENANCE.md) — 10 distinct requests for one feature, 5 confirmed bugs, or two actively monitored weeks — unless an override is documented the same way. Bug fixes and broken-link fixes are always welcome, freeze or not.
 
 ## Docs
 
