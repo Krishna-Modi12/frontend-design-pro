@@ -1,0 +1,31 @@
+{
+  "_comment": [
+    "Response body for GET /api/site/overview, the endpoint app/page.tsx reads on mount.",
+    "That endpoint belongs to the fictional 'Tracepoint' product; this repo ships the",
+    "frontend only, so without it the page renders its error state and the metric strip",
+    "reads 'Status feed unreachable'. This file is the fixture screenshot.png was",
+    "captured against, committed so the image is reproducible rather than asserted.",
+    "Shape is fixed by the demo's own exported types: PlatformMetric (Hero.tsx),",
+    "PlanPrice (Pricing.tsx), RegionState (Footer.tsx). Pricing.tsx already declares the",
+    "tier names and copy — only the price book crosses the network.",
+    "Recapture instructions: .github/SCREENSHOT_CONTRIBUTION.md"
+  ],
+  "metrics": [
+    { "id": "steps-committed", "label": "Steps committed", "value": "48.2M", "caption": "last 30 days, all regions" },
+    { "id": "replay-p99", "label": "Replay p99", "value": "310ms", "caption": "cold worker, log-backed resume" },
+    { "id": "duplicate-charges", "label": "Duplicate charges", "value": "0", "caption": "since the log became authoritative" }
+  ],
+  "plans": [
+    { "id": "hobby", "monthlyCents": 0, "annualCents": 0, "unit": "per project" },
+    { "id": "team", "monthlyCents": 4900, "annualCents": 46800, "unit": "per seat" },
+    { "id": "enterprise", "monthlyCents": 19900, "annualCents": 190800, "unit": "per seat" }
+  ],
+  "verified": {
+    "kalimba": "Verified customer · 14 months",
+    "otsu": "Verified customer · 3 years",
+    "meridian": "Verified customer · 8 months",
+    "vela": "Verified customer · 2 years",
+    "sable": "Verified customer · 11 months"
+  },
+  "region": "operational"
+}
