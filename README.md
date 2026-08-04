@@ -40,11 +40,11 @@ The agent reads the registry, matches your request to one skill, and loads only 
 | Layer | What it is | Cost |
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **1,888 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,073–2,241 tokens — the deps one skill declares |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,236–2,404 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **320,375 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **320,865 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,775–6,075 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888.
+**A typical request loads 4,928–6,228 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888.
 
 ## Skills (17)
 
@@ -126,7 +126,7 @@ Above-the-fold, default viewport, reduced motion off, captured via a headless Ch
 ## What's new in v14.4.0
 
 - **Live design research.** [`skills/design-research/`](skills/design-research/SKILL.md) is the seventeenth skill. Agents were already being handed URLs — "build it like this site", a Dribbble link, an Aceternity component — with no protocol for what to do next, so the behaviour was improvised: copy the pixels, or ignore the reference. This makes it a discipline. Nine sources with per-source extraction *and* rejection rules, an MCP integration guide that is honest about which sites have no MCP server at all, and a rule that every finding must land as an OKLCH token, a grid, a `cubic-bezier` or a step on the spacing scale. A finding that cannot be written as one of those was decoration, not a constraint.
-- **50-source knowledge ingestion.** Five new references, three appends and six audit fixes across `agent-ops`, `ai-ui-generation`, `animations`, `design-principles` and `design-system`. 76 → 86 references, 320,375 tokens of on-demand depth.
+- **50-source knowledge ingestion.** Five new references, three appends and six audit fixes across `agent-ops`, `ai-ui-generation`, `animations`, `design-principles` and `design-system`. 76 → 86 references, 320,865 tokens of on-demand depth.
 - **Two more enforced constraints.** `ANI-04` (AST) catches a `scroll` listener whose handler calls `setState` — a re-render every frame, which the pack taught against without enforcing. `MOTION-02R` widens motion checking from easing *direction* to easing *quality*: no bounce, elastic or back easing. 51 → 53.
 - **`framer-motion` → `motion`.** The upstream package was renamed and the pack still documented the dead import path. Fixed across 71 files — 14 stubs, 40 test mocks, 8 references ([#1](https://github.com/Krishna-Modi12/frontend-design-pro/issues/1)).
 - **Native install adapters.** [`install/`](install/) holds ten host directories, each with the rules file you would otherwise write by hand; `bash setup.sh` auto-detects five of them and overwrites nothing without `--force`. Windsurf, Continue.dev, Aider and Codex CLI follow their host's documented format but are **not** in the [tested matrix](docs/AGENT_COMPATIBILITY.md), and say so everywhere they appear.

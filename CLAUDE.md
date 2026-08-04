@@ -17,6 +17,7 @@ npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
 npm run constraints  # Gate 5 only — 36 regex constraints over skills/
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
+npm test             # Gate 7's runtime half — 39 files, 124 tests, ~35s
 ```
 
 Single-file checks while iterating on an example (much faster than the full chain):
@@ -27,7 +28,15 @@ python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 36 regex 
 python scripts/build_release.py --bump-patch                          # patch bump + gates + build
 ```
 
-**`npm test` (vitest) is partially green — 20 of 39 files pass, and a red exit is expected.** It is not run in CI; Gate 7 is the blocking contract (every gold has a 1:1 `.test.tsx`, every test file compiles strict). Peer libraries are aliased to runtime stubs in `test/stubs/` via `vitest.config.ts` — do **not** try to fix failures by editing `_stubs.d.ts`, which is compile-time only and invisible at runtime. Before trusting any pass count, check for orphaned `node` workers from an interrupted run: unbounded jsdom workers exhaust memory and report `Worker exited unexpectedly`, which is indistinguishable from a component crash. Causes, per-file breakdown and what would close the gap: `docs/TESTING.md`.
+**`npm test` (vitest) runs and must stay green** — Gate 7 runs it, so a red suite blocks the build. The examples' ~25 peer libraries are still not installed; `test/stubs/` supplies one runtime module per specifier and `vitest.config.ts` aliases them.
+
+Three rules from `test/stubs/README.md`, because each was learned from a silent failure:
+
+- **One file per specifier.** A module has one `default` export (`gsap` and `@splinetool/react-spline` both want it), a namespace import reads every name in the file (`import * as z from 'zod'`), and `vi.mock` keys on the *resolved* path — so aliasing three specifiers to one file makes their mocks collide.
+- **Never return a bare `new Proxy({}, { get })` from a `vi.mock` factory.** The trap answers `then`, so `await factory()` treats it as a thenable, calls it, and never settles. The module never loads and the worker is killed — reported as `Error: Worker exited unexpectedly`, which reads like memory pressure and is not.
+- **If a stub takes an ARIA role, it owns that role's name.** `role="dialog"` without `aria-labelledby` is an axe violation the real Radix component does not have, and emitting one fails a gold for a defect that exists only in the stub.
+
+`docs/TESTING.md` carries the per-file history and what the suite does and does not prove.
 
 `scripts/build_release.py` is the **only supported way** to produce an archive. Do not zip by hand.
 

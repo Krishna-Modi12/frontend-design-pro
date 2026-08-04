@@ -1,25 +1,13 @@
 // Test for good-tanstack — generated per Testing Doctrine (references/testing.md).
-// Compile-only in this repo (test libs are ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-tanstack';
 
 expect.extend(toHaveNoViolations);
-
-
-vi.mock('@tanstack/react-query', () => {
-  const actual: Record<string, unknown> = {};
-  actual.QueryClient = class {};
-  actual.QueryClientProvider = (props: { children?: unknown }) => <>{props.children as never}</>;
-  actual.useQuery = () => ({ data: undefined, isLoading: false, isError: false });
-  actual.useInfiniteQuery = () => ({ data: { pages: [] }, fetchNextPage: vi.fn(), hasNextPage: false, isFetchingNextPage: false, isLoading: false });
-  actual.useMutation = () => ({ mutate: vi.fn(), isPending: false });
-  actual.useQueryClient = () => ({ invalidateQueries: vi.fn(), setQueryData: vi.fn(), getQueryData: vi.fn(), cancelQueries: vi.fn() });
-  return actual;
-});
 
 describe('good-tanstack', () => {
   it('renders without crashing', () => {

@@ -1,7 +1,7 @@
 // Test for good-composition-patterns — per Testing Doctrine (references/testing.md).
-// Compile-only here (test libs ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
@@ -22,12 +22,16 @@ describe('good-composition-patterns', () => {
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 
-  it('responds to a button activation', async () => {
+  it('moves tab selection when a tab is activated', async () => {
     const user = userEvent.setup();
     render(<Component />);
-    const btn = screen.getAllByRole('button')[0];
-    await user.click(btn);
-    expect(btn).toBeInTheDocument();
+    // The controls here are tabs, not plain buttons: `role="tab"` on a <button>
+    // replaces the implicit role, so a `getAllByRole('button')` query finds none.
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    await user.click(tabs[1]);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
   });
 
   it('has no axe accessibility violations', async () => {

@@ -1,4 +1,4 @@
-// Runtime stub for `three`. See `motion-react.tsx` for why these exist.
+// Runtime stub for `three`. See ./README.md for why these exist.
 // Minimal enough to construct and mutate; no rendering, no math correctness.
 
 export class Vector2 {

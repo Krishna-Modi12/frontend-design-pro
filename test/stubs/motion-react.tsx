@@ -1,19 +1,5 @@
-// Runtime stub for `motion/react`.
-//
-// Why this exists: gold examples import ~25 peer libraries that the repo
-// deliberately does not install — the pack ships no runtime, and installing
-// three.js + react-native + storybook to render a markdown skill pack would be
-// absurd. The ambient `_stubs.d.ts` files satisfy `tsc`, but they are
-// declaration files: they do not exist at runtime, so Vite cannot resolve the
-// bare specifier and every test importing one failed to load.
-//
-// These modules are aliased in `vitest.config.ts` and exist only for the test
-// run. They are NOT shipped — `build_release.py` copies core/ skills/ scripts/
-// evals/ rules/ and four root files, none of which is this directory.
-//
-// Rule: forward every prop. A stub that swallows props silently deletes
-// `role`, `aria-label` and `onClick`, which turns a passing accessibility
-// assertion into a false negative — worse than the import error it replaced.
+// Runtime stub for `motion/react` (and `framer-motion`, the same package under
+// its former name). See ./README.md for why these exist.
 import * as React from 'react';
 
 type AnyProps = Record<string, unknown>;

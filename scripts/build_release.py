@@ -69,6 +69,10 @@ def _version() -> str:
     return json.loads((ROOT / "metadata.json").read_text(encoding="utf-8"))["version"]
 # Matches any 1–2 digit major so the leak scan keeps working past v12.
 VERSION_RE = re.compile(r"\bv?\d{1,2}\.\d{1,2}\.\d{1,3}\b")
+# SGR escape sequences. Node CLIs colour their output even when it is redirected
+# to a pipe, and a regex written against the visible text matches nothing without
+# this.
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def run(cmd, **kw):
@@ -77,14 +81,23 @@ def run(cmd, **kw):
                           encoding="utf-8", errors="replace", **kw)
 
 
-def _find_tsc():
-    """Local tsc, preferring the Windows .cmd shim (the bare file is a POSIX script)."""
-    names = ("tsc.cmd", "tsc") if sys.platform == "win32" else ("tsc",)
+def _find_bin(stem: str):
+    """Locally installed CLI, preferring the Windows .cmd shim.
+
+    The bare `node_modules/.bin/<name>` file is a POSIX shell script; on Windows
+    only the `.cmd` shim is executable, and running the bare one fails with a
+    WinError that reads like the tool is missing.
+    """
+    names = (f"{stem}.cmd", stem) if sys.platform == "win32" else (stem,)
     for base in [ROOT, *ROOT.parents]:
         for n in names:
             c = base / "node_modules/.bin" / n
             if c.exists(): return str(c)
     return None
+
+
+def _find_tsc():
+    return _find_bin("tsc")
 
 
 def constraint_counts() -> tuple[int, int]:
@@ -320,16 +333,19 @@ def gate_chain() -> tuple[bool, list]:
     ev = re.search(r"(\d+/\d+) evals passed", r.stdout)
     all_ok &= record("Evals", r.returncode == 0, (ev.group(1) if ev else "?") + " self-test")
 
-    # Gate 7 — Test coverage. Contract: every gold has a 1:1 `.test.tsx`, and every
-    # test file compiles under strict TypeScript.
+    # Gate 7 — Test coverage. Contract: every gold has a 1:1 `.test.tsx`, every test
+    # file compiles under strict TypeScript, AND the suite passes when it is run.
     #
-    # Runtime execution is deliberately NOT asserted. Gold examples import ~25 peer
-    # libraries (three, motion/react, react-hook-form, react-native, @playwright/test…)
-    # that exist only as ambient declarations in `_stubs.d.ts`, so `vitest run` cannot
-    # resolve them. The previous implementation probed `ROOT.parent/node_modules` — the
-    # wrong directory — so the vitest branch never fired and the gate silently reported
-    # a compile-only pass as though the suite had run. Asserting what is actually
-    # checked is the honest contract; see docs/ARCHITECTURE.md.
+    # Runtime execution used to be out of scope, and said so. Gold examples import
+    # ~25 peer libraries (three, motion/react, react-hook-form, react-native…) that
+    # exist only as ambient declarations in `_stubs.d.ts`, so `vitest run` could not
+    # resolve them and 29 of 39 files failed at import. `test/stubs/` now supplies a
+    # real module per specifier and `vitest.config.ts` aliases them, so the suite
+    # executes — and a gate that can assert behaviour should not settle for
+    # asserting that the file parses.
+    #
+    # It still degrades rather than lies. A fresh clone with no `npm install` has
+    # neither tsc nor vitest, and the detail string names exactly which layers ran.
     import glob as _glob, json as _json
     golds_n = [f[:-4] for f in _glob.glob(str(ROOT / "skills/*/examples/good-*.tsx")) if not f.endswith(".test.tsx")]
     tests = {f[:-9] for f in _glob.glob(str(ROOT / "skills/*/examples/good-*.test.tsx"))}
@@ -337,29 +353,53 @@ def gate_chain() -> tuple[bool, list]:
     if missing:
         all_ok &= record("Test coverage", False, f"missing tests: {missing}")
     else:
+        coverage_ok = True
+        layers = [f"{len(tests)}/{len(golds_n)} golds have a 1:1 test"]
+
         cfg = {"compilerOptions": {"strict": True, "noImplicitAny": True, "jsx": "react-jsx",
                "moduleResolution": "bundler", "target": "ES2022", "module": "ESNext",
                "esModuleInterop": True, "skipLibCheck": True, "noEmit": True, "types": ["react", "react-dom"]},
                "include": ["skills/*/examples/*.test.tsx", "skills/*/examples/*.d.ts"]}
         cfgp = ROOT / "tsconfig.tests.json"; cfgp.write_text(_json.dumps(cfg))
-        tsc = None
-        # `.bin/tsc` is a POSIX script on Windows; only the .cmd shim is executable.
-        _names = ("tsc.cmd", "tsc") if sys.platform == "win32" else ("tsc",)
-        for base in [ROOT, *ROOT.parents]:
-            cand = next((base / "node_modules/.bin" / n for n in _names
-                         if (base / "node_modules/.bin" / n).exists()), None)
-            if cand: tsc = str(cand); break
+        tsc = _find_tsc()
         if tsc:
-            tr = run([tsc, "-p", str(cfgp)]); cfgp.unlink(missing_ok=True)
-            passed = tr.returncode == 0
-            all_ok &= record("Test coverage", passed,
-                f"{len(tests)}/{len(golds_n)} golds have a 1:1 test; all test files compile strict "
-                f"(runtime exec out of scope — examples stub their peer deps)")
-            if not passed: print(tr.stdout[-1500:])
+            tr = run([tsc, "-p", str(cfgp)])
+            if tr.returncode:
+                coverage_ok = False; layers.append("strict compile FAILED"); print(tr.stdout[-1500:])
+            else:
+                layers.append("all compile strict")
         else:
-            cfgp.unlink(missing_ok=True)
-            warn("tsc not found — Test coverage degraded to file-existence only; run `npm install`")
-            all_ok &= record("Test coverage", True, f"{len(tests)}/{len(golds_n)} test files present (tsc absent — existence only)")
+            warn("tsc not found — strict compile of test files skipped; run `npm install`")
+            layers.append("compile skipped (tsc absent)")
+        cfgp.unlink(missing_ok=True)
+
+        vitest = _find_bin("vitest")
+        if vitest:
+            vr = run([vitest, "run", "--reporter=basic"], timeout=900)
+            # The summary carries SGR colour codes even when redirected, and the
+            # reporter splits itself across both streams — so join them and strip
+            # before matching. Reading the raw stdout matched nothing and reported
+            # a green suite as a failure.
+            blob = ANSI_RE.sub("", vr.stdout + vr.stderr)
+            counts = re.search(r"Tests\s+(\d+) passed \((\d+)\)", blob)
+            files = re.search(r"Test Files\s+(\d+) passed \((\d+)\)", blob)
+            if vr.returncode == 0 and counts and files:
+                layers.append(f"{files.group(1)}/{files.group(2)} files · {counts.group(1)}/{counts.group(2)} tests pass")
+            elif vr.returncode == 0:
+                # Exit 0 without a parseable summary means the reporter changed
+                # shape, not that the suite is broken — say which it is.
+                coverage_ok = False
+                layers.append("vitest exited 0 but printed no summary to parse")
+                print(blob[-2000:])
+            else:
+                coverage_ok = False
+                layers.append("vitest FAILED")
+                print(blob[-3000:])
+        else:
+            warn("vitest not found — suite not executed; run `npm install`")
+            layers.append("suite not run (vitest absent)")
+
+        all_ok &= record("Test coverage", coverage_ok, "; ".join(layers))
 
     r = run(["node", str(SCRIPTS / "parser_regression_test.js")])
     rg = re.search(r"(\d+/\d+) regression", r.stdout)

@@ -4,6 +4,45 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.4.1] — 2026-08-05
+
+The first known gap in [ARCHITECTURE.md](ARCHITECTURE.md) — *"the vitest suite does not execute end-to-end"* — is closed. It had been published for four minor versions, in that file plus every launch draft and response template, because it was true: the examples' ~25 peer libraries existed only as ambient `declare module` declarations, so `vitest run` could not resolve them and 29 of 39 test files failed at import.
+
+### Added — `test/stubs/`, one runtime module per specifier
+
+Twenty-seven small modules, aliased in `vitest.config.ts`. Test-only; the archive ships `core/ skills/ scripts/ evals/ rules/ install/` and four root files, and `test/` is in none of them.
+
+**One file per specifier is a rule, not a preference.** Grouping them by domain is tidier and fails three ways, each silently: a module has exactly one `default` export (`gsap` and `@splinetool/react-spline` both want it, and the loser receives the winner's object); a namespace import reads every name in the file, so `import * as z from 'zod'` finds `Bell` and `ResponsiveContainer` but not `string`; and `vi.mock` keys on the *resolved* path, so three specifiers behind one file collide and the last factory registered wins. `test/stubs/README.md` records all three against the failure that produced them.
+
+The stubs are held to two rules that keep them from flattering the golds. Props are forwarded, so a missing `aria-label` still fails. And any ARIA relationship the real component wires up is modelled — Radix labels a dialog by its title and names a `role="combobox"` explicitly, and a stub that takes the role without the name invents a violation the real component does not have. Where jsdom has no answer at all — WebGL, layout, virtualisation — the stub renders nothing, because a test that asserts on content no user can perceive is worse than one that skips it.
+
+### Changed — Gate 7 runs the suite
+
+It asserted 1:1 coverage plus strict compilation and said runtime execution was out of scope. It now also runs `vitest` and fails on a red suite: **39/39 files, 124/124 tests**. It still degrades honestly — a clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran rather than implying all of them did.
+
+All 64 inline `vi.mock` factories are gone from the test files; the aliased stubs are the single source of truth. Eight of them returned a bare `new Proxy({}, { get })`, which is a thenable: `await factory()` calls the trap's `then`, which returns a JSX element and never resolves, so the module never loads and the worker is killed. It surfaces as `Error: Worker exited unexpectedly` — indistinguishable from memory pressure, and `vitest.config.ts` had already misattributed it to exactly that in a comment.
+
+### Fixed — four defects that compiling could not have found
+
+- **`good-view-transitions.tsx` crashed on every stable React build.** It destructured `React.ViewTransition` and rendered it directly; the API ships only in the experimental channel, so on React 19.2 it is `undefined` and the component threw `Element type is invalid` — for any consumer, not just under test. The `as unknown as` shim that kept it type-clean is precisely what hid it from `tsc`. It now resolves the API and falls back to rendering children unwrapped, which is the form its sibling `good-vt-shared-element.tsx` already used.
+- **Both copies of `good-shadcn.tsx` shipped an unnamed table column.** The action column declared `header: ''`, rendering `<th></th>` — an axe `empty-table-header` violation and a column a screen-reader user cannot identify. It now carries an `sr-only` label.
+- **Three generated tests queried a role their control does not have.** `getAllByRole('button')` matches nothing on a `<button role="tab">`, because the explicit role replaces the implicit one. They now assert that activating a tab moves `aria-selected`, which is the behaviour worth checking.
+- **Two more asserted that a clicked element was still in the document.** On a gallery that swaps in a detail pane, that asserts the interaction did *not* happen; on a checkout that opens on a skeleton, it reads the first frame instead of waiting. Both now assert the outcome.
+
+`document.fonts` joins `matchMedia`, `IntersectionObserver` and `ResizeObserver` in `vitest.setup.ts`: jsdom has no font pipeline, and a component that re-measures after webfonts settle is doing the right thing.
+
+### Changed — every published figure re-derived
+
+Two commits landed after `14.4.0` was cut and grew the reference corpus, which left every token figure in the live docs stale — the defect this repo keeps repeating. Re-measured from the git index (the LF copy CI and the archive see, not the CRLF working tree) and verified by reproducing the previous figures exactly at the release commit before trusting the method:
+
+- Reference depth **320,375 → 320,865** across 13 files.
+- Per-request totals **4,775–6,075 → 4,928–6,228**, every skill uniformly +153 from a shared core dependency, read off Gate 8a's own code against an LF checkout.
+- Core dependency load **2,073/2,149/2,241 → 2,236/2,312/2,404**.
+
+`docs/CHANGELOG.md` entries below and `docs/RELEASE_NOTES-*` are untouched: they were accurate when cut.
+
+---
+
 ## [14.4.0] — 2026-08-02
 
 **The feature freeze declared in `14.2.2` was overridden by owner directive on 2026-08-02.** None of its three lift thresholds — 10 distinct enhancement requests, 5 confirmed bugs, or 2026-08-13 — had been reached. Three branches of completed, gate-green work were held back by policy alone and were judged ready. The override, including what it cost, is recorded in [MAINTENANCE.md](MAINTENANCE.md#feature-freeze--overridden).

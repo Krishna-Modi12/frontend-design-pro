@@ -1,4 +1,4 @@
-// Runtime stub for `react-native`. See `motion-react.tsx` for why these exist.
+// Runtime stub for `react-native`. See ./README.md for why these exist.
 //
 // React Native has no jsdom renderer — `react-native` resolves to native
 // modules, and the real answer for testing it is `react-test-renderer` plus a
@@ -61,6 +61,27 @@ export const FlatList = ({ data, renderItem, ListEmptyComponent, ...rest }: AnyP
           React.createElement('div', { key: index, role: 'listitem' }, render?.({ item, index })),
         )
       : (ListEmptyComponent as React.ReactNode) ?? null,
+  );
+};
+
+export const SectionList = ({ sections, renderItem, renderSectionHeader, ListEmptyComponent, ...rest }: AnyProps) => {
+  const groups = (sections as Array<{ data?: unknown[] }>) ?? [];
+  const item = renderItem as ((a: { item: unknown; index: number }) => React.ReactNode) | undefined;
+  const header = renderSectionHeader as ((a: { section: unknown }) => React.ReactNode) | undefined;
+  const empty = groups.every((s) => !s.data?.length);
+  return React.createElement(
+    'div',
+    toDom(rest, 'list'),
+    empty
+      ? ((ListEmptyComponent as React.ReactNode) ?? null)
+      : groups.map((section, s) =>
+          React.createElement('div', { key: s, role: 'group' }, [
+            header ? React.createElement('div', { key: 'h' }, header({ section })) : null,
+            ...(section.data ?? []).map((it, index) =>
+              React.createElement('div', { key: index, role: 'listitem' }, item?.({ item: it, index })),
+            ),
+          ]),
+        ),
   );
 };
 

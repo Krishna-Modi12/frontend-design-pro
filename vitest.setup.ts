@@ -38,3 +38,26 @@ if (!(globalThis as { ResizeObserver?: unknown }).ResizeObserver) {
     disconnect() {}
   };
 }
+// CSS Font Loading API. jsdom has no font pipeline, so `document.fonts` is
+// absent — and a component that re-measures after webfonts settle
+// (`document.fonts.ready.then(…)`) is doing the right thing, not something the
+// test should have to mock away. Already-resolved: there are no webfonts here,
+// so the fonts are as loaded as they will ever be.
+if (!(document as { fonts?: unknown }).fonts) {
+  Object.defineProperty(document, 'fonts', {
+    configurable: true,
+    value: {
+      ready: Promise.resolve(),
+      status: 'loaded',
+      size: 0,
+      load: () => Promise.resolve([]),
+      check: () => true,
+      add: () => {},
+      delete: () => false,
+      clear: () => {},
+      forEach: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    },
+  });
+}

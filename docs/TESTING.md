@@ -1,75 +1,82 @@
 # Testing
 
-Two different things are called "tests" in this repo, and conflating them is how the claim in the README went stale.
+Two different things are called "tests" in this repo, and conflating them is how the claim in the README went stale once already.
 
 | | What it asserts | Where it runs | Blocking? |
 |---|---|---|---|
-| **Gate 7** | Every gold example has a 1:1 `.test.tsx`, and every test file compiles under strict TypeScript | `scripts/build_release.py`, CI | **Yes** — blocks the release |
-| **`npm test`** | The tests actually execute and their assertions hold | vitest, locally | **No** — not run in CI |
-
-Gate 7 is the contract. `npm test` is a development convenience that is **partially green**, and this file says exactly how partially, because "runtime exec is out of scope" was true before and is not true now.
+| **Gate 7** | Every gold example has a 1:1 `.test.tsx`, every test file compiles under strict TypeScript, **and the suite passes** | `scripts/build_release.py`, CI | **Yes** — blocks the release |
+| **`npm test`** | The same suite, on its own, in about 35 seconds | vitest, locally | It *is* Gate 7's third layer |
 
 ## Current state
 
-**20 of 39 test files pass.** Measured per-file with a 60s cap on a machine with no competing load:
+**39 of 39 test files, 124 of 124 tests.** Read off the same `npm run gates` that refuses to build an archive when it is not true.
 
-```bash
-for f in skills/*/examples/*.test.tsx; do npx vitest run "$f"; done
-```
+Gate 7 degrades rather than lies. A fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did.
 
-Run the whole suite at once and you will get a different, worse answer — see *Measuring this honestly* below.
-
-## Why most of them used to fail
+## Why the suite could not run at all
 
 Gold examples import ~25 peer libraries the repo deliberately does not install: the pack ships no runtime, and vendoring three.js, React Native and Storybook to render a markdown skill pack would be absurd. Those imports are satisfied for `tsc` by ambient `declare module` blocks in `skills/*/examples/_stubs.d.ts`.
 
 **Declaration files do not exist at runtime.** They satisfy the type checker and are invisible to Vite, so every import of `motion/react`, `three`, `zod` and the rest failed to resolve and 29 of 39 files died before running a single assertion. Expanding `_stubs.d.ts` cannot fix this — it is the wrong layer.
 
-The fix is resolution-level: `vitest.config.ts` aliases each specifier to a small **runtime** module under `test/stubs/`. Those modules are test-only — `build_release.py` ships `core/ skills/ scripts/ evals/ rules/ demo/ install/` plus four root files, and `test/` is in none of them.
+The fix is resolution-level: `vitest.config.ts` aliases each specifier to a small **runtime** module under `test/stubs/`. Those modules are test-only — `build_release.py` ships `core/ skills/ scripts/ evals/ rules/ install/` plus four root files, and `test/` is in none of them. The rules they follow, and the failure that produced each rule, are in [`test/stubs/README.md`](../test/stubs/README.md).
 
-A second cause was self-inflicted: 34 test files carried a hand-written `vi.mock('motion/react', …)` whose Proxy rendered *every* motion element as a `<div>` and forwarded animation props to the DOM. That silently turned `motion.h1` into a non-heading, so `getAllByRole('heading')` found nothing. `vi.mock` outranks a resolve alias, so those mocks were overriding the correct stub. They were removed; the shared stub maps tag names properly and strips motion-only props.
+## The three causes, once they were established
 
-## The 19 that still fail
+The first pass through this reached 20 of 39 and listed the remaining 19 as three unexplained clusters. Each had a single root cause, and none was the one that looked most likely.
 
 ### Worker exits — 8 files
 
-`threejs-3d/good-3d{,-interaction,-loader,-scene,-shader}`, `data-tables/good-dark-mode`, `design-system/good-dark-mode`, `platform/good-react-native`.
+Reported as `Error: Worker exited unexpectedly` after ~87s, which reads exactly like memory pressure. It was not. Those files were the ones whose `vi.mock` factory returned a **bare `new Proxy({}, { get })`**:
 
-The worker process exits silently during module load — `transform` completes, then `setup 0ms`, `collect 0ms`, and the pool reports `Worker exited unexpectedly` after ~87s. It reproduces one file at a time on an idle machine, under both the `threads` and `forks` pools, so it is not contention. Root cause is not established; these components reach for environments jsdom does not provide (a WebGL context, a native module bridge), which is the most likely explanation but is not proven.
+```ts
+vi.mock('@react-three/drei', () => new Proxy({}, { get: () => Component }))
+```
 
-**Do not read a silent worker exit as a component defect without checking machine load first** — see below.
+The trap answers *every* key, including `then`. Vitest does `await factory()`, JavaScript sees a thenable and calls `then(resolve, reject)` — which returns a React element and never calls `resolve`. The module never finishes loading, the file hangs, and the pool eventually kills the worker.
 
-### Missing accessible button — 4 files
+The tell: the eight affected files were exactly the eight with a bare-Proxy factory whose module was actually imported. `good-dashboard` has the same pattern for `recharts` and passed the whole time, because its gold never imports `recharts`, so the factory never ran.
 
-`ai-ui-generation`, `component-patterns`, `react-components/good-composition-patterns`, `forms/good-checkout`.
+All 64 inline `vi.mock` factories are now gone; the aliased stubs are the single source of truth.
 
-These query a `role="button"` that the stubbed component tree does not produce. The shadcn stub renders a real `<button>`, so the gap is in a composition path that wraps or replaces it. Fixable with more faithful stubs; not fixed here.
+### Missing accessible roles — 4 files
+
+Not a stub gap. Three queried `getAllByRole('button')` against `<button role="tab">`, where the explicit role replaces the implicit one — so the query correctly matched nothing. They now assert that activating a tab moves `aria-selected`. The fourth read the first frame of a checkout that opens on a skeleton, and now waits with `findAllByRole`.
 
 ### Assertion failures — 7 files
 
-`animations/good-{scroll,view-transitions,vt-shared-element}`, `data-tables/good-tanstack`, `forms/good-rhf`, `iconography/good-shadcn`, `react-components/good-shadcn`.
+The first pass concluded these needed real Radix/TanStack/zod behaviour, and that closing them meant reimplementing those libraries. Two were genuine defects in the golds; the rest were stubs that were wrong rather than merely shallow:
 
-Assertions that depend on behaviour the stubs deliberately do not model: Radix portals and focus management, TanStack's real row model, zod validation actually running. Making these pass means reimplementing shadcn/ui, Radix and zod inside `test/stubs/` — a larger and worse project than the gap it closes.
+- `good-view-transitions.tsx` destructured `React.ViewTransition` and rendered it. That API ships only in React's experimental channel, so on a stable build it is `undefined` and the component threw for every consumer — not only under test. The `as unknown as` shim that kept it type-clean is what hid it from `tsc`.
+- Both copies of `good-shadcn.tsx` gave the action column `header: ''`, rendering `<th></th>` — an axe `empty-table-header` violation, and a column a screen-reader user cannot identify.
+- The rest were stub fidelity: `useQuery` reporting `isLoading: false` with no data (a state no real query client produces), a header `getContext()` returning `{}` so `column.getIsSorted()` threw, and `document.fonts` missing from jsdom.
+
+## What the suite does and does not prove
+
+It proves the examples mount, expose the roles and labels they claim, respond to interaction, and pass axe. It does **not** prove they work against the real `three`, `motion/react` or `react-hook-form`, and it will not while those are uninstalled.
+
+Two rules keep the stubs from flattering the golds, and both are load-bearing:
+
+- **Props are forwarded.** A stub that swallows them deletes `role`, `aria-label` and `onClick`, turning a passing accessibility assertion into a false negative — worse than the import error it replaced.
+- **A stub that takes an ARIA role owns that role's name.** `role="dialog"` without `aria-labelledby`, or `role="combobox"` without `aria-expanded`, is an axe violation the real Radix component does not have. Emitting one fails a gold for a defect that exists only in the stub — the same error in the opposite direction.
+
+Where jsdom has no answer — WebGL, layout, virtualisation — the stub renders nothing rather than something no user could perceive. A `<Canvas>` that rendered its scene graph into the DOM would let a test assert on content invisible to every real user, which is exactly why the golds put `role="img"` and an `aria-label` on the wrapper instead.
 
 ## Measuring this honestly
 
-Each test file spins up its own jsdom environment. Unbounded, 39 of them exhaust memory on a 16 GB machine and the pool starts reporting `Worker exited unexpectedly` — **a resource failure that is indistinguishable from a component crash** and will send you debugging the wrong thing. It also leaves orphaned `node` workers behind when a run is interrupted, which poisons every subsequent measurement until they are cleared.
+Each test file spins up its own jsdom environment. Unbounded, 39 of them are a real memory cost, and `vitest.config.ts` caps worker concurrency at 4 for that reason.
 
-`vitest.config.ts` caps worker concurrency at 4 for this reason. Before trusting any number:
+Note what that cap is *not* for. A silent worker exit was blamed on memory here once, and the cap was added on that theory; the actual cause was the thenable Proxy above. **Do not read `Worker exited unexpectedly` as resource pressure without checking whether a module is hanging at import** — the two are indistinguishable from the message alone, and one of them is a five-minute fix.
+
+An interrupted run also leaves orphaned `node` workers behind, which poisons every subsequent measurement until they are cleared:
 
 ```bash
 # Windows — check for orphans from an interrupted run
 powershell "(Get-Process node -ErrorAction SilentlyContinue).Count"
 ```
 
-If that is more than a handful and no dev server is running, kill them and measure again.
+## If you add a gold example
 
-## What would close the gap
+Add its `good-*.test.tsx` too — Gate 7 fails on a gold without one, and now also on a test that does not pass. If it imports a peer library nothing else uses, add a stub: one file per specifier, no exceptions, for the three reasons in [`test/stubs/README.md`](../test/stubs/README.md).
 
-In rough order of value per unit of work:
-
-1. **The 4 button failures** — trace which wrapper eats the `role`, fix that stub. Cheapest real win.
-2. **The 8 worker exits** — establish the actual cause first. If it is a missing browser API, a targeted polyfill in `vitest.setup.ts` fixes a whole cluster.
-3. **The 7 assertion failures** — needs real library behaviour. The honest options are installing the real packages as devDependencies, or accepting these as permanently out of scope. Do not fake it with stubs that assert their own mock data back.
-
-Whatever happens, the number in this file must be re-measured and updated in the same commit. A test-coverage claim that nobody re-derives is exactly the defect this repo keeps shipping.
+Whatever happens, the numbers in this file must be re-measured and updated in the same commit. A test-coverage claim that nobody re-derives is exactly the defect this repo keeps shipping.

@@ -221,7 +221,7 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
 loads a 1,888-token registry that does nothing but route, then pulls in the single
-skill your request matched — measured 4,775–6,075 tokens all-in, including that
+skill your request matched — measured 4,928–6,228 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
 
@@ -254,11 +254,12 @@ constraints run over the source; the showcase demo gets a real `next build` agai
 its actually-installed dependencies. Nine gates, all release-blocking — a failure
 means no archive gets built at all.
 
-What is not verified, stated plainly because you'd find it anyway: the vitest suite
-does not execute end to end. The examples import ~25 peer libraries that exist only as
-ambient type stubs — that's what makes strict compilation cheap — so the test gate
-asserts 1:1 test coverage plus strict compilation rather than implying the suite ran.
-That gap is written into docs/ARCHITECTURE.md rather than left for you to discover.
+What is not verified, stated plainly because you'd find it anyway: the suite runs
+against hand-written stubs, not the real peer libraries — the pack installs none of
+them. So it proves the examples mount, expose the roles and labels they claim, respond
+to interaction and survive axe; it does not prove they work against the real `three` or
+`react-hook-form`. That limit is written into docs/ARCHITECTURE.md rather than left for
+you to discover.
 
 An agent telling you code "passes A11Y-01" without running anything is a claim, not a
 result. Run the gates yourself if enforcement matters to you.

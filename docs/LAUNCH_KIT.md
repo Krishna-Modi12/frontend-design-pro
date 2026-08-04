@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,375 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 17 semantic + 36 syntactic = 53 constraints · 22 evals · 13 regression cases · registry 1,888 tokens · heaviest request 6,075 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,865 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 17 semantic + 36 syntactic = 53 constraints · 22 evals · 13 regression cases · registry 1,888 tokens · heaviest request 6,228 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
@@ -27,8 +27,8 @@ your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 320,000 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 6,075 tokens.
-The lightest loads 4,775. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 6,228 tokens.
+The lightest loads 4,928. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -57,11 +57,12 @@ uses. CI runs a real `next build` against it on every push. The exact prompt
 that generated it is in the repo; copy it into any agent and compare output.
 
 Known gaps are in docs/ARCHITECTURE.md rather than left for you to find. The
-biggest: the vitest suite doesn't run end-to-end, because examples import ~25
-peer libraries that exist only as ambient type stubs. That's what makes strict
-compilation cheap and it's also why runtime execution can't resolve them, so
-the test gate asserts 1:1 coverage plus strict compilation and says exactly
-that, instead of implying the suite ran.
+biggest: the suite runs against hand-written stubs, not the real peer libraries
+— the pack installs none of its examples' ~25 dependencies. So it proves the
+examples mount, expose the roles and labels they claim, respond to interaction
+and survive axe; it doesn't prove they work against the real `three` or
+`react-hook-form`. Running it for the first time found a gold that crashed on
+any stable React build, which is the argument for having done it.
 
 One thing I'd flag as a lesson rather than a feature: the drop-in system prompt
 sat three architecture versions out of date for months. 28 of the 31 file paths
@@ -94,8 +95,8 @@ I built frontend-design-pro as a registry instead. 🧵
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 6,075 tokens.
-Reference material available: 320,375 tokens.
+Heaviest possible request: 6,228 tokens.
+Reference material available: 320,865 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -185,9 +186,9 @@ A registry rather than a document:
 - 17 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 86 references, 320,375 tokens. Loaded only when a skill routes to one.
+- 86 references, 320,865 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **4,775 to 6,075 tokens.** A gate fails the build
+Measured per-request load: **4,928 to 6,228 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
@@ -232,12 +233,12 @@ front-load everything.
 
 **Known limitations, up front**
 
-- The vitest suite doesn't execute end-to-end. Examples import ~25 peer libs
-  that exist only as ambient type stubs; that's what makes strict compilation
-  cheap and it's also why runtime resolution fails. The test gate asserts 1:1
-  coverage + strict compilation, and says so rather than implying more.
-- Reference depth is uneven — `design-system` has 14 references, the newest
-  skills have 1–2.
+- The suite runs against hand-written stubs, not the real peer libraries —
+  the pack installs none of them. It proves the examples mount, expose their
+  roles and labels, respond to interaction and pass axe; it doesn't prove they
+  work against the real `three` or `react-hook-form`.
+- Reference depth is uneven — `design-system` has 15 references, the newest
+  skills have 2.
 - The showcase screenshot is captured by hand, not in CI. It is committed and
   current as of this release, but a change to `demo/showcase` could make it
   stale before anyone notices. `.github/SCREENSHOT_CONTRIBUTION.md` has the

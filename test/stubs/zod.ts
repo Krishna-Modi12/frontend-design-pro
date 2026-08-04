@@ -1,4 +1,4 @@
-// Runtime stub for `zod`. See `motion-react.tsx` for why these exist.
+// Runtime stub for `zod`. See ./README.md for why these exist.
 //
 // Zod is imported three different ways across the golds — `import { z }`,
 // `import * as z`, and occasionally a default — so this exports the builders

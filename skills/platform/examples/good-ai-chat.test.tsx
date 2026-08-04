@@ -1,16 +1,13 @@
 // Test for good-ai-chat — generated per Testing Doctrine (references/testing.md).
-// Compile-only in this repo (test libs are ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-ai-chat';
 
 expect.extend(toHaveNoViolations);
-
-
-vi.mock('ai/react', () => ({ useChat: () => ({ messages: [], input: '', handleInputChange: vi.fn(), handleSubmit: vi.fn(), isLoading: false, stop: vi.fn(), setInput: vi.fn() }) }));
 
 describe('good-ai-chat', () => {
   it('renders without crashing', () => {

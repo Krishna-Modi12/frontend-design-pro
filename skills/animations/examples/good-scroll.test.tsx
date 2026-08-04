@@ -1,19 +1,13 @@
 // Test for good-scroll — generated per Testing Doctrine (references/testing.md).
-// Compile-only in this repo (test libs are ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-scroll';
 
 expect.extend(toHaveNoViolations);
-
-
-vi.mock('gsap', () => ({ default: { to: () => {}, from: () => {}, set: () => {}, timeline: () => ({ to: () => {}, from: () => {} }), registerPlugin: () => {}, context: (fn: () => void) => { fn?.(); return { revert: () => {} }; }, matchMedia: () => ({ add: () => {} }) }, gsap: { registerPlugin: () => {} } }));
-vi.mock('gsap/ScrollTrigger', () => ({ ScrollTrigger: { create: () => {}, batch: () => {}, getAll: () => [], refresh: () => {} } }));
-vi.mock('gsap/SplitText', () => ({ SplitText: class { lines: unknown[] = []; revert() {} } }));
-vi.mock('@gsap/react', () => ({ useGSAP: (fn: () => void) => { fn?.(); } }));
 
 describe('good-scroll', () => {
   it('renders without crashing', () => {

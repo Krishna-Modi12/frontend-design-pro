@@ -358,7 +358,10 @@ export default function TeamPage() {
     },
     {
       id: 'actions',
-      header: '',
+      // An action column is visually headerless, not semantically headerless: an
+      // empty <th> is an axe `empty-table-header` violation, and a screen-reader
+      // user gets an unnamed column. Label it and hide the label.
+      header: () => <span className="sr-only">Row actions</span>,
       cell: ({ row }: { row: { original: Member } }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

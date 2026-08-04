@@ -1,18 +1,13 @@
 // Test for good-3d — generated per Testing Doctrine (references/testing.md).
-// Compile-only in this repo (test libs are ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-3d';
 
 expect.extend(toHaveNoViolations);
-
-
-vi.mock('@react-three/fiber', () => ({ Canvas: (props: { children?: unknown }) => <div data-testid="canvas">{props.children as never}</div>, useFrame: () => {}, useThree: () => ({}) }));
-vi.mock('@react-three/drei', () => new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }));
-vi.mock('three', () => ({}));
 
 describe('good-3d', () => {
   it('renders without crashing', () => {

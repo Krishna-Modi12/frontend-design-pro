@@ -2,7 +2,7 @@
 
 **Status: FREEZE OVERRIDDEN by owner directive on 2026-08-02** — see [Feature Freeze — OVERRIDDEN](#feature-freeze--overridden) below, and the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped. The policy below is retained in full because it is what the project returns to, not a historical curiosity. Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway.
 
-The pack is 17 skills, 86 references, 320,375 tokens of on-demand depth, 53 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 17 skills, 86 references, 320,865 tokens of on-demand depth, 53 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 

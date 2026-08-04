@@ -1,28 +1,13 @@
 // Test for good-3d-loader — per Testing Doctrine (references/testing.md).
-// R3F/WebGL has no jsdom backend, so Canvas and drei are mocked to plain DOM (see testing.md §4).
-import { describe, it, expect, vi } from 'vitest';
+// R3F/WebGL has no jsdom backend: the stub renders the Canvas container and drops the
+// scene graph — which is all a real canvas contributes to the DOM (see testing.md §4).
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-3d-loader';
 
 expect.extend(toHaveNoViolations);
-
-vi.mock('@react-three/fiber', () => ({
-  Canvas: (props: { children?: unknown }) => <div data-testid="canvas">{props.children as never}</div>,
-  useFrame: () => {},
-  useThree: () => ({}),
-}));
-vi.mock('@react-three/drei', () => new Proxy({}, {
-  get: (_t, key: string) => {
-    if (key === 'useGLTF') { const f = () => ({ scene: { traverse: () => {} }, animations: [] }); f.preload = () => {}; return f; }
-    if (key === 'useAnimations') return () => ({ actions: {}, names: [] });
-    if (key === 'useProgress') return () => ({ progress: 42, item: 'lantern.glb' });
-    if (key === 'useCursor') return () => {};
-    if (key === 'useTexture') return () => ({});
-    return (p: Record<string, unknown>) => <div {...p} />;
-  },
-}));
 
 describe('good-3d-loader', () => {
   it('renders without crashing', () => {

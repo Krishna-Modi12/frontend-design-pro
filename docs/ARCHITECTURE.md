@@ -13,37 +13,37 @@ So the pack is not a document. It is a **registry that routes**.
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 17-row routing table, loading protocol, failure table | **1,888 tokens** | always |
-| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,073, 2,149 or 2,241 tokens** | the 3–4 a matched skill declares |
+| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,236, 2,312 or 2,404 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **789–1,572 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 86 deep references | **320,375 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 86 deep references | **320,865 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```
-iconography        4,775   ← lightest
-landing-pages      4,826
-testing            4,836
-web-interface      4,864
-data-tables        4,870
-ai-ui-generation   4,883
-forms              4,926
-react-performance  4,942
-design-system      4,974
-threejs-3d         5,036
-animations         5,075
-platform           5,089
-react-components   5,091
-component-patterns 5,198
-agent-ops          5,295
-design-principles  5,543
-design-research    6,075   ← heaviest
+iconography        4,928   ← lightest
+landing-pages      4,979
+testing            4,989
+web-interface      5,017
+data-tables        5,023
+ai-ui-generation   5,036
+forms              5,079
+react-performance  5,095
+design-system      5,127
+threejs-3d         5,189
+animations         5,228
+platform           5,242
+react-components   5,244
+component-patterns 5,351
+agent-ops          5,448
+design-principles  5,696
+design-research    6,228   ← heaviest
 ```
 
 `design-research` is the heaviest only because it declares two core deps (`design-tokens` + `component-api`) where every other skill declares one; its own router is mid-pack at 1,200 tokens.
 
-**Ceiling is 6,075 tokens against 320,375 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 6,228 tokens against 320,865 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,909 there, 1,888 here — exactly the 83 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 320,375 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,909 there, 1,888 here — exactly the 83 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 320,865 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
 The registry is the reason adding skills is cheap: the 17th skill grew `SKILL.md` from 1,837 to 1,888 tokens. Marginal cost of a skill is **~51 tokens** of always-loaded context, plus however much on-demand depth you give it.
 
@@ -56,7 +56,7 @@ Two core files were over budget and got split into a thin essential plus a deep 
 | `core/component-api.md` (904) | `core/component-api-deep.md` (1,527) |
 | `core/agent-behavior.md` (996) | `core/agent-behavior-patterns.md` (947) |
 
-That split cut the per-request dependency load from **4,143 → 2,073–2,241 tokens** without losing any content — the depth simply stopped being mandatory.
+That split cut the per-request dependency load from **4,143 → 2,236–2,404 tokens** without losing any content — the depth simply stopped being mandatory.
 
 ## Repo layout
 
@@ -73,6 +73,7 @@ skills/{id}/
 scripts/                 gate chain + scaffold
 evals/                   22 eval cases
 rules/                   v12 envelope JSON schema
+test/stubs/              runtime stubs for the examples' peer libs — test-only, never shipped
 docs/                    this directory
 dist/                    build output, gitignored
 ```
@@ -91,7 +92,7 @@ dist/                    build output, gitignored
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 53/53 files × 17/17 |
 | 5 | Syntactic | 36 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 36/36 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
-| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict | 22/22 · 39/39 |
+| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 39/39 files · 124/124 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 17/17 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
 
@@ -128,7 +129,7 @@ The two suites are complementary, not redundant — 17 semantic + 36 syntactic =
 4. One row in the `SKILL.md` registry table: id, path, trigger keywords, core dep
 5. `npm run gates`
 
-**A new gold example:** `skills/{id}/examples/good-*.tsx` **plus** a matching `good-*.test.tsx`. Gate 7 fails on any gold without a 1:1 test.
+**A new gold example:** `skills/{id}/examples/good-*.tsx` **plus** a matching `good-*.test.tsx`. Gate 7 fails on any gold without a 1:1 test, and now also on a test that does not pass. If the example imports a peer library nothing else uses, add a stub for it — `test/stubs/README.md` has the rules, and the first one is that every specifier gets its own file.
 
 **A new semantic rule:** a check in `scripts/parser_constraints.js` **and** a divergence case in `scripts/parser_regression_test.js` proving it beats regex. Gate labels read their counts from the suites themselves, so `51` updates on its own.
 
@@ -138,13 +139,24 @@ The two suites are complementary, not redundant — 17 semantic + 36 syntactic =
 
 Honest list, all verified against the current release.
 
-1. **The vitest suite executes partially — 20 of 39 test files pass.** Gold examples import ~25 peer libraries (`three`, `motion/react`, `react-hook-form`, `react-native`, `@playwright/test`, …) that exist only as ambient declarations in `_stubs.d.ts`. That is what makes strict compilation cheap, and it is why the suite could not run at all: declaration files do not exist at runtime, so Vite could not resolve the specifiers and 29 of 39 files died at import. `vitest.config.ts` now aliases each specifier to a runtime stub under `test/stubs/` (test-only — not in either archive manifest), which took the suite from 10 to **20 of 39 files**. The remaining 19 split into worker exits during module load (8), missing accessible roles in stubbed composition paths (4), and assertions that need real Radix/TanStack/zod behaviour (7). Gate 7 still asserts the enforceable contract — 1:1 coverage plus strict compilation — because that is what holds on a clean runner regardless. Per-file breakdown, causes and the measurement pitfall: [TESTING.md](TESTING.md).
+1. **What the suite runs against is stubs, not the real libraries.** The examples' ~25 peer dependencies are still not installed — `test/stubs/` supplies one hand-written module per specifier and `vitest.config.ts` aliases them. So the suite proves the components mount, expose the roles and labels they claim, respond to interaction, and survive axe. It does **not** prove they work against the real `three`, `motion/react` or `react-hook-form`, and it never will while those are absent. Two guards keep the stubs from flattering the golds: a stub renders the semantically correct element with props forwarded, so a missing `aria-label` still fails, and any ARIA relationship the real component wires (Radix labelling a dialog by its title) is modelled, so the stub cannot invent a violation either. Where jsdom simply has no answer — WebGL, layout, virtualisation — the stub renders nothing rather than something a user could not perceive.
 
-2. **Reference depth is unevenly distributed.** `ai-ui-generation` has 1 reference (992 tokens); `design-system` has 14 (53,659) and `platform` 9 (62,015). The newest skills are routers with little behind them.
+2. **Reference depth is unevenly distributed.** `component-patterns` has 2 references (2,338 tokens) and `ai-ui-generation` 2 (2,626); `design-system` has 15 (55,455) and `platform` 9 (62,012). The newest skills are routers with little behind them.
 
 3. **`rules/v12-envelope.schema.json` and `scripts/test_v12_pipeline.py` are named for an architecture two majors old.** Renaming them would touch `ci.yml` and `build_release.py`; the names were left alone and the contents corrected instead. The schema *is* now referenced by a gate — Gate 6 validates the documented envelope and the schema's own examples against it.
 
 ### Recently closed
+
+**The vitest suite did not execute end-to-end** — for four minor versions the first known gap on this page read "28 of 37 test files fail at import time", because the examples' peer libraries existed only as ambient declarations. `test/stubs/` now ships one runtime module per specifier, and Gate 7 runs the suite instead of disclaiming it: **39/39 files, 124/124 tests**.
+
+Running it found four things that compiling it could not, which is the argument for having done it:
+
+- `good-view-transitions.tsx` destructured `React.ViewTransition` and rendered it directly. On any stable React build that is `undefined`, so the component threw `Element type is invalid` for every consumer, not only in tests. The `as unknown as` shim that kept it type-clean is exactly what hid it from `tsc`. Its sibling `good-vt-shared-element.tsx` already had the `?? fallback` form; now both do.
+- Both copies of `good-shadcn.tsx` gave the action column `header: ''`, which renders `<th></th>` — an axe `empty-table-header` violation, and an unnamed column for a screen-reader user.
+- Three generated tests queried `getAllByRole('button')` on controls whose `role="tab"` replaces the implicit one, so they matched nothing. They now assert that activating a tab moves `aria-selected`, which is the behaviour worth checking.
+- Two more asserted that the clicked element was still in the document afterwards — on a gallery that swaps in a detail pane and a checkout that opens on a skeleton, so one was asserting the interaction had *not* worked and the other was reading the first frame.
+
+Per-file causes, what the suite does and does not prove, and the measurement pitfall that made a hanging import look like memory pressure: [TESTING.md](TESTING.md).
 
 **`design-system/references/brand-design-systems.md` was orphaned** — present on disk, absent from its skill's Reference Index, so nothing could route to it. A citation was added; 76/86 references now resolve with none orphaned.
 

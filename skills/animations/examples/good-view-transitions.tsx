@@ -16,10 +16,36 @@ import { useRouter } from 'next/navigation'
 
 // React View Transition API ships in the experimental channel; not yet in stable
 // @types/react. Narrow shim keeps the compile check strict everywhere else.
-const { ViewTransition, addTransitionType } = React as unknown as {
-  ViewTransition: React.ComponentType<{ children?: React.ReactNode; name?: string; enter?: string | Record<string, string>; exit?: string | Record<string, string>; default?: string; share?: string | Record<string, string>; update?: string | Record<string, string> }>
-  addTransitionType: (type: string) => void
+//
+// Resolve it, don't assume it: on a stable React build both names are absent, and
+// destructuring them straight off React yields `undefined` — which React reports
+// as "Element type is invalid" the moment the first <ViewTransition> renders. The
+// fallback renders children unwrapped, so the navigation still works and simply
+// animates nothing, which is the correct degradation for a progressive API.
+interface ViewTransitionProps {
+  children?: React.ReactNode
+  name?: string
+  enter?: string | Record<string, string>
+  exit?: string | Record<string, string>
+  default?: string
+  share?: string | Record<string, string>
+  update?: string | Record<string, string>
 }
+
+const ReactExperimental = React as unknown as {
+  ViewTransition?: React.ComponentType<ViewTransitionProps>
+  unstable_ViewTransition?: React.ComponentType<ViewTransitionProps>
+  addTransitionType?: (type: string) => void
+}
+
+const ViewTransition: React.ComponentType<ViewTransitionProps> =
+  ReactExperimental.ViewTransition ??
+  ReactExperimental.unstable_ViewTransition ??
+  function ViewTransitionFallback({ children }: ViewTransitionProps) {
+    return <>{children}</>
+  }
+
+const addTransitionType = ReactExperimental.addTransitionType ?? (() => {})
 
 // --- PATTERN 1: Directional Navigation ---
 

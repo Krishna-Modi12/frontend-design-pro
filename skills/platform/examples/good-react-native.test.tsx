@@ -1,18 +1,13 @@
 // Test for good-react-native — generated per Testing Doctrine (references/testing.md).
-// Compile-only in this repo (test libs are ambient-stubbed); install deps to run:
-//   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom
-import { describe, it, expect, vi } from 'vitest';
+// Peer libraries resolve to `test/stubs/` here — this repo installs none of them.
+// In a project that has the real ones, this file runs unchanged against those.
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import Component from './good-react-native';
 
 expect.extend(toHaveNoViolations);
-
-
-vi.mock('react-native', () => new Proxy({ StyleSheet: { create: (s: unknown) => s }, useColorScheme: () => 'light', Platform: { OS: 'ios' } }, { get: (t: Record<string, unknown>, k: string) => t[k] ?? ((p: Record<string, unknown>) => <div {...p} />) }));
-vi.mock('react-native-gesture-handler', () => new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }));
-vi.mock('react-native-reanimated', () => new Proxy({ default: {} }, { get: () => (p: Record<string, unknown>) => <div {...p} /> }));
 
 describe('good-react-native', () => {
   it('renders without crashing', () => {
