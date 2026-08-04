@@ -1,7 +1,7 @@
 ---
 name: component-patterns
 description: Patterns from modern component libraries — animated text, wrapper effects, ambient backgrounds, and composed UI, with the accessibility and performance rules they usually omit.
-version: "14.4.1"
+version: "14.4.2"
 core-deps:
   - core/component-api.md
 ---
