@@ -1,0 +1,94 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this repo is
+
+`frontend-design-pro` is a **skill pack for AI agents**, not an application. The deliverable is a `.skill` archive (a zip of markdown + TypeScript examples) that a host agent unzips and reads. Nothing here "runs" in the usual sense except `demo/showcase/`.
+
+The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 53 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
+
+## Commands
+
+```bash
+npm run gates        # python scripts/build_release.py --dry-run  — all 9 gates, builds nothing. THE check.
+npm run build        # full gated release: gates + archive + smoke test + release notes
+npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
+npm run constraints  # Gate 5 only — 36 regex constraints over skills/
+npm run evals        # 22 eval cases, self-test
+npm run regression   # 13 synthetic parser-vs-regex divergence cases
+```
+
+Single-file checks while iterating on an example (much faster than the full chain):
+
+```bash
+node scripts/parser_constraints.js skills/<id>/examples/good-x.tsx   # 17 AST constraints, one file
+python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 36 regex constraints, one file
+python scripts/build_release.py --bump-patch                          # patch bump + gates + build
+```
+
+**`npm test` (vitest) is partially green — 20 of 39 files pass, and a red exit is expected.** It is not run in CI; Gate 7 is the blocking contract (every gold has a 1:1 `.test.tsx`, every test file compiles strict). Peer libraries are aliased to runtime stubs in `test/stubs/` via `vitest.config.ts` — do **not** try to fix failures by editing `_stubs.d.ts`, which is compile-time only and invisible at runtime. Before trusting any pass count, check for orphaned `node` workers from an interrupted run: unbounded jsdom workers exhaust memory and report `Worker exited unexpectedly`, which is indistinguishable from a component crash. Causes, per-file breakdown and what would close the gap: `docs/TESTING.md`.
+
+`scripts/build_release.py` is the **only supported way** to produce an archive. Do not zip by hand.
+
+## Architecture: registry + lazy loading
+
+A monolithic pack of ~320k tokens cannot be loaded at all, so the pack is not a document — it is a **registry that routes**.
+
+| Tier | Loaded |
+|---|---|
+| `SKILL.md` (root) | **Always.** Identity, anti-slop wall, the routing table, loading protocol. |
+| `core/*.md` (8 files) | The 3–4 a matched skill declares in its frontmatter `core-deps`. |
+| `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
+| `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
+
+A request loads roughly 4,800–6,100 tokens against ~320k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+
+`AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
+
+## Adding or changing a skill — the contract
+
+Five requirements, each enforced by a different gate. Missing any one fails the build:
+
+1. **Frontmatter** must declare `name`, `description`, `version`, `core-deps`, and `version` must **exactly equal `metadata.json`'s version** (Gate 2). A new skill declares the *current* version, not the version you plan to release under.
+2. **A registry row** in the root `SKILL.md`, matching this shape exactly — the parser regex requires the deps cell to hold **exactly one** backticked `core/*.md`. Two deps in that cell means the row is not parsed and the skill silently becomes an orphan:
+   `| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |`
+   (The skill's own YAML `core-deps:` may still list several.)
+3. **`skills/{id}/examples/` must contain at least one `*.tsx`** (Gate 8b). A markdown-only examples directory fails.
+4. **Every `good-*.tsx` needs a 1:1 `good-*.test.tsx`** (Gate 7), and both must compile strict.
+5. **Every `references/*.md` must be cited** in that skill's Reference Index, or path integrity warns about an orphan — a reference nothing routes to can never be loaded, so it ships as dead weight.
+
+Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
+
+`python scripts/scaffold.py <intent>` generates differentiated component boilerplate by intent type.
+
+## Examples are gate-bearing artifacts
+
+`skills/*/examples/good-*.tsx` are not illustrations — they are the fixtures the constraint suites run against, and they must pass all 53 checks (17 AST via the TypeScript compiler API + 36 regex). `bad-*.tsx` are deliberate anti-examples that **must fail**; the suite asserts both directions.
+
+Write new golds by modelling closely on an existing one (`skills/design-principles/examples/good-landing.tsx` is the fullest). The recurring requirements: OKLCH only (no raw hex, no `[#...]`), `min-h-[100dvh]` never `min-h-screen`, a declared font (`Manrope`/system stack — never Inter/Roboto/Poppins as the display face), all four states with no `setTimeout` fake loader, a functional `useReducedMotion`, ease-out for entrances, a skip link on anything with `<nav>`/`<header>`, 44px touch targets, organic data values, an exported `*Props` interface that is actually *used* as a type, and `…` not `...`.
+
+`demo/showcase/` is the exception to everything above: a real, installed Next.js app verified by Gate 9 running `next build` against actual vendor typings. `demo/tsconfig.json` deliberately excludes it from the stub-typed regime.
+
+## Traps that will fail your build
+
+- **Version-leak scan.** Pre-flight fails if the *current* version string appears in any file outside an allowlist: `metadata.json`, `README.md`, `package.json`, `docs/CHANGELOG.md`, anything under `skills/`, `.github/workflows/`, `demo/showcase/`, and any `RELEASE_NOTES-*`. **This file is not on that list** — never write the current version literal into `CLAUDE.md`, `docs/MAINTENANCE.md`, or any other doc. A *branch name* containing the version counts as a leak too.
+- **Version bumps touch three places** and Gates 1–2 fail on any being out of step: `metadata.json`, a new top `## [x.y.z]` header in `docs/CHANGELOG.md`, and the `version:` line in **every** `skills/*/SKILL.md`.
+- **Published figures are LF/git-index measurements**, not Windows working-tree ones. A CRLF checkout measures marginally higher, so `build_release.py` run locally on Windows prints larger numbers than the canonical ones. Do not "correct" the docs back to a local Windows reading.
+- **No gate validates prose.** Skill/reference/example counts and token figures are hardcoded across ~30 documents and go stale silently — this is the single most repeated defect in this repo's history, and several releases exist only to correct it. Any change to the counts means sweeping `README.md`, `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `docs/USAGE.md`, `docs/LAUNCH_*.md`, `docs/MAINTENANCE.md`, `install/*/README.md` and `skills/agent-ops/references/token-optimization.md`. Re-derive from a green `--dry-run`; never hand-edit. **Leave `docs/RELEASE_NOTES-*` and prior `CHANGELOG.md` entries alone** — they were accurate when cut, and rewriting them falsifies the record.
+
+## Git discipline
+
+Two concurrent agent sessions against this working directory caused three bad releases; the whole story is in `docs/MAINTENANCE.md` § "Unattended writers". Consequences that bind you:
+
+- **Never `git add -A`.** Stage explicit paths.
+- `.githooks/pre-commit` blocks any commit adding **5+ new files** and prints the list, so you cannot sweep another writer's work in by accident. It fires for the lock owner too — that is the point. Override with `FDP_ALLOW_CONCURRENT=1 git commit …` only after confirming every listed path is yours. Install with `git config core.hooksPath .githooks` (per-clone, cannot be committed).
+- `git fetch` and check `git log --oneline -1` before every commit, tag and push.
+
+Releases: tag must be annotated (`git tag -a`). Pushing a `v*` tag fires `.github/workflows/release.yml`, which re-runs all 9 gates on a clean runner and publishes a public GitHub Release with the archive attached — so the tag push is the irreversible step, not the commit.
+
+## Policy
+
+`docs/MAINTENANCE.md` holds a feature freeze with explicit lift thresholds (10 distinct enhancement requests, 5 confirmed bugs, or a date). It is currently **overridden by owner directive**, recorded in that file. The default answer to "should we build X" is still *no, not yet*, and the burden is on evidence — new skills, references, examples, constraints and gates are the named forbidden category during a freeze.
+
+`install/` holds **consumer-facing adapters** (`.cursor/rules/*.mdc`, `copilot-instructions.md`, etc.) that ship inside the archive for other hosts. They are shipped artifacts, not rules governing development of this repo.

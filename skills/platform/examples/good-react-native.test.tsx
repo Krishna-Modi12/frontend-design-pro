@@ -9,16 +9,6 @@ import Component from './good-react-native';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-  useInView: () => true,
-  useMotionValue: (v: number) => ({ get: () => v, set: () => {}, on: () => () => {} }),
-  useTransform: () => 0,
-  useSpring: (v: unknown) => v,
-  useScroll: () => ({ scrollYProgress: { on: () => () => {} } }),
-}));
 
 vi.mock('react-native', () => new Proxy({ StyleSheet: { create: (s: unknown) => s }, useColorScheme: () => 'light', Platform: { OS: 'ios' } }, { get: (t: Record<string, unknown>, k: string) => t[k] ?? ((p: Record<string, unknown>) => <div {...p} />) }));
 vi.mock('react-native-gesture-handler', () => new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }));

@@ -9,16 +9,6 @@ import Component from './good-tanstack';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-  useInView: () => true,
-  useMotionValue: (v: number) => ({ get: () => v, set: () => {}, on: () => () => {} }),
-  useTransform: () => 0,
-  useSpring: (v: unknown) => v,
-  useScroll: () => ({ scrollYProgress: { on: () => () => {} } }),
-}));
 
 vi.mock('@tanstack/react-query', () => {
   const actual: Record<string, unknown> = {};

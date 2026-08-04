@@ -9,11 +9,6 @@ import Component from './good-composition-patterns';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-}));
 
 describe('good-composition-patterns', () => {
   it('renders without crashing', () => {

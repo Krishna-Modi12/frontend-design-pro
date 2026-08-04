@@ -9,16 +9,6 @@ import Component from './good-scroll';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-  useInView: () => true,
-  useMotionValue: (v: number) => ({ get: () => v, set: () => {}, on: () => () => {} }),
-  useTransform: () => 0,
-  useSpring: (v: unknown) => v,
-  useScroll: () => ({ scrollYProgress: { on: () => () => {} } }),
-}));
 
 vi.mock('gsap', () => ({ default: { to: () => {}, from: () => {}, set: () => {}, timeline: () => ({ to: () => {}, from: () => {} }), registerPlugin: () => {}, context: (fn: () => void) => { fn?.(); return { revert: () => {} }; }, matchMedia: () => ({ add: () => {} }) }, gsap: { registerPlugin: () => {} } }));
 vi.mock('gsap/ScrollTrigger', () => ({ ScrollTrigger: { create: () => {}, batch: () => {}, getAll: () => [], refresh: () => {} } }));

@@ -9,11 +9,6 @@ import Component from './good-vt-shared-element';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-}));
 
 describe('good-vt-shared-element', () => {
   it('renders without crashing', () => {

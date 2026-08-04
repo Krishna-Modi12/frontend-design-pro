@@ -9,16 +9,6 @@ import Component from './good-3d';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-  useInView: () => true,
-  useMotionValue: (v: number) => ({ get: () => v, set: () => {}, on: () => () => {} }),
-  useTransform: () => 0,
-  useSpring: (v: unknown) => v,
-  useScroll: () => ({ scrollYProgress: { on: () => () => {} } }),
-}));
 
 vi.mock('@react-three/fiber', () => ({ Canvas: (props: { children?: unknown }) => <div data-testid="canvas">{props.children as never}</div>, useFrame: () => {}, useThree: () => ({}) }));
 vi.mock('@react-three/drei', () => new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }));

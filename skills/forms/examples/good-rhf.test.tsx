@@ -9,16 +9,6 @@ import Component from './good-rhf';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('motion/react', () => ({
-  motion: new Proxy({}, { get: () => (p: Record<string, unknown>) => <div {...p} /> }),
-  AnimatePresence: (props: { children?: unknown }) => <>{props.children as never}</>,
-  useReducedMotion: () => true,
-  useInView: () => true,
-  useMotionValue: (v: number) => ({ get: () => v, set: () => {}, on: () => () => {} }),
-  useTransform: () => 0,
-  useSpring: (v: unknown) => v,
-  useScroll: () => ({ scrollYProgress: { on: () => () => {} } }),
-}));
 
 vi.mock('react-hook-form', () => ({
   useForm: () => ({ register: () => ({ name: 'f', onChange: vi.fn(), onBlur: vi.fn(), ref: vi.fn() }), handleSubmit: (fn: () => void) => (e: { preventDefault?: () => void }) => { e?.preventDefault?.(); fn?.(); }, formState: { errors: {}, isValid: true }, control: {}, watch: () => undefined, getValues: () => ({}), reset: vi.fn(), trigger: vi.fn(), setValue: vi.fn() }),
