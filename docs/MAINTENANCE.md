@@ -1,6 +1,19 @@
 # Maintenance policy
 
-**Status: FREEZE OVERRIDDEN by owner directive on 2026-08-02** — see [Feature Freeze — OVERRIDDEN](#feature-freeze--overridden) below, and the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped. The policy below is retained in full because it is what the project returns to, not a historical curiosity. Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway.
+## Current policy — active maintenance
+
+**There is no feature freeze in effect.** The freeze declared at v14.2.2 was overridden by owner directive on 2026-08-02 and has not been re-declared. Stating that plainly matters: for three days this file said "OVERRIDDEN" without saying what replaced it, and two new constraints shipped in that gap — work a freeze explicitly forbids. An undefined policy is not a strict one; it is one that whoever shows up next gets to interpret.
+
+| Change | Requires |
+|---|---|
+| Bug fixes, broken links, typos | Nothing. Always welcome, gate chain green. |
+| Doc corrections | Nothing — but re-derive counts from a green `--dry-run`, never by hand. |
+| New skill, reference, example, constraint or gate | Owner approval, **or** one of the thresholds in [What lifts the freeze](#what-lifts-the-freeze) below. |
+| Version bump | Patch for docs and fixes · minor for a new skill · major for a breaking registry change. |
+
+The freeze machinery below is retained deliberately. It is what the project returns to when the evidence thresholds are the right instrument again — not a historical curiosity, and not currently in force.
+
+Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway. See the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped last.
 
 The pack is 17 skills, 86 references, 320,865 tokens of on-demand depth, 53 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 

@@ -1,10 +1,32 @@
 # frontend-design-pro
 
-A machine-enforced frontend UI/UX skill pack for AI agents.
+**Your AI agent already writes React. This makes it write React that doesn't look AI-generated.**
+
+A machine-enforced frontend UI/UX skill pack — 17 auto-routing skills, 86 on-demand references, and 53 constraints that a build script actually runs.
 
 **9 release-blocking gates · 17 semantic AST checks · 36 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
 
 Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
+
+## What actually changes in your output
+
+These are not style preferences. Each row is a check that fails a build, with the constraint ID that enforces it.
+
+| What agents reach for by default | What this pack enforces | Enforced by |
+|---|---|---|
+| `Inter` / `Poppins` / `DM Sans` as the display face | A face with a point of view, system stack as fallback | `TYP-02` |
+| Purple → pink → blue gradient | One accent, derived from the brand | `COL-03` |
+| `bg-[#0F1419]`, raw hex everywhere | OKLCH tokens only | `COL-04`, `TOK-01` |
+| `min-h-screen` | `min-h-[100dvh]` — the mobile viewport is not the screen | `RES-01` |
+| `setTimeout(() => setLoading(false), 1500)` | Loading state driven by real async, never faked | `DELAY-01-AST` |
+| `ease-in` on an entrance | Ease-out to arrive, ease-in to leave | `MOTION-02` |
+| A `scroll` listener calling `setState` | Re-render per frame is a bug, not a technique | `ANI-04` |
+| "John Doe", "$99.99", "Elevate your workflow" | Real-shaped names, organic figures (47.2%, $12,847) | `SLOP-01`, `SLOP-02`, `SLOP-04` |
+| `aria-label` mentioned in a comment | Real JSX attributes, or it doesn't count | `A11Y-01` |
+| Equal-height card grid, 3 across | Asymmetry, hierarchy, one showpiece per viewport | anti-slop wall |
+| A component with only a happy path | All four states — loading, empty, error, success | `STA-01`, `STA-02` |
+
+The full list of 53 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Six deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
 ## Install in 30 seconds
 
@@ -17,7 +39,18 @@ bash frontend-design-pro/setup.sh          # detects the agent, writes its nativ
 
 `setup.sh --list` names every adapter, `setup.sh cursor` skips detection, `--dry-run` shows what it would write, and nothing is overwritten without `--force`. `setup.ps1` is the PowerShell port. The files it copies live in [`install/`](install/) if you would rather place them yourself.
 
-The remaining hosts need a web UI or a merge into a file your repo owns, so they stay manual. Every row below is the real setup path, not an approximation — click through for detail and troubleshooting.
+Then just ask for what you want, in plain language:
+
+```
+Build a pricing section for a developer tool. Dark mode, three tiers,
+annual/monthly toggle. Not the usual three equal cards.
+```
+
+The agent matches your wording against the registry, loads **one** skill plus its dependencies, and builds. **No slash commands, no prefixes** — routing is on natural-language trigger keywords.
+
+### Per-host setup
+
+The remaining hosts need a web UI or a merge into a file your repo owns, so they stay manual. Every row is the real setup path, not an approximation.
 
 | Agent | Steps |
 |---|---|
@@ -31,11 +64,54 @@ The remaining hosts need a web UI or a merge into a file your repo owns, so they
 
 **Don't see your agent?** [`install/`](install/) adds adapters for Windsurf, Continue.dev, Aider and OpenAI Codex CLI — untested against the matrix, but following each host's documented rules format. [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
 
-`SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit.
+`SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit. Full guide: [docs/USAGE.md](docs/USAGE.md).
 
-The agent reads the registry, matches your request to one skill, and loads only that skill plus its dependencies. **No slash commands** — routing is on natural-language trigger keywords. Full guide: [docs/USAGE.md](docs/USAGE.md).
+## The 17 skills
+
+One skill loads per request. You never name it — the **Try saying** column is what actually routes there. Most specific wins: *"form validation"* goes to `forms`, not `react-components`.
+
+### Building something new
+
+| Skill | What it covers | Try saying |
+|---|---|---|
+| [`landing-pages`](skills/landing-pages/SKILL.md) | Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding | *"Build a landing page for a CI tool. Dark, technical, no stock-photo energy."* |
+| [`react-components`](skills/react-components/SKILL.md) | One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, `forwardRef`, CVA | *"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly."* |
+| [`forms`](skills/forms/SKILL.md) | Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement | *"Multi-step checkout with Zod validation and errors wired to aria-describedby."* |
+| [`data-tables`](skills/data-tables/SKILL.md) | Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query | *"Sortable, filterable users table with pagination and a loading skeleton."* |
+| [`threejs-3d`](skills/threejs-3d/SKILL.md) | Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes | *"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion."* |
+
+### Making it look right
+
+| Skill | What it covers | Try saying |
+|---|---|---|
+| [`design-system`](skills/design-system/SKILL.md) | Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff | *"Build me a token system from this brand colour, with a dark mode that isn't just inverted."* |
+| [`design-principles`](skills/design-principles/SKILL.md) | The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction | *"Critique this layout. Why does it feel cluttered, and what's the actual fix?"* |
+| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: <url> — dark, developer tool."* |
+| [`animations`](skills/animations/SKILL.md) | Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion | *"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion."* |
+| [`component-patterns`](skills/component-patterns/SKILL.md) | Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit | *"Give me an animated headline like Aceternity's, but keyboard-accessible."* |
+| [`iconography`](skills/iconography/SKILL.md) | Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration | *"These icons look off next to the text — fix the sizing and optical alignment."* |
+
+### Making it work well
+
+| Skill | What it covers | Try saying |
+|---|---|---|
+| [`react-performance`](skills/react-performance/SKILL.md) | Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals | *"This page has a 4s LCP. Find the waterfall and fix it."* |
+| [`web-interface`](skills/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas | *"Review this component. What's wrong with it that I'm not seeing?"* |
+| [`testing`](skills/testing/SKILL.md) | Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy | *"Write tests for this form — including the validation errors and an axe pass."* |
+| [`platform`](skills/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
+
+### Meta
+
+| Skill | What it covers | Try saying |
+|---|---|---|
+| [`ai-ui-generation`](skills/ai-ui-generation/SKILL.md) | Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships | *"Render components from this JSON schema, and validate before it hits the DOM."* |
+| [`agent-ops`](skills/agent-ops/SKILL.md) | The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration | *"You keep re-reading the same files. Set up a context budget."* |
+
+**No keyword match?** The agent asks one clarifying question rather than guessing — that behaviour is part of the contract, not a fallback.
 
 ## Architecture — registry + lazy loading
+
+The pack is not a document. It is a **registry that routes**: a monolithic 320k-token pack could not be loaded at all.
 
 | Layer | What it is | Cost |
 |---|---|---|
@@ -44,31 +120,11 @@ The agent reads the registry, matches your request to one skill, and loads only 
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **320,865 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,928–6,228 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888.
-
-## Skills (17)
-
-| Skill | Covers |
-|---|---|
-| `agent-ops` | Token/context budgeting, memory persistence, continuous learning, verification loops, parallelization, subagent orchestration |
-| `design-principles` | UX laws, Gestalt, hierarchy, the three AI-design clusters, design DNA extraction |
-| `component-patterns` | Animated text, wrapper effects, ambient backgrounds, scroll-coupled components |
-| `react-components` | shadcn/Radix, compound components, CVA, forwardRef, prop taxonomy |
-| `landing-pages` | Hero, pricing, testimonials, bento, social proof, empty states |
-| `forms` | RHF + Zod, validation, auth, OTP/MFA, checkout |
-| `data-tables` | Tables, sorting, pagination, charts, KPI cards, dashboards |
-| `animations` | Framer Motion, GSAP, scroll, view transitions, **motion direction** |
-| `threejs-3d` | R3F, drei, shaders, post-processing, loaders, raycasting |
-| `design-system` | OKLCH tokens, dark mode, typography, brand systems, style presets |
-| `iconography` | Icon sizing, weight matching, colour inheritance, SVG a11y, avatars |
-| `ai-ui-generation` | Prompt-to-UI, JSON-to-UI, component registries, generation guardrails |
-| `react-performance` | Waterfalls, bundle size, RSC, memoization, virtualization |
-| `testing` | Vitest, Testing Library, jest-axe, Playwright, Storybook |
-| `web-interface` | Vercel WIG, copywriting, contrast, typography detail, audit rules |
-| `platform` | Mobile/PWA, React Native, i18n, SEO, payments, email, AI chat |
-| `design-research` | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev and convert inspiration into typed constraints |
+**A typical request loads 4,928–6,228 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 ## Core files (8)
+
+Every skill inherits `accessibility-baseline` and `validate-checklist` whenever it produces code; the rest load only when a skill declares them.
 
 | File | Purpose |
 |---|---|
@@ -99,8 +155,6 @@ bash demo/validate.sh              # all three
 bash demo/validate.sh dashboard    # one
 ```
 
-`demo/showcase/` is the one that breaks that convention on purpose — a real, installed, dev-server-verified app, detailed below.
-
 Demos are proof, not doctrine. Where a demo and a skill rule disagree, **the rule wins and the demo is the bug.**
 
 ## See It In Action
@@ -113,7 +167,7 @@ npm install
 npm run dev   # http://localhost:3000
 ```
 
-The exact prompt that generates it is documented in [`demo/showcase/README.md`](demo/showcase/README.md#the-prompt-that-would-generate-this) (also collected with the other three in [docs/DEMO_PROMPTS.md](docs/DEMO_PROMPTS.md)) — copy it into any agent set up per the docs below and compare the output.
+The exact prompt that generates it is documented in [`demo/showcase/README.md`](demo/showcase/README.md#the-prompt-that-would-generate-this) (also collected with the other three in [docs/DEMO_PROMPTS.md](docs/DEMO_PROMPTS.md)) — copy it into any agent set up per the docs above and compare the output.
 
 **The route it takes.** The registry matches *WebGL*, *bento*, *pricing*, *form* and *carousel* against the trigger-keyword column and loads `landing-pages`, `threejs-3d` and `forms` in turn, each pulling `core/design-tokens.md` and `core/component-api.md` from its declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read. The bans in the prompt — no Inter, no purple gradient, no `min-h-screen`, no equal-weight card grid — are not politeness: they are the anti-slop wall restated, and the constraint suite fails the build if the output violates them.
 
@@ -155,6 +209,8 @@ npm run gates    # all 9 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
+Gate 7 asserts 1:1 test coverage plus strict compilation. The vitest suite itself is **partially executable** — 20 of 39 files pass, with the remaining 19 listed by cause in [docs/TESTING.md](docs/TESTING.md). It is not run in CI, and the honest reason is written down rather than implied.
+
 ## Issues & contributing
 
 Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 9 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
@@ -166,7 +222,7 @@ Sending code:
 - New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
 - New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout, and [CLAUDE.md](CLAUDE.md) if you are pointing an agent at this repo.
 
 **The pack was under a feature freeze from v14.2.2 through 2026-08-02**, when it was overridden by owner directive to ship the accumulated staging work. Future freezes observe the thresholds in [docs/MAINTENANCE.md](docs/MAINTENANCE.md) — 10 distinct requests for one feature, 5 confirmed bugs, or two actively monitored weeks — unless an override is documented the same way. Bug fixes and broken-link fixes are always welcome, freeze or not.
 
@@ -174,7 +230,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout.
 
 **Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [ChatGPT](docs/CHATGPT_SETUP.md) · [OpenAI API](docs/OPENAI_API_SETUP.md) · [Copilot](docs/COPILOT_SETUP.md) · [Gemini](docs/GEMINI_SETUP.md) · [Generic](docs/INSTALL.md) · [Compatibility matrix](docs/AGENT_COMPATIBILITY.md)
 
-**Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Maintenance policy](docs/MAINTENANCE.md) · [Demo prompts](docs/DEMO_PROMPTS.md) · [Changelog](docs/CHANGELOG.md)
+**Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Testing](docs/TESTING.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Maintenance policy](docs/MAINTENANCE.md) · [Demo prompts](docs/DEMO_PROMPTS.md) · [Changelog](docs/CHANGELOG.md)
 
 ## License
 

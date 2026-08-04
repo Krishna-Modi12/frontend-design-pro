@@ -4,7 +4,7 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
-## [14.4.1] — 2026-08-05
+## [14.4.2] — 2026-08-05
 
 The first known gap in [ARCHITECTURE.md](ARCHITECTURE.md) — *"the vitest suite does not execute end-to-end"* — is closed. It had been published for four minor versions, in that file plus every launch draft and response template, because it was true: the examples' ~25 peer libraries existed only as ambient `declare module` declarations, so `vitest run` could not resolve them and 29 of 39 test files failed at import.
 
@@ -40,6 +40,44 @@ Two commits landed after `14.4.0` was cut and grew the reference corpus, which l
 - Core dependency load **2,073/2,149/2,241 → 2,236/2,312/2,404**.
 
 `docs/CHANGELOG.md` entries below and `docs/RELEASE_NOTES-*` are untouched: they were accurate when cut.
+
+---
+
+## [14.4.1] — 2026-08-05
+
+A patch release for one reason: **the `v14.4.0` archive shipped a README that contradicted its own contents.**
+
+The README fix landed one commit *after* the `v14.4.0` tag, so the published `.skill` carried a README announcing `## Skills (16)`, `## What's new in v14.2.3`, and an active feature freeze — while the pack inside it held 17 skills including `design-research`, which the README never mentioned. Nobody had downloaded it yet, which is luck rather than process. A pack whose entire claim is *verified rather than asserted* cannot distribute an artifact that disagrees with itself.
+
+The existing release was left alone rather than rebuilt in place: moving a published tag is not a normal operation, and the honest fix for "we shipped the wrong file" is a new version, not a quiet swap.
+
+### Changed — README rewritten around usage
+
+Two problems, neither of them the figures.
+
+**The skills section listed 17 skills and withheld the interface.** Routing happens on natural-language trigger keywords, so a reader who cannot guess the wording cannot reach the skill — and the table offered one line of jargon per skill. Every skill now carries what it covers, a link to its own router, and a *Try saying* prompt that actually routes there, grouped by intent (building something new · making it look right · making it work well · meta) rather than alphabetically.
+
+**The pack asserted "no generic AI UI" without ever showing it.** A new section near the top lists eleven defaults agents reach for — `Inter` as the display face, the purple→pink→blue gradient, `min-h-screen`, `setTimeout` fake loaders, `ease-in` entrances, "John Doe" — against what the pack enforces instead and the constraint ID that fails the build for each. All fifteen cited IDs were checked against `parser_constraints.js` and `test_constraints.py`; a table of invented IDs would have been worse than no table.
+
+The quickstart now shows a real prompt instead of stopping at install, and Verification states the vitest pass rate rather than leaving it implied. Nothing was dropped — every host row, demo, figure and link carried forward, and all 39 internal links resolve.
+
+### Added — `docs/TESTING.md`, and an executable test suite
+
+`npm test` could not run at all: gold examples import ~25 peer libraries the repo deliberately does not install, satisfied for `tsc` by ambient `declare module` blocks. Declaration files do not exist at runtime, so Vite could not resolve the specifiers and 29 of 39 files died at import. Expanding those `.d.ts` files cannot fix it — wrong layer — and `vi.mock` alone could not either.
+
+`vitest.config.ts` now aliases 30 specifiers to runtime stubs under `test/stubs/`, taking the suite from **10 to 20 of 39 files**. A second cause was self-inflicted: 34 test files carried a hand-written `vi.mock('motion/react', …)` rendering every motion element as a `<div>`, which silently turned `motion.h1` into a non-heading. Removed from all 34; no gold component was touched.
+
+The remaining 19 failures are listed by cause in [TESTING.md](TESTING.md) — 8 worker exits whose root cause is explicitly *not* established, 4 missing accessible roles, 7 assertions needing real Radix/TanStack/zod behaviour. `ARCHITECTURE.md`'s known-gaps entry claimed the suite "does not execute end-to-end"; that is no longer true in either direction, so it now states the measured number.
+
+Gate 7 is unchanged and remains the blocking contract: 1:1 coverage plus strict compilation. `test/` and `vitest.config.ts` are in neither archive manifest and do not ship.
+
+### Added — `CLAUDE.md`
+
+Repo guidance for agent sessions: the gate traps that are not discoverable without reading `build_release.py` (the registry row regex accepts exactly one core dep; a registry skill must have at least one `examples/*.tsx`), the version-leak allowlist, the LF-vs-CRLF measurement convention, and the git discipline the concurrent-writer incidents produced.
+
+### Fixed
+
+- `metadata.json` stats were internally inconsistent: `ci_constraints: 53` against `parser_constraints: 16` + `regex_constraints: 35`. Now 17 + 36 = 53.
 
 ---
 

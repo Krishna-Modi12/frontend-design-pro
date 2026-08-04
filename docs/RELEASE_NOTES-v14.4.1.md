@@ -1,0 +1,48 @@
+# Release Notes — frontend-design-pro v14.4.1
+
+**Date:** 2026-08-05
+**Archive:** `frontend-design-pro-v14.4.1.skill` — 1185 KB, 310 files, ~390,766 tokens of markdown, root `frontend-design-pro/`
+**Pipeline wall-clock:** 139.3s
+
+## Contents
+
+17 skills · 8 core files · 86 references (320,891 tokens of on-demand depth) · 45 examples (39 gold + 6 anti-examples) · 39 tests · 53 constraints (17 semantic + 36 syntactic)
+
+Registry (`SKILL.md`) is 1,888 tokens and is the only file always loaded.
+
+## Gate Results
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| Compile | PASS | All 45 gold examples compile under tsc --noEmit (strict) · 14 demo files clean |
+| Semantic | PASS | 53/53 files (39 golds + 14 demo) pass 17/17 parser checks |
+| Syntactic | PASS | gold examples clean, anti-examples fail as designed (36/36) · demos clean |
+| Pipeline | PASS | 16/16 checks (stages · architecture · cited paths) |
+| Evals | PASS | 22/22 self-test |
+| Test coverage | PASS | 39/39 golds have a 1:1 test; all test files compile strict (runtime exec out of scope — examples stub their peer deps) |
+| Regression | PASS | 13/13 synthetic cases |
+
+Plus pre-flight, frontmatter, path integrity, and per-skill budget gates — all blocking.
+
+## Known gaps
+
+See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: the vitest suite does not
+execute end-to-end because examples stub ~25 peer libraries, so Gate 7 asserts 1:1
+coverage plus strict compilation rather than implying more; reference depth is
+unevenly distributed across skills.
+
+## Install
+
+```bash
+unzip frontend-design-pro-v14.4.1.skill -d ~/.claude/skills/
+```
+
+See [INSTALL.md](INSTALL.md) and [USAGE.md](USAGE.md).
+
+---
+
+All gates passed. No manual changes were made after gate passage — the archive is a
+deterministic product of the working tree, re-verified against its own unzipped copy
+(Stage 6).
+
+Released by: build_release.py
