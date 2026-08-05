@@ -72,7 +72,14 @@ export default function Chart({ points, isLoading, error, onRetry }: ChartProps)
         </div>
       ) : points !== null && points.length > 0 ? (
         <>
-          <div aria-hidden="true" className="mt-5 h-64 w-full">
+          {/* The chart is decorative — the same series is published as a real
+              table below, which is what assistive technology should read. But
+              `aria-hidden` alone is a trap here: Recharts puts a focusable
+              surface in its SVG, so the subtree stayed in the tab order while
+              being hidden from the accessibility tree, which is an axe
+              violation and a genuine dead keyboard stop. `inert` removes it
+              from focus as well, so hidden means hidden. */}
+          <div aria-hidden="true" inert className="mt-5 h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
                 <CartesianGrid stroke={chartTokens.grid} strokeDasharray="2 4" vertical={false} />
