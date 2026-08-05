@@ -3,13 +3,18 @@
 Regenerates every image `README.md` links, from the committed demo sources.
 
 ```bash
+npm ci                              # AT THE REPO ROOT — see below, this is required
 cd tools/screenshots
-# Requires repo-root deps (React) installed first: run `npm ci` at the repo root.
 npm ci
 npx playwright install chromium     # once
 npm run capture
+```
 
-Or from the repo root: `npm run screenshots`.
+**The root install is not optional.** React is deliberately absent from this
+package (see the first trap below), so `next` resolves it by walking up to the
+repo root. Install here only and the dev server has no React at all.
+
+Or, from the repo root, which does both: `npm run screenshots`.
 
 Targets can be narrowed, and the Next build skipped when only the capture logic
 changed:

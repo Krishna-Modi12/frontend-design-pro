@@ -120,13 +120,25 @@ async function captureSite(site, browser, scratch) {
 
       for (const { src, dest, width } of targets) {
         const { buf, colors } = await encodeUnderCap(src, width);
+
+        // Refuse to write an image that breaks the cap. Even the lowest colour
+        // count can come back too large, and logging "OVER CAP" while writing the
+        // file anyway still exits 0 — a size limit nothing enforces is a comment,
+        // not a limit.
+        if (buf.length > SIZE_CAP) {
+          throw new Error(
+            `${dest} encodes to ${(buf.length / 1024).toFixed(0)} KB at ${colors} colours, over ` +
+              `the ${SIZE_CAP / 1024} KB cap. Crop it, narrow it, or change the cap on purpose — ` +
+              `see .github/SCREENSHOT_CONTRIBUTION.md.`,
+          );
+        }
+
         // Write the encoded buffer straight out. Passing it back through sharp()
         // re-encodes at defaults and throws the palette away — which silently
         // undoes the compression and puts the file back over the cap.
         writeFileSync(join(REPO, dest), buf);
         const kb = (statSync(join(REPO, dest)).size / 1024).toFixed(0);
-        const over = statSync(join(REPO, dest)).size > SIZE_CAP ? "  OVER CAP" : "";
-        console.log(`  ${dest.padEnd(40)} ${kb.padStart(4)} KB  ${colors}c${over}`);
+        console.log(`  ${dest.padEnd(40)} ${kb.padStart(4)} KB  ${colors}c`);
       }
 
       if (pageErrors.length) {

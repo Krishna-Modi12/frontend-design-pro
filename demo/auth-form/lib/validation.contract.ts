@@ -15,6 +15,7 @@
  * `IsAny` assertion below is the tripwire for exactly that.
  */
 
+import { z } from "zod";
 import { loginSchema } from "./validation";
 import type { LoginValues } from "./validation";
 
@@ -39,5 +40,22 @@ const schemaOutputIsLoginValues: Exact<
   LoginValues
 > = true;
 
+/**
+ * `loginSchema` has no `.transform()`, so its input and output coincide — but the
+ * stub must be able to tell them apart, or it is asserting something untrue about
+ * every schema that does transform. A form binds to the input; the parsed result
+ * is the output. Declaring the two identical is the same shape of mistake as
+ * `infer = any`: quiet, and only expensive later.
+ */
+const transformedSchema = loginSchema.transform((values) => values.email);
+const transformChangesOutput: Exact<z.infer<typeof transformedSchema>, string> = true;
+const transformKeepsInput: Exact<z.input<typeof transformedSchema>, LoginValues> = true;
+
 export type { LoginValues };
-export { loginValuesIsNotAny, loginValuesMatchesSchema, schemaOutputIsLoginValues };
+export {
+  loginValuesIsNotAny,
+  loginValuesMatchesSchema,
+  schemaOutputIsLoginValues,
+  transformChangesOutput,
+  transformKeepsInput,
+};
