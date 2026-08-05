@@ -17,30 +17,20 @@ export const fontGeistSans = '"Geist", "Manrope", ui-sans-serif, system-ui, sans
 export const fontGeistMono = '"Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace';
 
 /**
- * Global sheet. Tailwind v4 reads `@theme` and generates the utility classes the
- * components use (`bg-surface-raised`, `text-ink-muted`, `border-hairline`, …).
+ * Runtime sheet — the page shell injects this through a <style> tag.
+ *
+ * It holds only what a browser can act on directly. The design tokens themselves
+ * live in `../tokens.css`, because they are declared with `@theme`, and `@theme`
+ * is a Tailwind compiler directive rather than CSS: shipped in a runtime <style>
+ * it is dropped as an unknown at-rule, taking every utility built from it
+ * (`bg-surface`, `text-ink-muted`, `border-hairline`) down with it. That is where
+ * `bg-surface` stopped resolving.
+ *
+ * The `var(--color-*)` / `var(--font-*)` references below are answered by the
+ * variables Tailwind emits from that file, so the values are declared once and
+ * read here — never restated.
  */
 export const tokenStyles = `
-@theme {
-  --color-surface: oklch(17.4% 0.012 258);
-  --color-surface-raised: oklch(21.2% 0.014 258);
-  --color-surface-sunken: oklch(13.8% 0.010 258);
-  --color-hairline: oklch(29.6% 0.014 258);
-  --color-hairline-strong: oklch(38.2% 0.018 258);
-  --color-ink: oklch(96.4% 0.004 258);
-  --color-ink-muted: oklch(78.2% 0.010 258);
-  --color-ink-faint: oklch(62.4% 0.014 258);
-  --color-accent: oklch(80.6% 0.146 172);
-  --color-accent-strong: oklch(86.2% 0.132 172);
-  --color-accent-ink: oklch(19.4% 0.032 172);
-  --color-error: oklch(68.2% 0.184 24);
-  --color-success: oklch(76.4% 0.142 152);
-  --color-warn: oklch(82.4% 0.138 84);
-  --font-display: ${fontGeistSans};
-  --font-mono: ${fontGeistMono};
-  --shadow-lift: 0 1px 2px oklch(11% 0.02 258 / 0.55), 0 14px 36px oklch(11% 0.02 258 / 0.32);
-}
-
 :root {
   color-scheme: dark;
 }
