@@ -155,7 +155,41 @@ bash demo/validate.sh              # all three
 bash demo/validate.sh dashboard    # one
 ```
 
+Those read source. Nothing in the gate chain starts a browser, so the demos are also rendered — dev and production, both colour schemes — and checked for uncaught errors, hydration mismatches, axe WCAG 2.1 AA violations and horizontal overflow at 390/768/1920:
+
+```bash
+npm run demos:verify
+```
+
+That check exists because it found four defects a green 9/9 chain had passed: a stylesheet that silently did nothing, a page that scrolled sideways on a phone, a `<dl>` with a stray `<p>` in it, and a chart hidden from screen readers but still in the tab order.
+
+If you lift `demo/landing-page/` into a project, take [`tokens.css`](demo/landing-page/tokens.css) with it and import it after Tailwind — its palette is addressed through named utilities (`bg-surface`, `text-ink`), and Tailwind only emits those for tokens registered at build time. `dashboard` and `auth-form` carry their own tokens at runtime and need nothing.
+
 Demos are proof, not doctrine. Where a demo and a skill rule disagree, **the rule wins and the demo is the bug.**
+
+### What they look like
+
+Rendered in a real browser rather than described. Each is above-the-fold at 1920×1080; the full pages are linked underneath. Capture spec and how to reproduce these exactly: [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md).
+
+**[`demo/landing-page/`](demo/landing-page/)** — near-black OKLCH surface at a single hue, one acid-green accent, Geist display face, tabular-nums metric strip.
+
+![Tracepoint landing page — dark OKLCH surface, acid-green accent, workflow code panel and a tabular-nums metric strip](demo/landing-page/screenshot.png)
+
+*[Full page](demo/landing-page/screenshot-full.png) — asymmetric bento features, three-tier pricing with an annual toggle, testimonials, footer.*
+
+**[`demo/dashboard/`](demo/dashboard/)** — sortable accounts table, `next/dynamic` revenue chart, tabular-nums KPI cards, light surface.
+
+![Ledgerline dashboard — KPI cards, a year-over-year revenue chart and a sortable accounts table with health badges](demo/dashboard/screenshot.png)
+
+*[Full page](demo/dashboard/screenshot-full.png) — the table's sort, filter, empty and error states.*
+
+**[`demo/auth-form/`](demo/auth-form/)** — React Hook Form + Zod, OAuth providers, show-password toggle, errors wired through `aria-describedby`.
+
+![Arclight sign-in — OAuth provider buttons, email and password fields, and a panel explaining how sessions work](demo/auth-form/screenshot.png)
+
+*[Full page](demo/auth-form/screenshot-full.png).*
+
+`landing-page` reads its metric strip and price book from `/api/site/overview`, an endpoint belonging to the fictional product it advertises — this repo ships the frontend only. The image above was captured against [`demo/landing-page/screenshot-fixture.json`](demo/landing-page/screenshot-fixture.json), committed so the capture is reproducible rather than asserted. Without a backend the page renders its error state, which is correct behaviour and not what a reader wants from a screenshot.
 
 ## See It In Action
 

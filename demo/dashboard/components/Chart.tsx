@@ -72,7 +72,14 @@ export default function Chart({ points, isLoading, error, onRetry }: ChartProps)
         </div>
       ) : points !== null && points.length > 0 ? (
         <>
-          <div aria-hidden="true" className="mt-5 h-64 w-full">
+          {/* The chart is decorative — the same series is published as a real
+              table below, which is what assistive technology should read. But
+              `aria-hidden` alone is a trap here: Recharts puts a focusable
+              surface in its SVG, so the subtree stayed in the tab order while
+              being hidden from the accessibility tree, which is an axe
+              violation and a genuine dead keyboard stop. `inert` removes it
+              from focus as well, so hidden means hidden. */}
+          <div aria-hidden="true" inert className="mt-5 h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
                 <CartesianGrid stroke={chartTokens.grid} strokeDasharray="2 4" vertical={false} />
@@ -90,7 +97,16 @@ export default function Chart({ points, isLoading, error, onRetry }: ChartProps)
                   tick={{ fill: chartTokens.axisText, fontSize: 12, fontFamily: chartTokens.fontFamily }}
                 />
                 <Tooltip
-                  formatter={(value: number) => formatCurrencyPrecise(value)}
+                  // Recharts hands a tooltip formatter `ValueType | undefined`, not a
+                  // number: a series can be string- or array-valued, and the payload is
+                  // optional. Declaring `value: number` compiles only while `recharts`
+                  // is an ambient `any` — against the real typings it is rejected.
+                  // Widening to `unknown` and narrowing here keeps this series (always
+                  // numeric) formatted exactly as before, without asserting a shape the
+                  // library does not promise.
+                  formatter={(value: unknown) =>
+                    typeof value === "number" ? formatCurrencyPrecise(value) : String(value ?? "")
+                  }
                   contentStyle={{
                     background: "var(--color-surface-raised)",
                     border: "1px solid var(--color-border)",

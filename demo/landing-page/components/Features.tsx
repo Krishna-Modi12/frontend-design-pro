@@ -74,7 +74,13 @@ export default function Features({ throughput, isLoading, error }: FeaturesProps
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-6">
+        {/* grid-cols-1 is load-bearing, not decoration. A bare `grid` gets an
+            implicit `auto` column, which refuses to shrink below its content's
+            min-content width — one wide card then widened the single mobile
+            column and pushed the whole page 73px sideways at 390px. Tailwind's
+            grid-cols-1 is `minmax(0, 1fr)`, which may shrink, so the scroll
+            containers inside the cards do their own scrolling instead. */}
+        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-6">
           <article
             className={`${cardShell} flex flex-col justify-between gap-8 p-6 md:col-span-4 md:row-span-2 md:min-h-[23rem] lg:p-8`}
           >
@@ -201,8 +207,13 @@ export default function Features({ throughput, isLoading, error }: FeaturesProps
               kill a worker mid-run, restart it and watch the replay — on a plane, with
               no account.
             </p>
+            {/* Same reasoning as the workflow block in Hero: a scrollable
+                region needs a keyboard stop, or its overflow is mouse-only. */}
             <pre
-              className="overflow-x-auto rounded-lg border border-hairline bg-surface-sunken px-3 py-2 text-xs leading-relaxed text-ink-muted"
+              tabIndex={0}
+              role="region"
+              aria-label="Local replay command"
+              className={`${focusRing} overflow-x-auto rounded-lg border border-hairline bg-surface-sunken px-3 py-2 text-xs leading-relaxed text-ink-muted`}
               style={{ fontFamily: fontGeistMono }}
             >
               <code>{"npx tracepoint dev --replay ./.tracepoint/runs/4f2a"}</code>

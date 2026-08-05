@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+
+    // The demos live outside this directory, so TypeScript resolves their bare
+    // specifiers from `demo/`'s location and walks up to a repo root that
+    // installs none of them. These map every specifier at this package's
+    // node_modules first — the tsc counterpart to next.config.ts's
+    // resolve.modules, and what makes `npm run demos:typecheck` check the demos
+    // against REAL vendor typings rather than demo/_stubs.d.ts.
+    //
+    // `@types/*` has to come first. A bare `./node_modules/*` finds react's
+    // index.js, which carries no declarations, and TypeScript then reports the
+    // whole of React as an implicit any instead of consulting @types/react.
+    "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"],
+    "paths": {
+      "*": ["./node_modules/@types/*", "./node_modules/*", "*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../demo/**/*.ts", "../../demo/**/*.tsx"],
+  "exclude": ["node_modules", "../../demo/showcase", "../../demo/_stubs.d.ts", "../../demo/**/*.test.tsx"]
+}

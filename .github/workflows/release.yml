@@ -10,12 +10,27 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '24' }
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
-      - run: npm install
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      # `npm ci`, not `npm install`: this job produces the artifact people
+      # download, so it resolves from the lockfile or it does not run.
+      - run: npm ci
+
+      # Gate 9 builds demo/showcase against its real vendor typings, but it can
+      # only do that if the dependencies are there — without them it warns and
+      # skips, which would mean the published archive was never checked against
+      # the one demo that claims to run. Installing them here is what makes
+      # "all 9 gates" true of a release rather than only of a push to main.
+      - name: Install showcase dependencies (so Gate 9 runs, not skips)
+        working-directory: demo/showcase
+        run: npm ci
 
       - name: Build gated archive (all 9 gates must pass)
         run: python3 scripts/build_release.py

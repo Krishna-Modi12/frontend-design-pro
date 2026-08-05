@@ -19,20 +19,20 @@ export const loginSchema = z.object({
 });
 
 /**
- * Values `loginSchema` produces.
+ * Values `loginSchema` produces — derived, never restated.
  *
- * In an app with zod's real type definitions this is a single line:
- *   export type LoginValues = z.infer<typeof loginSchema>;
- * The shared `demo/_stubs.d.ts` stands in for zod's real types, and its `infer`
- * resolves to `any` — using it here would silently untype every form boundary.
- * Writing the parsed shape out keeps `register`, `handleSubmit` and
- * `onAuthenticate` genuinely checked under `tsc --strict`.
+ * This was once a hand-written interface, because the shared `demo/_stubs.d.ts`
+ * resolved `z.infer` to `any` and using it would have untyped every form
+ * boundary. Restating the shape kept the compile gate meaningful, but it also
+ * meant one contract had two declarations, and the schema was free to move
+ * without the interface following. It did: against zod's real types the two
+ * disagreed, and `zodResolver(loginSchema)` stopped satisfying
+ * `Resolver<LoginValues>` in a way only a real `next build` could see.
+ *
+ * The stub now models zod's phantom output type, so this is the same single
+ * line it would be in any app with the real package installed.
  */
-export interface LoginValues {
-  email: string;
-  password: string;
-  rememberMe: boolean;
-}
+export type LoginValues = z.infer<typeof loginSchema>;
 
 /**
  * Result of a credential exchange. Modelled as a discriminated union so the UI

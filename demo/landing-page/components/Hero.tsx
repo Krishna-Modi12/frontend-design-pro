@@ -196,9 +196,15 @@ export default function Hero({
                     >
                       {metric.value}
                     </dd>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-faint">
+                    {/* A second <dd>, not a <p>: inside a <dl> the only things
+                        that may sit in a term/description group are <dt> and
+                        <dd>, and a stray <p> breaks the pairing for anything
+                        walking the list. Multiple <dd> per <dt> is valid, and
+                        Tailwind's preflight already zeroes the default indent,
+                        so this renders identically. */}
+                    <dd className="mt-1 text-xs leading-relaxed text-ink-faint">
                       {metric.label} · {metric.caption}
-                    </p>
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -231,8 +237,14 @@ export default function Hero({
               replayed 3× · 0 duplicate charges
             </span>
           </div>
+          {/* A region that scrolls has to be reachable by keyboard, or the
+              content past the right edge is mouse-only. tabIndex plus a name
+              makes it a real stop; focusRing keeps that stop visible. */}
           <pre
-            className="overflow-x-auto px-4 py-5 text-[0.8125rem] leading-relaxed text-ink-muted"
+            tabIndex={0}
+            role="region"
+            aria-label="Workflow source, checkout/reserve-seat.ts"
+            className={`${focusRing} overflow-x-auto px-4 py-5 text-[0.8125rem] leading-relaxed text-ink-muted`}
             style={{ fontFamily: fontGeistMono }}
           >
             <code>{WORKFLOW_SOURCE}</code>

@@ -10,7 +10,10 @@
     "constraints": "python scripts/test_constraints.py --dir skills",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "screenshots": "npm --prefix tools/screenshots run capture --",
+    "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
+    "demos:verify": "npm --prefix tools/screenshots run verify --"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",
@@ -19,12 +22,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "autoprefixer": "^10.4.0",
-    "class-variance-authority": "^0.7.0",
     "jest-axe": "^9.0.0",
     "jsdom": "^25.0.0",
-    "postcss": "^8.4.0",
-    "tailwindcss": "^4.0.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"
   }

@@ -20,6 +20,17 @@ npm run regression   # 13 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 39 files, 124 tests, ~35s
 ```
 
+Renderer-level checks, for when you touch anything under `demo/`. These need a
+browser and real vendor libraries, so they live in `tools/screenshots/` (its own
+package.json, absent from the archive manifest) and are **not** in CI:
+
+```bash
+npm run demos:verify     # page errors · console errors · hydration · axe WCAG 2.1 AA
+                         # · overflow at 390/768/1920 — dev AND production, both schemes
+npm run demos:typecheck  # the demos against REAL vendor typings, not demo/_stubs.d.ts
+npm run screenshots      # regenerate every image README.md links
+```
+
 Single-file checks while iterating on an example (much faster than the full chain):
 
 ```bash
@@ -39,6 +50,23 @@ Three rules from `test/stubs/README.md`, because each was learned from a silent 
 `docs/TESTING.md` carries the per-file history and what the suite does and does not prove.
 
 `scripts/build_release.py` is the **only supported way** to produce an archive. Do not zip by hand.
+
+## No gate renders anything
+
+Every gate reads source. None of them starts a browser, and the gap is not
+theoretical — a stylesheet that silently did nothing, a resolver typed as `any`,
+a page that scrolled 73px sideways at 390px and a chart hidden from screen
+readers but still in the tab order all passed a green 9/9 chain. `npm run
+demos:verify` is what catches that class, and it is the check to run when a demo
+changes.
+
+The same blindness applies to `demo/_stubs.d.ts`. Its job is to type OUR code
+without vendoring libraries, but a stub loose enough to accept anything makes the
+gate that uses it decorative: `z.infer` once resolved to `any`, which forced a
+hand-written duplicate of a zod schema's output type, which then drifted from it.
+When a stub covers a seam where two things have to agree — a schema and a form, a
+resolver and its values — model the relationship. `demo/auth-form/lib/validation.contract.ts`
+asserts the result at compile time, `IsAny` tripwire included.
 
 ## Architecture: registry + lazy loading
 

@@ -1,0 +1,50 @@
+/**
+ * Tracepoint — design tokens, registered with Tailwind at build time.
+ *
+ * `@theme` is a Tailwind compiler directive, not CSS. It has to be compiled, which
+ * means it has to live in a stylesheet the build reads — a browser handed `@theme`
+ * in a runtime <style> tag drops it as an unknown at-rule and every utility built
+ * from it (`bg-surface`, `text-ink-muted`, `border-hairline`, `ring-accent`,
+ * `shadow-lift`) silently resolves to nothing. This file is where those utilities
+ * come from; `lib/tokens.ts` carries only the plain CSS that is valid at runtime.
+ *
+ * Import it once, after Tailwind, in whatever stylesheet the app already loads:
+ *
+ *   @import "tailwindcss";
+ *   @import "./tokens.css";
+ *
+ * One material, one hue: every surface step holds H≈258 and moves only in
+ * lightness, which is what keeps a dark shell from reading as five unrelated greys
+ * stacked on each other. OKLCH only — no hex anywhere — and the deepest surface is
+ * oklch(13.8% 0.010 258) rather than pure black, so elevation stays legible on OLED
+ * and the hairlines do not disappear.
+ *
+ * Values here are the single source of truth. `lib/tokens.ts` must not restate
+ * them — it reads them back as `var(--color-*)`.
+ */
+
+@theme {
+  --color-surface: oklch(17.4% 0.012 258);
+  --color-surface-raised: oklch(21.2% 0.014 258);
+  --color-surface-sunken: oklch(13.8% 0.010 258);
+  --color-hairline: oklch(29.6% 0.014 258);
+  --color-hairline-strong: oklch(38.2% 0.018 258);
+  --color-ink: oklch(96.4% 0.004 258);
+  --color-ink-muted: oklch(78.2% 0.010 258);
+  --color-ink-faint: oklch(62.4% 0.014 258);
+  --color-accent: oklch(80.6% 0.146 172);
+  --color-accent-strong: oklch(86.2% 0.132 172);
+  --color-accent-ink: oklch(19.4% 0.032 172);
+  --color-error: oklch(68.2% 0.184 24);
+  --color-success: oklch(76.4% 0.142 152);
+  --color-warn: oklch(82.4% 0.138 84);
+
+  /* Keep in step with fontGeistSans / fontGeistMono in lib/tokens.ts, which
+     reference these same families for the JS-side helpers. */
+  --font-display: "Geist", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --shadow-lift:
+    0 1px 2px oklch(11% 0.02 258 / 0.55),
+    0 14px 36px oklch(11% 0.02 258 / 0.32);
+}
