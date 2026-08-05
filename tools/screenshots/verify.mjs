@@ -16,7 +16,7 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
