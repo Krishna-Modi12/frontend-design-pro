@@ -1,0 +1,23 @@
+/* Real font families, so the demos' own stacks ("Geist", "Manrope", "JetBrains
+   Mono") resolve by the literal names they ask for instead of quietly falling
+   back to system-ui and changing what the screenshot shows. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@300..700&family=Manrope:wght@300..800&family=JetBrains+Mono:wght@300..700&display=swap');
+
+@import "tailwindcss";
+
+/* Scan the demos where they live. Tailwind only emits a utility it has seen used,
+   and none of these files are under this directory. */
+@source "../../../demo/landing-page";
+@source "../../../demo/dashboard";
+@source "../../../demo/auth-form";
+
+/* landing-page is the one demo with named token utilities (bg-surface, text-ink,
+   border-hairline, ring-accent, shadow-lift …), so its `@theme` has to be
+   compiled. Importing the demo's own file is the whole point: this harness does
+   not restate the tokens, so a capture cannot drift from what the demo ships.
+
+   dashboard and auth-form deliberately have no import here. Both address their
+   palette through arbitrary `bg-[var(--color-surface)]` utilities and inject the
+   matching `:root` block at runtime, so they need nothing at build time — and
+   registering tokens on their behalf would make this harness flatter them. */
+@import "../../../demo/landing-page/tokens.css";

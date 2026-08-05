@@ -10,7 +10,9 @@
     "constraints": "python scripts/test_constraints.py --dir skills",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "screenshots": "npm --prefix tools/screenshots run capture --",
+    "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",

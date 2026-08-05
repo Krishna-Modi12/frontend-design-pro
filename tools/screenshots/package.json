@@ -1,0 +1,30 @@
+{
+  "name": "frontend-design-pro-screenshots",
+  "private": true,
+  "description": "Renders demo/ in a real browser and captures the images README.md links. Not shipped in the .skill archive.",
+  "type": "module",
+  "scripts": {
+    "capture": "node capture.mjs",
+    "dev": "next dev -p 3311",
+    "build": "next build",
+    "start": "next start -p 3311"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tailwindcss/postcss": "^4.1.14",
+    "lucide-react": "^0.545.0",
+    "next": "^15.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.64.0",
+    "recharts": "^3.2.1",
+    "tailwindcss": "^4.1.14",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "playwright": "^1.56.0",
+    "sharp": "^0.34.4",
+    "typescript": "^5.9.3"
+  }
+}

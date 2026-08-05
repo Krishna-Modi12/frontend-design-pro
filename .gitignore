@@ -6,6 +6,11 @@ dist/
 node_modules/
 npm-debug.log*
 
+# Screenshot harness build output — the images it produces are committed under
+# demo/, the machinery that produces them is not.
+tools/screenshots/.next/
+tools/screenshots/next-env.d.ts
+
 # Python
 __pycache__/
 *.py[cod]
