@@ -4,10 +4,10 @@ Regenerates every image `README.md` links, from the committed demo sources.
 
 ```bash
 cd tools/screenshots
-npm install
+# Requires repo-root deps (React) installed first: run `npm ci` at the repo root.
+npm ci
 npx playwright install chromium     # once
 npm run capture
-```
 
 Or from the repo root: `npm run screenshots`.
 
