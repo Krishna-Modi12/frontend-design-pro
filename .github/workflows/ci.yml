@@ -10,24 +10,41 @@ jobs:
   gates:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '24' }
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      # No requirements.txt — every script here is stdlib, so there is nothing
+      # to pip install and nothing to cache on the Python side.
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # The release pipeline runs all 9 gates in order and fails fast.
+      # `build_release.py --dry-run` IS the contract: it runs all 9 gates in
+      # order, fails fast, and is the same entry point that builds a release.
+      # Everything below is diagnostics for when this step fails.
       - name: Full gate chain (dry run — no archive)
+        id: chain
         run: python3 scripts/build_release.py --dry-run
 
-      # Individual gates below, for readable CI output on failure.
+      # Individual gates, each guarded on the chain having failed.
+      #
+      # Without the guard these were dead weight: a failing chain fails the job,
+      # GitHub skips every later step by default, and so the "readable output on
+      # failure" steps only ever ran on a green build — doing the whole suite a
+      # second time and reporting nothing new. `if: failure() && ...` inverts
+      # that. Green runs skip them entirely; red runs get the per-gate breakdown
+      # they were always meant to provide.
       - name: Gate 3 — TypeScript strict compile
+        if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/typecheck_golds.py
 
       - name: Gate 4 — Semantic AST constraints
+        if: failure() && steps.chain.outcome == 'failure'
         run: |
           for f in skills/*/examples/good-*.tsx; do
             case "$f" in *.test.tsx) continue;; esac
@@ -35,19 +52,24 @@ jobs:
           done
 
       - name: Gate 5 — Syntactic constraints
+        if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/test_constraints.py --dir skills
 
       - name: Gate 6 — Pipeline smoke test
+        if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/test_v12_pipeline.py
 
       - name: Gate 7a — Eval self-test
+        if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/run_evals.py --self-test --no-semantic
 
-      # Gold examples import ~25 peer libraries that exist only as ambient
-      # declarations in _stubs.d.ts, so the suite cannot be executed at runtime.
-      # Gate 7b asserts the contract that is actually enforceable: every gold has a
-      # 1:1 test file, and every test file compiles under strict TypeScript.
+      # Gate 7 has two halves. The contract half asserts every gold has a 1:1
+      # test file and that all of them compile strict. The runtime half executes
+      # them: peer libraries resolve to `test/stubs/` through `vitest.config.ts`,
+      # so the suite runs green at 39/39 files and 124/124 tests. Both halves are
+      # already covered by the chain above — this is the readable breakdown.
       - name: Gate 7b — Test coverage (1:1 + strict compile)
+        if: failure() && steps.chain.outcome == 'failure'
         run: |
           missing=0
           for gold in skills/*/examples/good-*.tsx; do
@@ -60,7 +82,12 @@ jobs:
             --esModuleInterop --skipLibCheck --types react,react-dom \
             skills/*/examples/*.test.tsx skills/*/examples/*.d.ts
 
+      - name: Gate 7c — Test suite execution
+        if: failure() && steps.chain.outcome == 'failure'
+        run: npx vitest run --reporter=basic
+
       - name: Parser regression proof
+        if: failure() && steps.chain.outcome == 'failure'
         run: node scripts/parser_regression_test.js
 
   # demo/showcase/ is the one demo that claims to RUN. It has its own package.json
@@ -71,13 +98,19 @@ jobs:
   showcase:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '24' }
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: demo/showcase/package-lock.json
 
+      # `npm ci` alone, with no `|| npm install` fallback. The fallback made a
+      # lockfile that no longer matched package.json look like a passing build,
+      # which is the opposite of what a lockfile is for.
       - name: Install showcase dependencies
         working-directory: demo/showcase
-        run: npm ci || npm install
+        run: npm ci
 
       - name: Typecheck (real vendor typings, strict)
         working-directory: demo/showcase

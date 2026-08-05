@@ -467,8 +467,15 @@ def gate_showcase() -> bool:
     if not (app / "package.json").exists():
         warn("demo/showcase absent — nothing to build")
         return True
-    if not (app / "node_modules").exists():
-        warn("demo/showcase/node_modules absent — build skipped here; ci.yml 'showcase' job covers it")
+    # A `node_modules/` that exists is not the same as one that can build. A
+    # partial or interrupted install leaves the directory behind without the
+    # `next` binary, and the old check accepted that, so the gate reported
+    # "`next` is not recognized" as a hard failure — indistinguishable from a
+    # genuinely broken showcase, on a machine that had simply never finished
+    # `npm install`. Probe for the binary the build actually invokes.
+    next_bin = app / "node_modules" / ".bin" / ("next.cmd" if sys.platform == "win32" else "next")
+    if not next_bin.exists():
+        warn("demo/showcase dependencies not installed — build skipped here; ci.yml 'showcase' job covers it")
         return True
     npx = shutil.which("npx.cmd") if sys.platform == "win32" else shutil.which("npx")
     if not npx:
