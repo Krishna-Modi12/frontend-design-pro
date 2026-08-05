@@ -62,16 +62,42 @@ into looking better than they are.
 `app/api/site/overview/route.ts` serves `demo/landing-page/screenshot-fixture.json`
 by reading the committed file, so the image and the data behind it cannot drift.
 
-## Two traps worth knowing
+## Traps worth knowing
 
-Both cost real time already:
+Every one of these cost real time here:
 
+- **React must exist exactly once in the repo.** The root installs it for vitest;
+  `next` lists it as a peer and npm installs peers automatically, which would give
+  this package a second copy. Files under `demo/` then resolve the root's React
+  while files here resolve their own, and a tree spanning two instances dies in
+  dev with `Cannot read properties of undefined (reading
+  'recentlyCreatedOwnerStacks')`. Production stays green throughout, so the
+  symptom looks nothing like the cause. `.npmrc` suppresses the peer install.
+  Two near-misses, both tempting: aliasing `react` to this package's copy moves
+  the breakage into Next's own devtools, and *prepending* `node_modules` to
+  `resolve.modules` shadows Next's internal resolution — which is why the
+  fallback in `next.config.ts` is appended.
+- **Killing a Next server means killing its tree.** `shell: true` puts a shell
+  between us and `npx`, and `npx` puts another process between that and `next`,
+  so `child.kill()` leaves the server holding its port. The next run then fails
+  with "server never became ready" against a port that is very much in use.
+  `lib/next-server.mjs` handles this; use it rather than spawning directly.
+- **`dev` and `start` share one `.next` and disagree about it.** A dev pass on
+  top of a production build serves 500s on every route. `verify.mjs` clears it.
 - **`waitUntil: "networkidle"` never fires against a Next server.** It holds a
   socket open, so the navigation times out instead of settling. Wait for content.
 - **A sharp-encoded buffer must be written with `writeFileSync`.** Passing it back
   through `sharp().toFile()` re-encodes at defaults, discards the palette, and
   silently puts the file back over the size cap — while the in-memory check that
   chose the encoding still reports success.
+
+## Verifying the demos
+
+`npm run verify` (or `npm run demos:verify` from the root) renders every demo in
+**both** dev and production, in both colour schemes, and checks what no gate can:
+uncaught page errors, console errors, React hydration mismatches, serious and
+critical axe violations against WCAG 2.1 AA, and horizontal overflow at 390 /
+768 / 1920. Fifty assertions. It found four real defects the day it was written.
 
 ## Adding a demo
 
