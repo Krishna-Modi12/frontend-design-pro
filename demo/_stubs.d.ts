@@ -151,20 +151,32 @@ declare module "vaul";
 // of truth it is in a real project.
 declare module "zod" {
   export namespace z {
-    /** Phantom carrier. `_output` never exists at runtime; it exists so `infer` can read it. */
+    /**
+     * Phantom carriers. Neither field exists at runtime; they exist so `infer`,
+     * `input` and `output` can read the types back.
+     *
+     * `_input` is tracked separately from `_output` because `.transform()` makes
+     * them genuinely different, and a form binds to the INPUT while the parsed
+     * result is the OUTPUT. Declaring `input = output` would be a stub asserting
+     * something untrue — the same shape of mistake as `infer = any`, which is
+     * what put a hand-written duplicate of a schema next to the schema.
+     */
     export interface ZodTypeAny {
       readonly _output: unknown;
+      readonly _input: unknown;
     }
-    export interface ZodType<TOutput> extends ZodTypeAny {
+    export interface ZodType<TOutput, TInput = TOutput> extends ZodTypeAny {
       readonly _output: TOutput;
-      optional(): ZodType<TOutput | undefined>;
-      nullable(): ZodType<TOutput | null>;
-      nullish(): ZodType<TOutput | null | undefined>;
-      default(value: TOutput): ZodType<TOutput>;
-      describe(description: string): ZodType<TOutput>;
-      refine(check: (value: TOutput) => unknown, message?: unknown): ZodType<TOutput>;
-      superRefine(check: (value: TOutput, ctx: unknown) => unknown): ZodType<TOutput>;
-      transform<TNext>(fn: (value: TOutput) => TNext): ZodType<TNext>;
+      readonly _input: TInput;
+      optional(): ZodType<TOutput | undefined, TInput | undefined>;
+      nullable(): ZodType<TOutput | null, TInput | null>;
+      nullish(): ZodType<TOutput | null | undefined, TInput | null | undefined>;
+      default(value: TOutput): ZodType<TOutput, TInput | undefined>;
+      describe(description: string): ZodType<TOutput, TInput>;
+      refine(check: (value: TOutput) => unknown, message?: unknown): ZodType<TOutput, TInput>;
+      superRefine(check: (value: TOutput, ctx: unknown) => unknown): ZodType<TOutput, TInput>;
+      /** Output changes, input does not — that is the whole point of a transform. */
+      transform<TNext>(fn: (value: TOutput) => TNext): ZodType<TNext, TInput>;
       parse(data: unknown): TOutput;
       safeParse(data: unknown):
         | { success: true; data: TOutput }
@@ -197,14 +209,17 @@ declare module "zod" {
       nonnegative(message?: string): ZodNumber;
     }
     export interface ZodBoolean extends ZodType<boolean> {}
-    export interface ZodArray<TItem> extends ZodType<TItem[]> {
-      min(length: number, message?: string): ZodArray<TItem>;
-      max(length: number, message?: string): ZodArray<TItem>;
-      nonempty(message?: string): ZodArray<TItem>;
+    export interface ZodArray<TItem, TItemInput = TItem> extends ZodType<TItem[], TItemInput[]> {
+      min(length: number, message?: string): ZodArray<TItem, TItemInput>;
+      max(length: number, message?: string): ZodArray<TItem, TItemInput>;
+      nonempty(message?: string): ZodArray<TItem, TItemInput>;
     }
     /** The shape's builders are mapped to their outputs — this is what makes `infer` work. */
     export interface ZodObject<TShape extends Record<string, ZodTypeAny>>
-      extends ZodType<{ [K in keyof TShape]: TShape[K]["_output"] }> {
+      extends ZodType<
+        { [K in keyof TShape]: TShape[K]["_output"] },
+        { [K in keyof TShape]: TShape[K]["_input"] }
+      > {
       shape: TShape;
       partial(): ZodType<Partial<{ [K in keyof TShape]: TShape[K]["_output"] }>>;
       extend<TNext extends Record<string, ZodTypeAny>>(shape: TNext): ZodObject<TShape & TNext>;
@@ -213,7 +228,7 @@ declare module "zod" {
     }
 
     export type infer<T extends ZodTypeAny> = T["_output"];
-    export type input<T extends ZodTypeAny> = T["_output"];
+    export type input<T extends ZodTypeAny> = T["_input"];
     export type output<T extends ZodTypeAny> = T["_output"];
 
     export function object<TShape extends Record<string, ZodTypeAny>>(shape: TShape): ZodObject<TShape>;
@@ -229,7 +244,9 @@ declare module "zod" {
     export function union<TMembers extends readonly ZodTypeAny[]>(
       types: TMembers,
     ): ZodType<TMembers[number]["_output"]>;
-    export function array<TItem extends ZodTypeAny>(inner: TItem): ZodArray<TItem["_output"]>;
+    export function array<TItem extends ZodTypeAny>(
+      inner: TItem,
+    ): ZodArray<TItem["_output"], TItem["_input"]>;
     export function optional<TInner extends ZodTypeAny>(
       inner: TInner,
     ): ZodType<TInner["_output"] | undefined>;
