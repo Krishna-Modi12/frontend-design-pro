@@ -12,15 +12,14 @@
  */
 import { chromium } from "playwright";
 import sharp from "sharp";
-import { spawn } from "node:child_process";
 import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { IS_WIN, NPX, run, startNextServer, waitForServer } from "./lib/next-server.mjs";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const REPO = fileURLToPath(new URL("../../", import.meta.url));
-const IS_WIN = process.platform === "win32";
 
 const VIEWPORT = { width: 1920, height: 1080 };
 const SIZE_CAP = 500 * 1024;
@@ -62,30 +61,6 @@ const argv = process.argv.slice(2);
 const skipBuild = argv.includes("--skip-build");
 const only = argv.filter((a) => !a.startsWith("--"));
 
-function run(cmd, args, cwd) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { cwd, stdio: "inherit", shell: IS_WIN });
-    child.on("exit", (code) =>
-      code === 0 ? resolve() : reject(new Error(`${cmd} ${args.join(" ")} exited ${code}`)),
-    );
-    child.on("error", reject);
-  });
-}
-
-async function waitForServer(url, timeoutMs = 120_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
-      if (res.ok) return;
-    } catch {
-      /* not up yet */
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`server never became ready at ${url}`);
-}
-
 /**
  * Palette-quantise down to whatever colour count fits the cap. Dithering keeps the
  * dark OKLCH gradients from banding; 256 colours has been enough for every image so
@@ -106,11 +81,7 @@ async function encodeUnderCap(input, width) {
 
 async function captureSite(site, browser, scratch) {
   const base = `http://localhost:${site.port}`;
-  const server = spawn(IS_WIN ? "npx.cmd" : "npx", ["next", "start", "-p", String(site.port)], {
-    cwd: site.cwd,
-    stdio: "ignore",
-    shell: IS_WIN,
-  });
+  const server = startNextServer({ cwd: site.cwd, port: site.port, mode: "start" });
 
   try {
     await waitForServer(`${base}${site.shots[0].route}`);
@@ -166,7 +137,7 @@ async function captureSite(site, browser, scratch) {
       await ctx.close();
     }
   } finally {
-    server.kill();
+    await server.stop();
   }
 }
 
@@ -188,7 +159,7 @@ try {
     }
 
     console.log(`\n${site.id}:`);
-    if (!skipBuild) await run(IS_WIN ? "npx.cmd" : "npx", ["next", "build"], site.cwd);
+    if (!skipBuild) await run(NPX, ["next", "build"], site.cwd);
     await captureSite({ ...site, shots }, browser, scratch);
   }
 } finally {

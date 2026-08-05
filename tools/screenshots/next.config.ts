@@ -17,13 +17,22 @@ const config: NextConfig = {
    * The demos are imported where they live, so webpack resolves their bare
    * specifiers (`zod`, `lucide-react`, `recharts`, `@hookform/resolvers/zod`)
    * from `demo/`'s location — walking up to a repo root that deliberately
-   * installs none of them. Putting this package's `node_modules` first lets the
-   * demos find the real libraries without copying them in here, which is what
-   * keeps a capture honest: there is only ever one copy of each demo.
+   * installs none of them. Adding this package's node_modules as a fallback
+   * lets them find the real libraries without being copied in here, which is
+   * what keeps a capture honest: there is only ever one copy of each demo.
+   *
+   * It is appended, not prepended, and the order is load-bearing. Putting it
+   * first shadows Next's own resolution of `react` in development, and the dev
+   * server then dies inside RootLayout with "Cannot read properties of
+   * undefined (reading 'recentlyCreatedOwnerStacks')" — React's owner-stack
+   * machinery, which only exists in dev, which is why production builds looked
+   * fine throughout. Appended, normal node resolution wins wherever it can
+   * succeed, and the fallback only answers for files that have no node_modules
+   * above them at all.
    */
   webpack: (webpackConfig) => {
     const existing = webpackConfig.resolve.modules ?? ["node_modules"];
-    webpackConfig.resolve.modules = [harnessModules, ...existing];
+    webpackConfig.resolve.modules = [...existing, harnessModules];
     return webpackConfig;
   },
 

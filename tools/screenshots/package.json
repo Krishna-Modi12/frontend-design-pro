@@ -15,8 +15,6 @@
     "@tailwindcss/postcss": "^4.1.14",
     "lucide-react": "^0.545.0",
     "next": "^15.5.4",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "react-hook-form": "^7.64.0",
     "recharts": "^3.2.1",
     "tailwindcss": "^4.1.14",

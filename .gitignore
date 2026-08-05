@@ -19,6 +19,7 @@ __pycache__/
 # Generated / transient
 tsconfig.tests.json
 tsconfig.golds.*.json
+*.tsbuildinfo
 .DS_Store
 *.tmp
 *.bak

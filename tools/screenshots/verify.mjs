@@ -14,15 +14,15 @@
  * viewports. Demos that ship a dark variant are additionally rendered dark.
  */
 import { chromium } from "playwright";
-import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
-import { readFileSync } from "node:fs";
+import { readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { NPX, run, startNextServer, waitForServer } from "./lib/next-server.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const IS_WIN = process.platform === "win32";
 
 const ROUTES = [
   { name: "landing-page", route: "/landing-page", schemes: ["dark"] },
@@ -52,27 +52,6 @@ const HYDRATION = /hydrat|did not match|server rendered|server HTML/i;
 
 const prodOnly = process.argv.includes("--prod");
 let failures = 0;
-
-function run(cmd, args, cwd) {
-  return new Promise((resolve, reject) => {
-    const c = spawn(cmd, args, { cwd, stdio: "inherit", shell: IS_WIN });
-    c.on("exit", (code) => (code === 0 ? resolve() : reject(new Error(`${cmd} exited ${code}`))));
-    c.on("error", reject);
-  });
-}
-
-async function waitForServer(url, timeoutMs = 120_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      if ((await fetch(url, { signal: AbortSignal.timeout(4000) })).ok) return;
-    } catch {
-      /* not up yet */
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`server never became ready at ${url}`);
-}
 
 function report(label, problems) {
   if (problems.length === 0) {
@@ -153,18 +132,19 @@ async function verifyMode(mode, browser) {
   const base = `http://localhost:${port}`;
   console.log(`\n── ${mode} server ─────────────────────────────────────`);
 
-  const server = spawn(
-    IS_WIN ? "npx.cmd" : "npx",
-    ["next", mode === "dev" ? "dev" : "start", "-p", String(port)],
-    { cwd: HERE, stdio: "ignore", shell: IS_WIN },
-  );
+  // dev and start share one .next directory and disagree about what belongs in
+  // it. Starting dev on top of a production build left by `npm run screenshots`
+  // serves 500s on every route — so clear it and let this mode build its own.
+  if (mode === "dev") rmSync(join(HERE, ".next"), { recursive: true, force: true });
+
+  const server = startNextServer({ cwd: HERE, port, mode: mode === "dev" ? "dev" : "start" });
   try {
     await waitForServer(`${base}${ROUTES[0].route}`);
     for (const spec of ROUTES) {
       for (const scheme of spec.schemes) await checkRoute(browser, base, spec, scheme);
     }
   } finally {
-    server.kill();
+    await server.stop();
   }
 }
 
@@ -175,7 +155,7 @@ try {
   // afterwards leaves `next start` with nothing to serve.
   if (!prodOnly) await verifyMode("dev", browser);
   console.log("\nbuilding for the production pass…");
-  await run(IS_WIN ? "npx.cmd" : "npx", ["next", "build"], HERE);
+  await run(NPX, ["next", "build"], HERE);
   await verifyMode("prod", browser);
 } finally {
   await browser.close();
