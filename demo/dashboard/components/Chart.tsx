@@ -90,7 +90,16 @@ export default function Chart({ points, isLoading, error, onRetry }: ChartProps)
                   tick={{ fill: chartTokens.axisText, fontSize: 12, fontFamily: chartTokens.fontFamily }}
                 />
                 <Tooltip
-                  formatter={(value: number) => formatCurrencyPrecise(value)}
+                  // Recharts hands a tooltip formatter `ValueType | undefined`, not a
+                  // number: a series can be string- or array-valued, and the payload is
+                  // optional. Declaring `value: number` compiles only while `recharts`
+                  // is an ambient `any` — against the real typings it is rejected.
+                  // Widening to `unknown` and narrowing here keeps this series (always
+                  // numeric) formatted exactly as before, without asserting a shape the
+                  // library does not promise.
+                  formatter={(value: unknown) =>
+                    typeof value === "number" ? formatCurrencyPrecise(value) : String(value ?? "")
+                  }
                   contentStyle={{
                     background: "var(--color-surface-raised)",
                     border: "1px solid var(--color-border)",
