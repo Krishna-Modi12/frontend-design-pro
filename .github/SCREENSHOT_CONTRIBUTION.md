@@ -37,15 +37,28 @@ npm run dev      # http://localhost:3000
 
 You should get a dark, near-black page: a WebGL particle hero that tracks the cursor, an asymmetric six-card bento grid with a spotlight hover, a three-tier pricing table with a working annual toggle, a testimonial carousel, and a validated contact form. Acid green appears only on the primary actions. If it looks like a purple gradient with an even card grid, something is wrong — open an issue.
 
-The other three are **stub-typed**: they compile against the ambient `declare module` blocks in `demo/_stubs.d.ts` and no dependency is installed, so they do not run as they stand. Rendering them takes a throwaway Next.js app outside this repo:
+The other three are **stub-typed**: they compile against the ambient `declare module` blocks in `demo/_stubs.d.ts` and install no dependencies, so they do not run as they stand. [`tools/screenshots/`](../tools/screenshots/) is the harness that renders them — a small Next.js app with the real libraries installed, importing each demo where it lives rather than copying it:
 
-1. Scaffold an app and install what the three actually import — `next react react-dom lucide-react recharts react-hook-form @hookform/resolvers zod tailwindcss @tailwindcss/postcss`.
-2. Copy each demo directory in whole and re-export its page from a route, so the demos' internal relative imports (`../components/Hero`) keep resolving against their own directory. Do not edit the demo files.
-3. **Register the design tokens at build time.** Every one of the three declares its tokens at *runtime* — `dashboard` and `auth-form` in a `:root` block, `landing-page` in an `@theme` block the browser ignores outright because `@theme` is a Tailwind compiler directive, not CSS. Tailwind only emits a utility (`bg-surface`, `text-ink-muted`, `border-hairline`) for a token it saw at build time, so the union of their token names has to appear in an `@theme` block in your CSS entry or the pages render unstyled. The runtime blocks then supply each page's own values on cascade order.
-4. Serve `landing-page`'s fixture — see below.
-5. `next build && next start`, then drive it with headless Chromium at the spec above.
+```bash
+npm run screenshots                    # all three: build, capture, compress
+npm run screenshots -- landing-page    # one
+npm run screenshots -- showcase        # opt-in, see below
+```
 
-Type-checking that harness is not worth it: against **real** vendor typings `demo/auth-form`'s `zodResolver(loginSchema)` does not satisfy `Resolver<LoginValues>`, a mismatch the stub-typed regime cannot see because `_stubs.d.ts` types it as `any`. Runtime is unaffected.
+Its own [README](../tools/screenshots/README.md) covers how it is assembled and the traps inside it. Two things matter when reading a capture:
+
+- **`landing-page` needs `demo/landing-page/tokens.css` compiled.** It is the one demo that addresses its palette through named utilities (`bg-surface`, `text-ink`, `border-hairline`, `ring-accent`, `shadow-lift`), and Tailwind only emits those for tokens registered at build time. The harness imports the demo's own token file rather than restating it, so a capture cannot drift from what the demo ships.
+- **`dashboard` and `auth-form` need nothing.** Both address their palettes through arbitrary `bg-[var(--color-surface)]` utilities against a `:root` block they inject themselves. Registering tokens on their behalf would let the harness flatter them into looking better than they are.
+
+`showcase` is opt-in: its hero is a WebGL particle field seeded at random, so every capture differs and running it by default would dirty that file on every run. The other three regenerate near-deterministically — a multi-kilobyte diff means something really moved, a few bytes is antialiasing noise.
+
+If you touch a demo, run the renderer as well as the gates. It checks what no gate can:
+
+```bash
+npm run demos:verify    # page errors, console errors, hydration mismatches,
+                        # axe WCAG 2.1 AA, overflow at 390/768/1920 —
+                        # in dev and production, in both colour schemes
+```
 
 ## The landing-page fixture
 
@@ -60,4 +73,4 @@ Its shape is fixed by the demo's own exported types — `PlatformMetric` in `Her
 - Don't add the image reference without the image, or vice versa. Either half alone is a broken promise.
 - Don't stage a screenshot with edited copy, invented metrics, or a different brand. The point is to show what the pack actually generates; a retouched screenshot makes the whole verification story worthless. The fixture above is the one piece of supplied data in the set, and it is committed precisely so it is checkable rather than invented.
 - Don't commit the `.next/` build output that `npm run dev` creates. It is gitignored — leave it that way.
-- Don't commit the throwaway capture harness. It is scaffolding; this document is what makes it reproducible.
+- Don't hand-edit an image, or capture one by any route other than `npm run screenshots`. The harness is committed so that "reproducible" is a fact about the repo rather than a claim in this file; a one-off capture puts that back to a claim.

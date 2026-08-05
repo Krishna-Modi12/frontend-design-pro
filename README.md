@@ -155,6 +155,16 @@ bash demo/validate.sh              # all three
 bash demo/validate.sh dashboard    # one
 ```
 
+Those read source. Nothing in the gate chain starts a browser, so the demos are also rendered — dev and production, both colour schemes — and checked for uncaught errors, hydration mismatches, axe WCAG 2.1 AA violations and horizontal overflow at 390/768/1920:
+
+```bash
+npm run demos:verify
+```
+
+That check exists because it found four defects a green 9/9 chain had passed: a stylesheet that silently did nothing, a page that scrolled sideways on a phone, a `<dl>` with a stray `<p>` in it, and a chart hidden from screen readers but still in the tab order.
+
+If you lift `demo/landing-page/` into a project, take [`tokens.css`](demo/landing-page/tokens.css) with it and import it after Tailwind — its palette is addressed through named utilities (`bg-surface`, `text-ink`), and Tailwind only emits those for tokens registered at build time. `dashboard` and `auth-form` carry their own tokens at runtime and need nothing.
+
 Demos are proof, not doctrine. Where a demo and a skill rule disagree, **the rule wins and the demo is the bug.**
 
 ### What they look like
