@@ -68,12 +68,28 @@ export function startNextServer({ cwd, port, mode = "start" }) {
         killer.on("exit", () => resolve());
         killer.on("error", () => resolve());
       } else {
+        // Wait for the process to actually exit, not just for the signal to be
+        // delivered. verify.mjs runs `next build` against the same .next
+        // directory immediately after stopping the dev server, and resolving
+        // early races that build against the dying server's own cleanup.
+        const done = () => resolve();
+        child.once("exit", done);
         try {
           process.kill(-child.pid, "SIGTERM");
         } catch {
-          /* already gone */
+          child.off("exit", done);
+          return resolve(); // already gone
         }
-        resolve();
+        // SIGKILL anything still up after a grace period, so a wedged server
+        // cannot hang the run indefinitely.
+        setTimeout(() => {
+          try {
+            process.kill(-child.pid, "SIGKILL");
+          } catch {
+            /* gone in the meantime */
+          }
+          resolve();
+        }, 5000).unref();
       }
     });
 
