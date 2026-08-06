@@ -557,6 +557,14 @@ def release_source_guard() -> bool:
     function, the local ref read dc55237 while the real head was 57e9e5f, which
     is exactly the state in which the bad release was cut.
 
+    It resolves main through `git fetch origin main` + FETCH_HEAD rather than the
+    `origin/main` remote-tracking ref, because the ref is not always there. The
+    release workflow is the most important place this runs — it is the last
+    checkpoint before a public publish — and `actions/checkout` lands a shallow,
+    detached checkout of the tag with a refspec narrowed to that one ref, so
+    `git rev-parse origin/main` returns nothing. Reading the ref would have
+    failed every tagged release closed.
+
     Only a real release build runs this. `--dry-run` is the CI contract and runs
     on every branch and pull request, where being behind main is normal and
     correct.
@@ -571,24 +579,27 @@ def release_source_guard() -> bool:
         warn("not a git repository — cannot verify the archive's source commit")
         return True
 
-    if run(["git", "fetch", "origin", "--quiet"]).returncode != 0:
-        bad("could not fetch origin — freshness cannot be proven, so it is not assumed.\n"
+    if run(["git", "fetch", "origin", "main", "--quiet"]).returncode != 0:
+        bad("could not fetch origin/main — freshness cannot be proven, so it is not assumed.\n"
             "      Reconnect, or set FDP_ALLOW_UNPUBLISHED_BUILD=1 for a local-only archive.")
         return False
 
     head = run(["git", "rev-parse", "HEAD"]).stdout.strip()
-    upstream = run(["git", "rev-parse", "origin/main"]).stdout.strip()
+    upstream = run(["git", "rev-parse", "FETCH_HEAD"]).stdout.strip()
     if not head or not upstream:
-        bad("could not resolve HEAD or origin/main"); return False
+        bad("could not resolve HEAD or the fetched main"); return False
 
     if head != upstream:
+        # A shallow clone has no merge base, so rev-list can fail here. The
+        # counts are diagnostics; their absence must not mask the real failure.
         behind = run(["git", "rev-list", "--count", f"{head}..{upstream}"]).stdout.strip() or "?"
         ahead = run(["git", "rev-list", "--count", f"{upstream}..{head}"]).stdout.strip() or "?"
-        bad(f"HEAD is not origin/main — {ahead} ahead, {behind} behind\n"
-            f"      HEAD        {head[:7]}\n"
-            f"      origin/main {upstream[:7]}\n"
+        bad(f"HEAD is not the head of main — {ahead} ahead, {behind} behind\n"
+            f"      HEAD          {head[:7]}\n"
+            f"      origin/main   {upstream[:7]}\n"
             "      An archive built here would publish source no one can fetch. This is the\n"
-            "      defect that shipped v14.4.2. Merge first, then build from main.")
+            "      defect that shipped v14.4.2, where the tag named a commit two behind main.\n"
+            "      Merge first, then build from main; on a tag, re-tag main's actual head.")
         return False
 
     dirty = [l for l in run(["git", "status", "--porcelain"]).stdout.splitlines() if l.strip()]
@@ -598,7 +609,7 @@ def release_source_guard() -> bool:
         for l in dirty[:8]: print(f"      {l}")
         return False
 
-    ok_(f"building from origin/main @ {head[:7]}, clean tree")
+    ok_(f"building from main @ {head[:7]}, clean tree")
     return True
 
 
@@ -756,8 +767,17 @@ Released by: build_release.py
 """
     out = (REPO / "docs") if (REPO / "docs").exists() else (ROOT / "_meta")
     out = out / f"RELEASE_NOTES-v{version}.md"
-    out.write_text(notes, encoding="utf-8")
-    ok_(f"wrote {out.name}")
+    # Never clobber notes that are already committed. release.yml regenerates
+    # them on the runner and then feeds the SAME path to the release body, so an
+    # unconditional write silently replaces whatever a human curated — the
+    # known-issues list, the migration note — with the generated subset, and the
+    # published release says less than the repo does. Generate when the file is
+    # absent; otherwise leave it and say so.
+    if out.exists():
+        warn(f"{out.name} exists and was left alone — delete it to regenerate")
+    else:
+        out.write_text(notes, encoding="utf-8")
+        ok_(f"wrote {out.name}")
 
 
 # ── main ─────────────────────────────────────────────────────────────────────
