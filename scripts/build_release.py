@@ -767,8 +767,17 @@ Released by: build_release.py
 """
     out = (REPO / "docs") if (REPO / "docs").exists() else (ROOT / "_meta")
     out = out / f"RELEASE_NOTES-v{version}.md"
-    out.write_text(notes, encoding="utf-8")
-    ok_(f"wrote {out.name}")
+    # Never clobber notes that are already committed. release.yml regenerates
+    # them on the runner and then feeds the SAME path to the release body, so an
+    # unconditional write silently replaces whatever a human curated — the
+    # known-issues list, the migration note — with the generated subset, and the
+    # published release says less than the repo does. Generate when the file is
+    # absent; otherwise leave it and say so.
+    if out.exists():
+        warn(f"{out.name} exists and was left alone — delete it to regenerate")
+    else:
+        out.write_text(notes, encoding="utf-8")
+        ok_(f"wrote {out.name}")
 
 
 # ── main ─────────────────────────────────────────────────────────────────────
