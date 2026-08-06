@@ -115,12 +115,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 320k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **1,888 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **1,895 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,236–2,404 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **320,865 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 4,928–6,228 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 4,935–6,235 tokens, not 320,000.** Adding a skill costs about 51 tokens of always-loaded context — that is what the 17th cost, taking the registry from 1,837 to 1,888 (it reads 1,895 today, the difference being a trigger keyword disambiguated rather than a skill added). Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 ## Core files (8)
 
@@ -211,15 +211,15 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.4.0
+## What's new in v14.4.3
 
-- **Live design research.** [`skills/design-research/`](skills/design-research/SKILL.md) is the seventeenth skill. Agents were already being handed URLs — "build it like this site", a Dribbble link, an Aceternity component — with no protocol for what to do next, so the behaviour was improvised: copy the pixels, or ignore the reference. This makes it a discipline. Nine sources with per-source extraction *and* rejection rules, an MCP integration guide that is honest about which sites have no MCP server at all, and a rule that every finding must land as an OKLCH token, a grid, a `cubic-bezier` or a step on the spacing scale. A finding that cannot be written as one of those was decoration, not a constraint.
-- **50-source knowledge ingestion.** Five new references, three appends and six audit fixes across `agent-ops`, `ai-ui-generation`, `animations`, `design-principles` and `design-system`. 76 → 86 references, 320,865 tokens of on-demand depth.
-- **Two more enforced constraints.** `ANI-04` (AST) catches a `scroll` listener whose handler calls `setState` — a re-render every frame, which the pack taught against without enforcing. `MOTION-02R` widens motion checking from easing *direction* to easing *quality*: no bounce, elastic or back easing. 51 → 53.
-- **`framer-motion` → `motion`.** The upstream package was renamed and the pack still documented the dead import path. Fixed across 71 files — 14 stubs, 40 test mocks, 8 references ([#1](https://github.com/Krishna-Modi12/frontend-design-pro/issues/1)).
-- **Native install adapters.** [`install/`](install/) holds ten host directories, each with the rules file you would otherwise write by hand; `bash setup.sh` auto-detects five of them and overwrites nothing without `--force`. Windsurf, Continue.dev, Aider and Codex CLI follow their host's documented format but are **not** in the [tested matrix](docs/AGENT_COMPATIBILITY.md), and say so everywhere they appear.
-- **Every published figure re-derived.** Shipping a 17th skill while ~30 documents still read "16 skills · 76 references · 305,771 tokens" would have manufactured at scale the exact defect issues [#1](https://github.com/Krishna-Modi12/frontend-design-pro/issues/1)–[#3](https://github.com/Krishna-Modi12/frontend-design-pro/issues/3) reported. Counts were recomputed from the git index and swept. Historical release notes and changelog entries were left alone — they were accurate when cut.
-- **The feature freeze was overridden.** Declared at v14.2.2, lifted by owner directive on 2026-08-02 to ship the accumulated staging work. None of the three lift thresholds had been reached; the override and what it cost are recorded in [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
+A distribution hotfix. No skill, reference or constraint changed — every defect below sat between what this branch contained and what a download actually delivered.
+
+- **The published archive now matches the verified branch.** The previous release was tagged from a commit that was never `main`'s head, so it shipped demo defects that had already been fixed here: a `@theme` block inside a runtime style string (which browsers discard, leaving that demo unstyled), a missing `tokens.css`, and a hand-written `LoginValues` interface that broke a consumer's `next build`. All three are gone, and the build now refuses to produce an archive at all unless `HEAD` is `origin/main` with a clean tree — so a stale commit cannot reach a release in the first place.
+- **The README no longer claims its own test suite is broken.** It read "partially executable — 20 of 39 files pass … not run in CI". The real figure is 39 of 39 files and 124 of 124 tests, in CI on every push. `docs/TESTING.md` had it right; this file was the last one wrong, and it is the first one people read.
+- **The install link works.** Step 1 of [INSTALL.md](docs/INSTALL.md) pointed at `../../releases`, which resolves correctly from this file and 404s from anything inside `docs/`.
+- **Three of the four screenshots reach a release for the first time.** They were added two versions ago and never made it into an archive.
+- **The archive is checked for what it says, not just that it compiles.** The post-build smoke test already re-ran the compiler and all 17 AST constraints against the unzipped copy; it now also asserts that the version this section announces is the version being shipped. That mismatch has now shipped twice, and prose had no gate.
 
 ## Verification
 
@@ -235,7 +235,7 @@ Every release is produced by `scripts/build_release.py` with 9 blocking gates:
 8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
 9. **Showcase build** — `demo/showcase/` (the real, installed Next.js app) builds clean under `next build` against its actual vendor typings
 
-Then: path integrity, reference-depth audit, archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive.
+Then: path integrity, reference-depth audit, a **release source guard** that refuses to build unless `HEAD` is `origin/main` with a clean tree, archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive and checks what it claims — the version it announces, the changelog it tops out at, and that every demo image actually shipped.
 
 ```bash
 npm install
@@ -243,7 +243,7 @@ npm run gates    # all 9 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
-Gate 7 asserts 1:1 test coverage plus strict compilation. The vitest suite itself is **partially executable** — 20 of 39 files pass, with the remaining 19 listed by cause in [docs/TESTING.md](docs/TESTING.md). It is not run in CI, and the honest reason is written down rather than implied.
+Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **39 of 39 test files, 124 of 124 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
 
 ## Issues & contributing
 

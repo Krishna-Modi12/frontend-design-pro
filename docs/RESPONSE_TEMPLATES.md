@@ -76,7 +76,7 @@ things, so let's narrow it down.
 
 **The 3-step install:**
 
-1. Download the `.skill` archive attached to the latest release from [Releases](../../releases)
+1. Download the `.skill` archive attached to the latest release from [Releases](https://github.com/Krishna-Modi12/frontend-design-pro/releases)
 2. Unzip it into your agent's skills directory — for Claude Code that's
    `~/.claude/skills/` (or `.claude/skills/` inside a repo for a project-scoped
    install instead of global); other hosts differ, see the per-agent doc below
@@ -220,8 +220,8 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
-loads a 1,888-token registry that does nothing but route, then pulls in the single
-skill your request matched — measured 4,928–6,228 tokens all-in, including that
+loads a 1,895-token registry that does nothing but route, then pulls in the single
+skill your request matched — measured 4,935–6,235 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
 
