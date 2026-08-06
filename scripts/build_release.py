@@ -731,10 +731,11 @@ Plus pre-flight, frontmatter, path integrity, and per-skill budget gates — all
 
 ## Known gaps
 
-See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: the vitest suite does not
-execute end-to-end because examples stub ~25 peer libraries, so Gate 7 asserts 1:1
-coverage plus strict compilation rather than implying more; reference depth is
-unevenly distributed across skills.
+See [ARCHITECTURE.md](ARCHITECTURE.md#known-gaps). Summary: the suite runs against
+`test/stubs/`, not the examples' ~25 real peer libraries, so it proves the components
+mount, expose the roles they claim and survive axe — not that they work against the
+real `three` or `react-hook-form`; and reference depth is unevenly distributed across
+skills.
 
 ## Install
 
@@ -747,8 +748,9 @@ See [INSTALL.md](INSTALL.md) and [USAGE.md](USAGE.md).
 ---
 
 All gates passed. No manual changes were made after gate passage — the archive is a
-deterministic product of the working tree, re-verified against its own unzipped copy
-(Stage 6).
+deterministic product of a clean `origin/main` checkout (Stage 4.5 refuses to build from
+anything else), re-verified against its own unzipped copy for both compilation and
+content (Stage 6).
 
 Released by: build_release.py
 """
