@@ -2,7 +2,7 @@
 
 ## Agent setup (most people)
 
-1. Download the latest `frontend-design-pro-v*.skill` from [Releases](../../releases). A `.skill` file is a zip whose root folder is `frontend-design-pro/`.
+1. Download the latest `frontend-design-pro-v*.skill` from [Releases](https://github.com/Krishna-Modi12/frontend-design-pro/releases). A `.skill` file is a zip whose root folder is `frontend-design-pro/`.
 
 2. Unzip it into your agent's skills directory:
 
@@ -34,7 +34,7 @@
 
    > Create a landing page for a SaaS product
 
-   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~4,928–6,228 tokens). See [USAGE.md](USAGE.md).
+   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~4,935–6,235 tokens). See [USAGE.md](USAGE.md).
 
 > **Optional — `AGENT_SYSTEM_PROMPT.md`:** if your host has a system-prompt field, paste it in. `SKILL.md` alone is sufficient (it carries the identity, behavioural preamble, anti-slop wall, routing table and failure handling), but the system prompt makes the loading protocol, the intake trigger, the per-pass core-file citations and the validation contract explicit. It is version-free and every path it cites is verified by Gate 6 on each build.
 

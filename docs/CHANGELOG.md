@@ -4,6 +4,40 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.4.3] — 2026-08-06
+
+A distribution hotfix. The gate chain was green for v14.4.2 and the archive it produced was internally perfect — and shipped defects that had already been fixed on `main` two commits earlier. Nothing in this release changes a skill, a reference, an example or a constraint. Every entry below closes a gap between what this repo contains and what a download delivers.
+
+### Fixed — the archive was built from source no one could fetch
+
+`v14.4.2` was tagged from `d48546c`, which was never `main`'s head; the pull request that fixed the demos merged as `dc55237`. So the published archive carried a `@theme` block inside a runtime style string (which browsers discard, leaving `landing-page` unstyled), no `tokens.css`, and the hand-written `LoginValues` interface that breaks a consumer's `next build`. All three were fixed before the tag existed.
+
+Every gate passed, including the post-build smoke test, because none of them was wrong: the archive was a *faithful product of stale source*. The smoke test cannot catch this by construction — it verifies the archive against itself.
+
+**Stage 4.5, release source guard.** Fetches `origin` and refuses to build unless `HEAD` is exactly `origin/main` with a clean working tree. The fetch is the point: a stale `origin/main` ref passes the comparison trivially while proving nothing, which is the state the bad release was cut in. Release-path only — `--dry-run` is the CI contract and runs on branches where being behind `main` is normal. Override with `FDP_ALLOW_UNPUBLISHED_BUILD=1` for a local-only archive.
+
+### Fixed — the README told visitors the test suite was broken
+
+It read *"partially executable — 20 of 39 files pass … not run in CI"*. The real figure is **39 of 39 files, 124 of 124 tests**, and CI has run the full chain on every push and pull request to `main` since v14.4.2 closed that gap. `docs/TESTING.md` and `docs/ARCHITECTURE.md` were both already correct; `README.md` was the last file still wrong, and it is the first one anyone reads.
+
+### Fixed — install step 1 was a dead link
+
+`docs/INSTALL.md` and `docs/RESPONSE_TEMPLATES.md` linked `[Releases](../../releases)`. That resolves from a root README and 404s from anything inside `docs/` — GitHub sends it to `/tree/releases`. Both now use an absolute URL.
+
+### Fixed — the "What's new" heading announced the wrong version
+
+`README.md` still read *"What's new in v14.4.0"* at version 14.4.2 — the exact defect v14.4.1 was cut to correct, regressed and live in the published archive.
+
+**The post-build smoke test now reads the archive's prose**, not just its code: the version the README announces, the version `_meta/CHANGELOG.md` tops out at, and that every `demo/**/*.png` in the source reached the archive. The screenshot expectation is derived from the source tree rather than hardcoded — a literal would be one more figure to go stale. Three of the four screenshots had been committed two versions earlier and never reached a release.
+
+### Changed — `rtl` meant two unrelated things
+
+The trigger keyword appeared on both the `testing` row (React Testing Library) and the `platform` row (right-to-left), so *"add RTL support for Arabic"* could route to the test skill. Every `rtl` occurrence in `skills/` is right-to-left, all of it in `platform/references/i18n.md`; `testing` was keyed to content it does not have. `platform` keeps `rtl` and gains `right-to-left`; `testing` takes `testing library`, which matches what it actually covers.
+
+### Changed — figures re-derived
+
+The routing-table edit grew `SKILL.md` by 7 tokens, and the registry is added to every request. Registry **1,888 → 1,895**; per-request band **4,928–6,228 → 4,935–6,235**, uniformly +7. Reference depth is unchanged at **320,865**. Swept across 14 live documents; historical release notes and prior changelog entries left alone, as they were accurate when cut.
+
 ## [14.4.2] — 2026-08-05
 
 The first known gap in [ARCHITECTURE.md](ARCHITECTURE.md) — *"the vitest suite does not execute end-to-end"* — is closed. It had been published for four minor versions, in that file plus every launch draft and response template, because it was true: the examples' ~25 peer libraries existed only as ambient `declare module` declarations, so `vitest run` could not resolve them and 29 of 39 test files failed at import.

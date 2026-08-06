@@ -12,7 +12,7 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 17-row routing table, loading protocol, failure table | **1,888 tokens** | always |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 17-row routing table, loading protocol, failure table | **1,895 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,236, 2,312 or 2,404 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **789–1,572 tokens** | exactly one per request |
 | `skills/{id}/references/*.md` | 86 deep references | **320,865 tokens** | only when a skill file points at one for the task at hand |
@@ -20,32 +20,32 @@ So the pack is not a document. It is a **registry that routes**.
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```
-iconography        4,928   ← lightest
-landing-pages      4,979
-testing            4,989
-web-interface      5,017
-data-tables        5,023
-ai-ui-generation   5,036
-forms              5,079
-react-performance  5,095
-design-system      5,127
-threejs-3d         5,189
-animations         5,228
-platform           5,242
-react-components   5,244
-component-patterns 5,351
-agent-ops          5,448
-design-principles  5,696
-design-research    6,228   ← heaviest
+iconography        4,935   ← lightest
+landing-pages      4,986
+testing            4,996
+web-interface      5,024
+data-tables        5,030
+ai-ui-generation   5,043
+forms              5,086
+react-performance  5,102
+design-system      5,134
+threejs-3d         5,196
+animations         5,235
+platform           5,249
+react-components   5,251
+component-patterns 5,358
+agent-ops          5,455
+design-principles  5,703
+design-research    6,235   ← heaviest
 ```
 
 `design-research` is the heaviest only because it declares two core deps (`design-tokens` + `component-api`) where every other skill declares one; its own router is mid-pack at 1,200 tokens.
 
-**Ceiling is 6,228 tokens against 320,865 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 6,235 tokens against 320,865 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,909 there, 1,888 here — exactly the 83 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 320,865 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher (`SKILL.md` reads 1,915 there, 1,895 here — exactly the 83 CRLF bytes), so `build_release.py` run locally on Windows will print the larger numbers. The LF figure is the canonical one, for the same reason the 320,865 depth total is: it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
-The registry is the reason adding skills is cheap: the 17th skill grew `SKILL.md` from 1,837 to 1,888 tokens. Marginal cost of a skill is **~51 tokens** of always-loaded context, plus however much on-demand depth you give it.
+The registry is the reason adding skills is cheap: the 17th skill grew `SKILL.md` from 1,837 to 1,888 tokens. Marginal cost of a skill is **~51 tokens** of always-loaded context, plus however much on-demand depth you give it. (It reads 1,895 today; the extra 7 tokens went on disambiguating a trigger keyword, not on a skill.)
 
 ### Core file splitting
 
@@ -86,7 +86,7 @@ dist/                    build output, gitignored
 
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
-| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,888 tokens; version consistent; no leaks |
+| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,895 tokens; version consistent; no leaks |
 | 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 17/17 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 45/45 golds · 14/14 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 53/53 files × 17/17 |
@@ -96,7 +96,11 @@ dist/                    build output, gitignored
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 17/17 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
 
-Then, non-negotiable but not numbered: **path integrity** (87 skill-cited references resolve), **reference-depth audit**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+Then, non-negotiable but not numbered: **path integrity** (87 skill-cited references resolve), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+
+The source guard fetches `origin` and refuses to build an archive unless `HEAD` is exactly `origin/main` with a clean working tree. It exists because a green chain does not prove the *source* was current: v14.4.2 was tagged from a commit that was never main's head, so the archive was a faithful product of stale source and passed every gate including the smoke test. The smoke test cannot catch that by construction — it verifies the archive against itself, and the archive was not the thing that was wrong. Only a real release build runs the guard; `--dry-run` is the CI contract and runs on branches where being behind main is normal.
+
+The smoke test also reads the archive's prose: that the README's "What's new" heading names the version being shipped, that `_meta/CHANGELOG.md` tops out at it, and that every `demo/**/*.png` in the source reached the archive. The version-heading mismatch shipped twice before this check existed, and the screenshot expectation is derived from the source tree rather than hardcoded — a literal would be one more figure to go stale.
 
 A parser-regression proof runs alongside gate 4: 13 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 

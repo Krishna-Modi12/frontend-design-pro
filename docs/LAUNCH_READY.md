@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,865 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 17 semantic + 36 syntactic = 53 constraints · 9 gates · registry 1,888 tokens · heaviest request 6,228 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 17 skills · 8 core files · 86 references · 320,865 tokens of lazy depth · 45 examples (39 gold + 6 anti-examples) · 39 tests · 17 semantic + 36 syntactic = 53 constraints · 9 gates · registry 1,895 tokens · heaviest request 6,235 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 39 golds plus 6 deliberate anti-examples = 45 files). A launch audience fact-checks.
 
@@ -25,14 +25,14 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 1,888
+frontend-design-pro is a registry instead of a document. SKILL.md is 1,895
 tokens — identity, an anti-slop wall, and a 17-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 320,000 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 6,228 tokens.
-The lightest loads 4,928. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 6,235 tokens.
+The lightest loads 4,935. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -96,12 +96,12 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 1,888 tokens. That's all that's always loaded.
+2/ SKILL.md is 1,895 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 6,228 tokens.
+Heaviest possible request: 6,235 tokens.
 Reference material available: 320,865 tokens.
 
 3/ The economics of this are the whole point.
@@ -194,13 +194,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 1,888 tokens, always loaded. Routing table + anti-slop wall.
+- `SKILL.md` — 1,895 tokens, always loaded. Routing table + anti-slop wall.
 - 17 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 86 references, 320,865 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **4,928 to 6,228 tokens.** A gate fails the build
+Measured per-request load: **4,935 to 6,235 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**

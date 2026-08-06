@@ -541,8 +541,69 @@ def build_archive(version: str) -> Path:
     return archive
 
 
+# ── Stage 4.5 — Release source guard ─────────────────────────────────────────
+def release_source_guard() -> bool:
+    """The archive must be reproducible from a commit the public can fetch.
+
+    v14.4.2 shipped every demo defect the preceding pull request had already
+    fixed. The tag was cut from d48546c, which was never main's head, so the
+    archive was a *faithful* product of stale source — internally consistent,
+    two commits behind, and green through every gate including Stage 6. Stage 6
+    cannot catch this by construction: it verifies the archive against itself,
+    and the archive was not the thing that was wrong.
+
+    The fetch is the point. A stale `origin/main` ref passes this check
+    trivially while proving nothing — during the audit that produced this
+    function, the local ref read dc55237 while the real head was 57e9e5f, which
+    is exactly the state in which the bad release was cut.
+
+    Only a real release build runs this. `--dry-run` is the CI contract and runs
+    on every branch and pull request, where being behind main is normal and
+    correct.
+    """
+    hdr("STAGE 4.5 — RELEASE SOURCE GUARD")
+
+    if os.environ.get("FDP_ALLOW_UNPUBLISHED_BUILD") == "1":
+        warn("FDP_ALLOW_UNPUBLISHED_BUILD=1 — source guard skipped; do not tag this archive")
+        return True
+
+    if run(["git", "rev-parse", "--git-dir"]).returncode != 0:
+        warn("not a git repository — cannot verify the archive's source commit")
+        return True
+
+    if run(["git", "fetch", "origin", "--quiet"]).returncode != 0:
+        bad("could not fetch origin — freshness cannot be proven, so it is not assumed.\n"
+            "      Reconnect, or set FDP_ALLOW_UNPUBLISHED_BUILD=1 for a local-only archive.")
+        return False
+
+    head = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+    upstream = run(["git", "rev-parse", "origin/main"]).stdout.strip()
+    if not head or not upstream:
+        bad("could not resolve HEAD or origin/main"); return False
+
+    if head != upstream:
+        behind = run(["git", "rev-list", "--count", f"{head}..{upstream}"]).stdout.strip() or "?"
+        ahead = run(["git", "rev-list", "--count", f"{upstream}..{head}"]).stdout.strip() or "?"
+        bad(f"HEAD is not origin/main — {ahead} ahead, {behind} behind\n"
+            f"      HEAD        {head[:7]}\n"
+            f"      origin/main {upstream[:7]}\n"
+            "      An archive built here would publish source no one can fetch. This is the\n"
+            "      defect that shipped v14.4.2. Merge first, then build from main.")
+        return False
+
+    dirty = [l for l in run(["git", "status", "--porcelain"]).stdout.splitlines() if l.strip()]
+    if dirty:
+        bad(f"working tree has {len(dirty)} uncommitted change(s); the archive would not "
+            f"correspond to any commit:")
+        for l in dirty[:8]: print(f"      {l}")
+        return False
+
+    ok_(f"building from origin/main @ {head[:7]}, clean tree")
+    return True
+
+
 # ── Stage 6 — Post-build smoke ───────────────────────────────────────────────
-def post_build_smoke(archive: Path) -> bool:
+def post_build_smoke(archive: Path, version: str) -> bool:
     hdr("STAGE 6 — POST-BUILD SMOKE (against unzipped copy)")
     tmp = Path(tempfile.mkdtemp())
     with zipfile.ZipFile(archive) as z: z.extractall(tmp)
@@ -574,10 +635,60 @@ def post_build_smoke(archive: Path) -> bool:
         if run(["node", str(base / "scripts/parser_constraints.js"), str(f)]).returncode: r2_fail.append(f.name)
     smoke_ok = r1.returncode == 0 and not r2_fail
     (ok_ if smoke_ok else bad)(f"unzipped compile {'clean' if r1.returncode==0 else 'FAILED'}; parser {'clean' if not r2_fail else r2_fail}")
+    smoke_ok &= archive_content_checks(base, version)
     shutil.rmtree(tmp)
     if not smoke_ok:
         bad("archive is corrupt or non-deterministic — deleting"); archive.unlink()
     return smoke_ok
+
+
+def archive_content_checks(base: Path, version: str) -> bool:
+    """What the archive SAYS, not just that it compiles.
+
+    Everything above this point proves the archive is well-formed. None of it
+    reads a sentence. The README's "What's new" heading has shipped announcing
+    the wrong version twice (v14.4.0's archive, and again in v14.4.2) because
+    prose has no gate and a stale heading breaks nothing that executes.
+
+    The screenshot check derives its expectation from the source tree rather
+    than hardcoding a count. A literal here would be one more figure to go
+    stale, which is the defect this repo has spent the most releases fixing.
+    """
+    ok = True
+
+    readme = base / "README.md"
+    if not readme.exists():
+        bad("archive has no README.md"); return False
+    m = re.search(r"^##\s*What's new in v([\d.]+)", readme.read_text(encoding="utf-8"), re.M)
+    if not m:
+        warn("archive README has no \"What's new\" heading — nothing to check")
+    elif m.group(1) != version:
+        bad(f"archive README announces v{m.group(1)} but this is v{version}"); ok = False
+    else:
+        ok_(f"archive README announces v{version}")
+
+    changelog = base / "_meta/CHANGELOG.md"
+    if changelog.exists():
+        m = re.search(r"^##\s*\[([\d.]+)\]", changelog.read_text(encoding="utf-8"), re.M)
+        if m and m.group(1) != version:
+            bad(f"archive CHANGELOG tops out at {m.group(1)}, expected {version}"); ok = False
+        elif m:
+            ok_(f"archive CHANGELOG tops out at {version}")
+
+    # Same exclusions the archive itself applies, or generated build output
+    # (a PNG under .next/ or node_modules/) would be "missing" by design and
+    # fail a release for shipping exactly what it was told to ship.
+    shipped = (p.relative_to(ROOT).as_posix() for p in ROOT.glob("demo/**/*.png"))
+    want = {r for r in shipped if not EXCLUDE_PATTERNS.search(r)}
+    missing = sorted(r for r in want if not (base / r).exists())
+    if missing:
+        bad(f"{len(missing)} of {len(want)} demo image(s) absent from the archive:")
+        for r in missing[:8]: print(f"      {r}")
+        ok = False
+    elif want:
+        ok_(f"all {len(want)} demo image(s) present in the archive")
+
+    return ok
 
 
 # ── Stage 7 — Release notes ──────────────────────────────────────────────────
@@ -716,8 +827,11 @@ def main():
         print(f"\n{C_OK}DRY RUN — all gates passed. No archive built.{C_END}  ({time.time()-t0:.1f}s)")
         sys.exit(0)
 
+    if not release_source_guard():
+        print(f"\n{C_NO}RELEASE SOURCE GUARD FAILED — no archive produced.{C_END}"); sys.exit(1)
+
     archive = build_archive(version)
-    if not post_build_smoke(archive):
+    if not post_build_smoke(archive, version):
         print(f"\n{C_NO}POST-BUILD SMOKE FAILED — archive deleted.{C_END}"); sys.exit(1)
     release_notes(version, archive, gate_results, time.time() - t0)
 
