@@ -14,7 +14,15 @@ Copy-paste posts for the current release. Every body already carries the real re
 
 ## Hacker News
 
-**Title:** `Show HN: frontend-design-pro – a registry-routed frontend skill pack for AI agents`
+**Title** (79 chars — HN's field caps at 80 and truncates silently, so do not lengthen it):
+
+```
+Show HN: Frontend skill pack for AI agents, with machine-enforced quality gates
+```
+
+**url:** `https://github.com/Krishna-Modi12/frontend-design-pro` — and leave the text box **blank**.
+
+HN's submit form takes a url *or* text, not both: fill the url and whatever you typed into text is discarded. A Show HN submitted as text is a discussion post, and the repo link is then one click further away than it should be. Submit the url, then post the body below as your own first comment, immediately.
 
 ```
 Most agent skill packs are one big markdown file. That design has a hard
@@ -47,8 +55,8 @@ What's enforced, rather than asserted:
 - 9 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
-New in this release: a 16th skill, agent-ops, covering the agent's own
-operating discipline rather than UI — token budgeting, cross-session memory,
+The two newest pieces. agent-ops is a skill about the agent's own operating
+discipline rather than UI — token budgeting, cross-session memory,
 verification loops, subagent orchestration. And a demo that actually proves
 the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
 its own package.json, real installed deps (R3F, RHF+Zod), and a dev server
@@ -126,13 +134,12 @@ A blanket `...` ban flags every rest-spread.
 
 Constraints that cry wolf get turned off. Precision is a feature.
 
-7/ Things in here that most packs skip:
+7/ Things most packs skip:
 
-· motion direction — what an animation *communicates*, not just how to write it
-· AI-generated UI treated as untrusted input, same 53 constraints, no exemptions
-· a 6-question intake protocol, because content volume (3 items or 300?)
-  changes the architecture more than any other answer
-· icons as typography: hit area independent of glyph size
+· motion direction — what an animation *communicates*, not how to code it
+· AI-generated UI as untrusted input — same 53 constraints
+· a 6-question intake: content volume (3 items or 300?) drives the rest
+· icons as typography: hit area ≠ glyph size
 
 8/ A lesson that cost me a release:
 
@@ -146,19 +153,17 @@ Structural checks don't catch semantic rot.
 
 9/ So the gate now resolves every path the prompt cites.
 
-And I verified it FAILS against the old file before trusting it. A guardrail you
-haven't seen fail is a guardrail you haven't tested.
+And I verified it FAILS against the old file before trusting it. A guardrail
+you haven't seen fail is a guardrail you haven't tested.
 
-Remaining known gaps are all in ARCHITECTURE.md. Shipping the caveats is part
-of shipping.
+Known gaps are all in ARCHITECTURE.md. Shipping the caveats is part of
+shipping.
 
-10/ New in this release: agent-ops, a 16th skill — but this one is for the
-agent's own discipline, not UI. Token budgeting, cross-session memory,
-verification loops, subagent orchestration.
+10/ The newest skill is agent-ops — for the agent's own discipline, not UI.
+Token budgeting, cross-session memory, verification loops, subagents.
 
-Plus a showcase demo that's a REAL Next.js app — installed deps, a dev
-server that boots, CI running `next build` against it. Not stub-typed
-fantasy code. Copy the generating prompt from the repo and try it.
+Plus a showcase demo that IS a Next.js app: installed deps, a dev server that
+boots, CI running a real `next build` against it.
 
 11/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
 
@@ -167,7 +172,11 @@ https://github.com/Krishna-Modi12/frontend-design-pro
 
 ---
 
-## Reddit — r/ClaudeAI or r/webdev
+## Reddit — r/ClaudeAI and r/webdev
+
+One body, posted to both. **Check each subreddit's rules first** — r/webdev
+restricts "here's a thing I built" posts to its Showoff Saturday thread, so a
+weekday self-post there is liable to be removed no matter how good it is.
 
 **Title:** `frontend-design-pro — a registry-routed frontend skill pack for AI agents (MIT)`
 
@@ -218,7 +227,7 @@ Gestalt) · platform (mobile, PWA, RN, i18n, SEO, payments) · agent-ops
 (token budgeting, memory persistence, verification loops, subagent
 orchestration — for the agent's own discipline, not UI).
 
-**New in this release**
+**The newest pieces**
 
 A demo that's actually installed and run: `demo/showcase` is a real
 Next.js 15 + React 19 app (own `package.json`, real deps — R3F, RHF+Zod),
@@ -239,11 +248,12 @@ front-load everything.
   work against the real `three` or `react-hook-form`.
 - Reference depth is uneven — `design-system` has 15 references, the newest
   skills have 2.
-- The showcase screenshot is captured by hand, not in CI. It is committed and
-  current as of this release, but a change to `demo/showcase` could make it
-  stale before anyone notices. `.github/SCREENSHOT_CONTRIBUTION.md` has the
-  exact recapture spec; the app itself is verified on every push by Gate 9,
-  which runs a real `next build` against its real dependencies.
+- Screenshots are captured by hand, not in CI. The build now checks that every
+  one of them reaches the archive — it does not check that any of them still
+  matches the app, so a change to `demo/showcase` can make one stale before
+  anyone notices. `.github/SCREENSHOT_CONTRIBUTION.md` has the recapture spec;
+  the app itself is verified on every push by Gate 9, which runs a real
+  `next build` against its real dependencies.
 
 All of this is in `docs/ARCHITECTURE.md`. MIT licensed, contributions welcome.
 
