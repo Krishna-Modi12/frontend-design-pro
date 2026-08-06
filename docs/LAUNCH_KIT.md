@@ -55,7 +55,7 @@ What's enforced, rather than asserted:
 - 9 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
-The two newest pieces. agent-ops is a skill about the agent's own operating
+The two newest pieces: agent-ops, a skill about the agent's own operating
 discipline rather than UI — token budgeting, cross-session memory,
 verification loops, subagent orchestration. And a demo that actually proves
 the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
