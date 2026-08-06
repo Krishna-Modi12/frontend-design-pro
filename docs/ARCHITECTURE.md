@@ -19,7 +19,7 @@ So the pack is not a document. It is a **registry that routes**.
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
-```
+```text
 iconography        4,935   ← lightest
 landing-pages      4,986
 testing            4,996
