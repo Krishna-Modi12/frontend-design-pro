@@ -50,6 +50,8 @@ Match the request against trigger keywords. Load **one** skill. Most specific wi
 | `platform` | `skills/platform/SKILL.md` | mobile, pwa, react native, expo, i18n, locale, rtl, right-to-left, seo, metadata, email, stripe, ai chat, streaming | `core/component-api.md` |
 | `agent-ops` | `skills/agent-ops/SKILL.md` | agent ops, token budget, context window, memory persistence, subagent, orchestration, verification loop, parallelization, continuous learning, self-check | `core/agent-behavior.md` |
 | `design-research` | `skills/design-research/SKILL.md` | inspired by, reference, mood board, like this site, dribbble, mobbin, live design, browse, extract palette, source url | `core/design-tokens.md` |
+| `canvas-typography` | `skills/canvas-typography/SKILL.md` | canvas typography, kinetic type, particle text, generative text, text animation, variable font, text on path, scramble text | `core/design-tokens.md` |
+| `color-themes` | `skills/color-themes/SKILL.md` | color theme, palette generation, oklch theme, theme generator, auto theme, image palette, color scheme, harmonic colors | `core/design-tokens.md` |
 
 Every skill also inherits `core/accessibility-baseline.md` and `core/validate-checklist.md` — load them whenever the task produces code.
 

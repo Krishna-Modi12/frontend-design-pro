@@ -220,8 +220,8 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
-loads a 1,895-token registry that does nothing but route, then pulls in the single
-skill your request matched — measured 4,935–6,235 tokens all-in, including that
+loads a 1,998-token registry that does nothing but route, then pulls in the single
+skill your request matched — measured 5,038–6,338 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
 

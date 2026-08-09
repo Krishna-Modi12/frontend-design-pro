@@ -38,6 +38,29 @@ if (!(globalThis as { ResizeObserver?: unknown }).ResizeObserver) {
     disconnect() {}
   };
 }
+// Web Storage. `window.localStorage` arrives here as a bare object with no
+// methods on it, so every `getItem`/`setItem` throws TypeError. A component that
+// persists a preference is doing the ordinary thing, and — because the correct
+// implementation wraps storage in try/catch for Safari private mode — a broken
+// stub does not fail loudly. It silently takes the catch path, and a test that
+// asserts "the choice was saved" passes for the wrong reason or not at all.
+if (typeof window.localStorage?.getItem !== 'function') {
+  const store = new Map<string, string>();
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, String(v)),
+      removeItem: (k: string) => void store.delete(k),
+      clear: () => store.clear(),
+      key: (i: number) => [...store.keys()][i] ?? null,
+      get length() {
+        return store.size;
+      },
+    },
+  });
+}
+
 // CSS Font Loading API. jsdom has no font pipeline, so `document.fonts` is
 // absent — and a component that re-measures after webfonts settle
 // (`document.fonts.ready.then(…)`) is doing the right thing, not something the

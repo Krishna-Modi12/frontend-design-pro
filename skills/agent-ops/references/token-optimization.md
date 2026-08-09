@@ -6,7 +6,7 @@ This is about the agent's own working memory — the context window it reasons i
 
 A context window is not a queue that quietly overflows — it is a resource that degrades reasoning quality well before it is technically full. Irrelevant content dilutes attention, pushes load-bearing facts further from where they're used, and increases the chance a stale or contradictory fact from an early tool call still influences a decision much later. Treating context as free is the single most common way an agent talks itself into a wrong answer despite having "read everything."
 
-The registry pattern this repo uses at the meta level is the same discipline applied to files: per `docs/ARCHITECTURE.md`, a 1,895-token `SKILL.md` routes to 320,865 tokens of references, and no single request pays for material it doesn't touch. An agent reading "just in case" is doing the thing the registry exists to prevent, one level down.
+The registry pattern this repo uses at the meta level is the same discipline applied to files: per `docs/ARCHITECTURE.md`, a 1,998-token `SKILL.md` routes to 332,974 tokens of references, and no single request pays for material it doesn't touch. An agent reading "just in case" is doing the thing the registry exists to prevent, one level down.
 
 ## Eager vs. lazy: what to load and when
 
@@ -33,7 +33,7 @@ The registry pattern this repo uses at the meta level is the same discipline app
 - The number of files already read this task. Three deep reads is a reasonable investigation; fifteen is a sign the search strategy itself has failed and is substituting volume for precision.
 - Whether the content will still be needed several turns from now, or only to answer the immediate question. Content needed once should be summarized and released, not carried at full fidelity.
 
-This repo's own build makes the measurement explicit rather than impressionistic: Gate 1 asserts `SKILL.md` ≤6,000 tokens, Gate 8a asserts each skill ≤3,000 tokens alone and ≤8,000 with its declared core-deps, and `docs/ARCHITECTURE.md` reports the actual per-skill numbers (4,935–6,235 tokens) rather than an estimate. Hold your own reads to the same standard: state what a read is expected to cost and what question it answers.
+This repo's own build makes the measurement explicit rather than impressionistic: Gate 1 asserts `SKILL.md` ≤6,000 tokens, Gate 8a asserts each skill ≤3,000 tokens alone and ≤8,000 with its declared core-deps, and `docs/ARCHITECTURE.md` reports the actual per-skill numbers (5,038–6,338 tokens) rather than an estimate. Hold your own reads to the same standard: state what a read is expected to cost and what question it answers.
 
 ## Avoiding redundant re-reads
 

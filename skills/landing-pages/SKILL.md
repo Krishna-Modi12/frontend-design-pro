@@ -1,7 +1,7 @@
 ---
 name: landing-pages
 description: Marketing pages — heroes, pricing, testimonials, bento grids, social proof, CTAs, empty states, onboarding.
-version: "14.4.3"
+version: "14.5.0"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

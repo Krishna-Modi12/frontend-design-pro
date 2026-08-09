@@ -4,6 +4,42 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.5.0] — 2026-08-09
+
+Two new skills, and the first release in a while that adds capability rather than closing a gap. Both are **generative**: they cover design that is computed at runtime rather than authored once — type rendered as a system, colour derived as a function. Nothing in the pack covered that.
+
+### Added — `canvas-typography` (18th skill)
+
+Particle text, kinetic type, variable-font axis animation, scramble/decode reveals, and text on an SVG path. Four references, three gold examples, two anti-examples, three test files.
+
+The discipline the skill enforces is not the effect, it is what the effect must never cost: **the real string always stays in the DOM**, the canvas is `aria-hidden` decoration, and `getContext("2d")` is null-guarded — it returns `null` under SSR, under jsdom, and when a GPU process dies. Every gold degrades to plain readable type rather than a blank rectangle. `prefers-reduced-motion` paints the settled final state and never starts a loop; motion is driven by elapsed time, so a 144Hz display and a throttled tab agree.
+
+### Added — `color-themes` (19th skill)
+
+OKLCH theme generation from a single anchor hue, harmonic schemes (complementary, split, triadic, analogous), median-cut palette extraction from an image, and a light/dark/auto control. Four references, three gold examples, two anti-examples, three test files.
+
+Three rules the examples exist to demonstrate. **Chroma is clamped to the sRGB gamut** at each lightness, so two generated colours cannot silently clip to the same rendered one. **Palettes are clustered, never averaged** — the mean of any photograph is the same muddy brown-grey, because colours from opposite sides of the wheel cancel. And the theme control **persists the choice, not a resolved boolean**: storing `isDark` silently pins anyone who picked "follow the system" to whatever the system was on their first visit.
+
+The generator's contrast is verified across all 24 hue steps in both polarities rather than at one brand colour — the failures live at specific hues, so a single-hue test proves nothing.
+
+### Fixed — dependency advisories in both runnable demos
+
+`demo/showcase` was pinned to Next 15.3.9, which `npm audit` reports against a long list of HIGH advisories: SSRF in Server Actions and in rewrites, DoS in Server Components and via Cache Components, and a Middleware/Proxy bypass in App Router. Bumped to 15.5.23, a patch within 15.x. `demo/landing-page` follows, 15.5.22 → 15.5.23, so the two apps do not drift.
+
+Not fixed, and stated rather than left to be found: `postcss` and `sharp` remain flagged inside Next's own dependency tree, and npm's only offered remedy is Next 16 — a major, and not a change to make on the eve of a release.
+
+### Fixed — the test environment had no `localStorage`
+
+`window.localStorage` arrives in the vitest jsdom environment as a bare object with no methods on it, so every `getItem`/`setItem` throws. This is worse than it sounds: the *correct* implementation wraps storage in `try/catch` for Safari private mode, so a broken stub does not fail loudly — it silently takes the catch path, and a test asserting "the preference was saved" passes for the wrong reason. `vitest.setup.ts` now polyfills it alongside the existing `matchMedia`, `ResizeObserver` and `document.fonts` shims.
+
+### Stats
+
+19 skills · 8 core files · 94 references (332,974 tokens of on-demand depth) · 55 examples (45 gold + 10 anti-examples) · 45 tests · 53 constraints (17 semantic + 36 syntactic) · 22 evals · 13 regression cases · 9 gates.
+
+Registry (`SKILL.md`) is 1,998 tokens, up from 1,895 — **+103 for two skills, about 51 each**, which is the marginal cost this architecture has claimed all along. A request now loads 5,038 tokens at the lightest and 6,338 at the heaviest, against 332,974 available.
+
+---
+
 ## [14.4.3] — 2026-08-06
 
 A distribution hotfix. The gate chain was green for v14.4.2 and the archive it produced was internally perfect — and shipped defects that had already been fixed on `main` two commits earlier. Nothing in this release changes a skill, a reference, an example or a constraint. Every entry below closes a gap between what this repo contains and what a download delivers.

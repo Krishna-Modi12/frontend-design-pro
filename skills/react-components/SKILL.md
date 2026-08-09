@@ -1,7 +1,7 @@
 ---
 name: react-components
 description: Reusable React component APIs — buttons, cards, modals, tabs, dropdowns, shadcn/Radix primitives, compound components.
-version: "14.4.3"
+version: "14.5.0"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md
