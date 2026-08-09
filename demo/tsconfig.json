@@ -21,6 +21,7 @@
   ],
   "exclude": [
     "showcase",
+    "landing-page",
     "**/node_modules"
   ]
 }

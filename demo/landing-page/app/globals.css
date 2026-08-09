@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/**
+ * The demo's tokens, imported rather than restated. `@theme` is a Tailwind
+ * compiler directive, so this file has to be read at build time or every utility
+ * built from it — `bg-surface`, `text-ink-muted`, `border-hairline`,
+ * `ring-accent`, `shadow-lift` — silently resolves to nothing. That exact
+ * failure has shipped here before; it renders as an unstyled page, not an error.
+ *
+ * Order matters: after `tailwindcss`, so the theme is registered before the
+ * utilities that read it are generated.
+ */
+@import "../tokens.css";
+
+/**
+ * Fallbacks, not the primary source. `next/font` sets both variables on <html>
+ * with its own generated family names; these values only apply if that ever
+ * fails to load, and they name the same two faces `tokens.css` asks for.
+ */
+:root {
+  --font-geist-sans: "Geist", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/**
+ * Re-point the two font tokens at the self-hosted faces. `inline` is required:
+ * a plain `@theme` block copies the literal text of the value, so the `var()`
+ * would never be resolved against what `next/font` puts on <html>.
+ *
+ * The literal names are kept behind each variable so the stack still degrades
+ * the way `tokens.css` documents it, rather than falling straight to system-ui.
+ */
+@theme inline {
+  --font-display: var(--font-geist-sans), "Geist", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular,
+    monospace;
+}

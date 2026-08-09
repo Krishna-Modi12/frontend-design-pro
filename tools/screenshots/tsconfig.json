@@ -32,5 +32,14 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../demo/**/*.ts", "../../demo/**/*.tsx"],
-  "exclude": ["node_modules", "../../demo/showcase", "../../demo/_stubs.d.ts", "../../demo/**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    "../../demo/showcase",
+    // Both runnable apps type-check themselves, against their own installed
+    // dependencies. Compiling them from here would resolve their imports through
+    // this package's node_modules instead, which checks the wrong thing.
+    "../../demo/landing-page",
+    "../../demo/_stubs.d.ts",
+    "../../demo/**/*.test.tsx"
+  ]
 }

@@ -27,9 +27,10 @@ const SIZE_CAP = 500 * 1024;
 const FULL_PAGE_WIDTH = 1440;
 
 /**
- * `demos` serves the three stub-typed projects, which ship no runtime of their
- * own. `showcase` is a real installed app and is served from its own directory —
- * capturing it any other way would not be capturing the thing README describes.
+ * `demos` serves the two stub-typed projects, which ship no runtime of their own.
+ * `landing-page` and `showcase` are real installed apps and are served from their
+ * own directories — capturing either any other way would not be capturing the
+ * thing README describes.
  */
 const SITES = [
   {
@@ -37,10 +38,19 @@ const SITES = [
     cwd: HERE,
     port: 3311,
     shots: [
-      { name: "landing-page", route: "/landing-page", scheme: "dark", out: "demo/landing-page" },
       { name: "dashboard", route: "/dashboard", scheme: "light", out: "demo/dashboard" },
       { name: "auth-form", route: "/auth-form", scheme: "light", out: "demo/auth-form" },
     ],
+  },
+  {
+    id: "landing-page",
+    cwd: join(REPO, "demo", "landing-page"),
+    port: 3313,
+    needsInstall: true, // its own package.json; skipped with a notice if absent
+    // Not opt-in, unlike showcase: this page renders deterministically from a
+    // committed fixture, so a recapture only moves pixels when the UI actually
+    // changed.
+    shots: [{ name: "landing-page", route: "/", scheme: "dark", out: "demo/landing-page" }],
   },
   {
     id: "showcase",
