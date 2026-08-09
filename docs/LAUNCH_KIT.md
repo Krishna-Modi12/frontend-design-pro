@@ -55,14 +55,29 @@ What's enforced, rather than asserted:
 - 9 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
-The two newest pieces: agent-ops, a skill about the agent's own operating
-discipline rather than UI — token budgeting, cross-session memory,
-verification loops, subagent orchestration. And a demo that actually proves
-the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
-its own package.json, real installed deps (R3F, RHF+Zod), and a dev server
-that boots — not the ambient-stub-typed convention every other demo/ folder
-uses. CI runs a real `next build` against it on every push. The exact prompt
-that generated it is in the repo; copy it into any agent and compare output.
+The two newest skills are both generative — design computed at runtime rather
+than authored once. canvas-typography covers particle text, variable-font axis
+animation and scramble reveals, and the rule it enforces is not the effect but
+what the effect must never cost: the real string stays in the DOM, the canvas
+is aria-hidden decoration, and getContext("2d") is null-guarded because it
+returns null under SSR and under a headless test runner. color-themes does
+OKLCH generation from one anchor hue with chroma clamped to the sRGB gamut,
+plus palette extraction that clusters rather than averages — the mean of any
+photograph is the same muddy brown-grey, because opposite hues cancel. Its
+contrast is verified across all 24 hue steps in both polarities, since the
+failures live at specific hues and a single-hue test proves nothing.
+
+Adding both cost 103 tokens of always-loaded context. That is the architecture
+argument in one number: ~51 per skill, which is what the figure derived from a
+single skill predicted, and the 65,000 tokens of reference depth they brought
+are never loaded unless a request routes there.
+
+There is also a demo that proves the "runnable" claim: demo/showcase is a real
+Next.js 15 + React 19 app with its own package.json, real installed deps
+(R3F, RHF+Zod), and a dev server that boots — not the ambient-stub-typed
+convention every other demo/ folder uses. CI runs a real `next build` against
+it on every push. The exact prompt that generated it is in the repo; copy it
+into any agent and compare output.
 
 Known gaps are in docs/ARCHITECTURE.md rather than left for you to find. The
 biggest: the suite runs against hand-written stubs, not the real peer libraries
@@ -108,7 +123,8 @@ Reference material available: 332,974 tokens.
 
 3/ The economics of this are the whole point.
 
-Adding the 17th skill grew the always-loaded registry by 51 tokens.
+The two newest skills grew the always-loaded registry by 103 tokens. Both of
+them, combined.
 
 Marginal cost of a new skill: ~51 tokens of permanent context.
 Depth is free because it's lazy.
@@ -159,13 +175,22 @@ you haven't seen fail is a guardrail you haven't tested.
 Known gaps are all in ARCHITECTURE.md. Shipping the caveats is part of
 shipping.
 
-10/ The newest skill is agent-ops — for the agent's own discipline, not UI.
-Token budgeting, cross-session memory, verification loops, subagents.
+10/ Newest two are generative — design computed, not authored.
 
-Plus a showcase demo that IS a Next.js app: installed deps, a dev server that
-boots, CI running a real `next build` against it.
+canvas-typography: particle text, variable fonts, scramble. The real string
+stays in the DOM — the canvas is decoration.
 
-11/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+color-themes: OKLCH from one hue, gamut-clamped. Palettes clustered, never
+averaged.
+
+11/ Both cost 103 tokens of always-loaded context. Combined.
+
+~51 per skill, which is exactly what the number derived from ONE skill
+predicted. The 65k of depth they added loads only if you ask for it.
+
+That's the whole architecture argument in one measurement.
+
+12/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
 
 https://github.com/Krishna-Modi12/frontend-design-pro
 ```
@@ -229,16 +254,32 @@ orchestration — for the agent's own discipline, not UI).
 
 **The newest pieces**
 
-A demo that's actually installed and run: `demo/showcase` is a real
-Next.js 15 + React 19 app (own `package.json`, real deps — R3F, RHF+Zod),
-not the ambient-stub-typed convention the rest of `demo/` uses. CI runs a
-real `next build` against it on every push (Gate 9 below). The exact prompt
-that generated it is documented in the repo — copy it into any agent and
-compare the output. Setup docs also now cover ChatGPT, the OpenAI API,
-GitHub Copilot, and Gemini alongside the existing Claude/Cursor guides,
-with an honest compatibility matrix (`docs/AGENT_COMPATIBILITY.md`) that
-says plainly which agents get true on-demand loading versus which have to
-front-load everything.
+Two generative skills — design computed at runtime rather than authored once:
+
+- `canvas-typography` — particle text, kinetic type, variable-font axis
+  animation, scramble/decode reveals. What it enforces is not the effect but
+  what the effect must never cost: the real string stays in the DOM, the
+  canvas is `aria-hidden` decoration, and `getContext("2d")` is null-guarded,
+  because it returns `null` under SSR and under a headless test runner. Every
+  example degrades to plain readable type rather than a blank rectangle.
+- `color-themes` — OKLCH token generation from one anchor hue with chroma
+  clamped to the sRGB gamut, harmonic schemes, and palette extraction that
+  clusters rather than averages (the mean of any photograph is the same muddy
+  brown-grey — opposite hues cancel). Contrast is verified across all 24 hue
+  steps in both polarities, because the failures live at specific hues.
+
+Adding both grew the always-loaded registry by **103 tokens** — ~51 each,
+which is what the marginal-cost figure derived from a single skill predicted.
+The 65,000 tokens of reference depth they brought load only on demand.
+
+There's also a demo that's actually installed and run: `demo/showcase` is a
+real Next.js 15 + React 19 app (own `package.json`, real deps — R3F,
+RHF+Zod), not the ambient-stub-typed convention the rest of `demo/` uses. CI
+runs a real `next build` against it on every push (Gate 9 below). Setup docs
+cover ChatGPT, the OpenAI API, GitHub Copilot, and Gemini alongside the
+Claude/Cursor guides, with an honest compatibility matrix
+(`docs/AGENT_COMPATIBILITY.md`) that says plainly which agents get true
+on-demand loading versus which have to front-load everything.
 
 **Known limitations, up front**
 
