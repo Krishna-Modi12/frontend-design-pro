@@ -26,7 +26,7 @@ These are not style preferences. Each row is a check that fails a build, with th
 | Equal-height card grid, 3 across | Asymmetry, hierarchy, one showpiece per viewport | anti-slop wall |
 | A component with only a happy path | All four states — loading, empty, error, success | `STA-01`, `STA-02` |
 
-The full list of 53 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Six deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
+The full list of 53 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
 ## Install in 30 seconds
 
@@ -213,15 +213,16 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.4.3
+## What's new in v14.5.0
 
-A distribution hotfix. No skill, reference or constraint changed — every defect below sat between what this branch contained and what a download actually delivered.
+Two new skills, both **generative** — design computed at runtime rather than authored once. Type rendered as a system, colour derived as a function. Nothing in the pack covered that.
 
-- **The published archive now matches the verified branch.** The previous release was tagged from a commit that was never `main`'s head, so it shipped demo defects that had already been fixed here: a `@theme` block inside a runtime style string (which browsers discard, leaving that demo unstyled), a missing `tokens.css`, and a hand-written `LoginValues` interface that broke a consumer's `next build`. All three are gone, and the build now refuses to produce an archive at all unless `HEAD` is `origin/main` with a clean tree — so a stale commit cannot reach a release in the first place.
-- **The README no longer claims its own test suite is broken.** It read "partially executable — 20 of 39 files pass … not run in CI". The real figure is 39 of 39 files and 124 of 124 tests, in CI on every push. `docs/TESTING.md` had it right; this file was the last one wrong, and it is the first one people read.
-- **The install link works.** Step 1 of [INSTALL.md](docs/INSTALL.md) pointed at `../../releases`, which resolves correctly from this file and 404s from anything inside `docs/`.
-- **Three of the four screenshots reach a release for the first time.** They were added two versions ago and never made it into an archive.
-- **The archive is checked for what it says, not just that it compiles.** The post-build smoke test already re-ran the compiler and all 17 AST constraints against the unzipped copy; it now also asserts that the version this section announces is the version being shipped. That mismatch has now shipped twice, and prose had no gate.
+- **[`canvas-typography`](skills/canvas-typography/SKILL.md)** — particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path. The rule it enforces is not the effect but what the effect must never cost: **the real string stays in the DOM**, the canvas is `aria-hidden` decoration, and `getContext("2d")` is null-guarded — it returns `null` under SSR and under a headless test runner. Every example degrades to plain readable type rather than a blank rectangle, and the tests assert that degradation instead of mocking it away.
+- **[`color-themes`](skills/color-themes/SKILL.md)** — OKLCH token generation from one anchor hue with chroma clamped to the sRGB gamut, harmonic schemes, palettes extracted from an image, and light/dark/auto architecture. Three things the examples exist to prove: never average pixels (the mean of any photograph is the same muddy brown-grey, because opposite hues cancel), never ship a colour pair nobody measured, and never persist a resolved `isDark` boolean — that silently pins anyone who chose "follow the system". Contrast is verified across all 24 hue steps in both polarities, because the failures live at specific hues.
+- **Both skills are dependency-free.** Pure React and DOM APIs, with the OKLab conversion matrices written inline rather than pulling in a colour library. This pack installs none of its examples' peer dependencies by design, and this release does not become the exception.
+- **The demo apps are off their vulnerable Next.** `demo/showcase` was pinned to 15.3.9, carrying HIGH advisories including SSRF in Server Actions and a Middleware/Proxy bypass in App Router; both runnable apps are now on 15.5.23. `postcss` and `sharp` remain flagged inside Next's own dependency tree, where the only remedy npm offers is Next 16 — that is recorded rather than quietly carried.
+- **A test-environment gap that was hiding failures.** `window.localStorage` arrives in the suite as a bare object with no methods on it. That is worse than it sounds: correct code wraps storage in `try/catch` for Safari private mode, so the broken stub never threw — it silently took the catch path, and a test asserting "the preference was saved" would have passed for the wrong reason.
+- **Adding two skills cost 103 tokens.** The registry went 1,895 → 1,998 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
 
 ## Verification
 
@@ -245,7 +246,7 @@ npm run gates    # all 9 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
-Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **39 of 39 test files, 124 of 124 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
+Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **45 of 45 test files, 176 of 176 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
 
 ## Issues & contributing
 
