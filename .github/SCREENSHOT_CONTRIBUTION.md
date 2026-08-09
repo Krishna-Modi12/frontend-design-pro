@@ -37,17 +37,17 @@ npm run dev      # http://localhost:3000
 
 You should get a dark, near-black page: a WebGL particle hero that tracks the cursor, an asymmetric six-card bento grid with a spotlight hover, a three-tier pricing table with a working annual toggle, a testimonial carousel, and a validated contact form. Acid green appears only on the primary actions. If it looks like a purple gradient with an even card grid, something is wrong — open an issue.
 
-The other three are **stub-typed**: they compile against the ambient `declare module` blocks in `demo/_stubs.d.ts` and install no dependencies, so they do not run as they stand. [`tools/screenshots/`](../tools/screenshots/) is the harness that renders them — a small Next.js app with the real libraries installed, importing each demo where it lives rather than copying it:
+`landing-page` is also a real app and is captured from its own dev server. `dashboard` and `auth-form` are **stub-typed**: they compile against the ambient `declare module` blocks in `demo/_stubs.d.ts` and install no dependencies, so they do not run as they stand. [`tools/screenshots/`](../tools/screenshots/) is the harness that renders those two — a small Next.js app with the real libraries installed, importing each demo where it lives rather than copying it:
 
 ```bash
-npm run screenshots                    # all three: build, capture, compress
+npm run screenshots                    # every demo it covers: build, capture, compress
 npm run screenshots -- landing-page    # one
 npm run screenshots -- showcase        # opt-in, see below
 ```
 
 Its own [README](../tools/screenshots/README.md) covers how it is assembled and the traps inside it. Two things matter when reading a capture:
 
-- **`landing-page` needs `demo/landing-page/tokens.css` compiled.** It is the one demo that addresses its palette through named utilities (`bg-surface`, `text-ink`, `border-hairline`, `ring-accent`, `shadow-lift`), and Tailwind only emits those for tokens registered at build time. The harness imports the demo's own token file rather than restating it, so a capture cannot drift from what the demo ships.
+- **`landing-page` compiles its own `tokens.css`.** It addresses its palette through named utilities (`bg-surface`, `text-ink`, `border-hairline`, `ring-accent`, `shadow-lift`), and Tailwind only emits those for tokens registered at build time. The harness imports the demo's own token file rather than restating it, so a capture cannot drift from what the demo ships.
 - **`dashboard` and `auth-form` need nothing.** Both address their palettes through arbitrary `bg-[var(--color-surface)]` utilities against a `:root` block they inject themselves. Registering tokens on their behalf would let the harness flatter them into looking better than they are.
 
 `showcase` is opt-in: its hero is a WebGL particle field seeded at random, so every capture differs and running it by default would dirty that file on every run. The other three regenerate near-deterministically — a multi-kilobyte diff means something really moved, a few bytes is antialiasing noise.
@@ -62,7 +62,7 @@ npm run demos:verify    # page errors, console errors, hydration mismatches,
 
 ## The landing-page fixture
 
-`demo/landing-page/app/page.tsx` fetches `/api/site/overview` on mount for its metric strip, price book, testimonial verifications and region status. That endpoint belongs to the fictional product the page advertises; this repo ships the frontend only. With no backend the page renders its error state — correct behaviour, and not what a reader wants from a screenshot.
+`demo/landing-page/app/page.tsx` fetches `/api/site/overview` on mount for its metric strip, price book, testimonial verifications and region status. That endpoint belongs to the fictional product the page advertises, so the demo serves it itself from a committed fixture rather than depending on a backend nobody has. Point it somewhere that 404s and the page renders its error state — correct behaviour, and not what a reader wants from a screenshot.
 
 [`demo/landing-page/screenshot-fixture.json`](../demo/landing-page/screenshot-fixture.json) is the exact response `screenshot.png` was captured against. Serve it at that path and you reproduce the image. It is committed for one reason: a screenshot nobody can reproduce is asserted, not verified, and that is the thing this repo refuses to do everywhere else.
 

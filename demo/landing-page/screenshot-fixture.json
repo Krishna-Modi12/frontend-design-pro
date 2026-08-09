@@ -5,15 +5,24 @@
     "frontend only, so without it the page renders its error state and the metric strip",
     "reads 'Status feed unreachable'. This file is the fixture screenshot.png was",
     "captured against, committed so the image is reproducible rather than asserted.",
-    "Shape is fixed by the demo's own exported types: PlatformMetric (Hero.tsx),",
-    "PlanPrice (Pricing.tsx), RegionState (Footer.tsx). Pricing.tsx already declares the",
-    "tier names and copy — only the price book crosses the network.",
+    "Shape is fixed by the demo's own exported types: PlatformMetric (Hero.tsx, reused by",
+    "MetricsStrip.tsx), PlanPrice (Pricing.tsx), RegionState (Footer.tsx). Pricing.tsx",
+    "already declares the tier names and copy — only the price book crosses the network.",
+    "'metrics' is the hero's three headline readings; 'platform' is the four wider",
+    "counters in the strip beneath it. They are separate arrays because they answer",
+    "different questions, and the strip's lead figure takes a double-width track.",
     "Recapture instructions: .github/SCREENSHOT_CONTRIBUTION.md"
   ],
   "metrics": [
     { "id": "steps-committed", "label": "Steps committed", "value": "48.2M", "caption": "last 30 days, all regions" },
     { "id": "replay-p99", "label": "Replay p99", "value": "310ms", "caption": "cold worker, log-backed resume" },
     { "id": "duplicate-charges", "label": "Duplicate charges", "value": "0", "caption": "since the log became authoritative" }
+  ],
+  "platform": [
+    { "id": "runs-completed", "label": "Workflow runs completed", "value": "2.61B", "caption": "since the log became authoritative" },
+    { "id": "runs-resumed", "label": "Runs resumed mid-flight", "value": "1.34M", "caption": "after a deploy or a crash" },
+    { "id": "step-latency", "label": "Median step latency", "value": "41ms", "caption": "dispatch to commit, p50" },
+    { "id": "teams", "label": "Engineering teams", "value": "3,184", "caption": "self-hosted and cloud" }
   ],
   "plans": [
     { "id": "hobby", "monthlyCents": 0, "annualCents": 0, "unit": "per project" },

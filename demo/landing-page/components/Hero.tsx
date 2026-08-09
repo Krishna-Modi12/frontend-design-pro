@@ -73,6 +73,7 @@ export default workflow("reserve-seat", async (order) => {
     inventory.hold(order.sku, { qty: order.qty }),
   );
 
+  // Survives a deploy: the worker exits, the log keeps the timer.
   await step.sleep("cool-off", "45s");
 
   const charge = await step.run(
@@ -83,6 +84,59 @@ export default workflow("reserve-seat", async (order) => {
 
   return { holdId: hold.id, chargeId: charge.id };
 });`;
+
+type TokenKind = "plain" | "string" | "comment";
+
+interface SourceToken {
+  /** Byte offset into the snippet — stable, and never an array index. */
+  key: string;
+  kind: TokenKind;
+  text: string;
+}
+
+const TOKEN_CLASS: Record<TokenKind, string> = {
+  plain: "",
+  string: "text-accent",
+  comment: "text-ink-faint",
+};
+
+/**
+ * Two token classes, not a syntax engine: quoted strings and line comments are
+ * the only things being coloured, so a highlighter dependency would be more
+ * machinery than the panel is worth. Neither construct spans a line here, and
+ * the snippet is a module constant, so this runs once at import rather than on
+ * every render.
+ *
+ * `exec` rather than `matchAll` because its result types `index` as a required
+ * number — `RegExpMatchArray.index` is optional, and under `strict` that forces
+ * a fallback offset that would silently misplace a token.
+ */
+function tokenize(source: string): SourceToken[] {
+  const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)/g;
+  const tokens: SourceToken[] = [];
+  let cursor = 0;
+  let match = pattern.exec(source);
+
+  while (match !== null) {
+    if (match.index > cursor) {
+      tokens.push({ key: `t${cursor}`, kind: "plain", text: source.slice(cursor, match.index) });
+    }
+    tokens.push({
+      key: `t${match.index}`,
+      kind: match[1] === undefined ? "comment" : "string",
+      text: match[0],
+    });
+    cursor = match.index + match[0].length;
+    match = pattern.exec(source);
+  }
+
+  if (cursor < source.length) {
+    tokens.push({ key: `t${cursor}`, kind: "plain", text: source.slice(cursor) });
+  }
+  return tokens;
+}
+
+const WORKFLOW_TOKENS: SourceToken[] = tokenize(WORKFLOW_SOURCE);
 
 export default function Hero({
   metrics,
@@ -247,7 +301,17 @@ export default function Hero({
             className={`${focusRing} overflow-x-auto px-4 py-5 text-[0.8125rem] leading-relaxed text-ink-muted`}
             style={{ fontFamily: fontGeistMono }}
           >
-            <code>{WORKFLOW_SOURCE}</code>
+            <code>
+              {WORKFLOW_TOKENS.map((token: SourceToken) =>
+                token.kind === "plain" ? (
+                  token.text
+                ) : (
+                  <span key={token.key} className={TOKEN_CLASS[token.kind]}>
+                    {token.text}
+                  </span>
+                ),
+              )}
+            </code>
           </pre>
           <p className="border-t border-hairline px-4 py-3 text-xs leading-relaxed text-ink-faint">
             <code style={{ fontFamily: fontGeistMono }}>step.sleep</code> survives

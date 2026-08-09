@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import Hero from "../components/Hero";
 import type { PlatformMetric } from "../components/Hero";
+import MetricsStrip from "../components/MetricsStrip";
 import Features from "../components/Features";
 import Pricing from "../components/Pricing";
 import type { PlanPrice } from "../components/Pricing";
@@ -19,7 +20,10 @@ import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
  * worse than showing both as unavailable.
  */
 interface PageData {
+  /** The hero's three headline readings. */
   metrics: PlatformMetric[];
+  /** The four wider counters in the strip beneath the hero. */
+  platform: PlatformMetric[];
   plans: PlanPrice[];
   verified: Record<string, string>;
   region: RegionState;
@@ -125,6 +129,12 @@ export default function LandingPage(): ReactElement {
           onQuickstart={() => setQuickstartOpen((open: boolean) => !open)}
           quickstartOpen={quickstartOpen}
           ctaRef={ctaRef}
+        />
+
+        <MetricsStrip
+          metrics={data?.platform ?? []}
+          isLoading={isLoading}
+          error={error}
         />
 
         {quickstartOpen ? (
