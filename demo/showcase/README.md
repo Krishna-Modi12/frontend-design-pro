@@ -1,9 +1,9 @@
 # Nexus — showcase
 
-This is the one example in `demo/` that is not a stub-typed reference file. Every other
-folder under `demo/` (`landing-page/`, `dashboard/`, `auth-form/`) is a `.tsx` file compiled
-only against the ambient `declare module` stubs in `demo/_stubs.d.ts` — never installed,
-never run. `demo/showcase/` is the opposite: a real, standalone Next.js 15 (App Router) +
+This is one of two examples in `demo/` that are not stub-typed reference files — the other
+is `landing-page/`, which markets the pack itself. `dashboard/` and `auth-form/` are `.tsx`
+files compiled only against the ambient `declare module` stubs in `demo/_stubs.d.ts` —
+never installed, never run. `demo/showcase/` is the opposite: a real, standalone Next.js 15 (App Router) +
 React 19 + TypeScript + Tailwind v4 project, with its own `package.json`, real installed
 dependencies, and a dev server that actually boots. It exists to prove the skill pack
 produces a working application, not just type-checked snippets.

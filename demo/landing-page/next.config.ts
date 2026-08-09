@@ -2,11 +2,15 @@ import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
 
 /**
- * Deliberately not `output: "export"`. The page fetches `/api/site/overview` on
- * mount, and a static export drops route handlers — the endpoint would 404 and
- * the page would render its error state, which is the one thing a screenshot of
- * it must not show. The route is three lines over a committed fixture; keeping a
- * server is cheaper than teaching the page to live without one.
+ * Deliberately not `output: "export"`.
+ *
+ * Two things break under a static export, and the second one is the expensive
+ * one. The metric strip reads `/api/site/overview` on mount, and an export drops
+ * route handlers — the endpoint would 404 and the page would render its error
+ * state permanently. Worse, `tools/screenshots/lib/next-server.mjs` starts every
+ * demo with `next start`, which refuses to run at all against an exported build:
+ * an export would take `npm run screenshots` and `npm run demos:verify` down
+ * with it, and those are the only two checks in this repo that render anything.
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
