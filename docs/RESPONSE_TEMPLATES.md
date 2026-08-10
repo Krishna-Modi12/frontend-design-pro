@@ -221,7 +221,7 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
 loads a 2,002-token registry that does nothing but route, then pulls in the single
-skill your request matched — measured 5,038–6,338 tokens all-in, including that
+skill your request matched — measured 5,511–7,112 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
 
@@ -298,7 +298,7 @@ to each release are both free. There's no paid tier, no account, no telemetry in
 pack.
 
 The only thing it costs you is whatever your agent already charges for tokens, and the
-loading model is built to keep that small: ~1,800 tokens to route, ~5k for a typical
+loading model is built to keep that small: ~2,000 tokens to route, ~5k for a typical
 request rather than pulling the entire pack into context.
 ````
 

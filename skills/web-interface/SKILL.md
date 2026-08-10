@@ -10,7 +10,7 @@ core-deps:
 # Web Interface Review
 
 ## When to Use
-Auditing or polishing existing UI rather than building new: design review, accessibility audit, copy review, typography and contrast passes, "make this feel more finished", "what's wrong with this component". This skill is mostly *rules to check against*, not code to generate.
+Auditing or polishing existing UI rather than building new: design review, accessibility audit, copy review, typography and contrast passes, "make this feel more finished", "what's wrong with this component". This skill is mostly *rules to check against* rather than code to generate — but the craft rules have a worked example, cited below.
 
 ## Stack
 Framework-agnostic review · applies to React 19 · Tailwind v4 output
@@ -33,7 +33,9 @@ Framework-agnostic review · applies to React 19 · Tailwind v4 output
 - **Anti-pattern sweep** — `user-scalable=no`, blocked paste, `transition: all`, `outline:none` without replacement, `<div onClick>`, images without dimensions, `autoFocus` without justification.
 
 ## Examples
-Anti-examples are the teaching material here: `examples/bad-generic.tsx` (AI-slop layout and copy) · `examples/bad-inaccessible.tsx` (a11y failures) · `examples/bad-drive-by-refactoring.tsx` (scope violations).
+`examples/good-audited-panel.tsx` is the worked craft pass: two shadow layers, hover states that *gain* contrast, `tabular-nums` on every numeric column, the `min-w-0` + `truncate` pair, `Intl` formatting and `translate="no"` on identifiers — all four states, no faked delay. Read it when the ask is "make this feel more finished".
+
+The anti-examples are the other half — what a review rejects: `examples/bad-generic.tsx` (AI-slop layout and copy) · `examples/bad-inaccessible.tsx` (a11y failures) · `examples/bad-drive-by-refactoring.tsx` (scope violations).
 
 ## Reference Index
 Load only for the specific task:

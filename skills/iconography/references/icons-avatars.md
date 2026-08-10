@@ -170,17 +170,22 @@ Never use egg/silhouette placeholders. Always use initials with deterministic gr
 
 ### Gradient avatar component
 ```tsx
-// Deterministic color from name — same name always = same color
+// Deterministic color from name — same name always = same color.
+// The ramp walks warm → cool and deliberately skips the violet/fuchsia/purple
+// corridor: a purple→pink pair is anti-slop ban 3, and a default palette is the
+// worst place to break a ban, because every avatar in the product inherits it.
+// Eight buckets is about hash spread, not hue count — keep them distinguishable
+// at 32px, which is the size almost every one of these actually renders at.
 function getAvatarGradient(name: string): string {
   const gradients = [
-    'from-violet-500 to-indigo-500',
-    'from-emerald-400 to-teal-500',
+    'from-rose-400 to-red-600',
     'from-orange-400 to-rose-500',
-    'from-sky-400 to-blue-600',
-    'from-fuchsia-500 to-pink-500',
-    'from-amber-400 to-orange-500',
+    'from-amber-400 to-orange-600',
+    'from-yellow-400 to-lime-600',
     'from-lime-400 to-emerald-500',
-    'from-indigo-400 to-purple-600',
+    'from-emerald-400 to-teal-500',
+    'from-teal-400 to-cyan-600',
+    'from-sky-400 to-blue-600',
   ]
   let hash = 0
   for (let i = 0; i < name.length; i++) {

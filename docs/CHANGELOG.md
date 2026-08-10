@@ -6,11 +6,14 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ## [14.7.1] — 2026-08-10
 
-A correction. v14.7.0 described its three new constraints as covering "defects
-the field ships and nobody checks", and claimed no competing pack enforced any
-of them. **That was asserted, not verified** — which is precisely the failure
-mode this pack exists to make impossible. It has now been checked against
-source.
+A correction and a review pass. Neither adds a feature; both are the result of
+checking what already shipped.
+
+**The correction.** v14.7.0 described its three new constraints as covering
+"defects the field ships and nobody checks", and claimed no competing pack
+enforced any of them. **That was asserted, not verified** — which is precisely
+the failure mode this pack exists to make impossible. It has now been checked
+against source.
 
 ### What the check found
 
@@ -35,7 +38,79 @@ competitor, and the docs no longer say it is.
 No constraint behaviour changed. `README.md` and `core/validate-checklist.md`
 corrected.
 
----
+**The review pass.** Everything below was found by judging what already shipped,
+not by building something new.
+
+### Added — `web-interface` finally has a gold example
+
+The skill shipped three anti-examples and no positive one, so *"make this feel
+more finished"* — the request it exists to answer — had no worked answer
+anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`,
+so "every skill has an example" was enforced and "every skill has a **gold**"
+was not, and no gate checked the second.
+
+`examples/good-audited-panel.tsx` is the craft pass at component scale, not
+another landing page: two shadow layers, hover states that *gain* contrast
+rather than lose it, `tabular-nums` on every numeric column, the `min-w-0` +
+`truncate` pair the rule set names as its most frequent finding, `Intl`
+formatting and `translate="no"` on identifiers. All four states, no faked delay.
+
+### Fixed — an entrance eased the wrong way, inside a comment no gate can read
+
+`skills/animations/examples/good-view-transitions.tsx` ships its view-transition
+CSS in a `// --- Required CSS (add to global.css) ---` block for the reader to
+paste. `::view-transition-new(.slide-up)` used `ease-in` — an entrance easing
+the opposite way from ban 6, and from the four sibling rules in the same block.
+
+Gate 10 closed the blind spot on reference files. This is the same blind spot one
+layer down: **prescribed code inside a comment in an example file is read by no
+suite**, because every suite parses the file as TypeScript and a comment is not
+TypeScript. The gates check the code an example *runs*, never the code it *tells
+you to copy*.
+
+### Fixed — the default avatar palette broke ban 3
+
+`skills/iconography/references/icons-avatars.md` prescribes a deterministic
+gradient for initials avatars. Three of its eight entries were `violet→indigo`,
+`fuchsia→pink` and `indigo→purple`. Purple→pink is banned by name, and a default
+palette is the worst place to break a ban, because every avatar in the product
+inherits it. Replaced with a warm→cool ramp that skips the corridor.
+
+### Fixed — the no-raw-hex rule named none of its three real exceptions
+
+Three golds must use hex and always did: the Google "G" in
+`skills/forms/examples/good-auth.tsx` (colours its owner specifies), React Native
+`StyleSheet` in `good-react-native.tsx`, and a three.js material in `good-3d.tsx`
+— none of the three parse `oklch()`. The wall said "OKLCH only" with no
+exceptions, so an agent following it literally ships a subtly wrong Google logo,
+which is worse than the violation. The exceptions are now named in
+`AGENT_SYSTEM_PROMPT.md` and the root `SKILL.md`, and each site carries its
+reason. The three.js material also stopped being indigo `#4f46e5`: the hex was
+unavoidable, the AI-slop purple was not.
+
+### Fixed — figure drift, including two files that contradicted themselves
+
+`AGENT_SYSTEM_PROMPT.md` disagreed with itself four lines apart: the correct
+parser and regex totals on one line, "Semantic (16 AST)" and "Syntactic (35
+regex)" on the next two. `docs/ARCHITECTURE.md` disagreed with `README.md` about
+the test-suite figure — in a product whose entire claim is that its numbers are
+derived from a green chain. Its per-skill budget table was stale in all 19 rows,
+and its core-dependency range had not been re-derived since the core files were
+split.
+
+Neither file is on any sweep list, and no gate reads prose.
+
+### Added — `docs/REVIEW_PROTOCOL.md`
+
+The spot check, the list of things no gate can see, and the severity ladder.
+Tracked rather than kept in `.claude/`, which is gitignored — a protocol that
+lives there cannot reach a second session working the same tree. `CLAUDE.md`
+points at it.
+
+One trap it records, because it cost a build here: Stage 1's version-leak scan is
+`ROOT.rglob("*")`, a filesystem walk that does not read `.gitignore`. Any
+untracked scratch file containing the current version string fails pre-flight —
+and an `_ingestion/` directory named after the version fails it by its own name.
 
 ## [14.7.0] — 2026-08-10
 

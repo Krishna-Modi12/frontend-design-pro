@@ -246,6 +246,10 @@ export default function AuthPage({ defaultMode = 'login', isLoading = false }: A
                 disabled={isSubmitting}
                 className="w-full h-11 inline-flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-[oklch(98.5%_0.001_106.4)] hover:bg-slate-100 font-medium text-sm transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                {/* Brand asset: the four fills below are Google's specified
+                    colours, one of the three raw-hex exceptions the anti-slop
+                    wall sanctions. Re-expressing them in OKLCH would round the
+                    values and ship a subtly wrong Google logo. */}
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
