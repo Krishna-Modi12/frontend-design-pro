@@ -90,7 +90,7 @@ dist/                    build output, gitignored
 |---|---|---|---|
 | 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 1,998 tokens; version consistent; no leaks |
 | 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 17/17 |
-| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 45/45 golds · 14/14 demo files |
+| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 44/44 golds · 15/15 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 53/53 files × 17/17 |
 | 5 | Syntactic | 36 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 36/36 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
