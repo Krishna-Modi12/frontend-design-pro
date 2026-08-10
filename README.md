@@ -270,7 +270,7 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.1
+## What's new in v14.7.2
 
 **A correction, published because the alternative is a pack that asserts.**
 
@@ -288,9 +288,25 @@ Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-sk
 
 No constraint behaviour changed.
 
+### The survey, widened — and what it does not claim
+
+The v14.7.1 check covered four packs. It now covers eight, against one narrow, falsifiable question: **does the project run its own design rules over its own shipped guidance?** Not "does it have tests" — impeccable has more test infrastructure than this pack does.
+
+| Pack | Rules enforced mechanically? | Own reference material gated? |
+|---|---|---|
+| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 94 references and blocks the archive |
+| impeccable | 46 detector rules | **No** — 14 test targets, but `test:detector` runs against `tests/fixtures/antipatterns`. Nothing points the detector at `skill/reference/*.md` |
+| ui-ux-pro-max-skill | No | No — `validate:csv` / `check:assets` are schema and asset validation; the design guidance is a self-graded pre-delivery checklist |
+| `anthropics/skills` frontend-design | No | No — the directory is `SKILL.md` and `LICENSE.txt` |
+| taste-skill · awesome-claude-design · web-interface-guidelines · emilkowalski/skill | No | No — zero CI workflows, zero test files, all four |
+
+**A correction owed to impeccable.** Earlier notes here described its detectors as pointing "outward" as though the project were untested. It is not: 14 test targets including detector, framework, e2e and live-agent suites. It tests that its detector *works*. What it does not do is point that detector at its own guidance. That is a narrower and more defensible distinction than the one first drawn, and it is the one that holds.
+
+**What this does not establish.** That this pack is "the best" — that is not a property a repository can have, and it depends on what a team needs. ui-ux-pro-max ships far more styles and palettes. Impeccable's retrofit commands (`audit`, `polish`, `harden`) and its live browser loop have no equivalent here. The claim is the narrow one and nothing wider: **this pack's own reference material is held to the rules it hands the agent, and across eight packs read at source, nothing else in the field does that.**
+
 ## Previously — v14.7.0
 
-Three constraints for defects the field ships and almost nobody checks — found by sweeping both suites for gaps, then **verified against the competition's actual source** rather than assumed. Of the four packs checked (impeccable, ui-ux-pro-max-skill, taste-skill, `anthropics/skills` frontend-design), exactly one rule is enforced anywhere else: impeccable ships a `gradient-text` detector. It fires unconditionally, including on display headings, where the effect is legitimate; `TYP-03` is scoped to body-sized text. Nothing in any of the four enforces the other two.
+Three constraints for defects the field ships and almost nobody checks — found by sweeping both suites for gaps, then **verified against the competition's actual source** rather than assumed. Eight packs were read: impeccable, ui-ux-pro-max-skill, `anthropics/skills` frontend-design, taste-skill, awesome-claude-design, vercel-labs/web-interface-guidelines, emilkowalski/skill, and this one. Exactly one of the three rules is enforced anywhere else — impeccable ships a `gradient-text` detector, and it fires unconditionally, including on display headings where the effect is legitimate, while `TYP-03` is scoped to body-sized text. Nothing in the other seven enforces any of the three.
 
 - **`A11Y-06` — `outline-none` with no focus indicator.** `A11Y-02` (AST) already checks that a `focus-visible` class sits on an interactive element, which catches the ring being in the *wrong place*. It cannot catch the outline being removed and replaced with **nothing** — the far commoner defect, and the one that costs every keyboard user the page. Either `focus:` or `focus-visible:` satisfies it: the rule is that a visible indicator exists, not which variant spells it.
 - **`TYP-03` — gradient text on body copy.** Fine on a display heading. On prose, `bg-clip-text` sets the computed colour to `transparent`, which destroys contrast **and silently defeats every contrast checker**, because the ratio is measured against a colour no reader ever sees. That second half is why it survives review.

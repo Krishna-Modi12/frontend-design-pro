@@ -1,7 +1,7 @@
 ---
 name: threejs-3d
 description: 3D web experiences with React Three Fiber — scenes, geometry, materials, lighting, shaders, post-processing, model loading, raycasting.
-version: "14.7.1"
+version: "14.7.2"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md

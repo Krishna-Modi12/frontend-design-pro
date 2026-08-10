@@ -4,6 +4,50 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.7.2] — 2026-08-10
+
+The competitor check widened from four packs to eight, and one more correction
+paid.
+
+### The survey
+
+Packs read **at source**, not from their marketing pages: impeccable,
+ui-ux-pro-max-skill, `anthropics/skills` frontend-design, taste-skill,
+rohitg00/awesome-claude-design, vercel-labs/web-interface-guidelines,
+emilkowalski/skill.
+
+The question is deliberately narrow and falsifiable: **does the project run its
+own design rules over its own shipped guidance?** Not "does it have tests".
+
+| Pack | Rules enforced? | Own material gated? |
+|---|---|---|
+| frontend-design-pro | 59 | **Yes** — Gate 10, blocks the archive |
+| impeccable | 46 detectors | No — `test:detector` runs against `tests/fixtures/antipatterns` |
+| ui-ux-pro-max-skill | No | No — `validate:csv` is schema validation |
+| `anthropics/skills` frontend-design | No | No — `SKILL.md` + `LICENSE.txt` |
+| taste-skill, awesome-claude-design, web-interface-guidelines, emilkowalski/skill | No | No — zero CI, zero test files, all four |
+
+### Correction owed to impeccable
+
+Earlier notes in this repo described its detectors as pointing "outward" as
+though the project were untested. **It is not.** 14 test targets including
+detector, framework, e2e and live-agent suites — more test infrastructure than
+this pack has. It tests that its detector *works*. What it does not do is point
+that detector at `skill/reference/*.md`. That narrower distinction is the one
+that holds, and it is now the one stated.
+
+### What the survey does not establish
+
+`README.md` now says this outright: "best" is not a property a repository can
+have, and it depends on what a team needs. ui-ux-pro-max ships far more styles
+and palettes. Impeccable's retrofit commands (`audit`, `polish`, `harden`) and
+its live browser loop have no equivalent here. The claim is the narrow one and
+nothing wider.
+
+No constraint behaviour changed.
+
+---
+
 ## [14.7.1] — 2026-08-10
 
 A correction. v14.7.0 described its three new constraints as covering "defects
