@@ -1,7 +1,7 @@
 ---
 name: ai-ui-generation
 description: Prompt-to-UI, JSON-to-UI and generative-interface patterns — component registries, schema validation, and the guardrails generated markup must pass.
-version: "14.7.0"
+version: "14.7.1"
 core-deps:
   - core/component-api.md
   - core/validate-checklist.md

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `frontend-design-pro` is a **skill pack for AI agents**, not an application. The deliverable is a `.skill` archive (a zip of markdown + TypeScript examples) that a host agent unzips and reads. Nothing here "runs" in the usual sense except `demo/showcase/`.
 
-The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 56 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
+The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 59 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
 
 Because of that claim, the standing posture here is **judge before building**. Read [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) at the start of a session: it carries the five-minute spot check, the list of things no gate can see, and the severity ladder. Every release this project has had to correct was corrected for prose, not for code.
 
@@ -16,7 +16,7 @@ Because of that claim, the standing posture here is **judge before building**. R
 npm run gates        # python scripts/build_release.py --dry-run  — all 10 gates, builds nothing. THE check.
 npm run build        # full gated release: gates + archive + smoke test + release notes
 npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
-npm run constraints  # Gate 5 only — 39 regex constraints over skills/
+npm run constraints  # Gate 5 only — 42 regex constraints over skills/
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 205 tests, ~35s
@@ -37,7 +37,7 @@ Single-file checks while iterating on an example (much faster than the full chai
 
 ```bash
 node scripts/parser_constraints.js skills/<id>/examples/good-x.tsx   # 17 AST constraints, one file
-python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 39 regex constraints, one file
+python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 42 regex constraints, one file
 python scripts/build_release.py --bump-patch                          # patch bump + gates + build
 ```
 
@@ -81,7 +81,7 @@ A monolithic pack of ~320k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,172–6,773 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,511–7,112 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -103,7 +103,7 @@ Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any
 
 ## Examples are gate-bearing artifacts
 
-`skills/*/examples/good-*.tsx` are not illustrations — they are the fixtures the constraint suites run against, and they must pass all 56 checks (17 AST via the TypeScript compiler API + 39 regex). `bad-*.tsx` are deliberate anti-examples that **must fail**; the suite asserts both directions.
+`skills/*/examples/good-*.tsx` are not illustrations — they are the fixtures the constraint suites run against, and they must pass all 59 checks (17 AST via the TypeScript compiler API + 42 regex). `bad-*.tsx` are deliberate anti-examples that **must fail**; the suite asserts both directions.
 
 Write new golds by modelling closely on an existing one (`skills/landing-pages/examples/good-landing.tsx` is the fullest). The recurring requirements: OKLCH only (no raw hex, no `[#...]`), `min-h-[100dvh]` never `min-h-screen`, a declared font (`Manrope`/system stack — never Inter/Roboto/Poppins as the display face), all four states with no `setTimeout` fake loader, a functional `useReducedMotion`, ease-out for entrances, a skip link on anything with `<nav>`/`<header>`, 44px touch targets, organic data values, an exported `*Props` interface that is actually *used* as a type, and `…` not `...`.
 

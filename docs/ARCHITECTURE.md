@@ -13,39 +13,39 @@ So the pack is not a document. It is a **registry that routes**.
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,018 tokens** | always |
-| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,350, 2,426, 2,518 or 3,254 tokens** | the 3–4 a matched skill declares |
+| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,689, 2,765, 2,857 or 3,593 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **789–1,601 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 94 deep references | **333,701 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 94 deep references | **333,709 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```text
-iconography        5,172   ← lightest
-landing-pages      5,223
-testing            5,233
-data-tables        5,254
-ai-ui-generation   5,280
-forms              5,323
-react-performance  5,339
-web-interface      5,366
-design-system      5,371
-threejs-3d         5,433
-color-themes       5,471
-animations         5,472
-platform           5,486
-react-components   5,488
-component-patterns 5,595
-agent-ops          5,692
-design-principles  5,969
-canvas-typography  6,378
-design-research    6,773   ← heaviest
+iconography        5,511   ← lightest
+landing-pages      5,562
+testing            5,572
+data-tables        5,593
+ai-ui-generation   5,619
+forms              5,662
+react-performance  5,678
+web-interface      5,705
+design-system      5,710
+threejs-3d         5,772
+color-themes       5,810
+animations         5,811
+platform           5,825
+react-components   5,827
+component-patterns 5,934
+agent-ops          6,031
+design-principles  6,308
+canvas-typography  6,717
+design-research    7,112   ← heaviest
 ```
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,106 tokens, while `design-research` is the second-largest router in the pack at 1,501 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 6,773 tokens against 333,701 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,112 tokens against 333,709 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 333,701, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 333,709, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
 The registry is the reason adding skills is cheap, and the generative-design pair gave the cleanest measurement of it so far: **two** skills grew `SKILL.md` from 1,895 to 2,018 tokens — 103 tokens for both, **~51 each**, which is what the earlier single-skill figure predicted. Marginal cost of a skill is about 51 tokens of always-loaded context, plus however much on-demand depth you give it. `canvas-typography` and `color-themes` added 8 references and 65,000 tokens of depth between them, and none of that is loaded unless a request routes to it.
 
@@ -58,7 +58,7 @@ Two core files were over budget and got split into a thin essential plus a deep 
 | `core/component-api.md` (904) | `core/component-api-deep.md` (1,527) |
 | `core/agent-behavior.md` (996) | `core/agent-behavior-patterns.md` (947) |
 
-That split cut the per-request dependency load from **4,143 → 2,236–2,404 tokens** without losing any content — the depth simply stopped being mandatory.
+That split cut the per-request dependency load from **4,143 → 2,689–3,593 tokens** without losing any content — the depth simply stopped being mandatory.
 
 ## Repo layout
 
@@ -92,12 +92,12 @@ dist/                    build output, gitignored
 | 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 17/17 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 17/17 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
-| 5 | Syntactic | 39 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 39/39 · 3/3 demo projects |
+| 5 | Syntactic | 42 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 39/39 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 205/205 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 17/17 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
-| 10 | References | the 16 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 94 references, 19 skill routers and 8 core files | 122 files · 0 violations |
+| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 94 references, 19 skill routers and 8 core files | 122 files · 0 violations |
 
 Then, non-negotiable but not numbered: **path integrity** (87 skill-cited references resolve), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
 
@@ -146,7 +146,7 @@ Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby
 
 Note the bottom two: half the value is **removing false positives**. A blanket `...` ban flags every rest-spread in the pack; a blanket `&&` ban flags correct React. Constraints that cry wolf get switched off, so precision is a feature and not a nicety.
 
-The two suites are complementary, not redundant — 17 semantic + 39 syntactic = **56 checks across 56 distinct IDs**. Every ID belongs to exactly one suite, so a bare ID in a report is unambiguous about which layer flagged it. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
+The two suites are complementary, not redundant — 17 semantic + 42 syntactic = **59 checks across 59 distinct IDs**. Every ID belongs to exactly one suite, so a bare ID in a report is unambiguous about which layer flagged it. Regex still owns what regex is good at: `TYP-01` a font is actually declared, `TOK-01` no hex in token definitions, `QUA-03` no lorem ipsum, `SLOP-01`/`SLOP-02` no placeholder names or AI-slop copy.
 
 ## Adding to the pack
 

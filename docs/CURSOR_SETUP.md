@@ -72,7 +72,7 @@ Cursor's agent will follow the reference index inside the skill file to pull dee
 
 ## Verifying it took
 
-Ask **"which skill did you load?"** — you want one skill id and a token figure around 5,172–6,773, not a claim that it read the whole pack. If it cannot name the skill, the rule is not attaching: check that the file is under `.cursor/rules/`, has the `.mdc` extension, and that your `globs` match the file you have open.
+Ask **"which skill did you load?"** — you want one skill id and a token figure around 5,511–7,112, not a claim that it read the whole pack. If it cannot name the skill, the rule is not attaching: check that the file is under `.cursor/rules/`, has the `.mdc` extension, and that your `globs` match the file you have open.
 
 ## Known limits
 
