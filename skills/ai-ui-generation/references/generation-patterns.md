@@ -47,4 +47,4 @@ Supply the token set in the prompt. A generator given `--color-brand: oklch(60% 
 
 ## Relationship to the rest of this package
 
-Generated output is validated by the same 53 constraints as everything else (`core/validate-checklist.md`). If a generator's output can't pass the parser gate, the fix is the prompt or the registry — not an exemption.
+Generated output is validated by the same 56 constraints as everything else (`core/validate-checklist.md`). If a generator's output can't pass the parser gate, the fix is the prompt or the registry — not an exemption.

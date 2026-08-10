@@ -10,20 +10,33 @@ bash setup.sh --list       # every adapter
 
 `setup.ps1` is the PowerShell port, same arguments as `-Switch` form.
 
+**Start with [`agents/`](agents/)** unless you know you need a native format. It
+writes one `AGENTS.md`, an open specification governed by the Linux Foundation's
+Agentic AI Foundation, and roughly thirty agents read it — including Zed, Jules,
+Devin, Factory, Amp, OpenHands and JetBrains Junie, none of which have an adapter
+of their own here.
+
 | Adapter | Installs | Full doc |
 |---|---|---|
+| [`agents/`](agents/) | `AGENTS.md` — read by ~30 hosts | [README](agents/README.md) |
 | [`cursor/`](cursor/) | `.cursor/rules/frontend-design-pro.mdc` | [CURSOR_SETUP.md](../docs/CURSOR_SETUP.md) |
 | [`copilot/`](copilot/) | `.github/copilot-instructions.md` + path-scoped `.github/instructions/` | [COPILOT_SETUP.md](../docs/COPILOT_SETUP.md) |
+| [`cline/`](cline/) | `.clinerules/frontend-design-pro.md` | — untested |
+| [`roo/`](roo/) | `.roo/rules/frontend-design-pro.md` | — untested |
+| [`zed/`](zed/) | `.rules` | — untested |
+| [`gemini/`](gemini/) | `GEMINI.md` (Gemini CLI) | [GEMINI_SETUP.md](../docs/GEMINI_SETUP.md) |
 | [`windsurf/`](windsurf/) | `.windsurf/rules/frontend-design-pro.md` | — untested |
 | [`continue/`](continue/) | `.continue/rules/frontend-design-pro.md` | — untested |
 | [`aider/`](aider/) | `CONVENTIONS.md` | — untested |
 | [`claude/`](claude/) | manual — unzip into `~/.claude/skills/`, or Projects for Desktop | [CLAUDE_SETUP.md](../docs/CLAUDE_SETUP.md) |
 | [`chatgpt/`](chatgpt/) | manual — Custom GPT knowledge upload, 20-file cap | [CHATGPT_SETUP.md](../docs/CHATGPT_SETUP.md) |
-| [`gemini/`](gemini/) | manual — system instruction | [GEMINI_SETUP.md](../docs/GEMINI_SETUP.md) |
-| [`codex/`](codex/) | manual — `AGENTS.md` merge | [OPENAI_API_SETUP.md](../docs/OPENAI_API_SETUP.md) |
+| [`codex/`](codex/) | manual — merge into the `AGENTS.md` you own, or install [`agents/`](agents/) | [OPENAI_API_SETUP.md](../docs/OPENAI_API_SETUP.md) |
 | [`generic/`](generic/) | manual — any other host | [INSTALL.md](../docs/INSTALL.md) |
 
-"Manual" means there is no file an installer can safely drop in: a web UI, a JSON merge, or a file your repo already owns. Those cards give the real steps rather than automating a step that cannot be automated.
+"Manual" means there is no file an installer can safely drop in: a web UI, a user-level directory, or a file your repo already owns. Those cards give the real steps rather than automating a step that cannot be automated.
+
+An adapter declares which it is by shipping a `.manual` file saying why. Nothing
+lists auto/manual anywhere else, so a new adapter cannot be added and forgotten.
 
 ## Two things every adapter assumes
 

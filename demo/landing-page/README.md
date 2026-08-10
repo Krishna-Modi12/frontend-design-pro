@@ -32,7 +32,7 @@ of the two checks. `demo/tsconfig.json` excludes this directory for that reason.
 The anti-slop constraint suites still cover it, and still must pass:
 
 ```bash
-bash demo/validate.sh landing-page    # 17 AST + 36 regex constraints
+bash demo/validate.sh landing-page    # 17 AST + 39 regex constraints
 ```
 
 ## Where the data comes from

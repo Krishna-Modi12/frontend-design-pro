@@ -83,7 +83,7 @@ Hard shadow creates a 3D raised look. Click = visually pushes down.
     bg-[--neo-accent-yellow] text-[--neo-ink]
     border-[3px] border-[--neo-border] rounded-lg
     shadow-[4px_4px_0px_var(--neo-border)]
-    transition-all duration-100 ease-out
+    transition-[transform,box-shadow] duration-100 ease-out
     hover:shadow-[6px_6px_0px_var(--neo-border)] hover:-translate-x-px hover:-translate-y-px
     active:shadow-[0px_0px_0px_var(--neo-border)] active:translate-x-[4px] active:translate-y-[4px]
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--neo-border]
@@ -99,7 +99,7 @@ Hard shadow creates a 3D raised look. Click = visually pushes down.
     bg-[--neo-bg] text-[--neo-ink]
     border-[3px] border-[--neo-border] rounded-lg
     shadow-[4px_4px_0px_var(--neo-border)]
-    transition-all duration-100 ease-out
+    transition-[transform,box-shadow] duration-100 ease-out
     hover:bg-[--neo-accent-yellow]
     active:shadow-none active:translate-x-[4px] active:translate-y-[4px]
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--neo-border]
@@ -259,7 +259,7 @@ export function NeoModal({ open, onClose, title, children }: NeoModalProps) {
             hover:bg-[--neo-accent-yellow]
             active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
             shadow-[2px_2px_0px_var(--neo-border)]
-            transition-all duration-75
+            transition-[transform,box-shadow] duration-75
           "
         >
           ✕
@@ -303,7 +303,7 @@ export function NeoNav({ links }: { links: { label: string; href: string }[] }) 
               rounded-lg border-2 border-transparent
               hover:border-[--neo-border] hover:bg-[--neo-accent-yellow]
               hover:shadow-[2px_2px_0px_var(--neo-border)]
-              transition-all duration-75
+              transition-[transform,box-shadow] duration-75
             "
           >
             {link.label}
@@ -429,7 +429,7 @@ Neo-brutalism uses **mechanical, snappy** motion — not smooth/fluid:
 ```tsx
 export default function NeoBrutalismPage() {
   return (
-    <div className="min-h-screen bg-[--neo-bg] font-[--font-display]">
+    <div className="min-h-[100dvh] bg-[--neo-bg] font-[--font-display]">
       <NeoNav links={[
         { label: 'Work', href: '#work' },
         { label: 'About', href: '#about' },

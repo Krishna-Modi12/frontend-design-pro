@@ -31,10 +31,16 @@ AGENT=""
 FORCE=0
 DRY_RUN=0
 
-# Adapters whose payload is a file the installer can safely drop into a project.
-# Everything else needs a web UI, a JSON merge, or a decision only the user can
-# make, so those print their card instead of pretending to automate it.
-AUTO_AGENTS=" cursor copilot windsurf aider continue "
+# An adapter is auto-installable when its payload is a file that can safely be
+# dropped into a project. The ones that are not need a web UI, a user-level
+# directory, or a merge into a file the repo already owns, and those print their
+# card instead of pretending to automate it.
+#
+# This used to be a hardcoded list here, which silently disagreed with what
+# actually shipped: an adapter added under install/ with a perfectly droppable
+# payload stayed "manual" until somebody remembered this line. The fact now
+# lives with the adapter — install/<agent>/.manual, whose contents say why — so
+# adding a directory is the whole of adding an adapter.
 
 c_ok=""; c_no=""; c_warn=""; c_dim=""; c_end=""
 if [ -t 1 ]; then
@@ -61,7 +67,13 @@ all_agents() {
   find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort
 }
 
-is_auto() { case "$AUTO_AGENTS" in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
+# Auto iff it does not declare itself manual AND actually ships something to copy.
+# The second half matters: a directory holding only a README is a card, not an
+# adapter, and reporting it as installable would promise a write that never lands.
+is_auto() {
+  [ ! -f "$INSTALL_DIR/$1/.manual" ] || return 1
+  [ -n "$(find "$INSTALL_DIR/$1" -type f ! -name README.md ! -name .manual -print -quit)" ]
+}
 
 # Detect from marker files the agent itself creates. Returns every match rather
 # than the first: two markers means the answer is genuinely ambiguous, and
@@ -74,6 +86,14 @@ detect_agents() {
   if [ -f "$d/.aider.conf.yml" ] || [ -f "$d/.aider.conf.yaml" ] \
      || [ -f "$d/.aider.input.history" ];                                   then found="$found aider";    fi
   if [ -f "$d/.github/copilot-instructions.md" ] || [ -d "$d/.github/instructions" ]; then found="$found copilot"; fi
+  # Markers these hosts create themselves. Deliberately NOT their rules file:
+  # `.rules`, `GEMINI.md` and `AGENTS.md` are what this installer writes, so
+  # detecting on them would be circular — the only project we could ever detect
+  # would be one that no longer needs installing into.
+  if [ -d "$d/.clinerules" ] || [ -f "$d/.clinerules" ];                    then found="$found cline";    fi
+  if [ -d "$d/.roo" ] || [ -f "$d/.roorules" ];                             then found="$found roo";      fi
+  if [ -d "$d/.zed" ];                                                      then found="$found zed";      fi
+  if [ -d "$d/.gemini" ];                                                   then found="$found gemini";   fi
   printf '%s' "${found# }"
 }
 
@@ -106,6 +126,7 @@ install_agent() {
   while IFS= read -r f; do
     rel="${f#"$src/"}"
     [ "$rel" = "README.md" ] && continue
+    [ "$rel" = ".manual" ] && continue
     dest="$TARGET/$rel"
 
     if [ -e "$dest" ] && [ "$FORCE" -eq 0 ]; then

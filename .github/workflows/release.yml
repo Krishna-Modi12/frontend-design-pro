@@ -35,12 +35,12 @@ jobs:
       # only do that if the dependencies are there — without them it warns and
       # skips, which would mean the published archive was never checked against
       # the one demo that claims to run. Installing them here is what makes
-      # "all 9 gates" true of a release rather than only of a push to main.
+      # "all 10 gates" true of a release rather than only of a push to main.
       - name: Install showcase dependencies (so Gate 9 runs, not skips)
         working-directory: demo/showcase
         run: npm ci
 
-      - name: Build gated archive (all 9 gates must pass)
+      - name: Build gated archive (all 10 gates must pass)
         run: python3 scripts/build_release.py
 
       # build_release.py writes docs/RELEASE_NOTES-v<version>.md in Stage 7.

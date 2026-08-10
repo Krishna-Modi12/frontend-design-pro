@@ -16,6 +16,6 @@ Aider is not in the compatibility matrix and has no per-agent setup doc: the pac
    In chat the command is `/read-only CONVENTIONS.md` (older builds spell it `/read`). Adding it with `/add` instead makes it editable and puts it in the diff — not what you want.
 4. Ask in plain language, then add the routed skill file read-only too: `/read-only frontend-design-pro/skills/forms/SKILL.md`.
 
-**Degradation:** no on-demand loader — whatever you add read-only is in context and nothing else is. The 86 reference files reach the model only when you name one and add it.
+**Degradation:** no on-demand loader — whatever you add read-only is in context and nothing else is. The 94 reference files reach the model only when you name one and add it.
 
 Generic setup: [docs/INSTALL.md](../../docs/INSTALL.md). What degrades on the hosts that *are* tested: [docs/AGENT_COMPATIBILITY.md](../../docs/AGENT_COMPATIBILITY.md).

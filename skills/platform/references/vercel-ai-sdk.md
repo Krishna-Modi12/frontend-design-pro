@@ -774,7 +774,7 @@ function ContextMeter({ used, max }: { used: number; max: number }) {
     <div className="flex items-center gap-2 text-xs text-[var(--color-ink-tertiary)]">
       <div className="h-1 w-24 rounded-full bg-[var(--color-border)]">
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-full transition-[width]"
           style={{ width: `${pct * 100}%`, backgroundColor: color }}
         />
       </div>
@@ -794,7 +794,7 @@ function MessageActions({ content }: { content: string }) {
     <button
       onClick={() => copy(content)}
       aria-label={copied ? 'Copied' : 'Copy message'}
-      className="rounded p-1 text-[var(--color-ink-tertiary)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-ink)] transition-all"
+      className="rounded p-1 text-[var(--color-ink-tertiary)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-ink)] transition-[opacity,color]"
     >
       {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
     </button>

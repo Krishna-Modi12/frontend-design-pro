@@ -15,7 +15,7 @@ The freeze machinery below is retained deliberately. It is what the project retu
 
 Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway. See the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped last.
 
-The pack is 19 skills, 94 references, 332,974 tokens of on-demand depth, 53 machine-enforced constraints, 9 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 19 skills, 94 references, 332,974 tokens of on-demand depth, 56 machine-enforced constraints, 10 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
@@ -83,7 +83,7 @@ Each of those is individually reasonable, which is exactly why the list has to b
 Same as always, because the gates do not care about policy:
 
 ```bash
-python scripts/build_release.py --dry-run     # all 9 gates
+python scripts/build_release.py --dry-run     # all 10 gates
 ```
 
 A fix that cannot pass the chain is not a fix. If a change requires relaxing a gate to land, the change is wrong — that is the entire premise of the repo, and the freeze is not an exception to it.

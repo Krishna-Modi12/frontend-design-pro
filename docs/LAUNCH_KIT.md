@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 332,974 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 tests · 17 semantic + 36 syntactic = 53 constraints · 22 evals · 13 regression cases · registry 1,998 tokens · heaviest request 6,338 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 332,974 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 tests · 17 semantic + 39 syntactic = 56 constraints · 22 evals · 13 regression cases · registry 1,998 tokens · heaviest request 6,338 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
@@ -46,13 +46,13 @@ What's enforced, rather than asserted:
 - 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
-- 36 regex constraints for what regex is genuinely good at: banned display
+- 39 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
 - 13 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.
-- 9 blocking gates, and the archive is unzipped and re-verified against its
+- 10 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
 The two newest skills are both generative — design computed at runtime rather
@@ -131,8 +131,8 @@ Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
 
-9 blocking gates. 55 examples compile under tsc strict. 17 semantic
-constraints run through the TypeScript compiler API. 36 regex constraints.
+10 blocking gates. 55 examples compile under tsc strict. 17 semantic
+constraints run through the TypeScript compiler API. 39 regex constraints.
 22 evals.
 
 No gate passes → no archive exists.
@@ -153,7 +153,7 @@ Constraints that cry wolf get turned off. Precision is a feature.
 7/ Things most packs skip:
 
 · motion direction — what an animation *communicates*, not how to code it
-· AI-generated UI as untrusted input — same 53 constraints
+· AI-generated UI as untrusted input — same 56 constraints
 · a 6-question intake: content volume (3 items or 300?) drives the rest
 · icons as typography: hit area ≠ glyph size
 
@@ -227,13 +227,13 @@ if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
 
-9 blocking gates in `scripts/build_release.py`, ~45 seconds:
+10 blocking gates in `scripts/build_release.py`, ~45 seconds:
 
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 17/19 skills declare deps that exist
 3. Compile — 55 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 17 AST constraints via the TypeScript compiler API
-5. Syntactic — 36 regex constraints; anti-examples must FAIL
+5. Syntactic — 39 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget

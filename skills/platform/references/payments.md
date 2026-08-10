@@ -84,7 +84,10 @@ export const stripeAppearance: Appearance = {
     colorBackground: '#ffffff',
     colorText: '#0f172a',
     colorDanger: '#dc2626',
-    fontFamily: 'Inter, system-ui, sans-serif',
+    // Elements render in a cross-origin iframe: a face you have not registered
+    // through Stripe's `fonts` option cannot load there, so naming one is
+    // decoration that silently falls back. This stack is what actually renders.
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
     fontSizeBase: '15px',
     spacingUnit: '4px',
     borderRadius: '8px',
@@ -127,7 +130,10 @@ export const stripeDarkAppearance: Appearance = {
     colorBackground: '#0f172a',
     colorText: '#f8fafc',
     colorDanger: '#f87171',
-    fontFamily: 'Inter, system-ui, sans-serif',
+    // Elements render in a cross-origin iframe: a face you have not registered
+    // through Stripe's `fonts` option cannot load there, so naming one is
+    // decoration that silently falls back. This stack is what actually renders.
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
     borderRadius: '8px',
   },
 }
@@ -212,7 +218,7 @@ export function CheckoutForm() {
         type="submit"
         disabled={!stripe || isLoading}
         className="w-full h-11 bg-slate-900 text-white rounded-lg text-sm font-medium
-                   hover:bg-slate-800 active:scale-[0.98] transition-all duration-150
+                   hover:bg-slate-800 active:scale-[0.98] transition-[transform,background-color] duration-150
                    disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? (
@@ -243,7 +249,10 @@ const CARD_OPTIONS = {
     base: {
       fontSize: '15px',
       color: '#0f172a',
-      fontFamily: 'Inter, system-ui, sans-serif',
+      // Elements render in a cross-origin iframe: a face you have not registered
+    // through Stripe's `fonts` option cannot load there, so naming one is
+    // decoration that silently falls back. This stack is what actually renders.
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
       '::placeholder': { color: '#94a3b8' },
     },
     invalid: { color: '#dc2626' },
@@ -276,7 +285,7 @@ export function SimpleCardForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="rounded-lg border border-slate-200 p-3.5 focus-within:border-slate-900
-                      focus-within:ring-2 focus-within:ring-slate-900/10 transition-all">
+                      focus-within:ring-2 focus-within:ring-slate-900/10 transition-[box-shadow,border-color]">
         <CardElement options={CARD_OPTIONS} />
       </div>
       <button type="submit" disabled={!stripe} className="btn-primary w-full">
@@ -441,7 +450,7 @@ export function PricingCard({ plan }: { plan: PricingPlan }) {
         onClick={handleSubscribe}
         disabled={isLoading}
         className={cn(
-          'mt-8 w-full h-10 rounded-lg text-sm font-medium transition-all duration-150',
+          'mt-8 w-full h-10 rounded-lg text-sm font-medium transition-[background-color,box-shadow,opacity] duration-150',
           plan.popular
             ? 'bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98]'
             : 'border border-slate-200 hover:border-slate-400 active:scale-[0.98]'

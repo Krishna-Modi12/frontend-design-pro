@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>frontend-design-pro — Hardening Audit</title>
+
+<style>
+  :root {
+    --paper:      #f4f5f3;
+    --paper-sunk: #eaece9;
+    --band:       #e4e8e3;
+    --ink:        #111614;
+    --ink-2:      #59635d;
+    --ink-3:      #838d86;
+    --rule:       #d3d8d3;
+    --rule-soft:  #e2e6e1;
+    --accent:     #0f5132;
+    --accent-ink: #ffffff;
+    --flag:       #8c2f1e;
+    --warn:       #8a6a15;
+    --ok:         #26694a;
+    --shadow:     0 1px 0 rgba(17,22,20,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:      #0e1211;
+      --paper-sunk: #141a18;
+      --band:       #18201d;
+      --ink:        #e8ede9;
+      --ink-2:      #9aa7a0;
+      --ink-3:      #6d7a73;
+      --rule:       #232c28;
+      --rule-soft:  #1b2320;
+      --accent:     #6fae8a;
+      --accent-ink: #08110d;
+      --flag:       #d4816b;
+      --warn:       #c9a44e;
+      --ok:         #6fae8a;
+      --shadow:     none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0e1211; --paper-sunk:#141a18; --band:#18201d; --ink:#e8ede9;
+    --ink-2:#9aa7a0; --ink-3:#6d7a73; --rule:#232c28; --rule-soft:#1b2320;
+    --accent:#6fae8a; --accent-ink:#08110d; --flag:#d4816b; --warn:#c9a44e;
+    --ok:#6fae8a; --shadow:none;
+  }
+  :root[data-theme="light"] {
+    --paper:#f4f5f3; --paper-sunk:#eaece9; --band:#e4e8e3; --ink:#111614;
+    --ink-2:#59635d; --ink-3:#838d86; --rule:#d3d8d3; --rule-soft:#e2e6e1;
+    --accent:#0f5132; --accent-ink:#ffffff; --flag:#8c2f1e; --warn:#8a6a15;
+    --ok:#26694a; --shadow:0 1px 0 rgba(17,22,20,.05);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wrap { max-width: 74rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ─── masthead ─────────────────────────────────────────── */
+  .masthead { border-bottom: 2px solid var(--ink); padding: 3.5rem 0 1.25rem; }
+  .eyebrow {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ink-2); margin: 0 0 1.5rem;
+    display: flex; flex-wrap: wrap; gap: .5rem 1.25rem;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6.5vw, 4.6rem);
+    line-height: .98; letter-spacing: -.035em; font-weight: 800;
+    margin: 0 0 1rem; text-wrap: balance; max-width: 20ch;
+  }
+  .standfirst {
+    font-size: clamp(1.05rem, 1.9vw, 1.3rem); color: var(--ink-2);
+    max-width: 62ch; margin: 0 0 1.5rem; text-wrap: pretty;
+  }
+
+  /* ─── gate chain ───────────────────────────────────────── */
+  .chain { display: flex; flex-wrap: wrap; gap: .375rem; margin: 0 0 .5rem; padding: 0; list-style: none; }
+  .chain li {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .6875rem; letter-spacing: .04em;
+    padding: .3rem .55rem; border: 1px solid var(--rule);
+    background: var(--paper-sunk); color: var(--ink-2); border-radius: 2px;
+    white-space: nowrap;
+  }
+  .chain li[data-new] {
+    background: var(--accent); color: var(--accent-ink);
+    border-color: var(--accent); font-weight: 700;
+  }
+
+  /* ─── summary band ─────────────────────────────────────── */
+  .band { background: var(--band); border-bottom: 1px solid var(--rule); }
+  .figures {
+    display: grid; gap: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    padding: 0; margin: 0; list-style: none;
+  }
+  .figures > li {
+    padding: 1.75rem 1.5rem 1.75rem 0;
+    border-right: 1px solid var(--rule);
+  }
+  .figures > li:last-child { border-right: 0; }
+  .fig {
+    display: block; font-size: clamp(1.9rem, 4vw, 2.75rem); font-weight: 800;
+    letter-spacing: -.03em; line-height: 1; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .fig-l {
+    display: block; margin-top: .5rem; font-size: .75rem; color: var(--ink-2);
+    letter-spacing: .04em; max-width: 22ch;
+  }
+  .fig-d { color: var(--accent); }
+
+  /* ─── sections ─────────────────────────────────────────── */
+  section { padding: 3.5rem 0 .5rem; }
+  h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.85rem); font-weight: 800;
+    letter-spacing: -.02em; margin: 0 0 .4rem; text-wrap: balance;
+  }
+  .lede { color: var(--ink-2); max-width: 68ch; margin: 0 0 2rem; text-wrap: pretty; }
+  .sec-no {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ink-3); display: block; margin-bottom: .75rem;
+  }
+
+  /* ─── report rows ──────────────────────────────────────── */
+  .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .row {
+    display: grid; gap: .35rem 1.5rem; padding: 1.4rem 0 1.4rem 1rem;
+    border-bottom: 1px solid var(--rule-soft);
+    border-left: 3px solid transparent;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 46rem) {
+    .row { grid-template-columns: minmax(0,1fr) 9.5rem; align-items: start; }
+  }
+  .row[data-sev="high"]  { border-left-color: var(--flag); }
+  .row[data-sev="mid"]   { border-left-color: var(--warn); }
+  .row[data-sev="fixed"] { border-left-color: var(--ok); }
+
+  .row h3 { margin: 0; font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; }
+  .row p  { margin: .35rem 0 0; color: var(--ink-2); font-size: .93rem; max-width: 64ch; }
+  .where {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .78rem; color: var(--ink-3); margin-top: .5rem; display: block;
+    overflow-wrap: anywhere;
+  }
+  .meta { display: flex; flex-direction: column; gap: .4rem; align-items: flex-start; }
+  @media (min-width: 46rem) { .meta { align-items: flex-end; text-align: right; } }
+  .tag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: .7rem; letter-spacing: .05em; padding: .22rem .5rem;
+    border-radius: 2px; white-space: nowrap; border: 1px solid transparent;
+  }
+  .tag-id   { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .tag-none { background: transparent; color: var(--flag); border-color: var(--flag); }
+  .tag-note { background: transparent; color: var(--ink-3); border-color: var(--rule); }
+
+  /* ─── before / after ───────────────────────────────────── */
+  .ba { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 0 0 1rem; }
+  @media (min-width: 46rem) { .ba { grid-template-columns: 1fr 1fr; } }
+  .ba > div { background: var(--paper); padding: 1.25rem 1.4rem; }
+  .ba h4 {
+    margin: 0 0 .75rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+    font-weight: 600;
+  }
+  .ba code { font-size: .82rem; line-height: 1.75; display: block; overflow-wrap: anywhere; }
+  .del { color: var(--flag); }
+  .ins { color: var(--ok); }
+
+  /* ─── code block ───────────────────────────────────────── */
+  .term {
+    background: var(--paper-sunk); border: 1px solid var(--rule);
+    padding: 1.1rem 1.25rem; overflow-x: auto; margin: 0;
+    font-size: .8rem; line-height: 1.8;
+  }
+  .term .ok { color: var(--ok); }
+  .term .dim { color: var(--ink-3); }
+
+  /* ─── reach table ──────────────────────────────────────── */
+  .scroller { overflow-x: auto; border: 1px solid var(--rule); }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: .9rem; }
+  th, td { text-align: left; padding: .7rem 1rem; border-bottom: 1px solid var(--rule-soft); }
+  thead th {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; background: var(--paper-sunk);
+    border-bottom: 1px solid var(--rule);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.host { font-weight: 600; }
+  td .mono { font-size: .8rem; color: var(--ink-2); }
+  .new-pill {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .62rem; letter-spacing: .08em; padding: .12rem .38rem;
+    background: var(--accent); color: var(--accent-ink); border-radius: 2px;
+    margin-left: .45rem; font-weight: 700; vertical-align: 1px;
+  }
+
+  footer {
+    border-top: 2px solid var(--ink); margin-top: 4rem; padding: 1.75rem 0 3.5rem;
+    color: var(--ink-2); font-size: .85rem;
+  }
+  footer p { margin: 0 0 .4rem; max-width: 70ch; }
+  a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, li:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">
+      <span>frontend-design-pro</span>
+      <span>Hardening audit</span>
+      <span>10 Aug 2026</span>
+    </p>
+    <h1>The rules were real. The enforcement had holes.</h1>
+    <p class="standfirst">
+      A pack whose entire claim is <em>verified rather than asserted</em>, audited against
+      its own claim. Six defects, one stored-XSS sink, one missing trust boundary — and
+      three rules that every document repeated and no gate had ever checked.
+    </p>
+    <ul class="chain" aria-label="Release gate chain, all passing">
+      <li>1 Pre-flight</li><li>2 Frontmatter</li><li>3 Compile</li><li>4 Semantic</li>
+      <li>5 Syntactic</li><li>6 Pipeline</li><li>7 Evals</li><li>8 Budget</li>
+      <li>9 Showcase</li><li data-new>10 References — new</li>
+    </ul>
+  </div>
+</header>
+
+<div class="band">
+  <div class="wrap">
+    <ul class="figures">
+      <li><span class="fig fig-d">94</span><span class="fig-l">reference files brought under a gate — previously zero</span></li>
+      <li><span class="fig">56</span><span class="fig-l">constraints, up from 53</span></li>
+      <li><span class="fig">10</span><span class="fig-l">auto-installing adapters, up from 5</span></li>
+      <li><span class="fig">176</span><span class="fig-l">tests green across 45 files</span></li>
+    </ul>
+  </div>
+</div>
+
+<main class="wrap" id="main">
+
+  <section aria-labelledby="s1">
+    <span class="sec-no">Section 01 — Security</span>
+    <h2 id="s1">Two findings an agent would have shipped</h2>
+    <p class="lede">
+      Both live in reference files: the material an agent opens for depth and copies from
+      most directly.
+    </p>
+    <ul class="rows">
+      <li class="row" data-sev="high">
+        <div>
+          <h3>Stored XSS in the JSON-LD recipe</h3>
+          <p>
+            <span class="mono">JSON.stringify</span> escapes quotes and backslashes. It does not escape
+            <span class="mono">&lt;</span>. Every schema on the page is built from CMS fields — a title, a
+            product description, an FAQ answer — so one value carrying a closing script tag ends the
+            element and executes. It renders in the root layout, on every page.
+          </p>
+          <span class="where">skills/platform/references/seo.md</span>
+        </div>
+        <div class="meta">
+          <span class="tag tag-id">FIXED</span>
+          <span class="tag tag-note">escape at serialisation</span>
+        </div>
+      </li>
+      <li class="row" data-sev="high">
+        <div>
+          <h3>No trust boundary on fetched content</h3>
+          <p>
+            The research skill instructs an agent to browse arbitrary URLs and feed what it finds
+            into a build pipeline — with nothing anywhere saying that fetched bytes are untrusted.
+            It is the one skill that widens the trust boundary, and it had no rule about it.
+          </p>
+          <span class="where">skills/design-research/SKILL.md</span>
+        </div>
+        <div class="meta">
+          <span class="tag tag-id">FIXED</span>
+          <span class="tag tag-note">now rule #1 in that skill</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="s2">
+    <span class="sec-no">Section 02 — Enforcement</span>
+    <h2 id="s2">Three rules stated everywhere, checked nowhere</h2>
+    <p class="lede">
+      Each appears in the anti-slop wall, in the validation checklist, and in every host adapter.
+      None of them had a constraint. The anti-example files had already begun annotating
+      <span class="mono">❌ [RES] min-h-screen</span> — citing an ID the suite did not define.
+    </p>
+    <ul class="rows">
+      <li class="row" data-sev="fixed">
+        <div>
+          <h3><span class="mono">min-h-screen</span></h3>
+          <p>Named in four documents. <span class="mono">100vh</span> ignores the mobile toolbar; the rule is <span class="mono">min-h-[100dvh]</span>.</p>
+        </div>
+        <div class="meta"><span class="tag tag-none">was: nothing</span><span class="tag tag-id">now: RES-03</span></div>
+      </li>
+      <li class="row" data-sev="fixed">
+        <div>
+          <h3><span class="mono">React.FC</span></h3>
+          <p>Banned by the wall since the pack existed. Erases children typing and blocks generic components.</p>
+        </div>
+        <div class="meta"><span class="tag tag-none">was: nothing</span><span class="tag tag-id">now: TS-02</span></div>
+      </li>
+      <li class="row" data-sev="fixed">
+        <div>
+          <h3><span class="mono">onPress</span> on web</h3>
+          <p>
+            Scoped by import rather than filename — a React Native gold legitimately uses
+            <span class="mono">onPress</span>, and a rule that failed it would be wrong rather than strict.
+          </p>
+        </div>
+        <div class="meta"><span class="tag tag-none">was: nothing</span><span class="tag tag-id">now: PLAT-01</span></div>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="s3">
+    <span class="sec-no">Section 03 — The blind spot</span>
+    <h2 id="s3">98% of the pack was outside every gate</h2>
+    <p class="lede">
+      The constraint runner globs code extensions. A reference is markdown. So the 55 example
+      files were checked and the 94 references — roughly 333,000 tokens, and the part an agent
+      actually opens — were not read by anything.
+    </p>
+
+    <div class="ba">
+      <div>
+        <h4>Shipped, under a heading reading “Must have”</h4>
+        <code class="mono del">
+          &lt;div class="min-h-screen bg-gradient-to-br<br>
+          &nbsp;&nbsp;from-violet-500 via-purple-500 to-pink-500"&gt;
+        </code>
+      </div>
+      <div>
+        <h4>What the same pack's wall bans, by name</h4>
+        <code class="mono ins">
+          min-h-screen → use min-h-[100dvh]<br>
+          purple → pink → blue gradients
+        </code>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:0">
+      An agent routed to that file held both texts in one context window and had to pick a side.
+      Gate 10 now runs the 16 ban-shaped constraints over every fenced code block in all 94
+      references, 19 skill routers and 8 core files. Presence checks are excluded on purpose:
+      a nine-line snippet that omits a font declaration is correct, not defective, and a noisy
+      gate gets muted.
+    </p>
+    <pre class="term mono"><span class="dim">$ npm run gates</span>
+  <span class="ok">✓</span> Syntactic:  gold examples clean, anti-examples fail as designed (39/39)
+  <span class="ok">✓</span> References: 16 ban-shaped constraints over fenced code in every
+              reference, skill and core file (0 violations)
+  <span class="ok">✓</span> Test coverage: 45/45 golds have a 1:1 test; 176/176 tests pass
+
+<span class="ok">DRY RUN — all gates passed.</span>  (77.1s)</pre>
+  </section>
+
+  <section aria-labelledby="s4">
+    <span class="sec-no">Section 04 — Reach</span>
+    <h2 id="s4">One file, most of the field</h2>
+    <p class="lede">
+      The pack shipped ten adapters, each targeting exactly one host, and none for
+      <span class="mono">AGENTS.md</span> — an open specification governed by the Linux Foundation's
+      Agentic AI Foundation and read by roughly thirty agents. Adding it covers eight hosts that
+      previously had no adapter at all.
+    </p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th scope="col">Host</th><th scope="col">Adapter writes</th><th scope="col">Opens files on demand</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="host">Codex · Zed · Jules · Devin · Factory · Amp · OpenHands · Junie<span class="new-pill">NEW</span></td><td><span class="mono">AGENTS.md</span></td><td>Most CLI agents, yes</td></tr>
+          <tr><td class="host">Cline<span class="new-pill">NEW</span></td><td><span class="mono">.clinerules/</span></td><td>Yes</td></tr>
+          <tr><td class="host">Roo Code<span class="new-pill">NEW</span></td><td><span class="mono">.roo/rules/</span></td><td>Yes</td></tr>
+          <tr><td class="host">Zed<span class="new-pill">NEW</span></td><td><span class="mono">.rules</span></td><td>Yes</td></tr>
+          <tr><td class="host">Gemini CLI<span class="new-pill">NEW</span></td><td><span class="mono">GEMINI.md</span></td><td>Yes</td></tr>
+          <tr><td class="host">Cursor</td><td><span class="mono">.cursor/rules/*.mdc</span></td><td>Partial — <span class="mono">@</span>-reference</td></tr>
+          <tr><td class="host">GitHub Copilot</td><td><span class="mono">.github/copilot-instructions.md</span></td><td>No</td></tr>
+          <tr><td class="host">Windsurf · Continue</td><td><span class="mono">.windsurf/</span> · <span class="mono">.continue/</span></td><td>Partial</td></tr>
+          <tr><td class="host">Aider</td><td><span class="mono">CONVENTIONS.md</span></td><td>By hand — <span class="mono">/read-only</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="s5">
+    <span class="sec-no">Section 05 — Installer</span>
+    <h2 id="s5">The list that disagreed with what shipped</h2>
+    <p class="lede">
+      Auto-installable adapters were a hardcoded array in two setup scripts, while the adapter
+      list itself was derived from the directory. Any adapter added without editing that array
+      silently became “manual” — a working payload that never got written.
+    </p>
+    <ul class="rows">
+      <li class="row" data-sev="fixed">
+        <div>
+          <h3>The fact now lives with the adapter</h3>
+          <p>
+            An adapter declares itself manual by shipping a <span class="mono">.manual</span> file saying
+            why. Auto means: no such file, and at least one payload to copy. Adding a directory is
+            now the whole of adding an adapter, and the two scripts cannot drift apart from it.
+          </p>
+        </div>
+        <div class="meta"><span class="tag tag-id">5 → 10 auto</span></div>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      Every figure on this page comes from a green <span class="mono">python scripts/build_release.py --dry-run</span>
+      on the audited tree. Verify it by cloning and running <span class="mono">npm run gates</span> — the chain builds nothing and takes about eighty seconds.
+    </p>
+    <p class="mono" style="color:var(--ink-3);font-size:.78rem">
+      MIT · 19 skills · 94 references · 56 constraints · 10 gates
+    </p>
+  </div>
+</footer>
+</body>
+</html>

@@ -8,7 +8,7 @@ dependencies that skill declares under `frontend-design-pro/core/`. Every skill
 also inherits `frontend-design-pro/core/accessibility-baseline.md` and
 `frontend-design-pro/core/validate-checklist.md` whenever the task produces
 code. Most specific match wins — "form validation" routes to `forms`, not
-`react-components`. Load one skill, not all seventeen.
+`react-components`. Load one skill, not all nineteen.
 
 Routing is on natural-language trigger keywords. There are no slash commands.
 

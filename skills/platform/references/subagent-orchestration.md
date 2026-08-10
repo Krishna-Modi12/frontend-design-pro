@@ -125,7 +125,7 @@ export function PipelineProgress({ prompt }: { prompt: string }) {
         </div>
         <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-300"
+            className="h-full bg-primary transition-[width] duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -291,7 +291,7 @@ function AgentRow({ agent }: { agent: AgentState }) {
             className="mt-1 h-1 w-full rounded-full bg-muted overflow-hidden"
           >
             <div
-              className="h-full bg-blue-500 transition-all"
+              className="h-full bg-blue-500 transition-[width]"
               style={{ width: `${agent.progress}%` }}
             />
           </div>

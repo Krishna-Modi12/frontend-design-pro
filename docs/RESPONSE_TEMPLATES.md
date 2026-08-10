@@ -28,7 +28,7 @@ If this looks like something the constraint suite should have caught, naming the
 gate helps: **[Gate #N — name, once diagnosed]**. Full list for reference:
 
 1. Pre-flight · 2. Frontmatter · 3. Compile (`tsc --noEmit` strict) ·
-4. Semantic (17 AST constraints) · 5. Syntactic (36 regex constraints) ·
+4. Semantic (17 AST constraints) · 5. Syntactic (39 regex constraints) ·
 6. Pipeline · 7. Evals + coverage · 8. Budget + registry · 9. Showcase build
 
 (What each one asserts: docs/ARCHITECTURE.md.)
@@ -165,7 +165,7 @@ CI ran the full chain and it's green:
 
 - `tsc --noEmit` strict (+ `noImplicitAny`) over the changed examples
 - 17 AST/semantic constraints via the TypeScript compiler API
-- 36 regex/syntactic constraints
+- 39 regex/syntactic constraints
 - token budget (every skill ≤3,000 tokens alone, ≤8,000 with its core deps)
 - path integrity (every reference this PR cites resolves on disk)
 - *(if this PR touches `demo/showcase`)* Gate 9 — a real `next build` against
@@ -229,8 +229,8 @@ That is enforced rather than intended: a gate fails the build if any skill excee
 3,000 tokens on its own or 8,000 with its dependencies, so the budget can't quietly
 rot as content gets added.
 
-The other difference is that the quality claims are machine-checked — 53 constraints
-(17 AST checks through the TypeScript compiler API, 35 regex) across 9 release-blocking
+The other difference is that the quality claims are machine-checked — 56 constraints
+(17 AST checks through the TypeScript compiler API, 39 regex) across 9 release-blocking
 gates. If a gate fails, no archive is produced.
 
 Whether that's better for you depends on your host. Real lazy loading needs an agent

@@ -335,6 +335,35 @@ CONSTRAINTS: List[Constraint] = [
     ),
 
 
+    # ── Anti-slop wall items that had no enforcer ────────────────────────────
+    # Each of these is named in SKILL.md's wall and in core/validate-checklist.md,
+    # and each was, until now, checked by nobody. The anti-examples had already
+    # started annotating `❌ [RES] min-h-screen` — citing an ID the suite did not
+    # define. A rule stated in three documents and enforced in none is the exact
+    # gap this pack exists to close.
+    Constraint(
+        id="RES-03", category="Responsive",
+        description="No min-h-screen — use min-h-[100dvh] (svh/dvh survive mobile URL bars)",
+        severity="high",
+        check=lambda c: (_lacks(r"\bmin-h-screen\b", c),
+                         "min-h-screen found — 100vh ignores the mobile toolbar; use min-h-[100dvh]")),
+    Constraint(
+        id="TS-02", category="TypeScript",
+        description="No React.FC — it erases children typing and blocks generic components",
+        severity="high",
+        check=lambda c: (_lacks(r"\bReact\.FC\b|\bReact\.FunctionComponent\b", c),
+                         "React.FC found — annotate props directly: ({ a }: Props) => …")),
+    Constraint(
+        id="PLAT-01", category="Platform",
+        description="No onPress on web (React Native files exempt)",
+        severity="high",
+        # Scoped by import, not by filename: a good-react-native.tsx gold legitimately
+        # uses onPress, and a rule that fails it would be wrong rather than strict.
+        check=lambda c: (
+            _has(r"""from\s+["']react-native["']|from\s+["']expo""", c)
+            or _lacks(r"\bonPress(?:In|Out)?\s*=", c),
+            "onPress on a web component — the web handler is onClick")),
+
     # ── Vercel Web Interface Guidelines ──────────────────────────
     Constraint(
         id="COPY-02", category="Copy",

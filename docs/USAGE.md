@@ -64,7 +64,7 @@ Every gold example ships with one. Say "with tests" and you get a `.test.tsx` wi
 
 ## What you get automatically
 
-Whether or not you ask, generated code is checked against **53 constraints**:
+Whether or not you ask, generated code is checked against **56 constraints**:
 
 - **TypeScript strict**, exported prop interfaces, no implicit `any`
 - **OKLCH tokens** — never raw hex in component code
