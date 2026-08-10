@@ -4,6 +4,160 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.6.0] — 2026-08-10
+
+Security, enforcement and install coverage. Every item here is a defect that
+shipped, or a rule the pack stated and did not check.
+
+### Security — stored XSS in a shipped recipe
+
+`skills/platform/references/seo.md` told agents to render JSON-LD with
+`dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }}`. `JSON.stringify`
+does not escape `<`, so a CMS field containing `</script><script>…` closes the
+tag and executes. Replaced with a `jsonLd()` helper that escapes at the point of
+serialisation — a rule that lives in the CMS is a rule the next integration
+forgets.
+
+### Security — trust boundary on fetched content
+
+`skills/design-research/SKILL.md` instructs agents to fetch and read live pages
+and said nothing about what authority that text carries. It now opens with the
+boundary stated: fetched bytes — page text, alt text, comments, `<meta>`, hidden
+nodes, a README in a linked repo — are untrusted data being quoted, never
+instruction. Only typed values are extracted; a directive found in a page is a
+finding *about* the page.
+
+### Added — three constraints that had no enforcer
+
+`min-h-screen`, `React.FC` and `onPress` on web were named on the anti-slop wall
+and in `core/validate-checklist.md`, with no check behind any of them.
+Anti-example files were already annotating `❌ [RES] min-h-screen`, citing an ID
+the suite had never defined. Now **RES-03**, **TS-02** and **PLAT-01**
+(scoped by import rather than filename, so React Native files are not flagged).
+
+Constraints: 53 → **56** (17 parser AST + 39 regex).
+
+### Added — Gate 10, `scripts/check_references.py`
+
+`test_constraints.py` globs `*.tsx *.jsx *.ts *.js *.html`. Markdown is not in
+that list, so the **94 reference files — ~333k tokens, the part an agent
+actually loads for depth — were read by no gate at all.** The suite ran over the
+examples, which are 2% of the corpus. An example is a demonstration; a reference
+is an instruction.
+
+It showed. `glassmorphism.md` prescribed
+`min-h-screen bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500`
+under a heading reading **"Must have"** — both banned by name, in the same pack,
+in the same context window an agent holds.
+
+The new gate:
+
+- **imports** its constraints from `test_constraints.py` — one definition, no drift;
+- applies only **ban-shaped** constraints. "Has a default export" is a property of
+  a whole file; a 9-line snippet that omits it is correct, not defective, and a
+  noisy gate gets muted;
+- **skips anti-example blocks** — a reference showing `React.FC` under `// Bad —`
+  is teaching the rule;
+- carries a **per-file, per-constraint reason** on every exemption (React Native
+  has no OKLCH; Outlook ignores `@font-face`; `figma-to-code.md`'s subject *is*
+  converting hex).
+
+First run: 20 violations. All fixed. Second run: 0. Gates: 9 → **10**.
+
+### Fixed — adapters installed as silent no-ops
+
+`AUTO_AGENTS` was a hardcoded list of 5 while adapter discovery was derived from
+the `install/` directory, so any adapter added without editing that constant
+installed as a no-op with no error. Both `setup.sh` and `setup.ps1` now derive
+auto-vs-manual from a `.manual` marker file, verified in parity with a real
+nested-dotfile install.
+
+### Added — universal install coverage
+
+**14 adapters, 10 automatic (was 5), 4 manual.**
+
+| Adapter | Writes | Covers |
+|---|---|---|
+| `agents` | `AGENTS.md` | Codex, Jules, Devin, Factory, Amp, OpenHands, JetBrains Junie, VS Code |
+| `cline` | `.clinerules/` | Cline |
+| `roo` | `.roo/rules/` | Roo Code |
+| `zed` | `.rules` | Zed |
+| `gemini` | `GEMINI.md` | Gemini CLI |
+
+`AGENTS.md` is the one to install if you install only one — an open spec donated
+to the Linux Foundation's Agentic AI Foundation, 60k+ repos, the only rules
+format read by more than one vendor. Gemini CLI gets its own file because it
+reads `GEMINI.md` and *not* `AGENTS.md`.
+
+Kilo Code is deliberately **not** shipped: its docs URL 404s and sources disagree
+on `.kilo/rules` vs `.kilocode/rules`. A guessed path is worse than no adapter.
+
+### Added — `docs/audit-report.html`
+
+This audit, rendered by giving the pack the same brief you would give it for a
+client. The generating prompt is quoted verbatim in `README.md` and
+`docs/DEMO_PROMPTS.md`. The brief names "near-black with one acid accent" — a
+look this pack has shipped, and one of the three AI-design defaults its own wall
+bans — to find out whether the pack follows its own rule when the easy answer is
+sitting right there. It declines.
+
+---
+
+## [14.5.1] — 2026-08-10
+
+A correctness patch on top of v14.5.0. No new capability: two audit findings that
+made routing and examples quietly lie about themselves, and one documented gap.
+
+### Fixed — trigger-keyword collisions
+
+Three keywords each appeared in two registry rows, so routing between them was
+undefined rather than "most specific wins". The broader owner keeps the bare term;
+the narrower one is rescoped:
+
+| Keyword | Kept by | Rescoped |
+|---|---|---|
+| `bento` | `landing-pages` | `component-patterns` → `bento-card` |
+| `avatar` | `react-components` | `iconography` → `avatar-icon` |
+| `contrast` | `design-principles` | `web-interface` → `contrast-check` |
+
+204 registry keywords now resolve to exactly one row each.
+
+### Fixed — five byte-identical gold examples
+
+Five skills shipped a gold that was a byte-for-byte copy of another skill's, so four
+skills had no example of their own subject. Each duplicate was replaced rather than
+deleted — in four of the five cases the skill holding the copy had no other gold, and
+deleting would have left it with nothing:
+
+- `iconography/good-icon-button.tsx` — icon-only controls that carry an accessible
+  name, `1em` glyph sizing so the icon tracks the text rather than the box, and a
+  weight scale. Replaces a copy of the shadcn data table.
+- `component-patterns/good-spotlight-card.tsx` — pointer position written to CSS
+  custom properties and coalesced into one rAF, never to state. Replaces a copy of
+  the compound-component example.
+- `ai-ui-generation/good-registry-renderer.tsx` — JSON to UI through a closed
+  allow-list registry, `unknown`-narrowed props, bounded recursion depth, and an
+  unknown node that renders visibly instead of vanishing. No prop can carry a handler.
+  Replaces a copy of the same compound-component example.
+- `design-principles/good-visual-hierarchy.tsx` — rank expressed on size, weight and
+  colour together, exactly one primary action, grouping by spacing. Replaces a copy of
+  `landing-pages/good-landing.tsx`.
+- `data-tables` — dropped its copy of `good-dark-mode.tsx`; the canonical one stays in
+  `design-system`.
+
+Stats: `example_files` 55 → 54, `test_files` 45 → 44. Gold-to-test parity holds at
+44/44 and the suite grew 124 → 192 tests.
+
+### Known gap — development dependencies
+
+`npm audit` reports 5 advisories at the root (one `esbuild → vite → vitest` chain) and
+3 in `demo/showcase` (postcss, sharp, via `next`). Both fixes require a major bump —
+`vitest` 2 → 4 and `next` 15 → 16 — and every advisory is development- or build-time
+only. None of it reaches a consumer of the `.skill` archive: `node_modules/` is not in
+the manifest and the pack installs none of its examples' peer dependencies by design.
+Deferred to its own change after launch rather than carried into a patch release. See
+`docs/RELEASE_NOTES-v14.5.1.md`.
+
 ## [14.5.0] — 2026-08-09
 
 Two new skills, and the first release in a while that adds capability rather than closing a gap. Both are **generative**: they cover design that is computed at runtime rather than authored once — type rendered as a system, colour derived as a function. Nothing in the pack covered that.

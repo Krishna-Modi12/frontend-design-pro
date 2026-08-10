@@ -220,7 +220,7 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
-loads a 1,998-token registry that does nothing but route, then pulls in the single
+loads a 2,002-token registry that does nothing but route, then pulls in the single
 skill your request matched — measured 5,038–6,338 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
@@ -230,7 +230,7 @@ That is enforced rather than intended: a gate fails the build if any skill excee
 rot as content gets added.
 
 The other difference is that the quality claims are machine-checked — 56 constraints
-(17 AST checks through the TypeScript compiler API, 39 regex) across 9 release-blocking
+(17 AST checks through the TypeScript compiler API, 39 regex) across 10 release-blocking
 gates. If a gate fails, no archive is produced.
 
 Whether that's better for you depends on your host. Real lazy loading needs an agent
