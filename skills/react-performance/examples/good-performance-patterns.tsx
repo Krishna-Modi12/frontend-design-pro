@@ -118,7 +118,7 @@ export default function EdgeDashboard({ isLoading = false, regions = REGIONS }: 
       </label>
       <input id="region-filter" type="search" value={query} onChange={handleQuery}
         placeholder="Tokyo…" spellCheck={false} autoComplete="off"
-        className="mt-1 h-11 w-full max-w-sm rounded-lg border border-[oklch(90%_0.005_240)] bg-[oklch(99.5%_0.004_255)] px-3 text-sm transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[oklch(60%_0.185_276)]" />
+        className="mt-1 h-11 w-full max-w-sm rounded-lg border border-[oklch(90%_0.005_240)] bg-[oklch(99.5%_0.004_255)] px-3 text-base transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[oklch(60%_0.185_276)]" />
 
       {filtered.length > 0 ? (
         <ul id="regions" aria-label="Regions"

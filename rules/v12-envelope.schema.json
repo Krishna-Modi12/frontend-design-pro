@@ -95,7 +95,7 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 53,
-          "description": "Total constraints checked in VALIDATE. Ceiling is the 56 machine-enforced constraints in core/validate-checklist.md (17 parser + 39 regex); was capped at 29 against a retired v12 registry."
+          "description": "Total constraints checked in VALIDATE. Ceiling is the 59 machine-enforced constraints in core/validate-checklist.md (17 parser + 39 regex); was capped at 29 against a retired v12 registry."
         }
       }
     }

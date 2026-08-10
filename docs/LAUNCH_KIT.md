@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,602 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 39 syntactic = 56 constraints · 22 evals · 13 regression cases · registry 2,002 tokens · heaviest request 6,338 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,610 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 42 syntactic = 59 constraints · 22 evals · 13 regression cases · registry 2,002 tokens · heaviest request 6,338 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
@@ -46,7 +46,7 @@ What's enforced, rather than asserted:
 - 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
-- 39 regex constraints for what regex is genuinely good at: banned display
+- 42 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
 - 13 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
@@ -119,7 +119,7 @@ It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 6,338 tokens.
-Reference material available: 333,602 tokens.
+Reference material available: 333,610 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -132,7 +132,7 @@ Depth is free because it's lazy.
 4/ Quality is machine-enforced, not asserted.
 
 10 blocking gates. 54 examples compile under tsc strict. 17 semantic
-constraints run through the TypeScript compiler API. 39 regex constraints.
+constraints run through the TypeScript compiler API. 42 regex constraints.
 22 evals.
 
 No gate passes → no archive exists.
@@ -153,7 +153,7 @@ Constraints that cry wolf get turned off. Precision is a feature.
 7/ Things most packs skip:
 
 · motion direction — what an animation *communicates*, not how to code it
-· AI-generated UI as untrusted input — same 56 constraints
+· AI-generated UI as untrusted input — same 59 constraints
 · a 6-question intake: content volume (3 items or 300?) drives the rest
 · icons as typography: hit area ≠ glyph size
 
@@ -220,7 +220,7 @@ A registry rather than a document:
 - 19 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 94 references, 333,602 tokens. Loaded only when a skill routes to one.
+- 94 references, 333,610 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **5,038 to 6,338 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
@@ -233,7 +233,7 @@ if any skill exceeds 8,000 with dependencies.
 2. Frontmatter — 17/19 skills declare deps that exist
 3. Compile — 54 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 17 AST constraints via the TypeScript compiler API
-5. Syntactic — 39 regex constraints; anti-examples must FAIL
+5. Syntactic — 42 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget

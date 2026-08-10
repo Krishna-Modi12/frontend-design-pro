@@ -272,7 +272,7 @@ export default function ReactNativeShowcase() {
                     rows={2}
                     aria-describedby="error-feedback-hint"
                     placeholder="e.g. App froze after syncing watch data"
-                    className="w-full text-sm rounded-lg border border-red-300 dark:border-red-700 bg-[oklch(99%_0.003_250)] dark:bg-red-950/50 px-3 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 placeholder:text-slate-400"
+                    className="w-full text-base rounded-lg border border-red-300 dark:border-red-700 bg-[oklch(99%_0.003_250)] dark:bg-red-950/50 px-3 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 placeholder:text-slate-400"
                   />
                   <p id="error-feedback-hint" className="mt-1 text-xs text-red-500">
                     Optional — helps our team diagnose sync issues.

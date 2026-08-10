@@ -24,15 +24,15 @@ npm run build       # next build
 This app has its own `package.json` and installed dependencies, so it is excluded
 from the stub-typed regime the other demos share — `demo/tsconfig.json` and
 `tools/screenshots/tsconfig.json` both skip it. It is **not** exempt from the
-content rules: the 17 AST constraints run on every file here, and the 39 regex
+content rules: the 17 AST constraints run on every file here, and the 42 regex
 constraints run on the project.
 
 ## Where the numbers come from
 
 | On the page | Source |
 |---|---|
-| 19 skills · 56 constraints · 10 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 333,602 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
+| 19 skills · 59 constraints · 10 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
+| 333,610 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
 | 5,000–6,300 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
 | Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
 | Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |
@@ -45,10 +45,13 @@ most recently added skills pushed the loading protocol down by two lines, from
 58–66 to 60–68. Re-check `ROUTER_EXCERPT` in `components/Hero.tsx` against
 `SKILL.md` before recapturing.
 
-There is deliberately no test-suite figure on the page. `metadata.json` says 45
-test files and the suite reports 176 tests, but `README.md` and `docs/TESTING.md`
-still say 39 and 124 — until those agree, putting either number on the homepage
-would contradict the repo.
+There is deliberately no test-suite figure on the page, though the reason has
+changed. It used to be that the sources disagreed — `metadata.json`, `README.md`
+and `docs/TESTING.md` each named a different count, so any number on the homepage
+would have contradicted the repo. They now agree: **44 test files, 192 tests**.
+The figure stays off because four metrics is what the strip is sized for and the
+constraint count is the one that carries the argument, not because it is unsafe
+to state.
 
 The four figures cross the network from `/api/site/overview`; everything else is
 structural and lives in `lib/content.ts`. **When a stat changes, update

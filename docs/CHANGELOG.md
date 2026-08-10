@@ -4,6 +4,56 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.7.0] — 2026-08-10
+
+Three constraints for defects the whole field ships and nobody checks — found by
+sweeping both suites for gaps, not by adding rules that sounded good.
+
+### Added — `A11Y-06`, unpaired `outline-none`
+
+`A11Y-02` (AST) already checks that a `focus-visible` class sits on an
+interactive element. That catches the ring being in the *wrong place*. It cannot
+catch the outline being removed and replaced with **nothing**, which is the far
+commoner defect and the one that costs every keyboard user the page.
+
+Either `focus:` or `focus-visible:` satisfies the rule. The requirement is that
+a visible indicator exists, not which variant spells it — a `focus:border`
+colour change is a real indicator, and failing it would make the rule wrong
+rather than strict. A focus-trapped dialog container is the one legitimate bare
+`outline-none` and carries a documented exemption.
+
+### Added — `TYP-03`, gradient text on body copy
+
+Legitimate on a display heading. On prose, `bg-clip-text` sets the computed
+colour to `transparent`, which destroys contrast **and silently defeats every
+contrast checker**, because the ratio gets measured against a colour no reader
+ever sees. That second half is why it survives review.
+
+### Added — `FORM-01`, inputs below 16px
+
+An `input`, `textarea` or `select` carrying `text-sm` (14px) or `text-xs`
+(12px). Below 16px, focusing the field makes iOS Safari zoom the viewport, and
+it does not zoom back on blur. Invisible on desktop, universal on iPhone.
+`text-sm sm:text-base` is the same bug — the small value is the one mobile gets.
+
+### Fixed — 22 instances of these in our own shipped material
+
+All three are ban-shaped, so all three joined Gate 10's `FRAGMENT_SAFE` set and
+run over the whole reference corpus rather than only the examples. They found:
+
+| Where | Count |
+|---|---|
+| Gold examples (`good-rhf`, `good-checkout`, `good-react19`, `good-performance-patterns`, `good-image-palette`, `good-react-native`) | 11 |
+| References — incl. **five in `auth-patterns.md`**, the file that teaches agents to build sign-in forms | 11 |
+
+Every one is fixed. This is the argument for the gate, not a footnote to it: the
+rules were written this week and the defects have been shipping for months.
+
+Constraints: 56 → **59** (17 parser AST + 42 regex). Gate 10 applies **19**
+ban-shaped constraints, up from 16.
+
+---
+
 ## [14.6.0] — 2026-08-10
 
 Security, enforcement and install coverage. Every item here is a defect that

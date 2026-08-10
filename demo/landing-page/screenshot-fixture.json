@@ -25,16 +25,16 @@
     },
     {
       "id": "reference-tokens",
-      "value": "333,602",
+      "value": "333,610",
       "label": "Reference tokens",
       "caption": "Across 94 files. None of it enters the context window by default.",
       "source": "metadata.json · stats.reference_depth_tokens"
     },
     {
       "id": "constraints",
-      "value": "56",
+      "value": "59",
       "label": "Constraints",
-      "caption": "17 read the TypeScript AST, 39 read the source. Six of them are on this page.",
+      "caption": "17 read the TypeScript AST, 42 read the source. Six of them are on this page.",
       "source": "metadata.json · stats.ci_constraints"
     },
     {

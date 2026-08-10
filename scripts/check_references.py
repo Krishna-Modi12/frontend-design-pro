@@ -7,7 +7,7 @@ The blind spot this closes
 `test_constraints.py` globs `*.jsx *.tsx *.html *.js *.ts`. Markdown is not in
 that list, so until this gate existed the 94 reference files — ~333k tokens, the
 overwhelming majority of the pack by volume, and the part an agent actually
-loads for depth — were read by no gate at all. The 56 constraints ran over the
+loads for depth — were read by no gate at all. The 59 constraints ran over the
 example files, which are 2% of the corpus.
 
 That is backwards. An example is a demonstration; a reference is an instruction.
@@ -72,6 +72,9 @@ FRAGMENT_SAFE = {
     "MOTION-02R",  # bounce/elastic/back easing
     "PERF-04R",  # transition-all
     "COPY-02",   # "Loading..." instead of "Loading…"
+    "A11Y-06",   # outline-none with no focus indicator
+    "TYP-03",    # bg-clip-text on body copy
+    "FORM-01",   # input below 16px — iOS zoom trap
 }
 
 # Fenced languages that carry shippable UI code. `bash`, `json`, `text`, `diff`
@@ -88,6 +91,12 @@ ANTI_MARKERS = re.compile(
 # Exemptions are per-file and per-constraint, and every one carries the reason it
 # is not a defect. A blanket file skip would hide real findings in the same file.
 EXEMPT: Dict[str, Dict[str, str]] = {
+    "skills/platform/references/mobile-patterns.md": {
+        "A11Y-06": "Vaul Drawer.Content is a focus-trapped dialog container: it takes "
+                   "programmatic focus on open so the trap works, and a ring on the "
+                   "sheet itself is noise. The indicator belongs on the controls inside, "
+                   "which carry their own focus-visible styles",
+    },
     "skills/platform/references/react-native.md": {
         "COL-04": "React Native StyleSheet has no OKLCH and no Tailwind arbitrary values; hex is the only expressible form",
         "TOK-01": "same — RN colour literals are not CSS custom properties",

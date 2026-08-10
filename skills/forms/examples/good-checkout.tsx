@@ -208,7 +208,7 @@ function PaymentForm({ onSuccess, onError, errorMessage }: { onSuccess: () => vo
             autoComplete="cc-name"
             placeholder="Priya Shah"
             className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-[oklch(98.4%_0.003_247.9)]
-                       text-[oklch(18.8%_0.013_248.5)] placeholder:text-slate-400 text-sm
+                       text-[oklch(18.8%_0.013_248.5)] placeholder:text-slate-400 text-base
                        focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none
                        focus-visible:border-indigo-400 transition-colors"
             aria-describedby={hasError ? "card-error-msg" : undefined}

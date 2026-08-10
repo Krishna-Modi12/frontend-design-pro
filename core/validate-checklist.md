@@ -26,9 +26,15 @@ Constraint IDs enforced by `scripts/` on every gold example. Self-check output a
 
 ## Regex-enforced (36)
 
-Typography `TYP-01/02` · Colour `COL-01/03/04` · Accessibility `A11Y-04/05/07/08` · Animation `ANI-03`, `MOTION-02R` · States `STA-01/02` · Anti-slop `SLOP-01/02/03/04` · Responsive `RES-01/02/03` · TypeScript `TS-02` · Platform `PLAT-01` · Tokens `TOK-01/02` · Quality `QUA-01/02/03` · Delay `DELAY-01` · Copy `COPY-02` · Touch `TOUCH-01`, `SAFE-01` · Perf `PERF-04R`, `IMG-01` · Behaviour `BEHAV-05/06` · 3D `3D-04/05/06/07`.
+Typography `TYP-01/02/03` · Colour `COL-01/03/04` · Accessibility `A11Y-04/05/06/07/08` · Animation `ANI-03`, `MOTION-02R` · States `STA-01/02` · Anti-slop `SLOP-01/02/03/04` · Responsive `RES-01/02/03` · TypeScript `TS-02` · Forms `FORM-01` · Platform `PLAT-01` · Tokens `TOK-01/02` · Quality `QUA-01/02/03` · Delay `DELAY-01` · Copy `COPY-02` · Touch `TOUCH-01`, `SAFE-01` · Perf `PERF-04R`, `IMG-01` · Behaviour `BEHAV-05/06` · 3D `3D-04/05/06/07`.
 
 `RES-03` (no `min-h-screen`), `TS-02` (no `React.FC`) and `PLAT-01` (no `onPress` on web) are named in the anti-slop wall and were, until recently, enforced by nothing — the anti-examples had even begun annotating `❌ [RES] min-h-screen`, citing an ID the suite did not define. `PLAT-01` exempts any file importing from `react-native`/`expo`, where `onPress` is the correct handler rather than a mistake.
+
+`A11Y-06`, `TYP-03` and `FORM-01` are the three defects the field ships and nobody checks:
+
+- **`A11Y-06`** — `outline-none` with no focus indicator. `A11Y-02` (AST) checks that a `focus-visible` class sits on an interactive element, which catches the ring being in the *wrong place*; it cannot catch the outline being removed and replaced with nothing. Either `focus:` or `focus-visible:` satisfies this — the rule is that a visible indicator exists, not which variant spells it. A focus-trapped dialog container is the one legitimate bare `outline-none`, and takes a documented exemption.
+- **`TYP-03`** — `bg-clip-text` on body-sized text. Legitimate on a display heading. On prose it sets the computed colour to `transparent`, which destroys contrast *and* silently defeats every contrast checker, because the ratio gets measured against a colour no reader ever sees.
+- **`FORM-01`** — an `input`, `textarea` or `select` carrying `text-sm` (14px) or `text-xs` (12px). Below 16px, focusing the field makes iOS Safari zoom the viewport, and it does not zoom back on blur. Invisible on desktop, universal on iPhone. `text-sm sm:text-base` is the same bug: the small value is the one mobile gets. Adding it found **11 instances in this pack's own golds and 11 more in its references**, including five in `auth-patterns.md`.
 
 `MOTION-02R` widens `MOTION-02`'s concern from easing *direction* to easing *quality*: no bounce, elastic or back easing, and no spring `bounce` above 0.4. It is anchored on the `ease`/`easing` property, so the `animate-bounce` utility and Framer's `dragElastic` prop are untouched — neither is an easing curve.
 
@@ -41,4 +47,4 @@ Typography `TYP-01/02` · Colour `COL-01/03/04` · Accessibility `A11Y-04/05/07/
 | `BEHAV-03` | Success criteria were stated and are met |
 | `BEHAV-04` | Any assumption was stated explicitly in the output |
 
-**Total: 56 machine-enforced (17 parser + 39 regex) + 4 self-checks.** Every ID is unique to one suite — the regex `A11Y-01`/`A11Y-02` were renumbered to `A11Y-07`/`A11Y-08` because they named different rules from the parser checks of the same number, and the regex widening of `MOTION-02` takes the suffixed ID `MOTION-02R` for the same reason (as `PERF-04`/`PERF-04R` already do).
+**Total: 59 machine-enforced (17 parser + 42 regex) + 4 self-checks.** Every ID is unique to one suite — the regex `A11Y-01`/`A11Y-02` were renumbered to `A11Y-07`/`A11Y-08` because they named different rules from the parser checks of the same number, and the regex widening of `MOTION-02` takes the suffixed ID `MOTION-02R` for the same reason (as `PERF-04`/`PERF-04R` already do).
