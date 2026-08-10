@@ -271,7 +271,7 @@ export default function ImagePalette({
             type="file"
             accept="image/*"
             onChange={onFile}
-            className="h-11 w-full cursor-pointer rounded-xl border-2 border-[oklch(31.6%_0.015_248)] bg-[oklch(17.4%_0.012_248)] px-3 text-sm text-[oklch(96.2%_0.005_248)] outline-none transition-colors duration-200 ease-out file:mr-3 file:h-8 file:rounded-lg file:border-0 file:bg-[oklch(72.4%_0.181_156.3)] file:px-3 file:text-sm file:font-semibold file:text-[oklch(17.4%_0.012_248)] focus:border-[oklch(72.4%_0.181_156.3)] motion-reduce:transition-none"
+            className="h-11 w-full cursor-pointer rounded-xl border-2 border-[oklch(31.6%_0.015_248)] bg-[oklch(17.4%_0.012_248)] px-3 text-base text-[oklch(96.2%_0.005_248)] outline-none transition-colors duration-200 ease-out file:mr-3 file:h-8 file:rounded-lg file:border-0 file:bg-[oklch(72.4%_0.181_156.3)] file:px-3 file:text-sm file:font-semibold file:text-[oklch(17.4%_0.012_248)] focus:border-[oklch(72.4%_0.181_156.3)] motion-reduce:transition-none"
           />
         </div>
 

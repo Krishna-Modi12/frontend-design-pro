@@ -116,7 +116,7 @@ Apply Section 2: one skill file, its declared `core-deps`, plus the accessibilit
 
 ## SECTION 5 — VALIDATE
 
-Self-check against `core/validate-checklist.md` before output. **56 machine-enforced constraints (17 parser + 39 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
+Self-check against `core/validate-checklist.md` before output. **59 machine-enforced constraints (17 parser + 42 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
 
 - [ ] **TypeScript** — `.tsx`, exported prop interfaces, no implicit `any`; mentally simulate `tsc --noEmit --strict`
 - [ ] **Semantic (17 AST)** — the four the parser catches most: `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · declared `*Props` types **exist and are used**. The loaded checklist has the rest.

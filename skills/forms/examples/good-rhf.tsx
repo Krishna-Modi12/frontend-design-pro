@@ -188,7 +188,7 @@ function StepOne({ form }: { form: FormHandle }) {
           aria-describedby={errors.fullName ? "fullName-error" : undefined}
           placeholder="Amara Osei-Bonsu"
           {...register("fullName")}
-          className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-sm bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 placeholder:text-[oklch(70%_0.02_250)] focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 ${
+          className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-base bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 placeholder:text-[oklch(70%_0.02_250)] focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 ${
             errors.fullName
               ? "border-[oklch(55%_0.22_25)]"
               : "border-[oklch(88%_0.03_250)] dark:border-[oklch(35%_0.04_250)] hover:border-[oklch(75%_0.05_250)] dark:hover:border-[oklch(48%_0.06_250)]"
@@ -238,7 +238,7 @@ function StepOne({ form }: { form: FormHandle }) {
               aria-invalid={!!errors.role}
               aria-describedby={errors.role ? "role-error" : undefined}
               {...field}
-              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-sm bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
+              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-base bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
                 errors.role
                   ? "border-[oklch(55%_0.22_25)]"
                   : "border-[oklch(88%_0.03_250)] dark:border-[oklch(35%_0.04_250)] hover:border-[oklch(75%_0.05_250)]"
@@ -286,7 +286,7 @@ function StepTwo({ form }: { form: FormHandle }) {
           aria-describedby={errors.company ? "company-error" : undefined}
           placeholder="Tectonic Labs Inc."
           {...register("company")}
-          className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-sm bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 placeholder:text-[oklch(70%_0.02_250)] focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 ${
+          className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-base bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 placeholder:text-[oklch(70%_0.02_250)] focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 ${
             errors.company
               ? "border-[oklch(55%_0.22_25)]"
               : "border-[oklch(88%_0.03_250)] dark:border-[oklch(35%_0.04_250)] hover:border-[oklch(75%_0.05_250)]"
@@ -308,7 +308,7 @@ function StepTwo({ form }: { form: FormHandle }) {
               aria-invalid={!!errors.budgetRange}
               aria-describedby={errors.budgetRange ? "budgetRange-error" : undefined}
               {...field}
-              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-sm bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
+              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-base bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
                 errors.budgetRange
                   ? "border-[oklch(55%_0.22_25)]"
                   : "border-[oklch(88%_0.03_250)] dark:border-[oklch(35%_0.04_250)] hover:border-[oklch(75%_0.05_250)]"
@@ -338,7 +338,7 @@ function StepTwo({ form }: { form: FormHandle }) {
               aria-invalid={!!errors.timeline}
               aria-describedby={errors.timeline ? "timeline-error" : undefined}
               {...field}
-              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-sm bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
+              className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 text-base bg-[oklch(99%_0.004_250)] dark:bg-[oklch(18%_0.02_250)] text-[oklch(18%_0.03_250)] dark:text-[oklch(92%_0.02_250)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(68%_0.2_250)] focus-visible:ring-offset-2 cursor-pointer ${
                 errors.timeline
                   ? "border-[oklch(55%_0.22_25)]"
                   : "border-[oklch(88%_0.03_250)] dark:border-[oklch(35%_0.04_250)] hover:border-[oklch(75%_0.05_250)]"

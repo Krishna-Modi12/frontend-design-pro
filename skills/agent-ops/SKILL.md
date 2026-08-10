@@ -1,7 +1,7 @@
 ---
 name: agent-ops
 description: Agent operating discipline — token budgeting, cross-session memory, self-improvement loops, self-verification, parallel work, and subagent orchestration.
-version: "14.6.0"
+version: "14.7.0"
 core-deps:
   - core/agent-behavior.md
   - core/validate-checklist.md

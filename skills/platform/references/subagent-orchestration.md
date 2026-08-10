@@ -556,7 +556,7 @@ export function ParallelOutputs({ prompt }: { prompt: string }) {
       <div className="space-y-2">
         <label className="text-sm font-medium">Merged output (edit freely)</label>
         <textarea
-          className="w-full rounded-md border border-border p-3 text-sm min-h-[120px] resize-y"
+          className="w-full rounded-md border border-border p-3 text-base min-h-[120px] resize-y"
           value={merged}
           onChange={(e) => setMerged(e.target.value)}
           placeholder="Paste or drag sections from agents above…"
@@ -1048,7 +1048,7 @@ export function StepErrorRecovery({
             Provide manual output for this step
           </label>
           <textarea
-            className="w-full rounded border border-red-300 p-2 text-sm font-mono min-h-[80px] resize-y bg-white"
+            className="w-full rounded border border-red-300 p-2 text-base font-mono min-h-[80px] resize-y bg-white"
             value={overrideValue}
             onChange={(e) => setOverrideValue(e.target.value)}
             placeholder={`Paste expected output for "${step.label}"…`}

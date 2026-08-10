@@ -465,7 +465,7 @@ export default function React19TaskManager({ isLoading: initialLoading = false }
                   <select
                     id="task-priority"
                     name="priority"
-                    className="h-11 min-h-[44px] px-3 pr-8 rounded-xl border-2 border-[oklch(88%_0.015_264)] dark:border-[oklch(30%_0.018_264)] bg-[oklch(99.5%_0.004_264)] dark:bg-[oklch(16%_0.012_264)] text-[oklch(16%_0.02_264)] dark:text-[oklch(92%_0.012_264)] text-sm outline-none transition-colors focus:border-[oklch(54%_0.19_264)] focus-visible:ring-2 focus-visible:ring-[oklch(54%_0.19_264)] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[oklch(17%_0.014_264)]"
+                    className="h-11 min-h-[44px] px-3 pr-8 rounded-xl border-2 border-[oklch(88%_0.015_264)] dark:border-[oklch(30%_0.018_264)] bg-[oklch(99.5%_0.004_264)] dark:bg-[oklch(16%_0.012_264)] text-[oklch(16%_0.02_264)] dark:text-[oklch(92%_0.012_264)] text-base outline-none transition-colors focus:border-[oklch(54%_0.19_264)] focus-visible:ring-2 focus-visible:ring-[oklch(54%_0.19_264)] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[oklch(17%_0.014_264)]"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
