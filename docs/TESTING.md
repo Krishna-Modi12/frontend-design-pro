@@ -9,7 +9,7 @@ Two different things are called "tests" in this repo, and conflating them is how
 
 ## Current state
 
-**44 of 44 test files, 192 of 192 tests.** Read off the same `npm run gates` that refuses to build an archive when it is not true.
+**45 of 45 test files, 205 of 205 tests.** Read off the same `npm run gates` that refuses to build an archive when it is not true.
 
 Gate 7 degrades rather than lies. A fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did.
 

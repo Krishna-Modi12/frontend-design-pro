@@ -94,8 +94,11 @@ function DistortSphere() {
       floatIntensity={prefersReducedMotion ? 0 : 0.8}
     >
       <mesh ref={meshRef} geometry={geometry} castShadow>
+        {/* three.js `Color` has no oklch() parser — one of the three raw-hex
+            sites the anti-slop wall sanctions. Teal, not the indigo this used
+            to be: a purple hero material is ban 3 wearing a different hat. */}
         <MeshDistortMaterial
-          color="#4f46e5"
+          color="#16b39b"
           distort={prefersReducedMotion ? 0 : 0.35}
           speed={prefersReducedMotion ? 0 : 2}
           roughness={0.1}

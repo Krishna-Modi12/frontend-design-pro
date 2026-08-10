@@ -10,9 +10,9 @@ Flat derivative of [LAUNCH_KIT.md](LAUNCH_KIT.md), which stays **canonical** —
 - **Every post now names the installer.** One command, ten agents, each in its own native rules format — the most concrete adoption story the pack has, and it appeared in none of the four posts.
 - The "no screenshot of the showcase" limitation was **false** and is replaced with the caveat that is real: the screenshot is captured by hand, not in CI, so it can go stale.
 
-Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,602 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 39 syntactic = 56 constraints · 10 gates · registry 2,002 tokens · heaviest request 6,338 tokens.
+Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,701 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 205 tests · 17 semantic + 39 syntactic = 56 constraints · 10 gates · registry 2,018 tokens · heaviest request 6,773 tokens.
 
-**Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 44 golds plus 10 deliberate anti-examples = 54 files). A launch audience fact-checks.
+**Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
 ---
 
@@ -37,14 +37,14 @@ your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 333,000 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 6,338 tokens.
-The lightest loads 5,038. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 6,773 tokens.
+The lightest loads 5,172. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
 What's enforced, rather than asserted:
 
-- 54 examples compile under `tsc --noEmit` strict + noImplicitAny
+- 55 examples compile under `tsc --noEmit` strict + noImplicitAny
 - 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
@@ -115,13 +115,13 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 2,002 tokens. That's all that's always loaded.
+2/ SKILL.md is 2,018 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 6,338 tokens.
-Reference material available: 333,602 tokens.
+Heaviest possible request: 6,773 tokens.
+Reference material available: 333,701 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -132,7 +132,7 @@ Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
 
-10 blocking gates. 54 examples compile under tsc strict. 17 semantic
+10 blocking gates. 55 examples compile under tsc strict. 17 semantic
 constraints run through the TypeScript compiler API. 39 regex constraints.
 22 evals.
 
@@ -221,13 +221,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 2,002 tokens, always loaded. Routing table + anti-slop wall.
+- `SKILL.md` — 2,018 tokens, always loaded. Routing table + anti-slop wall.
 - 19 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 94 references, 333,602 tokens. Loaded only when a skill routes to one.
+- 94 references, 333,701 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **5,038 to 6,338 tokens.** A gate fails the build
+Measured per-request load: **5,172 to 6,773 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
@@ -236,7 +236,7 @@ if any skill exceeds 8,000 with dependencies.
 
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 17/19 skills declare deps that exist
-3. Compile — 54 examples, `tsc --noEmit` strict + noImplicitAny
+3. Compile — 55 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 17 AST constraints via the TypeScript compiler API
 5. Syntactic — 39 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers

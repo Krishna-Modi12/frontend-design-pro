@@ -117,6 +117,8 @@ function AppRoot({ children }: { children: React.ReactNode }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  // RN `StyleSheet` has no oklch() parser — one of the three raw-hex sites the
+  // anti-slop wall sanctions. On web these two would be OKLCH tokens.
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0D1117' : '#F5F7FA' }}>
       {children}

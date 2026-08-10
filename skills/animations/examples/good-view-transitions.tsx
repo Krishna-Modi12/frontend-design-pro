@@ -358,8 +358,8 @@ export default function ViewTransitionsDemo() {
              var(--vt-exit) ease-out both vt-slide-y reverse;
 }
 ::view-transition-new(.slide-up) {
-  animation: var(--vt-enter) ease-in var(--vt-exit) both vt-fade,
-             var(--vt-move)  ease-in both vt-slide-y;
+  animation: var(--vt-enter) ease-out var(--vt-exit) both vt-fade,
+             var(--vt-move)  ease-out both vt-slide-y;
 }
 
 ::view-transition-old(.nav-forward) {

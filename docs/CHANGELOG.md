@@ -101,6 +101,62 @@ look this pack has shipped, and one of the three AI-design defaults its own wall
 bans — to find out whether the pack follows its own rule when the easy answer is
 sitting right there. It declines.
 
+### Added — `web-interface` finally has a gold example
+
+The skill shipped three anti-examples and no positive one, so *"make this feel
+more finished"* — the request it exists to answer — had no worked answer
+anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`,
+so "every skill has an example" was true and "every skill has a **gold**" was
+not, and no gate checked the second.
+
+`examples/good-audited-panel.tsx` is the craft pass at component scale, not
+another landing page: two shadow layers, hover states that *gain* contrast
+rather than lose it, `tabular-nums` on every numeric column, the `min-w-0` +
+`truncate` pair the rule set names as its most frequent finding, `Intl`
+formatting and `translate="no"` on identifiers. All four states, no faked delay.
+
+### Fixed — an entrance eased the wrong way, inside a comment no gate can read
+
+`skills/animations/examples/good-view-transitions.tsx` ships its view-transition
+CSS in a `// --- Required CSS (add to global.css) ---` block for the reader to
+paste. `::view-transition-new(.slide-up)` used `ease-in` — an entrance easing the
+opposite way from ban 6, and from the four sibling rules in the same block.
+
+Gate 10 closed the blind spot on reference files. This is the same blind spot one
+layer down: **prescribed code inside a comment in an example file is read by no
+suite**, because every suite parses the file as TypeScript, and a comment is not
+TypeScript. The gates verify the code an example *runs*, not the code it *tells
+you to copy*.
+
+### Fixed — the default avatar palette broke ban 3
+
+`skills/iconography/references/icons-avatars.md` prescribes a deterministic
+gradient for initials avatars. Three of its eight entries were `violet→indigo`,
+`fuchsia→pink` and `indigo→purple`. Purple→pink is banned by name, and a default
+palette is the worst place to break a ban, because every avatar in the product
+inherits it. Replaced with a warm→cool ramp that skips the corridor.
+
+### Fixed — the no-raw-hex rule named none of its three real exceptions
+
+Three golds must use hex and always did: the Google "G" in
+`skills/forms/examples/good-auth.tsx` (colours its owner specifies), React Native
+`StyleSheet` in `good-react-native.tsx`, and a three.js material in `good-3d.tsx`
+— none of the three parse `oklch()`. The wall said "OKLCH only" with no
+exceptions, so an agent following it literally ships a subtly wrong Google logo,
+which is worse than the violation. The exceptions are now named in
+`AGENT_SYSTEM_PROMPT.md` and the root `SKILL.md`, and each site carries its
+reason. The three.js material also stopped being indigo `#4f46e5`: the hex is
+unavoidable, the AI-slop purple was not.
+
+### Fixed — figure drift in five documents no gate reads for prose
+
+`AGENT_SYSTEM_PROMPT.md` contradicted itself four lines apart: "17 parser + 39
+regex" on one line, "Semantic (16 AST)" and "Syntactic (35 regex)" on the next
+two. `docs/FAQ.md` still said 36 regex. `CLAUDE.md`, `docs/ARCHITECTURE.md` and
+`docs/INSTALL.md` still quoted "45 files, 176 tests" — two releases stale, and
+`ARCHITECTURE.md` therefore disagreed with `README.md` about the flagship number
+in a product whose whole claim is that its numbers are derived.
+
 ---
 
 ## [14.5.1] — 2026-08-10

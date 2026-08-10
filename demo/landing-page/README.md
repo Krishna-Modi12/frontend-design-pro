@@ -32,7 +32,7 @@ constraints run on the project.
 | On the page | Source |
 |---|---|
 | 19 skills · 56 constraints · 10 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 333,602 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
+| 333,701 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
 | 5,000–6,300 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
 | Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
 | Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |
@@ -45,10 +45,11 @@ most recently added skills pushed the loading protocol down by two lines, from
 58–66 to 60–68. Re-check `ROUTER_EXCERPT` in `components/Hero.tsx` against
 `SKILL.md` before recapturing.
 
-There is deliberately no test-suite figure on the page. `metadata.json` says 45
-test files and the suite reports 176 tests, but `README.md` and `docs/TESTING.md`
-still say 39 and 124 — until those agree, putting either number on the homepage
-would contradict the repo.
+There is deliberately no test-suite figure on the page. The disagreement that
+originally justified that — `metadata.json` against `README.md` and
+`docs/TESTING.md` — is now resolved, and all three read 45 test files and 205
+tests. The figure is omitted for a different reason: it is the fastest-moving
+number in the repo, so it is the one most likely to make the homepage wrong.
 
 The four figures cross the network from `/api/site/overview`; everything else is
 structural and lives in `lib/content.ts`. **When a stat changes, update

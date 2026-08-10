@@ -69,7 +69,7 @@ Every skill also inherits `core/accessibility-baseline.md` and `core/validate-ch
 
 ## Validate before output
 
-Self-check against `core/validate-checklist.md`: TypeScript strict, no implicit `any` · OKLCH tokens, no raw hex · `min-h-[100dvh]` · WCAG 2.2 AA · exported prop interfaces · all four states (loading/empty/error/success) with no fake delays · `prefers-reduced-motion` respected · every changed line traces to the request.
+Self-check against `core/validate-checklist.md`: TypeScript strict, no implicit `any` · OKLCH tokens, no raw hex (brand marks, React Native, three.js excepted — comment why) · `min-h-[100dvh]` · WCAG 2.2 AA · exported prop interfaces · all four states (loading/empty/error/success) with no fake delays · `prefers-reduced-motion` respected · every changed line traces to the request.
 
 ## Failure handling
 

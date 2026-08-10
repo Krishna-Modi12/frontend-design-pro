@@ -53,11 +53,11 @@ This skill is a **registry**, not a document. Loading everything is not an optio
 
 Before writing any code:
 
-1. **Read `SKILL.md`** — the registry, ~1,800 tokens. Read it fully. It holds the identity, the anti-slop wall, and the routing table.
+1. **Read `SKILL.md`** — the registry, ~2,000 tokens. Read it fully. It holds the identity, the anti-slop wall, and the routing table.
 2. **Match the request against the Trigger Keywords column** of the registry table. `SKILL.md` is the single source of truth for those keywords — this prompt deliberately does not copy them, so the two cannot disagree.
 3. **Load exactly one `skills/{id}/SKILL.md`.** One skill, not several.
 4. **Load the Core Dependencies** named in that skill's frontmatter (`core-deps`), plus `core/accessibility-baseline.md` and `core/validate-checklist.md` whenever the task produces code.
-5. **Budget: ≤8,000 tokens total.** A typical request lands at 5,038–6,338 — registry + one skill + its declared deps. Over budget: drop the deepest reference first and **say which** in your output.
+5. **Budget: ≤8,000 tokens total.** A typical request lands at 5,172–6,773 — registry + one skill + its declared deps. Over budget: drop the deepest reference first and **say which** in your output.
 6. **Load a `skills/{id}/references/*.md` file only when the loaded skill file points you at it** for the specific task. That is where the ~333k tokens of depth lives; none of it is loaded by default.
 7. **Most specific skill wins.** "form validation" → `forms`, not `react-components`. "icon button sizing" → `iconography`, not `react-components`.
 8. **No keyword match → ask ONE clarifying question.** Never guess a skill.
@@ -119,8 +119,8 @@ Apply Section 2: one skill file, its declared `core-deps`, plus the accessibilit
 Self-check against `core/validate-checklist.md` before output. **56 machine-enforced constraints (17 parser + 39 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
 
 - [ ] **TypeScript** — `.tsx`, exported prop interfaces, no implicit `any`; mentally simulate `tsc --noEmit --strict`
-- [ ] **Semantic (16 AST)** — the four the parser catches most: `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · declared `*Props` types **exist and are used**. The loaded checklist has the rest.
-- [ ] **Syntactic (35 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`04` no placeholder names, AI-slop copy, `// TODO`, or round data (47.2%, $12,847 — not 50%) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
+- [ ] **Semantic (17 AST)** — the four the parser catches most: `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · declared `*Props` types **exist and are used**. The loaded checklist has the rest.
+- [ ] **Syntactic (39 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`04` no placeholder names, AI-slop copy, `// TODO`, or round data (47.2%, $12,847 — not 50%) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
 - [ ] **Passes 1–5 held** — four states reachable, WCAG criterion cited, OKLCH tokens, no raw hex
 - [ ] **Responsive** — verified at 320 / 768 / 1440px, no horizontal scroll
 - [ ] **Anti-slop** — Section 6 clean, all sixteen
@@ -144,7 +144,7 @@ A brief does **not** unlock this list. The one exception is ban 13: those aesthe
 2. **NEVER** use Inter / Roboto / Poppins / DM Sans / Space Grotesk as a display typeface
 3. **NEVER** use purple→pink→blue gradients
 4. **NEVER** use `min-h-screen` — use `min-h-[100dvh]`
-5. **NEVER** use raw hex in component code — OKLCH tokens only
+5. **NEVER** use raw hex in component code — OKLCH tokens only. Three renderers cannot parse `oklch()`, and they are the only sanctioned exceptions: brand assets whose colours their owner specifies (the Google "G", a card-network mark), React Native `StyleSheet`, and three.js / WebGL materials. Comment the reason at the site. "Correcting" a brand mark to OKLCH produces a wrong logo — worse than the violation it fixes
 6. **NEVER** use `ease-in` for entrance animations
 7. **NEVER** introduce artificial loading delays
 8. **NEVER** use `onPress` instead of `onClick` on web
