@@ -270,11 +270,19 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.1
+## What's new in v14.7.2
 
-**A correction and a review pass.** Neither adds a feature; both are the result of checking what already shipped.
+A review pass, not a feature pass — everything here was found by judging what already shipped.
 
-### The correction
+- **`web-interface` has a gold example for the first time.** It shipped three anti-examples and nothing positive, so *"make this feel more finished"* — the one request it exists to answer — had no worked answer anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`, so *every skill has an example* was enforced and *every skill has a **gold*** was not. `good-audited-panel.tsx` is the craft pass at component scale: layered shadows, hover states that **gain** contrast, `tabular-nums`, the `min-w-0` + `truncate` pair, `Intl` formatting, `translate="no"` on identifiers.
+- **An entrance eased the wrong way, in code no gate can read.** `good-view-transitions.tsx` ships its CSS in a *"Required CSS (add to global.css)"* comment for the reader to paste, and one `::view-transition-new` rule used `ease-in`. Gate 10 closed the blind spot on references; this is the same blind spot one layer down — **the suites check the code an example runs, never the code it tells you to copy**, because a comment is not TypeScript.
+- **The default avatar palette broke ban 3.** Three of the eight prescribed gradients in `icons-avatars.md` were violet→indigo, fuchsia→pink and indigo→purple. A default palette is the worst place to break a ban: every avatar in the product inherits it.
+- **The no-raw-hex rule named none of its three real exceptions** — brand assets, React Native `StyleSheet`, three.js materials, none of which parse `oklch()`. Following it literally ships a subtly wrong Google logo. Now named on the wall, with the reason at each site.
+- **Two documents contradicted themselves.** `AGENT_SYSTEM_PROMPT.md` gave three different constraint counts within four lines; `ARCHITECTURE.md` disagreed with this file about the test figure, and its per-skill budget table was stale in all 19 rows. Neither is on any sweep list, and no gate reads prose.
+
+New: [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) — the spot check, what the gates cannot see, and the severity ladder.
+
+## Previously — v14.7.1
 
 **A correction, published because the alternative is a pack that asserts.**
 
@@ -291,18 +299,6 @@ Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-sk
 `TYP-03` and impeccable's `gradient-text` are still not the same rule: impeccable's fires **unconditionally**, including on a display heading, where gradient text is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized text. That is a difference in precision, not the absence of a competitor, and the docs no longer claim otherwise.
 
 No constraint behaviour changed.
-
-### The review pass
-
-A review pass, not a feature pass — everything here was found by judging what already shipped.
-
-- **`web-interface` has a gold example for the first time.** It shipped three anti-examples and nothing positive, so *"make this feel more finished"* — the one request it exists to answer — had no worked answer anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`, so *every skill has an example* was enforced and *every skill has a **gold*** was not. `good-audited-panel.tsx` is the craft pass at component scale: layered shadows, hover states that **gain** contrast, `tabular-nums`, the `min-w-0` + `truncate` pair, `Intl` formatting, `translate="no"` on identifiers.
-- **An entrance eased the wrong way, in code no gate can read.** `good-view-transitions.tsx` ships its CSS in a *"Required CSS (add to global.css)"* comment for the reader to paste, and one `::view-transition-new` rule used `ease-in`. Gate 10 closed the blind spot on references; this is the same blind spot one layer down — **the suites check the code an example runs, never the code it tells you to copy**, because a comment is not TypeScript.
-- **The default avatar palette broke ban 3.** Three of the eight prescribed gradients in `icons-avatars.md` were violet→indigo, fuchsia→pink and indigo→purple. A default palette is the worst place to break a ban: every avatar in the product inherits it.
-- **The no-raw-hex rule named none of its three real exceptions** — brand assets, React Native `StyleSheet`, three.js materials, none of which parse `oklch()`. Following it literally ships a subtly wrong Google logo. Now named on the wall, with the reason at each site.
-- **Two documents contradicted themselves.** `AGENT_SYSTEM_PROMPT.md` gave three different constraint counts within four lines; `ARCHITECTURE.md` disagreed with this file about the test figure, and its per-skill budget table was stale in all 19 rows. Neither is on any sweep list, and no gate reads prose.
-
-New: [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) — the spot check, what the gates cannot see, and the severity ladder.
 
 ## Previously — v14.7.0
 

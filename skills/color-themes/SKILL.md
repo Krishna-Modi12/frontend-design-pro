@@ -1,7 +1,7 @@
 ---
 name: color-themes
 description: Algorithmic colour theme generation in OKLCH — harmonic schemes, palettes derived from an image, dark/light/auto architecture, and contrast checked before a token ships rather than after.
-version: "14.7.1"
+version: "14.7.2"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md
