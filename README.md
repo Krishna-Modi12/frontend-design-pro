@@ -30,9 +30,23 @@ The full list of 56 lives in [`core/validate-checklist.md`](core/validate-checkl
 
 ## Install in 30 seconds
 
-If your agent keeps its rules in a file, the installer writes it for you:
+Run this from the root of the project you want the agent to work on:
 
 ```bash
+git clone --depth 1 https://github.com/Krishna-Modi12/frontend-design-pro && bash frontend-design-pro/setup.sh
+```
+
+That is the whole install. The clone directory is named `frontend-design-pro` on
+purpose — every adapter references `frontend-design-pro/SKILL.md` relative to
+your project root, so the path the installer writes is the path that exists.
+`setup.sh` then detects your agent and writes its native rules file.
+
+Prefer the gated archive over a git tree? Every release attaches a `.skill`
+built only after all 10 gates pass — the tree on `main` is checked by CI, but
+the archive is the artifact that cannot exist while anything is red:
+
+```bash
+gh release download --repo Krishna-Modi12/frontend-design-pro --pattern '*.skill'
 unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
 bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
 ```
