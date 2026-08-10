@@ -141,12 +141,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 320k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,002 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,236–2,404 tokens — the deps one skill declares |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,018 tokens** — always loaded |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,689–3,593 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **333,610 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **333,709 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,038–6,338 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 2,002 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,511–7,112 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 2,002 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 ## Core files (8)
 
@@ -266,11 +266,17 @@ colour for severity must be separate from the brand accent. Tabular figures.
 No horizontal scroll at 390px.
 ```
 
-**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 333,610 available.
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 333,709 available.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
 ## What's new in v14.7.2
+
+Three passes shipped the same day, all of them corrections rather than features: a verified claim, a review of what already shipped, and a widened survey.
+
+**A correction and a review pass.** Neither adds a feature; both are the result of checking what already shipped.
+
+### The correction
 
 **A correction, published because the alternative is a pack that asserts.**
 
@@ -287,6 +293,18 @@ Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-sk
 `TYP-03` and impeccable's `gradient-text` are still not the same rule: impeccable's fires **unconditionally**, including on a display heading, where gradient text is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized text. That is a difference in precision, not the absence of a competitor, and the docs no longer claim otherwise.
 
 No constraint behaviour changed.
+
+### The review pass
+
+A review pass, not a feature pass — everything here was found by judging what already shipped.
+
+- **`web-interface` has a gold example for the first time.** It shipped three anti-examples and nothing positive, so *"make this feel more finished"* — the one request it exists to answer — had no worked answer anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`, so *every skill has an example* was enforced and *every skill has a **gold*** was not. `good-audited-panel.tsx` is the craft pass at component scale: layered shadows, hover states that **gain** contrast, `tabular-nums`, the `min-w-0` + `truncate` pair, `Intl` formatting, `translate="no"` on identifiers.
+- **An entrance eased the wrong way, in code no gate can read.** `good-view-transitions.tsx` ships its CSS in a *"Required CSS (add to global.css)"* comment for the reader to paste, and one `::view-transition-new` rule used `ease-in`. Gate 10 closed the blind spot on references; this is the same blind spot one layer down — **the suites check the code an example runs, never the code it tells you to copy**, because a comment is not TypeScript.
+- **The default avatar palette broke ban 3.** Three of the eight prescribed gradients in `icons-avatars.md` were violet→indigo, fuchsia→pink and indigo→purple. A default palette is the worst place to break a ban: every avatar in the product inherits it.
+- **The no-raw-hex rule named none of its three real exceptions** — brand assets, React Native `StyleSheet`, three.js materials, none of which parse `oklch()`. Following it literally ships a subtly wrong Google logo. Now named on the wall, with the reason at each site.
+- **Two documents contradicted themselves.** `AGENT_SYSTEM_PROMPT.md` gave three different constraint counts within four lines; `ARCHITECTURE.md` disagreed with this file about the test figure, and its per-skill budget table was stale in all 19 rows. Neither is on any sweep list, and no gate reads prose.
+
+New: [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) — the spot check, what the gates cannot see, and the severity ladder.
 
 ### The survey, widened — and what it does not claim
 
@@ -369,7 +387,7 @@ npm run gates    # all 10 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
-Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **44 of 44 test files, 192 of 192 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
+Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **45 of 45 test files, 205 of 205 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
 
 ## Issues & contributing
 

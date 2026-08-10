@@ -6,7 +6,7 @@
 
 A: There's no ranked "best" — see [`AGENT_COMPATIBILITY.md`](AGENT_COMPATIBILITY.md) for the full matrix across all eight host surfaces (Claude Code, Claude Desktop, Claude.ai, Cursor, ChatGPT, OpenAI API, Copilot, Gemini). The one fact that actually separates them, per that doc: *can the agent decide, mid-conversation, to open one specific file it wasn't given up front?*
 
-**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~5,038–6,338 tokens), leaving the other 333,610 tokens of reference depth untouched until the routing table points at something.
+**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~5,511–7,112 tokens), leaving the other 333,709 tokens of reference depth untouched until the routing table points at something.
 
 Everywhere else, that degrades — not uniformly, and not to zero:
 
@@ -20,13 +20,13 @@ What travels everywhere regardless of host: routing (in a "prompted" form off th
 
 ## Q: Can I use this without a system prompt?
 
-A: Yes. `SKILL.md` carries the identity, behavioural preamble, anti-slop wall, the 19-row routing table and failure handling — it's a complete, self-contained registry at 2,002 tokens, and no system-prompt setup is required to use it (`README.md`, [`INSTALL.md`](INSTALL.md)).
+A: Yes. `SKILL.md` carries the identity, behavioural preamble, anti-slop wall, the 19-row routing table and failure handling — it's a complete, self-contained registry at 2,018 tokens, and no system-prompt setup is required to use it (`README.md`, [`INSTALL.md`](INSTALL.md)).
 
 `AGENT_SYSTEM_PROMPT.md` is optional. If your host happens to have a system-prompt field, pasting it in makes the loading protocol, the intake trigger, the per-pass core-file citations and the validation contract *explicit* rather than implicit — it's a registry-native drop-in, not a second copy of the pack's content. It's version-free, and every path it cites is checked by Gate 6 on every build, so it can't quietly go stale the way the pre-registry version did (see [`ARCHITECTURE.md`](ARCHITECTURE.md)'s "Known gaps" → "Recently closed" note — 28 of 31 cited paths didn't exist before that file was rewritten).
 
 ## Q: Why is there a feature freeze / no v14.3.0 yet?
 
-A: Because the pack considers itself functionally done — 19 skills, 94 references, 333,610 tokens of on-demand depth, 59 machine-enforced constraints, 10 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
+A: Because the pack considers itself functionally done — 19 skills, 94 references, 333,709 tokens of on-demand depth, 59 machine-enforced constraints, 10 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
 
 The freeze lifts on any **one** of three documented, evidence-based triggers, quoted from `MAINTENANCE.md`:
 

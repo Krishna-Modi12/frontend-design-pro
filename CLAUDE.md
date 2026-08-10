@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 59 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
 
+Because of that claim, the standing posture here is **judge before building**. Read [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) at the start of a session: it carries the five-minute spot check, the list of things no gate can see, and the severity ladder. Every release this project has had to correct was corrected for prose, not for code.
+
 ## Commands
 
 ```bash
@@ -17,7 +19,7 @@ npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
 npm run constraints  # Gate 5 only — 42 regex constraints over skills/
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
-npm test             # Gate 7's runtime half — 44 files, 192 tests, ~35s
+npm test             # Gate 7's runtime half — 45 files, 205 tests, ~35s
 ```
 
 Renderer-level checks, for when you touch anything under `demo/`. These need a
@@ -79,7 +81,7 @@ A monolithic pack of ~320k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 4,800–6,100 tokens against ~320k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,511–7,112 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
