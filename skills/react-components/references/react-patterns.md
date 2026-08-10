@@ -277,7 +277,7 @@ function Dashboard() {
           </button>
         ))}
       </nav>
-      {isPending && <div aria-live="polite" className="sr-only">Loading...</div>}
+      {isPending ? <div aria-live="polite" className="sr-only">Loading…</div> : null}
       <TabContent tab={tab} />
     </>
   )

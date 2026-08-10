@@ -1,7 +1,7 @@
 ---
 name: design-principles
 description: UX laws and design reasoning — cognitive load, Gestalt grouping, Fitts/Hick/Miller, visual hierarchy, and extracting a visual identity into a reusable spec.
-version: "14.5.0"
+version: "14.6.0"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md
@@ -45,7 +45,7 @@ Framework-agnostic reasoning · applied to React 19 · Tailwind v4 output
 - **Orchestrated moment over scattered effects** — one well-directed page-load sequence beats micro-interactions sprinkled everywhere; scattered motion reads as AI-generated.
 
 ## Examples
-`examples/good-landing.tsx` in `skills/landing-pages/` is the clearest applied case (hierarchy, proximity, single CTA). This skill is reasoning, not code — its output is decisions and critique, which the other skills implement.
+`examples/good-visual-hierarchy.tsx` is the worked case (rank by size + weight + colour together, one primary action, grouping by spacing). `examples/good-landing.tsx` in `skills/landing-pages/` applies the same rules at page scale. This skill is reasoning, not code — its output is decisions and critique, which the other skills implement.
 
 ## Reference Index
 Load only for the specific task:

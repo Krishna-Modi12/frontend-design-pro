@@ -116,10 +116,31 @@ export async function generateMetadata({
 
 Always inject via `<script type="application/ld+json">`. Never keyword-stuff.
 
+### Escape it — `JSON.stringify` alone is an XSS sink
+
+`JSON.stringify` escapes quotes and backslashes. It does **not** escape `<`. Every
+schema below is built from CMS fields — `post.title`, `product.description`,
+`faq.answer` — so one value containing `</script><script>…` closes this element
+and runs. It is stored XSS, it renders in the root layout, and it is on every page.
+
+```tsx
+// lib/json-ld.ts
+// The JSON parser reads < back as "<", so the payload is unchanged and
+// inert. Escape at the point of serialisation, never at the point of authoring —
+// a rule that lives in the CMS is a rule the next integration forgets.
+export const jsonLd = (data: unknown): string =>
+  JSON.stringify(data).replace(/</g, "\\u003c");
+```
+
+Use `jsonLd(schema)` for every block on this page. `next/script` does not help
+here: it serialises the same string the same way.
+
 ### Organization (homepage)
 
 ```tsx
 // app/layout.tsx — inject once in root layout
+import { jsonLd } from "@/lib/json-ld";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const org = {
     '@context': 'https://schema.org',
@@ -138,7 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(org) }}
         />
       </head>
       <body>{children}</body>

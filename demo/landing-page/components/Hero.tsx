@@ -29,7 +29,7 @@ interface SourceLine {
 const ROUTER_EXCERPT: SourceLine[] = [
   { no: 60, text: "## Loading protocol" },
   { no: 61, text: "" },
-  { no: 62, text: "1. Read this file — always (1.8k)." },
+  { no: 62, text: "1. Read this file — always (2.0k)." },
   { no: 63, text: "2. Match trigger keywords → pick one skill." },
   { no: 64, text: "3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated)." },
   {

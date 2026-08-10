@@ -36,16 +36,16 @@ Match the request against trigger keywords. Load **one** skill. Most specific wi
 | `react-components` | `skills/react-components/SKILL.md` | component, button, card, modal, dialog, dropdown, tabs, accordion, tooltip, badge, avatar, shadcn, radix, compound | `core/component-api.md` |
 | `landing-pages` | `skills/landing-pages/SKILL.md` | landing, hero, pricing, testimonials, bento, marketing, saas, homepage, features, cta, social proof, empty state, onboarding | `core/design-tokens.md` |
 | `forms` | `skills/forms/SKILL.md` | form, validation, contact, checkout, auth, login, signup, register, newsletter, rhf, zod, otp, mfa, payment | `core/component-api.md` |
-| `component-patterns` | `skills/component-patterns/SKILL.md` | component library, pattern, animated text, background effect, magnetic, spotlight, tilt, react bits, aceternity, cult ui, bento | `core/component-api.md` |
+| `component-patterns` | `skills/component-patterns/SKILL.md` | component library, pattern, animated text, background effect, magnetic, spotlight, tilt, react bits, aceternity, cult ui, bento-card | `core/component-api.md` |
 | `data-tables` | `skills/data-tables/SKILL.md` | table, grid, data, list, pagination, sort, filter, tanstack, datatable, chart, dashboard, kpi, analytics | `core/component-api.md` |
 | `threejs-3d` | `skills/threejs-3d/SKILL.md` | 3d, three.js, r3f, scene, shader, webgl, canvas, model, gltf, glb, geometry, spline, raycast | `core/component-api.md` |
 | `design-principles` | `skills/design-principles/SKILL.md` | design, ux, laws, principles, hierarchy, contrast, gestalt, cognitive load, why, critique | `core/design-tokens.md` |
 | `design-system` | `skills/design-system/SKILL.md` | tokens, theme, colors, palette, typography, design system, dark mode, spacing, brand, font, figma | `core/design-tokens.md` |
 | `ai-ui-generation` | `skills/ai-ui-generation/SKILL.md` | ai generate, prompt to ui, json to ui, generative interface, component registry, openui, tambo, morphic, llm ui | `core/component-api.md` |
-| `iconography` | `skills/iconography/SKILL.md` | icon, phosphor, lucide, svg, icon button, icon size, icon weight, avatar, initials | `core/design-tokens.md` |
+| `iconography` | `skills/iconography/SKILL.md` | icon, phosphor, lucide, svg, icon button, icon size, icon weight, avatar-icon, initials | `core/design-tokens.md` |
 | `animations` | `skills/animations/SKILL.md` | animation, motion, transition, framer, gsap, animate, scroll, parallax, view transition | `core/design-tokens.md` |
 | `testing` | `skills/testing/SKILL.md` | test, vitest, testing, testing library, playwright, axe, coverage, storybook, story | `core/component-api.md` |
-| `web-interface` | `skills/web-interface/SKILL.md` | review, audit, guidelines, wig, copywriting, microcopy, contrast, a11y audit, ux rules | `core/design-tokens.md` |
+| `web-interface` | `skills/web-interface/SKILL.md` | review, audit, guidelines, wig, copywriting, microcopy, contrast-check, a11y audit, ux rules | `core/design-tokens.md` |
 | `react-performance` | `skills/react-performance/SKILL.md` | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `core/component-api.md` |
 | `platform` | `skills/platform/SKILL.md` | mobile, pwa, react native, expo, i18n, locale, rtl, right-to-left, seo, metadata, email, stripe, ai chat, streaming | `core/component-api.md` |
 | `agent-ops` | `skills/agent-ops/SKILL.md` | agent ops, token budget, context window, memory persistence, subagent, orchestration, verification loop, parallelization, continuous learning, self-check | `core/agent-behavior.md` |
@@ -59,7 +59,7 @@ Every skill also inherits `core/accessibility-baseline.md` and `core/validate-ch
 
 ## Loading protocol
 
-1. Read this file — always (1.8k).
+1. Read this file — always (2.0k).
 2. Match trigger keywords → pick one skill.
 3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated).
 4. Load its listed core deps (0.6–0.9k each) plus the accessibility baseline when producing code.

@@ -234,14 +234,20 @@ export function GlassModal({ open, onClose, children }: GlassModalProps) {
 
 Glass is only as good as its background. Must have:
 
-```tsx
-/* Option 1: Gradient mesh */
-<div className="min-h-screen bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500">
+Derive the background from the project's brand hue. Violet→purple→pink is the
+gradient the anti-slop wall bans by name, and reaching for it here is how glass
+ends up looking like every other AI-generated landing page.
 
-/* Option 2: Animated gradient blob */
+```tsx
+/* Option 1: Gradient mesh — two stops off one brand hue, not three off the wheel */
+<div
+  className="min-h-[100dvh] bg-[linear-gradient(135deg,var(--brand-600),var(--brand-900))]"
+>
+
+/* Option 2: Ambient blobs — same hue family, different lightness */
 <div className="relative overflow-hidden">
-  <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-400 rounded-full blur-3xl opacity-60 animate-pulse" />
-  <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400 rounded-full blur-3xl opacity-60 animate-pulse" />
+  <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl opacity-60 bg-[var(--brand-500)]" />
+  <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl opacity-60 bg-[var(--brand-700)]" />
 </div>
 
 /* Option 3: Spline 3D scene (best result) */

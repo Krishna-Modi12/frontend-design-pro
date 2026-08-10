@@ -947,7 +947,7 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-[100dvh] items-center justify-center">
         <SessionSkeleton />
       </div>
     );

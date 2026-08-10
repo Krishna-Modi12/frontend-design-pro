@@ -84,7 +84,7 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
     <Html lang="en" dir="ltr">
       <Head>
         <Font
-          fontFamily="Inter"
+          fontFamily="Arial"
           fallbackFontFamily="Arial"
           webFont={{ url: 'https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2', format: 'woff2' }}
           fontWeight={400}
@@ -160,7 +160,9 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
 }
 
 // Inline style objects — required for email
-const body = { backgroundColor: '#f6f9fc', fontFamily: 'Inter, Arial, sans-serif' }
+// Email is the one surface where Arial/Helvetica are correct rather than lazy:
+// Outlook ignores @font-face, so a webfont name here is a fallback you cannot see.
+const body = { backgroundColor: '#f6f9fc', fontFamily: 'Arial, Helvetica, sans-serif' }
 
 const container = {
   backgroundColor: '#ffffff',

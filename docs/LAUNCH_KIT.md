@@ -2,11 +2,11 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 332,974 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 tests · 17 semantic + 36 syntactic = 53 constraints · 22 evals · 13 regression cases · registry 1,998 tokens · heaviest request 6,338 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,602 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 39 syntactic = 56 constraints · 22 evals · 13 regression cases · registry 2,002 tokens · heaviest request 6,338 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
-> - *"42 gold examples."* There are 45 golds plus 10 deliberate anti-examples = 55 files. Say 45 golds, or 55 examples — not 42 golds.
+> - *"42 gold examples."* There are 44 golds plus 10 deliberate anti-examples = 54 files. Say 44 golds, or 54 examples — not 42 golds.
 >
 > A launch audience fact-checks. Ship the number you can reproduce on demand.
 
@@ -29,7 +29,7 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 1,998
+frontend-design-pro is a registry instead of a document. SKILL.md is 2,002
 tokens — identity, an anti-slop wall, and a 19-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 333,000 tokens of
@@ -42,27 +42,42 @@ grew the always-loaded registry by 51 tokens.
 
 What's enforced, rather than asserted:
 
-- 55 examples compile under `tsc --noEmit` strict + noImplicitAny
+- 54 examples compile under `tsc --noEmit` strict + noImplicitAny
 - 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
-- 36 regex constraints for what regex is genuinely good at: banned display
+- 39 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
 - 13 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.
-- 9 blocking gates, and the archive is unzipped and re-verified against its
+- 10 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
-The two newest pieces: agent-ops, a skill about the agent's own operating
-discipline rather than UI — token budgeting, cross-session memory,
-verification loops, subagent orchestration. And a demo that actually proves
-the "runnable" claim: demo/showcase is a real Next.js 15 + React 19 app with
-its own package.json, real installed deps (R3F, RHF+Zod), and a dev server
-that boots — not the ambient-stub-typed convention every other demo/ folder
-uses. CI runs a real `next build` against it on every push. The exact prompt
-that generated it is in the repo; copy it into any agent and compare output.
+The two newest skills are both generative — design computed at runtime rather
+than authored once. canvas-typography covers particle text, variable-font axis
+animation and scramble reveals, and the rule it enforces is not the effect but
+what the effect must never cost: the real string stays in the DOM, the canvas
+is aria-hidden decoration, and getContext("2d") is null-guarded because it
+returns null under SSR and under a headless test runner. color-themes does
+OKLCH generation from one anchor hue with chroma clamped to the sRGB gamut,
+plus palette extraction that clusters rather than averages — the mean of any
+photograph is the same muddy brown-grey, because opposite hues cancel. Its
+contrast is verified across all 24 hue steps in both polarities, since the
+failures live at specific hues and a single-hue test proves nothing.
+
+Adding both cost 103 tokens of always-loaded context. That is the architecture
+argument in one number: ~51 per skill, which is what the figure derived from a
+single skill predicted, and the 65,000 tokens of reference depth they brought
+are never loaded unless a request routes there.
+
+There is also a demo that proves the "runnable" claim: demo/showcase is a real
+Next.js 15 + React 19 app with its own package.json, real installed deps
+(R3F, RHF+Zod), and a dev server that boots — not the ambient-stub-typed
+convention every other demo/ folder uses. CI runs a real `next build` against
+it on every push. The exact prompt that generated it is in the repo; copy it
+into any agent and compare output.
 
 Known gaps are in docs/ARCHITECTURE.md rather than left for you to find. The
 biggest: the suite runs against hand-written stubs, not the real peer libraries
@@ -98,25 +113,26 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 1,998 tokens. That's all that's always loaded.
+2/ SKILL.md is 2,002 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 6,338 tokens.
-Reference material available: 332,974 tokens.
+Reference material available: 333,602 tokens.
 
 3/ The economics of this are the whole point.
 
-Adding the 17th skill grew the always-loaded registry by 51 tokens.
+The two newest skills grew the always-loaded registry by 103 tokens. Both of
+them, combined.
 
 Marginal cost of a new skill: ~51 tokens of permanent context.
 Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
 
-9 blocking gates. 55 examples compile under tsc strict. 17 semantic
-constraints run through the TypeScript compiler API. 36 regex constraints.
+10 blocking gates. 54 examples compile under tsc strict. 17 semantic
+constraints run through the TypeScript compiler API. 39 regex constraints.
 22 evals.
 
 No gate passes → no archive exists.
@@ -137,7 +153,7 @@ Constraints that cry wolf get turned off. Precision is a feature.
 7/ Things most packs skip:
 
 · motion direction — what an animation *communicates*, not how to code it
-· AI-generated UI as untrusted input — same 53 constraints
+· AI-generated UI as untrusted input — same 56 constraints
 · a 6-question intake: content volume (3 items or 300?) drives the rest
 · icons as typography: hit area ≠ glyph size
 
@@ -159,13 +175,22 @@ you haven't seen fail is a guardrail you haven't tested.
 Known gaps are all in ARCHITECTURE.md. Shipping the caveats is part of
 shipping.
 
-10/ The newest skill is agent-ops — for the agent's own discipline, not UI.
-Token budgeting, cross-session memory, verification loops, subagents.
+10/ Newest two are generative — design computed, not authored.
 
-Plus a showcase demo that IS a Next.js app: installed deps, a dev server that
-boots, CI running a real `next build` against it.
+canvas-typography: particle text, variable fonts, scramble. The real string
+stays in the DOM — the canvas is decoration.
 
-11/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
+color-themes: OKLCH from one hue, gamut-clamped. Palettes clustered, never
+averaged.
+
+11/ Both cost 103 tokens of always-loaded context. Combined.
+
+~51 per skill, which is exactly what the number derived from ONE skill
+predicted. The 65k of depth they added loads only if you ask for it.
+
+That's the whole architecture argument in one measurement.
+
+12/ MIT licensed. Works with Claude, Cursor, or anything that reads skill files.
 
 https://github.com/Krishna-Modi12/frontend-design-pro
 ```
@@ -191,24 +216,24 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 1,998 tokens, always loaded. Routing table + anti-slop wall.
+- `SKILL.md` — 2,002 tokens, always loaded. Routing table + anti-slop wall.
 - 19 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 94 references, 332,974 tokens. Loaded only when a skill routes to one.
+- 94 references, 333,602 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **5,038 to 6,338 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
 
-9 blocking gates in `scripts/build_release.py`, ~45 seconds:
+10 blocking gates in `scripts/build_release.py`, ~45 seconds:
 
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 17/19 skills declare deps that exist
-3. Compile — 55 examples, `tsc --noEmit` strict + noImplicitAny
+3. Compile — 54 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 17 AST constraints via the TypeScript compiler API
-5. Syntactic — 36 regex constraints; anti-examples must FAIL
+5. Syntactic — 39 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget
@@ -229,16 +254,32 @@ orchestration — for the agent's own discipline, not UI).
 
 **The newest pieces**
 
-A demo that's actually installed and run: `demo/showcase` is a real
-Next.js 15 + React 19 app (own `package.json`, real deps — R3F, RHF+Zod),
-not the ambient-stub-typed convention the rest of `demo/` uses. CI runs a
-real `next build` against it on every push (Gate 9 below). The exact prompt
-that generated it is documented in the repo — copy it into any agent and
-compare the output. Setup docs also now cover ChatGPT, the OpenAI API,
-GitHub Copilot, and Gemini alongside the existing Claude/Cursor guides,
-with an honest compatibility matrix (`docs/AGENT_COMPATIBILITY.md`) that
-says plainly which agents get true on-demand loading versus which have to
-front-load everything.
+Two generative skills — design computed at runtime rather than authored once:
+
+- `canvas-typography` — particle text, kinetic type, variable-font axis
+  animation, scramble/decode reveals. What it enforces is not the effect but
+  what the effect must never cost: the real string stays in the DOM, the
+  canvas is `aria-hidden` decoration, and `getContext("2d")` is null-guarded,
+  because it returns `null` under SSR and under a headless test runner. Every
+  example degrades to plain readable type rather than a blank rectangle.
+- `color-themes` — OKLCH token generation from one anchor hue with chroma
+  clamped to the sRGB gamut, harmonic schemes, and palette extraction that
+  clusters rather than averages (the mean of any photograph is the same muddy
+  brown-grey — opposite hues cancel). Contrast is verified across all 24 hue
+  steps in both polarities, because the failures live at specific hues.
+
+Adding both grew the always-loaded registry by **103 tokens** — ~51 each,
+which is what the marginal-cost figure derived from a single skill predicted.
+The 65,000 tokens of reference depth they brought load only on demand.
+
+There's also a demo that's actually installed and run: `demo/showcase` is a
+real Next.js 15 + React 19 app (own `package.json`, real deps — R3F,
+RHF+Zod), not the ambient-stub-typed convention the rest of `demo/` uses. CI
+runs a real `next build` against it on every push (Gate 9 below). Setup docs
+cover ChatGPT, the OpenAI API, GitHub Copilot, and Gemini alongside the
+Claude/Cursor guides, with an honest compatibility matrix
+(`docs/AGENT_COMPATIBILITY.md`) that says plainly which agents get true
+on-demand loading versus which have to front-load everything.
 
 **Known limitations, up front**
 

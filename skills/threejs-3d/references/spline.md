@@ -245,7 +245,7 @@ const Spline = lazy(() => import('@splinetool/react-spline'))
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-[#0F1419] overflow-hidden">
+    <section className="relative min-h-[100dvh] bg-[oklch(18%_0.02_240)] overflow-hidden">
       {/* 3D scene as full-bleed background */}
       <div className="absolute inset-0 z-0">
         <Suspense fallback={
@@ -260,14 +260,14 @@ export default function HeroSection() {
       </div>
 
       {/* Content overlay */}
-      <div className="relative z-10 flex flex-col items-start justify-center min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex flex-col items-start justify-center min-h-[100dvh] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-6xl md:text-8xl font-extrabold text-white tracking-tighter leading-none">
           Your headline
         </h1>
         <p className="mt-6 text-xl text-white/60 max-w-[52ch]">
           Specific, concrete value proposition.
         </p>
-        <a href="#start" className="mt-8 h-12 px-7 inline-flex items-center bg-white text-[#0F1419] font-semibold rounded-xl hover:bg-slate-100 transition-colors">
+        <a href="#start" className="mt-8 h-12 px-7 inline-flex items-center bg-[oklch(97%_0.01_240)] text-[oklch(18%_0.02_240)] font-semibold rounded-xl hover:bg-[oklch(92%_0.015_240)] transition-colors">
           Get started →
         </a>
       </div>

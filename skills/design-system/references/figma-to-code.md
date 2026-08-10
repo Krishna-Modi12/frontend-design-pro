@@ -227,7 +227,7 @@ export function Button({
       disabled={disabled || isLoading}
       className={`
         inline-flex items-center justify-center font-semibold
-        transition-all duration-150 active:scale-[0.97]
+        transition-[transform,background-color,box-shadow] duration-150 active:scale-[0.97]
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
         disabled:opacity-50 disabled:cursor-not-allowed
         ${buttonVariants[variant]}
@@ -324,7 +324,7 @@ cn(
 // Pattern 3: CVA (class-variance-authority) for complex systems
 import { cva } from 'class-variance-authority'
 
-const buttonCVA = cva('inline-flex items-center font-semibold transition-all', {
+const buttonCVA = cva('inline-flex items-center font-semibold transition-[color,background-color,border-color,box-shadow]', {
   variants: {
     variant: {
       primary: 'bg-indigo-600 text-white hover:bg-indigo-700',

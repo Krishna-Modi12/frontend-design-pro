@@ -321,6 +321,25 @@ def gate_chain() -> tuple[bool, list]:
             syn_detail += " · demos clean"
     all_ok &= record("Syntactic", syn_ok, syn_detail)
 
+    # References — the gate that reads the other 98% of the pack.
+    # Everything above this line judges skills/*/examples/*.tsx and demo/: 55 files.
+    # The 94 reference files are ~333k tokens and are what an agent actually loads
+    # for depth, and until this gate they were scanned by nothing, because
+    # test_constraints.py globs code extensions and a reference is markdown. The
+    # cost of that gap was measurable: a "Must have" background prescribing
+    # min-h-screen with a violet→purple→pink gradient, both banned by name in the
+    # wall the same agent had in context.
+    r = run([PY, str(SCRIPTS / "check_references.py")])
+    ref_ok = r.returncode == 0
+    rf = re.search(r"\[REFS\] (\d+) violation\(s\) · (\d+) ban-shaped", r.stdout)
+    ref_detail = (
+        f"{rf.group(2)} ban-shaped constraints over fenced code in every reference, "
+        f"skill and core file ({rf.group(1)} violations)"
+        if rf else "reference checker produced no summary line"
+    )
+    if r.returncode: print(r.stdout[-2000:])
+    all_ok &= record("References", ref_ok, ref_detail)
+
     r = run([PY, str(SCRIPTS / "test_v12_pipeline.py"), str(REPO / "AGENT_SYSTEM_PROMPT.md")])
     # The label was hardcoded "9/9 stage markers" while the checker actually
     # scored 7/9 — two extra checks had been failing silently for three majors.

@@ -125,8 +125,16 @@ export const ENFORCED_RULES: EnforcedRule[] = [
   },
 ];
 
-/** install/README.md — the adapter table, including its own untested column. */
+/**
+ * install/README.md — the adapter table, including its own untested column.
+ *
+ * `mode` is not editorial: it is whether `install/{id}/.manual` exists on disk,
+ * which is the same file both setup scripts read to decide what they may write.
+ * A manual adapter is one no installer should touch — a user-level directory, a
+ * web upload, or a file the repo already owns.
+ */
 export const ADAPTERS: Adapter[] = [
+  { id: "agents", mode: "auto", untested: false, installs: "AGENTS.md — read by ~30 hosts" },
   {
     id: "cursor",
     mode: "auto",
@@ -139,6 +147,15 @@ export const ADAPTERS: Adapter[] = [
     untested: false,
     installs: ".github/copilot-instructions.md",
   },
+  {
+    id: "cline",
+    mode: "auto",
+    untested: true,
+    installs: ".clinerules/frontend-design-pro.md",
+  },
+  { id: "roo", mode: "auto", untested: true, installs: ".roo/rules/frontend-design-pro.md" },
+  { id: "zed", mode: "auto", untested: true, installs: ".rules" },
+  { id: "gemini", mode: "auto", untested: false, installs: "GEMINI.md (Gemini CLI)" },
   {
     id: "windsurf",
     mode: "auto",
@@ -154,7 +171,6 @@ export const ADAPTERS: Adapter[] = [
   { id: "aider", mode: "auto", untested: true, installs: "CONVENTIONS.md" },
   { id: "claude", mode: "manual", untested: false, installs: "unzip into ~/.claude/skills/" },
   { id: "chatgpt", mode: "manual", untested: false, installs: "Custom GPT knowledge upload" },
-  { id: "gemini", mode: "manual", untested: false, installs: "system instruction" },
   { id: "codex", mode: "manual", untested: false, installs: "AGENTS.md merge" },
   { id: "generic", mode: "manual", untested: false, installs: "any other host" },
 ];

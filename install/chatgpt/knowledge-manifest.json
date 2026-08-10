@@ -13,7 +13,7 @@
     "registry": [
       {
         "path": "SKILL.md",
-        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 1,998 tokens. Never omit this one."
+        "why": "The registry itself — routing table, anti-slop wall, loading protocol. 2,002 tokens. Never omit this one."
       }
     ],
     "core_typical_request": [
@@ -31,7 +31,7 @@
       },
       {
         "path": "core/validate-checklist.md",
-        "why": "Universal dep — the 53 constraints the model self-checks against by inspection."
+        "why": "Universal dep — the 56 constraints the model self-checks against by inspection."
       }
     ],
     "skill_routers_example": [

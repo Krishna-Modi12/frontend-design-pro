@@ -1,7 +1,7 @@
 ---
 name: data-tables
 description: Tables, grids, charts and dashboards — sorting, filtering, pagination, selection, KPIs, data fetching.
-version: "14.5.0"
+version: "14.6.0"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md
@@ -34,7 +34,7 @@ React 19 · TypeScript strict · Tailwind v4 · TanStack Table/Query · Recharts
 - **DASH-LAYOUT** = sidebar 240px + header 56px + flexible content.
 
 ## Examples
-`examples/good-data-table.tsx` (sort, select, paginate, all states) · `examples/good-tanstack.tsx` (useQuery/useMutation/useInfiniteQuery, optimistic) · `examples/good-dashboard.tsx` (KPI + charts) · `examples/good-dark-mode.tsx` (themed dashboard).
+`examples/good-data-table.tsx` (sort, select, paginate, all states) · `examples/good-tanstack.tsx` (useQuery/useMutation/useInfiniteQuery, optimistic) · `examples/good-dashboard.tsx` (KPI + charts).
 
 ## Reference Index
 Load only for the specific task:

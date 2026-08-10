@@ -24,21 +24,21 @@ npm run build       # next build
 This app has its own `package.json` and installed dependencies, so it is excluded
 from the stub-typed regime the other demos share — `demo/tsconfig.json` and
 `tools/screenshots/tsconfig.json` both skip it. It is **not** exempt from the
-content rules: the 17 AST constraints run on every file here, and the 36 regex
+content rules: the 17 AST constraints run on every file here, and the 39 regex
 constraints run on the project.
 
 ## Where the numbers come from
 
 | On the page | Source |
 |---|---|
-| 19 skills · 53 constraints · 9 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 332,974 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
+| 19 skills · 56 constraints · 10 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
+| 333,602 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
 | 5,000–6,300 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
 | Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
 | Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |
 | The hero code panel | `SKILL.md` lines 60–68, unedited |
 | Install commands | `README.md` → Install in 30 seconds |
-| Ten adapters | the `install/` directory and its README's own untested column |
+| Fourteen adapters, ten automatic | the `install/` directory — `mode` is whether `install/{id}/.manual` exists, the same marker both setup scripts read — and its README's own untested column |
 
 **The hero's line numbers move when the registry table above them does.** The two
 most recently added skills pushed the loading protocol down by two lines, from

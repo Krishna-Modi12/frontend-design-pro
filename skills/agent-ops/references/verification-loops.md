@@ -25,7 +25,7 @@ This repo's own gate chain formalizes the same distinction at the level of an en
 
 For code changes specifically, three checks are cheap enough that skipping them is rarely justified:
 - **Compile.** If the language has a compiler or type checker, run it against the changed file(s) at minimum. A change that "should type-check" and wasn't checked is a guess wearing the clothes of a fact. This pack's own `scripts/typecheck_golds.py` runs `tsc --noEmit --strict` over every gold example precisely because "the code looks right" was never accepted as a substitute for the compiler actually agreeing.
-- **Lint / static constraints.** Where a project defines its own machine-enforced rules (this pack's 53 constraints across `scripts/parser_constraints.js` and `scripts/test_constraints.py`, per `core/validate-checklist.md`), run them against changed files rather than eyeballing compliance. A rule that's machine-checkable and wasn't machine-checked is being taken on faith when it didn't need to be.
+- **Lint / static constraints.** Where a project defines its own machine-enforced rules (this pack's 56 constraints across `scripts/parser_constraints.js` and `scripts/test_constraints.py`, per `core/validate-checklist.md`), run them against changed files rather than eyeballing compliance. A rule that's machine-checkable and wasn't machine-checked is being taken on faith when it didn't need to be.
 - **Tests.** Run the existing suite touching the changed area, and add or update the test that would have caught the introduced change's specific failure mode. A change with no test exercising it is a change nobody has verified — including the person who wrote it.
 
 ## Re-reading diffs

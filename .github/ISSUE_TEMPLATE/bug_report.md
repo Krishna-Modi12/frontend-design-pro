@@ -17,7 +17,7 @@ Path to the skill, reference, or example (e.g. `skills/forms/SKILL.md`, `skills/
 
 ## Which gate catches this?
 
-If you ran `python scripts/build_release.py --dry-run`, which of the 9 gates flagged it (or should have, but didn't)? Check all that apply.
+If you ran `python scripts/build_release.py --dry-run`, which of the 10 gates flagged it (or should have, but didn't)? Check all that apply.
 
 - [ ] 1 — Pre-flight (`SKILL.md` token ceiling, version consistency, no version leaks)
 - [ ] 2 — Frontmatter (`name`/`description`/`version`/`core-deps` on every skill)

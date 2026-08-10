@@ -14,7 +14,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "frontend-design-pro — AI Skill Pack for Production UI",
   description:
-    "1,998-token router. 19 skills. 333k tokens of depth. Machine-enforced anti-slop rules.",
+    "2,002-token router. 19 skills. 333k tokens of depth. Machine-enforced anti-slop rules.",
 };
 
 export interface RootLayoutProps {
