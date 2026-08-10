@@ -4,6 +4,55 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.7.3] — 2026-08-10
+
+Competitor survey widened from four packs to eight, and `metadata.json`'s
+changelog restored.
+
+### The survey
+
+Packs read **at source**: impeccable, ui-ux-pro-max-skill, `anthropics/skills`
+frontend-design, taste-skill, rohitg00/awesome-claude-design,
+vercel-labs/web-interface-guidelines, emilkowalski/skill.
+
+The question is narrow and falsifiable: **does the project run its own design
+rules over its own shipped guidance?** Not "does it have tests".
+
+| Pack | Rules enforced? | Own material gated? |
+|---|---|---|
+| frontend-design-pro | 59 | **Yes** — Gate 10, blocks the archive |
+| impeccable | 46 detectors | No — `test:detector` runs against `tests/fixtures/antipatterns` |
+| ui-ux-pro-max-skill | No | No — `validate:csv` is schema validation |
+| `anthropics/skills` frontend-design | No | No — `SKILL.md` + `LICENSE.txt` |
+| taste-skill, awesome-claude-design, web-interface-guidelines, emilkowalski/skill | No | No — zero CI, zero test files, all four |
+
+### Correction owed to impeccable
+
+Earlier notes here described its detectors as pointing "outward" as though the
+project were untested. **It is not** — 14 test targets including detector,
+framework, e2e and live-agent suites, more test infrastructure than this pack
+has. It tests that its detector *works*; what it does not do is point that
+detector at `skill/reference/*.md`. That narrower distinction is the one that
+holds.
+
+### What the survey does not establish
+
+`README.md` now says it outright: "best" is not a property a repository can
+have. ui-ux-pro-max ships far more styles and palettes; impeccable's retrofit
+commands and its live browser loop have no equivalent here.
+
+### Fixed — a drift no gate can see
+
+`metadata.json`'s changelog dict had lost its `14.7.1` and `14.7.2` entries
+across two concurrent merges, while `docs/CHANGELOG.md` kept both. **No gate
+compares the two** — pre-flight checks `metadata.version` against this file's
+top header, and both agreed every time — so it passed clean twice. Both
+restored.
+
+No constraint behaviour changed.
+
+---
+
 ## [14.7.2] — 2026-08-10
 
 A review pass: everything here was found by judging what already shipped,

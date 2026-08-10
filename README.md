@@ -270,7 +270,7 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.2
+## What's new in v14.7.3
 
 A review pass, not a feature pass — everything here was found by judging what already shipped.
 
@@ -299,6 +299,22 @@ Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-sk
 `TYP-03` and impeccable's `gradient-text` are still not the same rule: impeccable's fires **unconditionally**, including on a display heading, where gradient text is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized text. That is a difference in precision, not the absence of a competitor, and the docs no longer claim otherwise.
 
 No constraint behaviour changed.
+
+### The survey, widened — and what it does not claim
+
+The v14.7.1 check covered four packs. It now covers eight, against one narrow, falsifiable question: **does the project run its own design rules over its own shipped guidance?** Not "does it have tests" — impeccable has more test infrastructure than this pack does.
+
+| Pack | Rules enforced mechanically? | Own reference material gated? |
+|---|---|---|
+| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 94 references and blocks the archive |
+| impeccable | 46 detector rules | **No** — 14 test targets, but `test:detector` runs against `tests/fixtures/antipatterns`. Nothing points the detector at `skill/reference/*.md` |
+| ui-ux-pro-max-skill | No | No — `validate:csv` / `check:assets` are schema and asset validation; the design guidance is a self-graded pre-delivery checklist |
+| `anthropics/skills` frontend-design | No | No — the directory is `SKILL.md` and `LICENSE.txt` |
+| taste-skill · awesome-claude-design · web-interface-guidelines · emilkowalski/skill | No | No — zero CI workflows, zero test files, all four |
+
+**A correction owed to impeccable.** Earlier notes here described its detectors as pointing "outward" as though the project were untested. It is not: 14 test targets including detector, framework, e2e and live-agent suites. It tests that its detector *works*. What it does not do is point that detector at its own guidance. That is a narrower and more defensible distinction than the one first drawn, and it is the one that holds.
+
+**What this does not establish.** That this pack is "the best" — that is not a property a repository can have, and it depends on what a team needs. ui-ux-pro-max ships far more styles and palettes. Impeccable's retrofit commands (`audit`, `polish`, `harden`) and its live browser loop have no equivalent here. The claim is the narrow one and nothing wider: **this pack's own reference material is held to the rules it hands the agent, and across eight packs read at source, nothing else in the field does that.**
 
 ## Previously — v14.7.0
 
