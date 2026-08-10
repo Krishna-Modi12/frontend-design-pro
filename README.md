@@ -284,7 +284,7 @@ New: [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) — the spot check, wh
 
 ## Previously — v14.7.0
 
-Three constraints for defects the whole field ships and nobody checks — found by sweeping both suites for gaps, not by adding rules that sounded good.
+Three constraints for defects the field ships and almost nobody checks — found by sweeping both suites for gaps, then **verified against the competition's actual source** rather than assumed. Of the four packs checked (impeccable, ui-ux-pro-max-skill, taste-skill, `anthropics/skills` frontend-design), exactly one rule is enforced anywhere else: impeccable ships a `gradient-text` detector. It fires unconditionally, including on display headings, where the effect is legitimate; `TYP-03` is scoped to body-sized text. Nothing in any of the four enforces the other two.
 
 - **`A11Y-06` — `outline-none` with no focus indicator.** `A11Y-02` (AST) already checks that a `focus-visible` class sits on an interactive element, which catches the ring being in the *wrong place*. It cannot catch the outline being removed and replaced with **nothing** — the far commoner defect, and the one that costs every keyboard user the page. Either `focus:` or `focus-visible:` satisfies it: the rule is that a visible indicator exists, not which variant spells it.
 - **`TYP-03` — gradient text on body copy.** Fine on a display heading. On prose, `bg-clip-text` sets the computed colour to `transparent`, which destroys contrast **and silently defeats every contrast checker**, because the ratio is measured against a colour no reader ever sees. That second half is why it survives review.
