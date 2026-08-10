@@ -1,5 +1,24 @@
 # Install
 
+## One line (fastest)
+
+From the root of the project you want the agent to work on:
+
+```bash
+git clone --depth 1 https://github.com/Krishna-Modi12/frontend-design-pro && bash frontend-design-pro/setup.sh
+```
+
+The clone directory name is load-bearing: every adapter references
+`frontend-design-pro/SKILL.md` relative to your project root, so cloning under
+that exact name is what makes the path the installer writes a path that exists.
+`setup.sh` detects the agent and writes its native rules file; `--dry-run` shows
+what it would write first, and nothing is overwritten without `--force`.
+
+This gives you the tree on `main`, which CI checks on every push. The numbered
+route below gives you the released `.skill`, which is built only after all 10
+gates pass — the difference matters if you want the artifact that cannot exist
+while anything is red.
+
 ## Agent setup (most people)
 
 1. Download the latest `frontend-design-pro-v*.skill` from [Releases](https://github.com/Krishna-Modi12/frontend-design-pro/releases). A `.skill` file is a zip whose root folder is `frontend-design-pro/`.
