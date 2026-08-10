@@ -272,6 +272,28 @@ No horizontal scroll at 390px.
 
 ## What's new in v14.7.1
 
+**A correction and a review pass.** Neither adds a feature; both are the result of checking what already shipped.
+
+### The correction
+
+**A correction, published because the alternative is a pack that asserts.**
+
+v14.7.0 described its three new constraints as covering "defects the field ships and nobody checks", and said no competing pack enforced any of them. That was asserted, not verified — the exact failure mode this project exists to make impossible. So it was checked against source.
+
+| Constraint | Enforced elsewhere? |
+|---|---|
+| `A11Y-06` — `outline-none` with no indicator | **No.** Zero matches for `outline` across impeccable's 46 detector rules. ui-ux-pro-max carries "Focus states visible for keyboard nav" as a self-graded checklist line with no machine check behind it |
+| `TYP-03` — gradient text on body copy | **Yes — the claim was wrong.** impeccable ships a `gradient-text` detector firing on `background-clip: text` + gradient, and on Tailwind's `bg-clip-text` + `bg-gradient-to-` pair |
+| `FORM-01` — inputs below 16px | **No.** impeccable's font-size floor for interactive text is **11px**, so a 14px input passes it. Its iOS-zoom note is prose in `harden.md`, enforced by nothing |
+
+Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-skill, taste-skill, and `anthropics/skills` frontend-design — a single `SKILL.md` with no enforcement mechanism of any kind.
+
+`TYP-03` and impeccable's `gradient-text` are still not the same rule: impeccable's fires **unconditionally**, including on a display heading, where gradient text is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized text. That is a difference in precision, not the absence of a competitor, and the docs no longer claim otherwise.
+
+No constraint behaviour changed.
+
+### The review pass
+
 A review pass, not a feature pass — everything here was found by judging what already shipped.
 
 - **`web-interface` has a gold example for the first time.** It shipped three anti-examples and nothing positive, so *"make this feel more finished"* — the one request it exists to answer — had no worked answer anywhere in the pack. Gate 8b globs `examples/*.tsx`, which counts `bad-*.tsx`, so *every skill has an example* was enforced and *every skill has a **gold*** was not. `good-audited-panel.tsx` is the craft pass at component scale: layered shadows, hover states that **gain** contrast, `tabular-nums`, the `min-w-0` + `truncate` pair, `Intl` formatting, `translate="no"` on identifiers.
