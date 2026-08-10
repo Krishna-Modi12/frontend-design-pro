@@ -67,6 +67,24 @@ npm run dev
 
 ---
 
+## `docs/audit-report.html`
+
+The one page in this repo the pack was pointed at *itself* to produce — a hardening audit of `frontend-design-pro`, written as a test report rather than a landing page. Quoted verbatim from [`README.md`](../README.md#the-pack-pointed-at-itself):
+
+> Build a single-page audit report for a developer tool that publishes machine-checked quality claims. It has to communicate three things in order: two security defects found in shipped reference material, three rules the product documented everywhere and enforced nowhere, and a gate that was missing entirely.
+>
+> Treat it as a test report, not a landing page. No hero. The reader is deciding whether to trust the tool, so findings and their IDs are the content — surface severity in form as well as words. Light and dark both.
+>
+> Constraints: this is our own repo, so obey our own wall. No near-black with one acid accent, no cream-and-serif, no purple gradients, no Inter. Semantic colour for severity must be separate from the brand accent. Tabular figures. No horizontal scroll at 390px.
+
+**Skills loaded:** `design-principles`, `design-system`, `web-interface` — matched on *report*, *severity*, *dark* and *contrast* — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens.
+
+**What it demonstrates:** The escape-hatch case handled honestly. The brief names the near-black/acid-accent default the anti-slop wall bans, and the result declines it: ledger rows on cool paper, severity carried by an oxblood/ochre stripe that is *semantic*, held separate from the forest-green structural accent. Full light/dark token sets, `tabular-nums` on every constraint ID.
+
+It is a single self-contained `.html` file in `docs/`, not `demo/` — `*.html` is inside the constraint suite's glob, and a static report has no default export and no four states, so it would fail component-oriented checks it was never meant to satisfy.
+
+---
+
 ## On screenshots
 
 `demo/showcase/screenshot.png` exists because that demo is a real running app. The three stub-typed demos above are not — they're `.tsx` files compiled against ambient stubs in `demo/_stubs.d.ts`, never installed, never run (see [`README.md`](../README.md)'s Demos section for that distinction). There's nothing to screenshot without first wiring one into a runnable shell of its own, which isn't part of what these demos are for.

@@ -1,0 +1,3 @@
+Manual: the pack installs as a real skill under ~/.claude/skills/ (or a Project
+for Desktop), which is a user-level location an installer should not write to
+unasked. See README.md in this directory.

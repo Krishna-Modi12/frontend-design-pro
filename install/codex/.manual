@@ -1,0 +1,3 @@
+Manual: Codex reads AGENTS.md, a file your repository very likely already owns
+and whose contents are not ours to overwrite. Install ../agents/ instead, or
+merge the section by hand. See README.md in this directory.

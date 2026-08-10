@@ -149,7 +149,7 @@ function RevealHeadline({ children }: { children: string }) {
       rotateX: -90,
       stagger: 0.02,
       duration: 0.6,
-      ease: 'back.out(1.7)',
+      ease: 'power3.out',
       scrollTrigger: { trigger: ref.current, start: 'top 85%' },
     })
   }, { scope: ref })
@@ -647,7 +647,7 @@ function Marquee({ items, speed = 30 }: { items: React.ReactNode[]; speed?: numb
         className="flex w-max gap-12 items-center"
         style={{ animation: `marquee ${speed}s linear infinite` }}
       >
-        {/* Duplicate for seamless loop */}
+        {/* Rendered twice so the loop restarts with no visible seam */}
         {[...items, ...items].map((item, i) => (
           <li key={i} className="shrink-0">{item}</li>
         ))}

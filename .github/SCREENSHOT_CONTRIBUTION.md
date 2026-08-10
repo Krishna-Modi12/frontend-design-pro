@@ -9,7 +9,7 @@ Four demo screenshots are linked from the root `README.md` — one per project i
 | `demo/dashboard/screenshot.png` (+ `-full`) | same | light |
 | `demo/auth-form/screenshot.png` (+ `-full`) | same | light |
 
-These exist because everything else in this repository is machine-checked — 9 release-blocking gates, 53 constraints, a `next build` on the showcase in CI — and none of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.
+These exist because everything else in this repository is machine-checked — 10 release-blocking gates, 56 constraints, a `next build` on the showcase in CI — and none of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.
 
 **No gate checks these images.** They go stale silently the moment the UI under them changes, and a stale screenshot is a worse failure mode than a missing one: it actively misrepresents the current app. If you change anything under a `demo/` project, recapture its image in the same PR.
 

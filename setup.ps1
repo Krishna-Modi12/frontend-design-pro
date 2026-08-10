@@ -49,10 +49,14 @@ $ErrorActionPreference = 'Stop'
 $PackRoot   = $PSScriptRoot
 $InstallDir = Join-Path $PackRoot 'install'
 
-# Adapters whose payload is a file the installer can safely drop into a project.
-# Everything else needs a web UI, a JSON merge, or a decision only the user can
-# make, so those print their card instead of pretending to automate it.
-$AutoAgents = @('cursor', 'copilot', 'windsurf', 'aider', 'continue')
+# An adapter is auto-installable when its payload is a file that can safely be
+# dropped into a project. The ones that are not need a web UI, a user-level
+# directory, or a merge into a file the repo already owns, and those print their
+# card instead of pretending to automate it.
+#
+# This used to be a hardcoded list, which silently disagreed with what actually
+# shipped. The fact now lives with the adapter — install/<agent>/.manual, whose
+# contents say why — so adding a directory is the whole of adding an adapter.
 
 function Write-Ok   { param([string]$m) Write-Host "  ok $m"   -ForegroundColor Green }
 function Write-Warn { param([string]$m) Write-Host "  -- $m"   -ForegroundColor Yellow }
@@ -74,7 +78,17 @@ function Get-AllAgents {
     Get-ChildItem -LiteralPath $InstallDir -Directory | Select-Object -ExpandProperty Name | Sort-Object
 }
 
-function Test-IsAuto { param([string]$name) return $AutoAgents -contains $name }
+# Auto iff it does not declare itself manual AND actually ships something to copy.
+# The second half matters: a directory holding only a README is a card, not an
+# adapter, and reporting it as installable would promise a write that never lands.
+function Test-IsAuto {
+    param([string]$name)
+    $dir = Join-Path $InstallDir $name
+    if (Test-Path -LiteralPath (Join-Path $dir '.manual')) { return $false }
+    $payload = Get-ChildItem -LiteralPath $dir -Recurse -File -Force |
+        Where-Object { $_.Name -ne 'README.md' -and $_.Name -ne '.manual' }
+    return $null -ne $payload
+}
 
 # Detect from marker files the agent itself creates. Returns every match rather
 # than the first: two markers means the answer is genuinely ambiguous, and
@@ -91,6 +105,13 @@ function Get-DetectedAgents {
         (& $has '.aider.input.history'))                      { $found.Add('aider') }
     if ((& $has '.github/copilot-instructions.md') -or
         (& $has '.github/instructions'))                      { $found.Add('copilot') }
+    # Markers these hosts create themselves. Deliberately NOT their rules file:
+    # .rules, GEMINI.md and AGENTS.md are what this installer writes, so detecting
+    # on them would be circular.
+    if (& $has '.clinerules')                                 { $found.Add('cline') }
+    if ((& $has '.roo') -or (& $has '.roorules'))             { $found.Add('roo') }
+    if (& $has '.zed')                                        { $found.Add('zed') }
+    if (& $has '.gemini')                                     { $found.Add('gemini') }
     return $found
 }
 
@@ -133,7 +154,7 @@ function Install-Adapter {
     $files = Get-ChildItem -LiteralPath $src -Recurse -File -Force | Sort-Object FullName
     foreach ($f in $files) {
         $rel = $f.FullName.Substring($src.Length + 1)
-        if ($rel -eq 'README.md') { continue }
+        if ($rel -eq 'README.md' -or $rel -eq '.manual') { continue }
         $show = $rel -replace '\\', '/'
         $dest = Join-Path $targetDir $rel
 

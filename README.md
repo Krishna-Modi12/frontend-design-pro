@@ -2,9 +2,9 @@
 
 **Your AI agent already writes React. This makes it write React that doesn't look AI-generated.**
 
-A machine-enforced frontend UI/UX skill pack — 19 auto-routing skills, 94 on-demand references, and 53 constraints that a build script actually runs.
+A machine-enforced frontend UI/UX skill pack — 19 auto-routing skills, 94 on-demand references, and 56 constraints that a build script actually runs.
 
-**9 release-blocking gates · 17 semantic AST checks · 36 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
+**10 release-blocking gates · 17 semantic AST checks · 39 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
 
 Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
 
@@ -17,7 +17,7 @@ These are not style preferences. Each row is a check that fails a build, with th
 | `Inter` / `Poppins` / `DM Sans` as the display face | A face with a point of view, system stack as fallback | `TYP-02` |
 | Purple → pink → blue gradient | One accent, derived from the brand | `COL-03` |
 | `bg-[#0F1419]`, raw hex everywhere | OKLCH tokens only | `COL-04`, `TOK-01` |
-| `min-h-screen` | `min-h-[100dvh]` — the mobile viewport is not the screen | `RES-01` |
+| `min-h-screen` | `min-h-[100dvh]` — the mobile viewport is not the screen | `RES-03` |
 | `setTimeout(() => setLoading(false), 1500)` | Loading state driven by real async, never faked | `DELAY-01-AST` |
 | `ease-in` on an entrance | Ease-out to arrive, ease-in to leave | `MOTION-02` |
 | A `scroll` listener calling `setState` | Re-render per frame is a bug, not a technique | `ANI-04` |
@@ -26,16 +26,26 @@ These are not style preferences. Each row is a check that fails a build, with th
 | Equal-height card grid, 3 across | Asymmetry, hierarchy, one showpiece per viewport | anti-slop wall |
 | A component with only a happy path | All four states — loading, empty, error, success | `STA-01`, `STA-02` |
 
-The full list of 53 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
+The full list of 56 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
 ## Install in 30 seconds
 
-If your agent keeps its rules in a file — Cursor, Copilot, Windsurf, Continue.dev, Aider — the installer writes it for you:
+If your agent keeps its rules in a file, the installer writes it for you:
 
 ```bash
 unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
 bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
 ```
+
+**Not sure, or using something not listed? Install the cross-agent file:**
+
+```bash
+bash frontend-design-pro/setup.sh agents   # writes AGENTS.md
+```
+
+`AGENTS.md` is an open specification governed by the Linux Foundation's Agentic AI Foundation, and roughly thirty agents read it — Codex, Cursor, Copilot, Windsurf, Aider, Continue, **Zed, Jules, Devin, Factory, Amp, OpenHands, JetBrains Junie, Roo Code**. One file, most of the field.
+
+Ten adapters install automatically: `agents` · `cursor` · `copilot` · `cline` · `roo` · `zed` · `gemini` (CLI) · `windsurf` · `continue` · `aider`. Four are manual because no installer should write them — Claude Code (a user-level skills directory), ChatGPT (a web upload), Codex (an `AGENTS.md` your repo already owns), and anything unlisted.
 
 `setup.sh --list` names every adapter, `setup.sh cursor` skips detection, `--dry-run` shows what it would write, and nothing is overwritten without `--force`. `setup.ps1` is the PowerShell port. The files it copies live in [`install/`](install/) if you would rather place them yourself.
 
@@ -117,12 +127,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 320k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **1,998 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,002 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,236–2,404 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **332,974 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **333,602 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,038–6,338 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,038–6,338 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 2,002 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 ## Core files (8)
 
@@ -136,7 +146,7 @@ Every skill inherits `accessibility-baseline` and `validate-checklist` whenever 
 | `core/component-api-deep.md` | Compound components, composition patterns, API anti-patterns |
 | `core/agent-behavior.md` | The four principles — think, simplify, stay surgical, verify |
 | `core/agent-behavior-patterns.md` | Design-work addendum, external behavioural patterns |
-| `core/validate-checklist.md` | All 53 constraints (17 parser + 36 regex, unique IDs) with pass criteria |
+| `core/validate-checklist.md` | All 56 constraints (17 parser + 39 regex, unique IDs) with pass criteria |
 | `core/user-intake.md` | Six questions to ask before building a site — and when not to ask them |
 
 ## Demos
@@ -150,7 +160,7 @@ Four projects generated by the skill routing itself — the pack eating its own 
 | [`demo/auth-form/`](demo/auth-form/) | Stub-typed | `forms` + `core/component-api.md` | RHF + Zod, `aria-describedby` errors, OAuth, jest-axe test |
 | [`demo/showcase/`](demo/showcase/) | **Runnable Next.js app** | `landing-pages` + `threejs-3d` + `forms` | R3F hero, bento grid, pricing, testimonials, validated form — see [See It In Action](#see-it-in-action) below |
 
-The three stub-typed demos are checked by the same suites as the gold examples — `tsc --noEmit` strict, 17 AST constraints, 36 regex constraints:
+The three stub-typed demos are checked by the same suites as the gold examples — `tsc --noEmit` strict, 17 AST constraints, 39 regex constraints:
 
 ```bash
 bash demo/validate.sh              # all three
@@ -207,13 +217,50 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **The route it takes.** The registry matches *WebGL*, *bento*, *pricing*, *form* and *carousel* against the trigger-keyword column and loads `landing-pages`, `threejs-3d` and `forms` in turn, each pulling `core/design-tokens.md` and `core/component-api.md` from its declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read. The bans in the prompt — no Inter, no purple gradient, no `min-h-screen`, no equal-weight card grid — are not politeness: they are the anti-slop wall restated, and the constraint suite fails the build if the output violates them.
 
-**It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 17 AST checks on every authored file, the 36 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
+**It is checked, not just shipped.** Unlike the three stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 17 AST checks on every authored file, the 39 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
 
 ![Nexus showcase — dark-mode analytics landing page with WebGL particle hero, asymmetric bento grid, and acid-green accents](demo/showcase/screenshot.png)
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.5.1
+## The pack, pointed at itself
+
+[**`docs/audit-report.html`**](docs/audit-report.html) — open it in a browser — is a hardening audit of this repository, built by giving the pack the same brief you would give it for a client. It is the honest test: a pack that claims to stop AI-looking output should be able to produce a page that does not look AI-generated, about its own defects, without exemptions.
+
+**The exact prompt:**
+
+```
+Build a single-page audit report for a developer tool that publishes
+machine-checked quality claims. It has to communicate three things in order:
+two security defects found in shipped reference material, three rules the
+product documented everywhere and enforced nowhere, and a gate that was
+missing entirely.
+
+Treat it as a test report, not a landing page. No hero. The reader is
+deciding whether to trust the tool, so findings and their IDs are the
+content — surface severity in form as well as words. Light and dark both.
+
+Constraints: this is our own repo, so obey our own wall. No near-black with
+one acid accent, no cream-and-serif, no purple gradients, no Inter. Semantic
+colour for severity must be separate from the brand accent. Tabular figures.
+No horizontal scroll at 390px.
+```
+
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 333,602 available.
+
+**What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
+
+## What's new in v14.6.0
+
+Security, enforcement and install coverage — the three things an outside reader can check.
+
+- **A stored XSS in a shipped recipe.** [`skills/platform/references/seo.md`](skills/platform/references/seo.md) told agents to render JSON-LD with `dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }}`. `JSON.stringify` does not escape `<`, so a CMS field containing `</script><script>…` closes the tag and executes. Fixed with a `jsonLd()` helper that escapes at the point of serialisation — a rule that lives in the CMS is a rule the next integration forgets.
+- **A trust boundary on fetched content.** `design-research` instructs agents to fetch and read live pages, with nothing saying what authority that text carries. It now states it: fetched bytes — page text, alt text, comments, `<meta>`, hidden nodes, a README in a linked repo — are untrusted data being quoted, never instruction.
+- **Three rules documented everywhere and enforced nowhere** now have IDs. `min-h-screen`, `React.FC` and `onPress` on web were on the anti-slop wall and in `core/validate-checklist.md` with no check behind any of them — anti-example files were already annotating `❌ [RES] min-h-screen`, citing an ID the suite had never defined. Now **RES-03 / TS-02 / PLAT-01**. Constraints 53 → **56** (17 parser AST + 39 regex).
+- **Gate 10 closes the blind spot.** `test_constraints.py` globs `*.tsx *.jsx *.ts *.js *.html`, so the **94 reference files — ~333k tokens, the part an agent actually loads for depth — were read by no gate at all.** The suite ran over the examples, which are 2% of the corpus. It showed: `glassmorphism.md` prescribed `min-h-screen bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500` under a heading reading **"Must have"** — both banned by name, in the same pack, in the same context window an agent holds. [`scripts/check_references.py`](scripts/check_references.py) imports its constraints from the suite (one definition, no drift), applies only **ban-shaped** ones (a 9-line snippet with no default export is correct, not defective), skips anti-example blocks, and carries a per-file, per-constraint reason on every exemption. First run: 20 violations. All fixed. Second run: 0. Gates 9 → **10**.
+- **Universal install.** `AUTO_AGENTS` was a hardcoded list of 5 while adapter discovery was derived from the directory, so any adapter added without editing that constant installed as a silent no-op. Both installers now derive auto-vs-manual from a `.manual` marker. **14 adapters, 10 automatic (was 5), 4 manual** — adding `AGENTS.md` (Codex, Jules, Devin, Factory, Amp, OpenHands, Junie, VS Code), `.clinerules/`, `.roo/rules/`, `.rules` (Zed) and `GEMINI.md`. **`AGENTS.md` is the one to install if you install only one** — an open spec donated to the Linux Foundation's Agentic AI Foundation, 60k+ repos, the only rules format read by more than one vendor. Gemini CLI gets its own file because it reads `GEMINI.md` and *not* `AGENTS.md`. Kilo Code is deliberately **not** shipped: its docs URL 404s and sources disagree on `.kilo/rules` vs `.kilocode/rules`, and a guessed path is worse than no adapter.
+
+## Previously — v14.5.1
 
 A correctness patch. No new capability — two audit findings that made routing and examples quietly lie about themselves.
 
@@ -232,17 +279,17 @@ Two new skills, both **generative** — design computed at runtime rather than a
 - **Both skills are dependency-free.** Pure React and DOM APIs, with the OKLab conversion matrices written inline rather than pulling in a colour library. This pack installs none of its examples' peer dependencies by design, and this release does not become the exception.
 - **The demo apps are off their vulnerable Next.** `demo/showcase` was pinned to 15.3.9, carrying HIGH advisories including SSRF in Server Actions and a Middleware/Proxy bypass in App Router; both runnable apps are now on 15.5.23. `postcss` and `sharp` remain flagged inside Next's own dependency tree, where the only remedy npm offers is Next 16 — that is recorded rather than quietly carried.
 - **A test-environment gap that was hiding failures.** `window.localStorage` arrives in the suite as a bare object with no methods on it. That is worse than it sounds: correct code wraps storage in `try/catch` for Safari private mode, so the broken stub never threw — it silently took the catch path, and a test asserting "the preference was saved" would have passed for the wrong reason.
-- **Adding two skills cost 103 tokens.** The registry went 1,895 → 1,998 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
+- **Adding two skills cost 103 tokens.** The registry went 1,895 → 2,002 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
 
 ## Verification
 
-Every release is produced by `scripts/build_release.py` with 9 blocking gates:
+Every release is produced by `scripts/build_release.py` with 10 blocking gates:
 
 1. **Pre-flight** — clean tree, token budget, version consistency, no version-string leaks
 2. **Frontmatter** — every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist
 3. **Compile** — `tsc --noEmit` strict + `noImplicitAny` over every example
 4. **Semantic** — 17 AST constraints via the TypeScript compiler API
-5. **Syntactic** — 36 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy)
+5. **Syntactic** — 39 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy)
 6. **Pipeline** — `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves
 7. **Evals + coverage** — 22 eval cases; every gold has a test
 8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
@@ -252,7 +299,7 @@ Then: path integrity, reference-depth audit, a **release source guard** that ref
 
 ```bash
 npm install
-npm run gates    # all 9 gates, no archive
+npm run gates    # all 10 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
@@ -260,11 +307,11 @@ Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passe
 
 ## Issues & contributing
 
-Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 9 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
+Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 10 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
 
 Sending code:
 
-- All changes must pass the 9 gates — CI runs them on every push and PR
+- All changes must pass the 10 gates — CI runs them on every push and PR
 - New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
 - New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
 - New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`
