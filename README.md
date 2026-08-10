@@ -270,7 +270,25 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.0
+## What's new in v14.7.1
+
+**A correction, published because the alternative is a pack that asserts.**
+
+v14.7.0 described its three new constraints as covering "defects the field ships and nobody checks", and said no competing pack enforced any of them. That was asserted, not verified — the exact failure mode this project exists to make impossible. So it was checked against source.
+
+| Constraint | Enforced elsewhere? |
+|---|---|
+| `A11Y-06` — `outline-none` with no indicator | **No.** Zero matches for `outline` across impeccable's 46 detector rules. ui-ux-pro-max carries "Focus states visible for keyboard nav" as a self-graded checklist line with no machine check behind it |
+| `TYP-03` — gradient text on body copy | **Yes — the claim was wrong.** impeccable ships a `gradient-text` detector firing on `background-clip: text` + gradient, and on Tailwind's `bg-clip-text` + `bg-gradient-to-` pair |
+| `FORM-01` — inputs below 16px | **No.** impeccable's font-size floor for interactive text is **11px**, so a 14px input passes it. Its iOS-zoom note is prose in `harden.md`, enforced by nothing |
+
+Sources read: impeccable's `scripts/detector/rules/checks.mjs`, ui-ux-pro-max-skill, taste-skill, and `anthropics/skills` frontend-design — a single `SKILL.md` with no enforcement mechanism of any kind.
+
+`TYP-03` and impeccable's `gradient-text` are still not the same rule: impeccable's fires **unconditionally**, including on a display heading, where gradient text is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized text. That is a difference in precision, not the absence of a competitor, and the docs no longer claim otherwise.
+
+No constraint behaviour changed.
+
+## Previously — v14.7.0
 
 Three constraints for defects the field ships and almost nobody checks — found by sweeping both suites for gaps, then **verified against the competition's actual source** rather than assumed. Of the four packs checked (impeccable, ui-ux-pro-max-skill, taste-skill, `anthropics/skills` frontend-design), exactly one rule is enforced anywhere else: impeccable ships a `gradient-text` detector. It fires unconditionally, including on display headings, where the effect is legitimate; `TYP-03` is scoped to body-sized text. Nothing in any of the four enforces the other two.
 
