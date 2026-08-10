@@ -1,7 +1,7 @@
 ---
 name: design-research
 description: Live web research protocol — browse component libraries, design galleries and motion sites, extract palettes, spacing, easing and interaction models, and convert them into typed constraints before any code is written.
-version: "14.6.0"
+version: "14.7.0"
 core-deps:
   - core/design-tokens.md
   - core/component-api.md

@@ -186,7 +186,7 @@ export function NeoCard({ children, accent = false }: { children: React.ReactNod
 ```tsx
 <input
   className="
-    w-full px-4 py-3 text-sm font-medium
+    w-full px-4 py-3 text-base font-medium
     bg-[--neo-bg] text-[--neo-ink]
     border-[3px] border-[--neo-border] rounded-lg
     shadow-[3px_3px_0px_var(--neo-border)]

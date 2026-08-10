@@ -93,7 +93,7 @@ export function LoginForm() {
           spellCheck={false}
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
-          className={`w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 ${
+          className={`w-full rounded-md border px-3 py-2 text-base outline-none focus:ring-2 focus:ring-blue-500 ${
             errors.email ? "border-red-400 bg-red-50" : "border-gray-300"
           }`}
           {...register("email")}
@@ -118,7 +118,7 @@ export function LoginForm() {
             spellCheck={false}
             aria-invalid={!!errors.password}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className={`w-full rounded-md border px-3 py-2 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full rounded-md border px-3 py-2 pr-10 text-base outline-none focus:ring-2 focus:ring-blue-500 ${
               errors.password ? "border-red-400 bg-red-50" : "border-gray-300"
             }`}
             {...register("password")}
@@ -261,7 +261,7 @@ export function SignUpForm() {
           autoCapitalize="off"
           spellCheck={false}
           aria-invalid={!!errors.email}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("email")}
         />
         {errors.email && <p role="alert" className="text-xs text-red-600">{errors.email.message}</p>}
@@ -276,7 +276,7 @@ export function SignUpForm() {
           autoCapitalize="off"
           spellCheck={false}
           aria-invalid={!!errors.password}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("password")}
         />
         {/* Strength indicator */}
@@ -311,7 +311,7 @@ export function SignUpForm() {
           autoCapitalize="off"
           spellCheck={false}
           aria-invalid={!!errors.confirmPassword}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
@@ -537,7 +537,7 @@ export function MagicLinkForm() {
           autoComplete="email"
           autoCapitalize="off"
           spellCheck={false}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("email")}
         />
         {errors.email && <p role="alert" className="text-xs text-red-600">{errors.email.message}</p>}
@@ -600,7 +600,7 @@ function RequestScreen({ onSent }: { onSent: (email: string) => void }) {
           autoComplete="email"
           autoCapitalize="off"
           spellCheck={false}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("email")}
         />
         {errors.email && <p role="alert" className="text-xs text-red-600">{errors.email.message}</p>}
@@ -671,7 +671,7 @@ function NewPasswordScreen({ token, onSuccess }: { token: string; onSuccess: () 
         <label htmlFor="np-password" className="block text-sm font-medium text-gray-700">New password</label>
         <input id="np-password" type="password" autoComplete="new-password"
           autoCapitalize="off" spellCheck={false}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("password")} />
         {watched.length > 0 && (
           <div className="flex gap-1 h-1.5 mt-1">
@@ -690,7 +690,7 @@ function NewPasswordScreen({ token, onSuccess }: { token: string; onSuccess: () 
         <label htmlFor="np-confirm" className="block text-sm font-medium text-gray-700">Confirm password</label>
         <input id="np-confirm" type="password" autoComplete="new-password"
           autoCapitalize="off" spellCheck={false}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           {...register("confirmPassword")} />
         {errors.confirmPassword && <p role="alert" className="text-xs text-red-600">{errors.confirmPassword.message}</p>}
       </div>
@@ -831,7 +831,7 @@ export function OnboardingFlow() {
                   <div className="space-y-1">
                     <label htmlFor="ob-name" className="block text-sm font-medium text-gray-700">Full name</label>
                     <input id="ob-name" type="text" autoComplete="name" spellCheck={false}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
                       {...methods.register("name")} />
                     {methods.formState.errors.name && (
                       <p role="alert" className="text-xs text-red-600">{(methods.formState.errors.name as any)?.message}</p>

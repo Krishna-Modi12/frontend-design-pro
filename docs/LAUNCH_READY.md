@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,602 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 39 syntactic = 56 constraints · 10 gates · registry 2,002 tokens · heaviest request 6,338 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,610 tokens of lazy depth · 54 examples (44 gold + 10 anti-examples) · 44 test files, 192 tests · 17 semantic + 42 syntactic = 59 constraints · 10 gates · registry 2,002 tokens · heaviest request 6,338 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 44 golds plus 10 deliberate anti-examples = 54 files). A launch audience fact-checks.
 
@@ -42,7 +42,7 @@ What's enforced, rather than asserted:
 - 17 semantic constraints run through the TypeScript compiler API, on every
   gold example — a comment reading `// aria-describedby` is not accessibility,
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
-- 39 regex constraints for what regex is genuinely good at: banned display
+- 42 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
 - 13 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
@@ -102,7 +102,7 @@ It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 6,338 tokens.
-Reference material available: 333,602 tokens.
+Reference material available: 333,610 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -114,7 +114,7 @@ Depth is free because it's lazy.
 4/ Quality is machine-enforced, not asserted.
 
 10 blocking gates. 54 examples compile under tsc strict. 17 semantic
-constraints run through the TypeScript compiler API. 39 regex constraints.
+constraints run through the TypeScript compiler API. 42 regex constraints.
 22 evals.
 
 No gate passes → no archive exists.
@@ -135,7 +135,7 @@ Constraints that cry wolf get turned off. Precision is a feature.
 7/ Things in here that most packs skip:
 
 · motion direction — what an animation *communicates*, not just how to write it
-· AI-generated UI treated as untrusted input, same 56 constraints, no exemptions
+· AI-generated UI treated as untrusted input, same 59 constraints, no exemptions
 · a 6-question intake protocol, because content volume (3 items or 300?)
   changes the architecture more than any other answer
 · icons as typography: hit area independent of glyph size
@@ -198,7 +198,7 @@ A registry rather than a document:
 - 19 skills, 789–1,572 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 94 references, 333,602 tokens. Loaded only when a skill routes to one.
+- 94 references, 333,610 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **5,038 to 6,338 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
@@ -211,7 +211,7 @@ if any skill exceeds 8,000 with dependencies.
 2. Frontmatter — 17/19 skills declare deps that exist
 3. Compile — 54 examples, `tsc --noEmit` strict + noImplicitAny
 4. Semantic — 17 AST constraints via the TypeScript compiler API
-5. Syntactic — 39 regex constraints; anti-examples must FAIL
+5. Syntactic — 42 regex constraints; anti-examples must FAIL
 6. Pipeline — stage markers
 7. Evals + coverage — 22 evals; every gold has a 1:1 test
 8. Budget + registry — every row resolves, every skill in budget

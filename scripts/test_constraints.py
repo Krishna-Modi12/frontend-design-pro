@@ -364,6 +364,61 @@ CONSTRAINTS: List[Constraint] = [
             or _lacks(r"\bonPress(?:In|Out)?\s*=", c),
             "onPress on a web component — the web handler is onClick")),
 
+    # ── Defects the field ships and nobody checks ────────────────────────────
+    # Three rules that survived a sweep of both suites: none of the 56 existing
+    # constraints catches any of them, and no competing pack enforces them at
+    # all. Each is ban-shaped, so each is inherited by Gate 10 over the whole
+    # reference corpus for free — a rule that only holds in examples is a rule
+    # that does not hold where the agent actually reads.
+    Constraint(
+        id="A11Y-06", category="Accessibility",
+        description="outline-none must be paired with a visible focus-visible ring",
+        severity="critical",
+        # A11Y-02 (AST) checks that focus-visible sits on an interactive element —
+        # it catches the ring being in the wrong place. It cannot catch the far
+        # commoner defect: removing the outline and replacing it with nothing.
+        # Tailwind's focus-visible:outline-none is the legitimate reset (the ring
+        # utility supplies the replacement), so only the unqualified form is banned.
+        #
+        # `focus:` counts as well as `focus-visible:`. The rule is "there is a
+        # visible indicator", not "the indicator uses the newer variant" — a
+        # focus:border colour change is a real indicator, and failing it would
+        # make the rule wrong rather than strict.
+        check=lambda c: (
+            not _has(r"(?<!focus-visible:)(?<!focus:)\boutline-none\b", c)
+            or _has(r"focus(?:-visible)?:(?:ring|outline|border|shadow)", c),
+            "outline-none with no focus/focus-visible indicator — keyboard users lose the page"
+        )
+    ),
+    Constraint(
+        id="TYP-03", category="Typography",
+        description="No gradient text on body copy (bg-clip-text is display-only)",
+        severity="high",
+        # Legitimate on a display heading. On prose it sets the computed colour to
+        # transparent, which destroys contrast and silently defeats every contrast
+        # checker — the ratio is measured against a colour no reader ever sees.
+        check=lambda c: (
+            _lacks(
+                r"(?:text-(?:xs|sm|base|lg)|leading-relaxed|prose)[^\"'`]{0,120}\bbg-clip-text\b"
+                r"|\bbg-clip-text\b[^\"'`]{0,120}(?:text-(?:xs|sm|base|lg)|leading-relaxed|prose)",
+                c),
+            "bg-clip-text on body-sized text — the computed colour is transparent, so contrast is unmeasurable"
+        )
+    ),
+    Constraint(
+        id="FORM-01", category="Forms",
+        description="Inputs are ≥16px on mobile — smaller zooms iOS Safari and never zooms back",
+        severity="high",
+        # text-sm is 14px and text-xs is 12px. Below 16px, focusing an input makes
+        # iOS Safari zoom the viewport, and it does not restore on blur. Invisible
+        # on desktop, universal on iPhone. Responsive forms (text-sm sm:text-base)
+        # are the same bug: the small value is the one mobile gets.
+        check=lambda c: (
+            _lacks(r"<(?:input|textarea|select|Input|Textarea|Select)\b[^>]{0,400}?\btext-(?:xs|sm)\b", c),
+            "input/textarea below 16px — iOS Safari zooms the viewport on focus and does not zoom back"
+        )
+    ),
+
     # ── Vercel Web Interface Guidelines ──────────────────────────
     Constraint(
         id="COPY-02", category="Copy",

@@ -31,7 +31,7 @@ There is no rules file to drop in; the pack goes into the system instruction.
 3. Narrow integration: add the one or two `skills/{id}/SKILL.md` files plus the
    `core/*.md` deps you know you need. Broad integration: add all 8 `core/*.md`
    and all 19 skill routers — small enough that a large context window absorbs
-   it. Leave `references/` out; 333,602 tokens is too large to paste wholesale
+   it. Leave `references/` out; 333,610 tokens is too large to paste wholesale
    in any window.
 4. For genuine on-demand loading, wire a function/tool that reads a pack file by
    path, and let the model call it after matching the routing table in `SKILL.md`.

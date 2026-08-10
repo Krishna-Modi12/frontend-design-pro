@@ -655,7 +655,7 @@ export function InlineCorrection({ original, sourceId }: Props) {
             ref={ref}
             defaultValue={original}
             rows={3}
-            className="w-full rounded border p-2 text-sm"
+            className="w-full rounded border p-2 text-base"
           />
           <div className="mt-1 flex gap-2">
             <button onClick={save} className="ph-correction-save text-sm text-blue-600">Save</button>
@@ -723,7 +723,7 @@ export function ChatAssistant() {
           value={input}
           onChange={handleInputChange}
           placeholder="Ask anything…"
-          className="flex-1 rounded border px-3 py-2 text-sm"
+          className="flex-1 rounded border px-3 py-2 text-base"
         />
         <button type="submit" disabled={isLoading} className="ph-chat-submit">
           {isLoading ? 'Thinking…' : 'Send'}
