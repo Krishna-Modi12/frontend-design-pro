@@ -1,31 +1,48 @@
 {
   "_comment": [
     "Response body for GET /api/site/overview, the endpoint app/page.tsx reads on mount.",
-    "That endpoint belongs to the fictional 'Tracepoint' product; this repo ships the",
-    "frontend only, so without it the page renders its error state and the metric strip",
-    "reads 'Status feed unreachable'. This file is the fixture screenshot.png was",
-    "captured against, committed so the image is reproducible rather than asserted.",
-    "Shape is fixed by the demo's own exported types: PlatformMetric (Hero.tsx),",
-    "PlanPrice (Pricing.tsx), RegionState (Footer.tsx). Pricing.tsx already declares the",
-    "tier names and copy — only the price book crosses the network.",
+    "",
+    "Every figure below is copied from metadata.json, and the exact key is named on each",
+    "entry so a reader can check it rather than take it. They are committed here rather",
+    "than computed so the capture is reproducible: screenshot.png is captured against",
+    "exactly this payload, and a recapture only moves pixels when the UI actually changed.",
+    "",
+    "metadata.json is the authority. When a stat moves there it has to move here too, and",
+    "the screenshot has to be recaptured in the same commit — CLAUDE.md names drifting",
+    "counts as this repo's single most repeated defect, and this page is one more place",
+    "for one to drift.",
+    "",
+    "Shape is fixed by PlatformMetric, exported from components/MetricsStrip.tsx.",
     "Recapture instructions: .github/SCREENSHOT_CONTRIBUTION.md"
   ],
   "metrics": [
-    { "id": "steps-committed", "label": "Steps committed", "value": "48.2M", "caption": "last 30 days, all regions" },
-    { "id": "replay-p99", "label": "Replay p99", "value": "310ms", "caption": "cold worker, log-backed resume" },
-    { "id": "duplicate-charges", "label": "Duplicate charges", "value": "0", "caption": "since the log became authoritative" }
-  ],
-  "plans": [
-    { "id": "hobby", "monthlyCents": 0, "annualCents": 0, "unit": "per project" },
-    { "id": "team", "monthlyCents": 4900, "annualCents": 46800, "unit": "per seat" },
-    { "id": "enterprise", "monthlyCents": 19900, "annualCents": 190800, "unit": "per seat" }
-  ],
-  "verified": {
-    "kalimba": "Verified customer · 14 months",
-    "otsu": "Verified customer · 3 years",
-    "meridian": "Verified customer · 8 months",
-    "vela": "Verified customer · 2 years",
-    "sable": "Verified customer · 11 months"
-  },
-  "region": "operational"
+    {
+      "id": "skills",
+      "value": "19",
+      "label": "Skills",
+      "caption": "One is matched per request by trigger keyword, and one is loaded. Never two.",
+      "source": "metadata.json · stats.skills"
+    },
+    {
+      "id": "reference-tokens",
+      "value": "333,602",
+      "label": "Reference tokens",
+      "caption": "Across 94 files. None of it enters the context window by default.",
+      "source": "metadata.json · stats.reference_depth_tokens"
+    },
+    {
+      "id": "constraints",
+      "value": "56",
+      "label": "Constraints",
+      "caption": "17 read the TypeScript AST, 39 read the source. Six of them are on this page.",
+      "source": "metadata.json · stats.ci_constraints"
+    },
+    {
+      "id": "gates",
+      "value": "10",
+      "label": "Blocking gates",
+      "caption": "A red gate refuses to build the archive. There is no override flag.",
+      "source": "metadata.json · stats.release_gates"
+    }
+  ]
 }

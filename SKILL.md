@@ -59,7 +59,7 @@ Every skill also inherits `core/accessibility-baseline.md` and `core/validate-ch
 
 ## Loading protocol
 
-1. Read this file — always (1.8k).
+1. Read this file — always (2.0k).
 2. Match trigger keywords → pick one skill.
 3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated).
 4. Load its listed core deps (0.6–0.9k each) plus the accessibility baseline when producing code.

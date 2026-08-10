@@ -1,8 +1,8 @@
 {
-  "name": "tracepoint-landing-page",
+  "name": "frontend-design-pro-landing",
   "version": "0.1.0",
   "private": true,
-  "description": "demo/landing-page as a standalone Next.js app. The components, tokens and page shell are the committed demo sources — this package only adds the runtime they never had.",
+  "description": "demo/landing-page as a standalone Next.js app — the product homepage for this pack, built under the pack's own rules. Every figure on the page traces to a file in this repo.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +13,7 @@
     "next": "15.5.23",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "lucide-react": "0.545.0"
+    "geist": "1.3.1"
   },
   "devDependencies": {
     "tailwindcss": "4.1.14",

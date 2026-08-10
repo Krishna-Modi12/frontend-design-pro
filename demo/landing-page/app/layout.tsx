@@ -1,45 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { ReactNode } from "react";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 /**
- * `tokens.css` asks for the families by their literal names ("Geist", "Geist
- * Mono"), which only resolve if something has actually loaded them. The
- * screenshot harness did that with a Google Fonts `@import`; self-hosting them
- * here means the page renders the same typeface with no network request, and no
- * flash of the fallback stack while one is in flight.
- *
- * `globals.css` is what bridges the two — it maps `--font-display` and
- * `--font-mono` onto these variables.
+ * `geist` rather than `next/font/google`. Both self-host, but the Google loader
+ * reaches out to fonts.googleapis.com at build time — and this app is built
+ * three times in CI by the screenshot and verify harnesses, on runners where a
+ * cold font fetch is one more thing that can fail for reasons unrelated to the
+ * page. The package ships the files.
  */
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Tracepoint — durable execution for the handlers you already wrote",
+  title: "frontend-design-pro — AI Skill Pack for Production UI",
   description:
-    "Tracepoint checkpoints every step of a workflow to an append-only log, so a worker that dies mid-charge resumes on the next line instead of the first one.",
+    "2,002-token router. 19 skills. 333k tokens of depth. Machine-enforced anti-slop rules.",
 };
 
 export interface RootLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      {/* The page shell owns body colour and margin — it injects `tokenStyles`
-          from lib/tokens.ts, which is also what dashboard and auth-form do. */}
-      <body>{children}</body>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className="bg-surface-page text-ink antialiased">{children}</body>
     </html>
   );
 }

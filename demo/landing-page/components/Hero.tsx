@@ -1,260 +1,220 @@
-"use client";
+import type { ReactElement } from "react";
+import CtaButton from "./CtaButton";
+import { sectionShell } from "../lib/tokens";
 
-import { forwardRef } from "react";
-import type { ButtonHTMLAttributes, ForwardedRef, ReactElement, Ref } from "react";
-import { ArrowRight, BookOpen } from "lucide-react";
-import {
-  alertShell,
-  cardShell,
-  focusRing,
-  fontGeistMono,
-  sectionShell,
-  skeletonBlock,
-  tapTarget,
-} from "../lib/tokens";
+export interface HeroProps {
+  /** Repository the primary CTA points at. Passed in so the URL lives in one place. */
+  repoUrl: string;
+}
 
-/** A single reading from the control plane, already formatted for display. */
-export interface PlatformMetric {
+/** One line of the excerpt, carrying its real line number in `SKILL.md`. */
+interface SourceLine {
+  no: number;
+  text: string;
+}
+
+/**
+ * `SKILL.md` lines 60–68, verbatim. The line numbers are rendered rather than
+ * decorative: this is the whole router, and a reader who thinks the page is
+ * marketing can open the file and diff it against what is on screen.
+ *
+ * Copied rather than read at build time on purpose — the demo is documented as
+ * liftable into another project, and a build that reaches two directories up
+ * for a file outside its own tree stops being liftable.
+ *
+ * The cost of that copy is that these numbers move whenever the registry table
+ * above them gains a row. Two new skills shifted them by two on the way in.
+ * Re-check them against `SKILL.md` before recapturing the screenshot.
+ */
+const ROUTER_EXCERPT: SourceLine[] = [
+  { no: 60, text: "## Loading protocol" },
+  { no: 61, text: "" },
+  { no: 62, text: "1. Read this file — always (2.0k)." },
+  { no: 63, text: "2. Match trigger keywords → pick one skill." },
+  { no: 64, text: "3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated)." },
+  {
+    no: 65,
+    text: "4. Load its listed core deps (0.6–0.9k each) plus the accessibility baseline when producing code.",
+  },
+  {
+    no: 66,
+    text: "5. Each skill has its own `references/` for depth — load a reference **only** when the skill file points you there for the specific task.",
+  },
+  {
+    no: 67,
+    text: "6. **Budget ≤8,000 tokens.** Over budget: drop the deepest reference first, note the omission.",
+  },
+  { no: 68, text: "7. No keyword match → ask ONE clarifying question. Never guess." },
+];
+
+type SegmentKind = "heading" | "path" | "strong" | "plain";
+
+interface Segment {
+  /** Stable across renders: line number plus the offset the run starts at. */
+  id: string;
+  kind: SegmentKind;
+  text: string;
+}
+
+const SEGMENT_INK: Record<SegmentKind, string> = {
+  heading: "text-ink-faint",
+  path: "text-accent",
+  strong: "text-ink",
+  plain: "text-ink-muted",
+};
+
+/** Backticked paths and **bold** runs, in one pass, keeping their delimiters. */
+const MARKUP = /(`[^`]+`|\*\*[^*]+\*\*)/g;
+
+/**
+ * Module scope, not a hook: the excerpt is a constant, so re-tokenising it on
+ * every render would be work with no input that can change.
+ */
+function tokenize(line: SourceLine): Segment[] {
+  if (line.text.startsWith("## ")) {
+    return [{ id: `${line.no}:0`, kind: "heading", text: line.text }];
+  }
+
+  const segments: Segment[] = [];
+  let offset = 0;
+
+  for (const part of line.text.split(MARKUP)) {
+    if (part.length === 0) {
+      continue;
+    }
+    const kind: SegmentKind = part.startsWith("`")
+      ? "path"
+      : part.startsWith("**")
+        ? "strong"
+        : "plain";
+    segments.push({ id: `${line.no}:${offset}`, kind, text: part });
+    offset += part.length;
+  }
+
+  return segments;
+}
+
+const TOKENISED: { line: SourceLine; segments: Segment[] }[] = ROUTER_EXCERPT.map(
+  (line: SourceLine) => ({ line, segments: tokenize(line) }),
+);
+
+interface BudgetFact {
   id: string;
   label: string;
   value: string;
-  caption: string;
 }
-
-export interface CtaButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** `solid` is the page's single primary style; `ghost` is its pair. */
-  tone?: "solid" | "ghost";
-}
-
-const CTA_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-lg px-6 text-base font-medium transition-colors duration-150 ease-out motion-reduce:transition-none";
-
-const CTA_TONES: Record<"solid" | "ghost", string> = {
-  solid: "bg-accent text-accent-ink hover:bg-accent-strong",
-  ghost: "border border-hairline-strong text-ink-muted hover:border-accent hover:text-ink",
-};
 
 /**
- * The page's primary action. Ref-forwarding is load-bearing here: the shell
- * returns focus to this button when the quickstart disclosure closes.
+ * The cost per use, which is a different claim from the inventory in the strip
+ * below: that one is what exists, this is what a request actually pays for it.
+ *
+ * Figures from `docs/AGENT_COMPATIBILITY.md` and step 6 of the protocol in the
+ * panel opposite. The ceiling is not advisory — Gate 8a fails the build when a
+ * skill exceeds it.
  */
-export const CtaButton = forwardRef(function CtaButton(
-  { tone = "solid", className = "", children, type = "button", ...rest }: CtaButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>,
-): ReactElement {
-  return (
-    <button
-      ref={ref}
-      type={type}
-      className={`${tapTarget} ${focusRing} ${CTA_BASE} ${CTA_TONES[tone]} ${className}`}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-});
+const BUDGET: BudgetFact[] = [
+  { id: "per-request", label: "Loaded per request", value: "5,000–6,300 tokens" },
+  { id: "skills-read", label: "Skills read", value: "exactly one" },
+  { id: "ceiling", label: "Hard ceiling", value: "8,000 tokens" },
+];
 
-export interface HeroProps {
-  /** Live control-plane readings. Empty while the first request is in flight. */
-  metrics: PlatformMetric[];
-  isLoading: boolean;
-  /** Transport-level failure text, or `null` when the last read succeeded. */
-  error: string | null;
-  onRetry: () => void;
-  onQuickstart: () => void;
-  quickstartOpen: boolean;
-  ctaRef: Ref<HTMLButtonElement>;
-}
-
-const WORKFLOW_SOURCE = `import { step, workflow } from "@tracepoint/sdk";
-
-export default workflow("reserve-seat", async (order) => {
-  const hold = await step.run("hold-inventory", () =>
-    inventory.hold(order.sku, { qty: order.qty }),
-  );
-
-  await step.sleep("cool-off", "45s");
-
-  const charge = await step.run(
-    "charge-card",
-    { retries: 6, backoff: "exponential" },
-    () => payments.charge(order.paymentId, hold.amountCents),
-  );
-
-  return { holdId: hold.id, chargeId: charge.id };
-});`;
-
-export default function Hero({
-  metrics,
-  isLoading,
-  error,
-  onRetry,
-  onQuickstart,
-  quickstartOpen,
-  ctaRef,
-}: HeroProps): ReactElement {
+/**
+ * The headline steps down to `text-5xl` on mobile rather than starting at
+ * `text-7xl`: "frontend-design-pro" at 72px is wider than a 390px viewport even
+ * after the hyphen break, and `npm run demos:verify` fails a page that scrolls
+ * sideways.
+ */
+export default function Hero({ repoUrl }: HeroProps): ReactElement {
   return (
     <section
       id="overview"
-      aria-labelledby="hero-title"
-      className="relative overflow-hidden border-b border-hairline"
+      className="flex min-h-[100dvh] flex-col justify-center border-b border-surface-border"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(112% 118% at 14% 0%, oklch(25.6% 0.042 186) 0%, oklch(17.4% 0.012 258) 56%)",
-        }}
-      />
-      <div
-        className={`${sectionShell} relative grid gap-14 pt-14 pb-16 sm:pt-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:pt-28 lg:pb-24`}
-      >
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface-sunken px-3 py-1 text-xs uppercase tracking-[0.14em] text-ink-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
-            v3.4 · durable execution
+      <div className={`${sectionShell} grid items-center gap-14 pt-24 lg:grid-cols-12 lg:gap-16`}>
+        <div className="lg:col-span-7">
+          <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">
+            Skill pack · MIT · React · Next.js · Tailwind
           </p>
 
-          <h1
-            id="hero-title"
-            className="mt-6 text-balance text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-[4.25rem]"
-          >
-            Retries and replay belong to the runtime, not to your handlers.
+          <h1 className="mt-6 text-balance break-words text-5xl font-semibold tracking-tighter sm:text-7xl lg:text-8xl">
+            frontend-design-pro
           </h1>
 
-          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-ink-muted">
-            Tracepoint checkpoints every step of a workflow to an append-only log,
-            so a worker that dies mid-charge resumes on the next line instead of the
-            first one. No queues to babysit, no idempotency keys to invent.
+          <div aria-hidden="true" className="mt-8 h-1.5 w-32 rounded-full bg-accent" />
+
+          <p className="mt-8 max-w-lg text-pretty text-lg leading-relaxed text-ink-muted">
+            Your agent loads exactly one skill. Not fifty thousand tokens of slop.
           </p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <CtaButton
-              ref={ctaRef}
-              onClick={onQuickstart}
-              aria-expanded={quickstartOpen}
-              aria-controls="quickstart"
-            >
-              Start building
-              <ArrowRight aria-hidden="true" className="h-4 w-4" strokeWidth={1.75} />
+          <p className="mt-4 max-w-lg text-pretty text-sm leading-relaxed text-ink-faint">
+            A registry that routes instead of a document that gets pasted. The rules
+            below are not advice — they are the checks that refuse to build a release.
+          </p>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <CtaButton href={repoUrl} variant="primary" external>
+              Read the rules
             </CtaButton>
+            <CtaButton href="#registry" variant="secondary">
+              See the registry
+            </CtaButton>
+          </div>
+        </div>
 
-            <a
-              href="#capabilities"
-              className={`${tapTarget} ${focusRing} inline-flex items-center justify-center gap-2 rounded-lg border border-hairline-strong px-6 text-base font-medium text-ink-muted transition-colors duration-150 ease-out hover:border-accent hover:text-ink motion-reduce:transition-none`}
+        <div className="lg:col-span-5">
+          <figure className="m-0">
+            <div
+              role="region"
+              aria-label="SKILL.md router, lines 60 to 68"
+              tabIndex={0}
+              className="overflow-x-auto rounded-xl border border-surface-border bg-surface-sunken p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-page"
             >
-              <BookOpen aria-hidden="true" className="h-4 w-4" strokeWidth={1.75} />
-              How the log works
-            </a>
-          </div>
-
-          <div
-            className="mt-8 border-t border-hairline pt-6"
-            aria-live="polite"
-            aria-busy={isLoading}
-          >
-            <p className="text-xs uppercase tracking-[0.14em] text-ink-faint">
-              Live from the control plane
-            </p>
-
-            {error !== null ? (
-              <div
-                role="alert"
-                className={`${alertShell} mt-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between`}
-              >
-                <p className="text-sm text-ink-muted">
-                  Status feed unreachable — {error}
-                </p>
-                <button
-                  type="button"
-                  onClick={onRetry}
-                  className={`${tapTarget} ${focusRing} inline-flex items-center justify-center rounded-lg border border-hairline-strong px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent motion-reduce:transition-none`}
-                >
-                  Read again
-                </button>
-              </div>
-            ) : isLoading ? (
-              <ul className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-3">
-                {["dispatch", "delivery", "replay"].map((slot: string) => (
-                  <li key={slot}>
-                    <div className={`${skeletonBlock} h-7 w-24`} />
-                    <div className={`${skeletonBlock} mt-2 h-3 w-20`} />
-                    <span className="sr-only">Reading {slot} figures…</span>
-                  </li>
-                ))}
-              </ul>
-            ) : metrics.length > 0 ? (
-              <dl className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-3">
-                {metrics.map((metric: PlatformMetric) => (
-                  <div key={metric.id}>
-                    <dt className="sr-only">{metric.label}</dt>
-                    <dd
-                      data-metric="true"
-                      className="text-2xl font-semibold tabular-nums text-ink"
-                      style={{ fontFamily: fontGeistMono }}
-                    >
-                      {metric.value}
-                    </dd>
-                    {/* A second <dd>, not a <p>: inside a <dl> the only things
-                        that may sit in a term/description group are <dt> and
-                        <dd>, and a stray <p> breaks the pairing for anything
-                        walking the list. Multiple <dd> per <dt> is valid, and
-                        Tailwind's preflight already zeroes the default indent,
-                        so this renders identically. */}
-                    <dd className="mt-1 text-xs leading-relaxed text-ink-faint">
-                      {metric.label} · {metric.caption}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ) : (
-              <div className="mt-4 rounded-lg border border-dashed border-hairline p-4">
-                <p className="text-sm font-medium text-ink">
-                  No samples in the last 60 seconds
-                </p>
-                <p className="mt-1 text-sm text-ink-muted">
-                  The control plane is idle in this region.{" "}
-                  <a
-                    href="/status"
-                    className={`${focusRing} rounded underline decoration-hairline-strong underline-offset-4 hover:decoration-accent`}
-                  >
-                    Open the status history
-                  </a>
-                </p>
-              </div>
-            )}
-          </div>
+              <pre className="m-0 font-mono text-[0.8125rem] leading-relaxed">
+                <code className="grid grid-cols-[2.25rem_1fr] gap-x-3">
+                  {TOKENISED.map(
+                    ({ line, segments }: { line: SourceLine; segments: Segment[] }) => (
+                      <span key={line.no} className="contents">
+                        <span
+                          data-metric="true"
+                          aria-hidden="true"
+                          className="select-none text-right text-ink-faint/70"
+                        >
+                          {line.no}
+                        </span>
+                        <span className="whitespace-pre-wrap break-words">
+                          {segments.map((segment: Segment) => (
+                            <span key={segment.id} className={SEGMENT_INK[segment.kind]}>
+                              {segment.text}
+                            </span>
+                          ))}
+                        </span>
+                      </span>
+                    ),
+                  )}
+                </code>
+              </pre>
+            </div>
+            <figcaption className="mt-3 text-xs text-ink-faint">
+              <code className="font-mono">SKILL.md</code> lines 60–68, unedited. Every
+              other file in the pack is reached from here.
+            </figcaption>
+          </figure>
         </div>
+      </div>
 
-        <div className={`${cardShell} h-fit overflow-hidden shadow-[var(--shadow-lift)]`}>
-          <div className="flex flex-wrap items-center gap-3 border-b border-hairline px-4 py-3">
-            <span className="h-2 w-2 rounded-full bg-success" aria-hidden="true" />
-            <span className="text-xs text-ink-muted" style={{ fontFamily: fontGeistMono }}>
-              checkout/reserve-seat.ts
-            </span>
-            <span className="ms-auto text-xs text-ink-faint">
-              replayed 3× · 0 duplicate charges
-            </span>
-          </div>
-          {/* A region that scrolls has to be reachable by keyboard, or the
-              content past the right edge is mouse-only. tabIndex plus a name
-              makes it a real stop; focusRing keeps that stop visible. */}
-          <pre
-            tabIndex={0}
-            role="region"
-            aria-label="Workflow source, checkout/reserve-seat.ts"
-            className={`${focusRing} overflow-x-auto px-4 py-5 text-[0.8125rem] leading-relaxed text-ink-muted`}
-            style={{ fontFamily: fontGeistMono }}
-          >
-            <code>{WORKFLOW_SOURCE}</code>
-          </pre>
-          <p className="border-t border-hairline px-4 py-3 text-xs leading-relaxed text-ink-faint">
-            <code style={{ fontFamily: fontGeistMono }}>step.sleep</code> survives
-            deploys: the worker exits, the log keeps the timer, a fresh worker picks
-            the run up at the next line.
-          </p>
-        </div>
+      <div className={`${sectionShell} mt-16 pb-14`}>
+        <dl className="flex flex-wrap gap-x-14 gap-y-5 border-t border-surface-border pt-6">
+          {BUDGET.map((fact: BudgetFact) => (
+            <div key={fact.id}>
+              <dt className="text-xs uppercase tracking-[0.14em] text-ink-faint">
+                {fact.label}
+              </dt>
+              <dd data-metric="true" className="mt-1.5 text-sm text-accent">
+                {fact.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

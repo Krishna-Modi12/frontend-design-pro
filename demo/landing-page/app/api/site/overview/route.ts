@@ -1,20 +1,26 @@
-import fixture from "../../../../screenshot-fixture.json";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { NextResponse } from "next/server";
 
 /**
- * `app/page.tsx` reads its metric strip, price book, testimonial verifications
- * and region status from here on mount. The endpoint belongs to the fictional
- * "Tracepoint" product this page advertises — the repo ships the frontend only,
- * so this stands in for it.
+ * The one endpoint the page reads. It serves `screenshot-fixture.json`, whose
+ * figures are copied from `metadata.json` and `docs/TESTING.md` with the source
+ * named on each entry.
  *
- * The body is the committed fixture, imported rather than restated, so the
- * screenshot and the data behind it cannot drift and anyone can reproduce the
- * capture from the repo alone. A plain JSON import also keeps this out of
- * `node:fs`: bundling `fileURLToPath` into a route handler breaks at
- * collect-page-data time.
+ * Read from disk per request rather than imported, so editing the fixture during
+ * `next dev` shows up on reload instead of at the next restart — the fixture is
+ * the thing a contributor changes when a stat moves.
  */
-export function GET() {
-  // `_comment` documents the fixture for a human reader; the page never asks for it.
-  const { _comment, ...payload } = fixture;
-  void _comment;
-  return Response.json(payload);
+export async function GET(): Promise<NextResponse> {
+  const fixture = join(process.cwd(), "screenshot-fixture.json");
+
+  try {
+    const raw = await readFile(fixture, "utf8");
+    return NextResponse.json(JSON.parse(raw));
+  } catch {
+    // A missing or malformed fixture is a real 500, not an empty payload. The
+    // page has an error branch; handing it `{}` would render the empty state
+    // instead and quietly claim the pack has no metrics.
+    return NextResponse.json({ error: "overview fixture unreadable" }, { status: 500 });
+  }
 }
