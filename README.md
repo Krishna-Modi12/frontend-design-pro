@@ -213,7 +213,17 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
-## What's new in v14.5.0
+## What's new in v14.5.1
+
+A correctness patch. No new capability — two audit findings that made routing and examples quietly lie about themselves.
+
+- **Three trigger keywords resolved to two skills each.** `bento`, `avatar` and `contrast` each appeared in two registry rows, so routing between them was undefined rather than decided by specificity. The broader owner keeps the bare term and the narrower one is rescoped: `component-patterns` → `bento-card`, `iconography` → `avatar-icon`, `web-interface` → `contrast-check`. All 204 registry keywords now resolve to exactly one row.
+- **Five gold examples were byte-for-byte copies of another skill's.** The effect was worse than redundancy: four skills had no example of their own subject — `iconography` demonstrated a data table, `design-principles` shipped a landing page, and `ai-ui-generation` and `component-patterns` shared one compound-component file. Each was replaced rather than deleted, because in four of the five cases the skill holding the copy had no other gold. The new ones are [`good-icon-button`](skills/iconography/examples/good-icon-button.tsx) (icon-only controls that carry an accessible name), [`good-spotlight-card`](skills/component-patterns/examples/good-spotlight-card.tsx) (pointer position in CSS custom properties, coalesced into one rAF, never state), [`good-registry-renderer`](skills/ai-ui-generation/examples/good-registry-renderer.tsx) (JSON to UI through a closed allow-list where no prop can carry a handler), and [`good-visual-hierarchy`](skills/design-principles/examples/good-visual-hierarchy.tsx) (rank on size, weight and colour together).
+- **The suite grew 124 → 192 tests** while examples went 55 → 54 and tests 45 → 44. Gold-to-test parity holds at 44/44.
+- **Dependency advisories are documented, not bumped.** Both available fixes need a major (`vitest` 2 → 4, `next` 15 → 16) and every advisory is development- or build-time only — `node_modules/` is not in the archive manifest. Recorded in [docs/RELEASE_NOTES-v14.5.1.md](docs/RELEASE_NOTES-v14.5.1.md) rather than carried silently.
+- **One finding is reported and deliberately not fixed:** `web-interface` ships zero gold examples. It passes Gate 8b only because that gate globs `examples/*.tsx`, which counts anti-examples. Writing one is a content change, not a patch fix.
+
+## Previously — v14.5.0
 
 Two new skills, both **generative** — design computed at runtime rather than authored once. Type rendered as a system, colour derived as a function. Nothing in the pack covered that.
 
