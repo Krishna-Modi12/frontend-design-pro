@@ -4,6 +4,39 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.7.1] — 2026-08-10
+
+A correction. v14.7.0 described its three new constraints as covering "defects
+the field ships and nobody checks", and claimed no competing pack enforced any
+of them. **That was asserted, not verified** — which is precisely the failure
+mode this pack exists to make impossible. It has now been checked against
+source.
+
+### What the check found
+
+| Constraint | Enforced elsewhere? |
+|---|---|
+| `A11Y-06` — `outline-none` with no indicator | **No.** Zero matches for `outline` across impeccable's 46 detector rules. ui-ux-pro-max carries "Focus states visible for keyboard nav" as a self-graded pre-delivery checklist line with no machine check behind it |
+| `TYP-03` — gradient text on body copy | **Yes — the claim was wrong.** impeccable ships a `gradient-text` detector firing on `background-clip: text` plus a gradient (and the Tailwind `bg-clip-text` + `bg-gradient-to-` pair) |
+| `FORM-01` — inputs below 16px | **No.** impeccable's font-size floor for interactive text is **11px**, so a 14px input passes it. Its iOS-zoom note lives in `skill/reference/harden.md` as prose, enforced by nothing |
+
+Sources read: impeccable's `scripts/detector/rules/checks.mjs` (46 rule IDs),
+ui-ux-pro-max-skill, taste-skill, and `anthropics/skills` frontend-design —
+which is a single `SKILL.md` with no enforcement mechanism of any kind.
+
+### What is still true, stated precisely
+
+`TYP-03` and impeccable's `gradient-text` are not the same rule. Impeccable's
+fires **unconditionally**, including on a display heading, where gradient text
+is a legitimate choice rather than a defect. `TYP-03` is scoped to body-sized
+text. That is a real difference in precision — it is not the absence of a
+competitor, and the docs no longer say it is.
+
+No constraint behaviour changed. `README.md` and `core/validate-checklist.md`
+corrected.
+
+---
+
 ## [14.7.0] — 2026-08-10
 
 Three constraints for defects the whole field ships and nobody checks — found by
