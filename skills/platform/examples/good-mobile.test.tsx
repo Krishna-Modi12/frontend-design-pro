@@ -22,4 +22,8 @@ describe('good-mobile', () => {
     await user.click(btn);
     expect(btn).toBeInTheDocument();
   });
+  it('names its main navigation landmark', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
+  });
 });

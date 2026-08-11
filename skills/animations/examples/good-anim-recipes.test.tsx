@@ -20,4 +20,8 @@ describe('good-anim-recipes', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('exposes the notification demo once content loads', async () => {
+    render(<Component />);
+    expect(await screen.findByLabelText('Notification stack demo')).toBeInTheDocument();
+  });
 });

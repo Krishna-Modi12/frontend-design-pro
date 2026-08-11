@@ -27,4 +27,9 @@ describe('good-rhf', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('names the progress region and the primary heading', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Application progress')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Start a project/i);
+  });
 });

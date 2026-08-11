@@ -28,4 +28,9 @@ describe('good-auth', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('offers both federated sign-in paths by name', () => {
+    render(<Component />);
+    expect(screen.getByRole('button', { name: 'Continue with Google' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Continue with GitHub' })).toBeInTheDocument();
+  });
 });

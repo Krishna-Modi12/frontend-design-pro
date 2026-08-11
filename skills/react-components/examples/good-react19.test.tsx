@@ -28,4 +28,9 @@ describe('good-react19', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('names the task filter controls', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Filter tasks')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Sprint tasks/i);
+  });
 });

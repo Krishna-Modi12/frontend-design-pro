@@ -28,4 +28,9 @@ describe('good-shadcn', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('names the team heading and the role filter', () => {
+    render(<Component />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Team members/i);
+    expect(screen.getByLabelText('Filter by role')).toBeInTheDocument();
+  });
 });

@@ -19,4 +19,9 @@ describe('good-react-native', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('names the primary navigation and the dashboard heading', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Primary navigation')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Training Dashboard/i);
+  });
 });

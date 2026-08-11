@@ -19,4 +19,12 @@ describe('good-3d', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('hides the decorative canvas from assistive tech and keeps the meaning in the DOM', () => {
+    // The lesson this gold teaches: a canvas carries no accessible content, so
+    // it is aria-hidden and every meaningful word lives in an overlay a screen
+    // reader can actually reach. Wiring that backwards renders identically.
+    const { container } = render(<Component />);
+    expect(container.querySelector('[aria-hidden="true"]')).toBeTruthy();
+    expect(screen.getAllByRole('heading')[0]).toHaveTextContent(/\S/);
+  });
 });

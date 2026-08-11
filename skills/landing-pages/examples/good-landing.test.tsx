@@ -25,4 +25,8 @@ describe('good-landing', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('names its primary navigation landmark', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Primary')).toBeInTheDocument();
+  });
 });

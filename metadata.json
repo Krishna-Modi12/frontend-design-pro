@@ -139,7 +139,7 @@
     "behavioral_principles": 4,
     "skills": 19,
     "core_files": 8,
-    "reference_depth_tokens": 333969,
+    "reference_depth_tokens": 334051,
     "registry_tokens": 2018,
     "ci_constraints_detail": "59 checks across 59 distinct IDs (17 parser AST + 42 regex)"
   },

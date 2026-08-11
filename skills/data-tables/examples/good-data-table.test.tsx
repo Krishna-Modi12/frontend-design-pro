@@ -27,4 +27,11 @@ describe('good-data-table', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('names the table region and offers a search box', () => {
+    render(<Component />);
+    // The accessible name sits on the <section> wrapping the table, so this is
+    // a region rather than a table — assert where the name actually is.
+    expect(screen.getByRole('region', { name: 'User management table' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search by name or email…')).toBeInTheDocument();
+  });
 });

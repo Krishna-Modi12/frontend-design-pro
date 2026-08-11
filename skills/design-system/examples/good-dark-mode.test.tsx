@@ -22,4 +22,8 @@ describe('good-dark-mode', () => {
     await user.click(btn);
     expect(btn).toBeInTheDocument();
   });
+  it('groups the theme controls under an accessible name', () => {
+    render(<Component />);
+    expect(screen.getByRole('group', { name: 'Theme' })).toBeInTheDocument();
+  });
 });

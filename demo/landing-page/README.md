@@ -32,7 +32,7 @@ constraints run on the project.
 | On the page | Source |
 |---|---|
 | 19 skills · 59 constraints · 11 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 333,969 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
+| 334,051 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
 | 5,665–7,266 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
 | Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
 | Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |
@@ -48,7 +48,7 @@ most recently added skills pushed the loading protocol down by two lines, from
 There is deliberately no test-suite figure on the page, though the reason has
 changed. It used to be that the sources disagreed — `metadata.json`, `README.md`
 and `docs/TESTING.md` each named a different count, so any number on the homepage
-would have contradicted the repo. They now agree: **45 test files, 205 tests**.
+would have contradicted the repo. They now agree: **45 test files, 229 tests**.
 The figure stays off because four metrics is what the strip is sized for and the
 constraint count is the one that carries the argument, not because it is unsafe
 to state.

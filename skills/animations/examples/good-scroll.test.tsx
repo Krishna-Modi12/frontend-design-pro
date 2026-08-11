@@ -19,4 +19,10 @@ describe('good-scroll', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('leads with a single labelled top-level heading', () => {
+    render(<Component />);
+    const h1 = screen.getAllByRole('heading', { level: 1 });
+    expect(h1).toHaveLength(1);
+    expect(h1[0]).toHaveTextContent(/Design faster/i);
+  });
 });

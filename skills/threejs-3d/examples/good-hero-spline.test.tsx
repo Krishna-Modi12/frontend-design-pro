@@ -19,4 +19,10 @@ describe('good-hero-spline', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('describes the 3D scene to assistive tech', () => {
+    render(<Component />);
+    const described = screen.getAllByRole('img');
+    expect(described.length).toBeGreaterThan(0);
+    described.forEach((el: HTMLElement) => expect(el).toHaveAccessibleName());
+  });
 });

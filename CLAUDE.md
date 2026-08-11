@@ -20,7 +20,7 @@ npm run constraints  # Gate 5 only — 42 regex constraints over skills/
 npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
-npm test             # Gate 7's runtime half — 45 files, 205 tests, ~35s
+npm test             # Gate 7's runtime half — 45 files, 229 tests, ~35s
 ```
 
 Renderer-level checks, for when you touch anything under `demo/`. These need a

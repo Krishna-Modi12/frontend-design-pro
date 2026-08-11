@@ -31,4 +31,8 @@ describe('good-checkout', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('resolves into a named order summary', async () => {
+    render(<Component />);
+    expect(await screen.findByLabelText('Order summary')).toBeInTheDocument();
+  });
 });

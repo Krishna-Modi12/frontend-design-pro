@@ -22,4 +22,9 @@ describe('good-perf', () => {
     const items = screen.queryAllByRole('listitem');
     expect(rows.length + items.length).toBeGreaterThan(0);
   });
+  it('resolves its loading state into a searchable catalog', async () => {
+    render(<Component />);
+    expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText('Search by name or role…')).toBeInTheDocument();
+  });
 });

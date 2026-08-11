@@ -19,4 +19,9 @@ describe('good-ai-chat', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('names the chat interface and its heading', () => {
+    render(<Component />);
+    expect(screen.getByLabelText('AI Chat interface')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Meridian AI/i);
+  });
 });

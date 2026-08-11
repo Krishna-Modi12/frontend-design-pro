@@ -24,4 +24,8 @@ describe('good-view-transitions', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('leads with the shop heading', () => {
+    render(<Component />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Shop/i);
+  });
 });

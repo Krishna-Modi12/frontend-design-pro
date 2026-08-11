@@ -24,4 +24,9 @@ describe('good-dashboard', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('labels its section tabs for keyboard users', () => {
+    render(<Component />);
+    expect(screen.getByRole('tablist', { name: 'Dashboard sections' })).toBeInTheDocument();
+    expect(screen.getAllByRole('tab').length).toBeGreaterThan(0);
+  });
 });

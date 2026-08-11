@@ -25,4 +25,8 @@ describe('good-design-md-round-trip', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('exposes the billing-period switch by name', () => {
+    render(<Component />);
+    expect(screen.getByRole('group', { name: 'Billing period' })).toBeInTheDocument();
+  });
 });
