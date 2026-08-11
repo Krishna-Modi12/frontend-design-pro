@@ -4,6 +4,52 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.8.1] — 2026-08-11
+
+**The archive told people to read files it did not contain.**
+
+22 shipped files carried **137 references to `docs/*.md`**, and the archive had
+no `docs/` directory at all. That included **all 14 `install/*/README.md`
+per-agent setup guides** and the last line `setup.sh` prints — on the
+gated-archive route the README recommends to anyone who wants the artifact that
+cannot exist while a gate is red.
+
+It had been broken for the pack's entire life. It was found by doing the thing
+nobody had done in fourteen days and eleven releases: downloading a published
+release into a clean directory and following its own instructions. A pointer
+into nothing is worse than no pointer, because the reader assumes they unzipped
+it wrong.
+
+### Fixed three ways
+
+- **The 13 consumer-facing docs now ship** at `docs/` in the archive — the
+  compatibility matrix, install, usage, architecture, FAQ, testing, demo prompts,
+  and the six per-host setup guides. About 89 KB against a 1.9 MB archive. The
+  split is by **audience, not size**: a consumer needs their host's setup guide
+  and does not need the freeze policy, the review protocol or the launch copy,
+  and shipping those would be shipping the project's internal process to its
+  users.
+- **`docs/CHANGELOG.md` references are repointed to `_meta/CHANGELOG.md`**, where
+  that file actually ships. Repointing beats linking out for a file the reader
+  already has in their hand.
+- **Anything still unshippable becomes an absolute URL pinned to its tag**, not
+  to `main`. An archive is a snapshot; pointing a v14.x reader at whatever `main`
+  says today is how a document starts lying. `_meta/CHANGELOG.md` is exempt from
+  rewriting — it is the historical record, its links were correct where each
+  entry was written, and editing it to suit the archive falsifies it. Same rule
+  the figure gate follows.
+
+### And a check, so it cannot come back
+
+Stage 6 now asserts that **every `docs/` path cited by a shipped file resolves
+inside the archive**. It uses the same two link shapes and the same exclusions as
+the rewriter, so the check and the fix cannot disagree — a backticked path used
+as a link's display text resolves via its URL and is not a dead local pointer.
+
+No constraint, gate count or documented figure changed.
+
+---
+
 ## [14.8.0] — 2026-08-11
 
 **Gate 11 — the figure gate.** `CLAUDE.md` named the same defect as this repo's

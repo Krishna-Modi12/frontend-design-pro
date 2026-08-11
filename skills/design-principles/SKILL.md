@@ -1,7 +1,7 @@
 ---
 name: design-principles
 description: UX laws and design reasoning — cognitive load, Gestalt grouping, Fitts/Hick/Miller, visual hierarchy, and extracting a visual identity into a reusable spec.
-version: "14.8.0"
+version: "14.8.1"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md

@@ -270,7 +270,17 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.8.0
+## What's new in v14.8.1
+
+**The archive told people to read files it did not contain.** 22 shipped files carried 137 references to `docs/*.md`, and the archive had no `docs/` directory at all — including all 14 per-agent setup guides and the last line `setup.sh` prints, on the gated-archive route this README recommends.
+
+It had been broken for the pack's entire life, and was found by doing the thing nobody had done in fourteen days and eleven releases: downloading a published release into a clean directory and following its own instructions.
+
+The 13 consumer-facing docs now ship inside the archive (~89 KB — split by audience, not size: you need your host's setup guide, not our freeze policy). `docs/CHANGELOG.md` repoints to `_meta/CHANGELOG.md`, where it actually ships. Anything still unshippable becomes an absolute URL **pinned to its tag** rather than `main` — an archive is a snapshot, and pointing a v14.x reader at today's `main` is how a document starts lying.
+
+Stage 6 now asserts that every `docs/` path cited by a shipped file resolves inside the archive, using the same link shapes and exclusions as the rewriter, so the check and the fix cannot disagree.
+
+## Previously — v14.8.0
 
 **Gate 11 — the figure gate.** `CLAUDE.md` named the same defect as this repo's worst for several releases: *"No gate validates prose. Counts and token figures are hardcoded across ~30 documents and go stale silently."* Every gate read code. The thing that kept breaking was arithmetic in markdown.
 

@@ -303,7 +303,10 @@ FIGURES: Sequence[Figure] = (
         # Two digits minimum: every per-skill reference count in these docs is
         # single-digit or is guarded by the `has`/`and` suppressor, and the
         # total has been three digits since v14.1.
-        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b",
+        # `(?!\s+to\b)` because "137 references to docs/*.md" counts pointers,
+        # not reference files. A count followed by "to" always names what is
+        # being pointed at, never the corpus.
+        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b(?!\s+to\b)",
         lambda t: (str(t["reference_files"]),),
         forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.]{0,10}$",
     ),
