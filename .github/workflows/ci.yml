@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # `build_release.py --dry-run` IS the contract: it runs all 10 gates in
+      # `build_release.py --dry-run` IS the contract: it runs all 11 gates in
       # order, fails fast, and is the same entry point that builds a release.
       # Everything below is diagnostics for when this step fails.
       - name: Full gate chain (dry run — no archive)

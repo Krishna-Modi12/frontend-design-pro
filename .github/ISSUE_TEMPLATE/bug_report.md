@@ -17,7 +17,7 @@ Path to the skill, reference, or example (e.g. `skills/forms/SKILL.md`, `skills/
 
 ## Which gate catches this?
 
-If you ran `python scripts/build_release.py --dry-run`, which of the 10 gates flagged it (or should have, but didn't)? Check all that apply.
+If you ran `python scripts/build_release.py --dry-run`, which of the 11 gates flagged it (or should have, but didn't)? Check all that apply.
 
 - [ ] 1 — Pre-flight (`SKILL.md` token ceiling, version consistency, no version leaks)
 - [ ] 2 — Frontmatter (`name`/`description`/`version`/`core-deps` on every skill)
@@ -28,6 +28,8 @@ If you ran `python scripts/build_release.py --dry-run`, which of the 10 gates fl
 - [ ] 7 — Evals + coverage (eval cases, 1:1 gold/test coverage)
 - [ ] 8 — Budget + registry (token budget per skill, registry rows resolve)
 - [ ] 9 — Showcase build (`demo/showcase/` builds clean under `next build`)
+- [ ] 10 — References (the constraints run over `skills/*/references/*.md`, not just examples)
+- [ ] 11 — Figures (every documented count and token figure recomputed from the filesystem)
 - [ ] None of these / not sure
 
 ## Agent used
