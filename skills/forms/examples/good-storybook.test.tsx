@@ -28,4 +28,8 @@ describe('good-storybook', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('leads with the support heading', () => {
+    render(<Component />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Contact Support/i);
+  });
 });

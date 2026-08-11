@@ -305,7 +305,11 @@ function Accordion({ children, isOpen }: { children: React.ReactNode; isOpen: bo
   animation: fade-in-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in-up { animation: none; }
+  /* Name the resting state. `animation: none` alone relies on the element's
+     base styles being the settled ones — true here only because the keyframe
+     carries `both`. Set `opacity: 0` on the base class and the content is
+     invisible to exactly the users who asked for less motion. */
+  .animate-fade-in-up { animation: none; opacity: 1; transform: none; }
 }
 ```
 

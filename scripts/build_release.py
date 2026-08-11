@@ -625,6 +625,12 @@ ARCHIVE_DOCS = [
     "FAQ.md", "TESTING.md", "DEMO_PROMPTS.md",
     "CLAUDE_SETUP.md", "CURSOR_SETUP.md", "CHATGPT_SETUP.md",
     "COPILOT_SETUP.md", "GEMINI_SETUP.md", "OPENAI_API_SETUP.md",
+    # Not a setup guide, and it ships for a different reason: README.md and
+    # DEMO_PROMPTS.md both tell the reader to open it in a browser, and it is
+    # the pack's own output on its own defects — the thing the pitch rests on.
+    # 20 KB, zero external references, so it works offline from the archive.
+    # Linking it out to a blob URL would show the reader HTML source instead.
+    "audit-report.html",
 ]
 
 # Links the archive cannot satisfy locally, rewritten to the tag they shipped
@@ -692,16 +698,64 @@ def build_archive(version: str) -> Path:
                 text = text.replace(old, new_path)
 
         def _link(m):
-            nonlocal rewritten
-            target = m.group(1)
-            if target in shipped_docs:
+            """Any relative link that does not resolve inside the archive.
+
+            This was four narrow patterns and shipped eleven dead links anyway:
+            the character class carried no digits or dots (so every
+            `RELEASE_NOTES-v14.x.y.md` slipped through), it matched only `.md`
+            (so `audit-report.html` did), it required a leading `docs/` (so
+            root `CLAUDE.md` and `.github/` did), and it never considered links
+            written relative to their own file (so `docs/FAQ.md`'s siblings did).
+
+            Resolving against the staging tree instead asks the only question
+            that matters — *is this file in the box?* — and cannot go stale when
+            a new unshippable path appears.
+            """
+            nonlocal rewritten, repointed
+            label, target = m.group(1), m.group(2)
+            if target.startswith(("http://", "https://", "mailto:", "#")):
                 return m.group(0)
+            path, _, anchor = target.partition("#")
+            if not path:
+                return m.group(0)
+            # This repo writes links both ways — relative to the file, and
+            # anchored at the repo root. Try both before calling one dead, or a
+            # root-anchored link in a nested file resolves to a path that never
+            # existed (`demo/showcase/` + `docs/FAQ.md`) and gets pinned to a
+            # URL that 404s — trading a dead relative link for a dead absolute
+            # one.
+            rel_to_file = os.path.normpath(
+                os.path.join(os.path.dirname(rel), path)).replace(os.sep, "/")
+            root_anchored = os.path.normpath(path).replace(os.sep, "/")
+            for cand in (rel_to_file, root_anchored):
+                if not cand.startswith("..") and (staging / cand).exists():
+                    return m.group(0)
+            # Staging mirrors the repo, so whichever form names a real repo path
+            # is the one to pin. Prefer the root-anchored reading when the link
+            # starts at a top-level directory the repo actually has.
+            top = root_anchored.split("/")[0]
+            resolved = root_anchored if (REPO / top).exists() or (ROOT / top).exists() else rel_to_file
+            resolved = resolved.lstrip("./")
+            # A relocated file still ships — just elsewhere. Send the reader to
+            # the copy in their hand rather than out to GitHub for it. This is
+            # the case RELOCATED's own string swap misses, because a sibling
+            # link inside docs/ says `CHANGELOG.md`, not `docs/CHANGELOG.md`.
+            if resolved in RELOCATED:
+                here = os.path.dirname(rel)
+                local = os.path.relpath(RELOCATED[resolved], here or ".").replace(os.sep, "/")
+                repointed += 1
+                return f"[{label}]({local}{'#' + anchor if anchor else ''})"
             rewritten += 1
-            return f"]({_REPO_URL}/v{version}/{target})"
+            return f"[{label}]({_REPO_URL}/v{version}/{resolved}{'#' + anchor if anchor else ''})"
 
         def _code(m):
             """A backticked path is still an instruction to go open something.
-            Inline code cannot carry a URL, so it becomes a real link."""
+            Inline code cannot carry a URL, so it becomes a real link.
+
+            Kept scoped to `docs/` on purpose: `skills/new-skill/SKILL.md` and
+            `skills/a/b/c/SKILL.md` are illustrative placeholders in prose, and
+            turning those into links would promise files that never existed.
+            """
             nonlocal rewritten
             target = m.group(1)
             if target in shipped_docs:
@@ -709,8 +763,8 @@ def build_archive(version: str) -> Path:
             rewritten += 1
             return f"[`{target}`]({_REPO_URL}/v{version}/{target})"
 
-        text = re.sub(r"\]\((docs/[A-Za-z_-]+\.md)\)", _link, text)
-        text = re.sub(r"(?<!\[)`(docs/[A-Za-z_-]+\.md)`(?!\])", _code, text)
+        text = re.sub(r"\[([^\]]*)\]\(([^)\s]+)\)", _link, text)
+        text = re.sub(r"(?<!\[)`(docs/[\w.-]+\.(?:md|html))`(?!\])", _code, text)
         if text != original:
             p.write_text(text, encoding="utf-8", newline="\n")
     if rewritten or repointed:
@@ -893,22 +947,43 @@ def archive_content_checks(base: Path, version: str) -> bool:
         if rel in _LINK_REWRITE_EXEMPT:
             continue
         text = p.read_text(encoding="utf-8", errors="replace")
-        # Deliberately the same two shapes the archive rewriter handles, with
-        # the same exclusions, so the check and the fix cannot disagree. The
-        # lookarounds skip a backticked path used as a link's display text —
-        # `[`docs/x.md`](https://…)` resolves via its URL and is not a dead
-        # local pointer.
-        cited = set(re.findall(r"\]\((docs/[A-Za-z_-]+\.md)\)", text))
-        cited |= set(re.findall(r"(?<!\[)`(docs/[A-Za-z_-]+\.md)`(?!\])", text))
+        # This check used to mirror the rewriter's two regexes exactly, on the
+        # stated grounds that "the check and the fix cannot disagree". They
+        # cannot — that is the defect. A check shaped like its fix can only
+        # confirm the fix ran; it can never find what the fix does not already
+        # handle, so it passes whether or not the archive is sound. The release
+        # that introduced this check shipped eleven dead links through a green
+        # run of it — found by unzipping the published archive by hand.
+        #
+        # It now states the requirement on its own terms — *every local pointer
+        # a shipped file offers must resolve inside the archive* — and is
+        # deliberately blind to how the rewriter works.
+        cited = set()
+        for target in re.findall(r"\[[^\]]*\]\(([^)\s]+)\)", text):
+            if not target.startswith(("http://", "https://", "mailto:", "#")):
+                cited.add(target.split("#")[0])
+        # A backticked docs/ path is an instruction to open something even
+        # without link syntax. Left scoped to docs/ because `skills/new-skill/…`
+        # and `skills/a/b/c/…` are illustrative placeholders in prose, not
+        # promises. The lookarounds skip a backticked path used as a link's
+        # display text — `[`docs/x.md`](https://…)` resolves via its URL.
+        cited |= set(re.findall(r"(?<!\[)`(docs/[\w.-]+\.(?:md|html))`(?!\])", text))
         for target in cited:
-            if not (base / target).exists():
-                dead.append(f"{rel} → {target}")
+            if not target:
+                continue
+            rel_to_file = os.path.normpath(
+                os.path.join(os.path.dirname(rel), target)).replace(os.sep, "/")
+            root_anchored = os.path.normpath(target).replace(os.sep, "/")
+            if any(not c.startswith("..") and (base / c).exists()
+                   for c in (rel_to_file, root_anchored)):
+                continue
+            dead.append(f"{rel} → {target}")
     if dead:
         bad(f"{len(dead)} reference(s) to files absent from the archive:")
         for d in sorted(dead)[:10]: print(f"      {d}")
         ok = False
     else:
-        ok_(f"every docs/ path cited by a shipped file resolves inside the archive")
+        ok_("every local pointer in a shipped file resolves inside the archive")
 
     # Same exclusions the archive itself applies, or generated build output
     # (a PNG under .next/ or node_modules/) would be "missing" by design and

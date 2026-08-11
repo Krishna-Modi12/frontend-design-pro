@@ -22,4 +22,8 @@ describe('good-tanstack', () => {
     await user.click(btn);
     expect(btn).toBeInTheDocument();
   });
+  it('exposes the compose action by name', () => {
+    render(<Component />);
+    expect(screen.getByRole('button', { name: 'Write a new post' })).toBeInTheDocument();
+  });
 });

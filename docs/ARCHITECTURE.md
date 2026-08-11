@@ -15,7 +15,7 @@ So the pack is not a document. It is a **registry that routes**.
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,018 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,843, 2,919, 3,011 or 3,747 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **789–1,601 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 94 deep references | **333,969 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 94 deep references | **334,051 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
@@ -43,9 +43,9 @@ design-research     7,266   ← heaviest
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,106 tokens, while `design-research` is the second-largest router in the pack at 1,501 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,266 tokens against 333,969 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,266 tokens against 334,051 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 333,969, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 334,051, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
 The registry is the reason adding skills is cheap, and the generative-design pair gave the cleanest measurement of it so far: **two** skills grew `SKILL.md` from 1,895 to 1,998 tokens — 103 tokens for both, **~51 each**, which is what the earlier single-skill figure predicted. Marginal cost of a skill is about 51 tokens of always-loaded context, plus however much on-demand depth you give it. `canvas-typography` and `color-themes` added 8 references and 65,000 tokens of depth between them, and none of that is loaded unless a request routes to it.
 
@@ -94,7 +94,7 @@ dist/                    build output, gitignored
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
 | 5 | Syntactic | 42 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 45/45 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
-| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 205/205 tests |
+| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 205/229 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 19/19 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
 | 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 94 references, 19 skill routers and 8 core files | 122 files · 0 violations |
@@ -177,7 +177,7 @@ Honest list, all verified against the current release.
 
 ### Recently closed
 
-**The vitest suite did not execute end-to-end** — for four minor versions the first known gap on this page read "28 of 37 test files fail at import time", because the examples' peer libraries existed only as ambient declarations. `test/stubs/` now ships one runtime module per specifier, and Gate 7 runs the suite instead of disclaiming it: **45/45 files, 205/205 tests**.
+**The vitest suite did not execute end-to-end** — for four minor versions the first known gap on this page read "28 of 37 test files fail at import time", because the examples' peer libraries existed only as ambient declarations. `test/stubs/` now ships one runtime module per specifier, and Gate 7 runs the suite instead of disclaiming it: **45/45 files, 205/229 tests**.
 
 Running it found four things that compiling it could not, which is the argument for having done it:
 

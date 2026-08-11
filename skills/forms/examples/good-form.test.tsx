@@ -28,4 +28,10 @@ describe('good-form', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+  it('associates every visible input with a label', () => {
+    render(<Component />);
+    const fields = screen.getAllByRole('textbox');
+    expect(fields.length).toBeGreaterThan(0);
+    fields.forEach((f: HTMLElement) => expect(f).toHaveAccessibleName());
+  });
 });

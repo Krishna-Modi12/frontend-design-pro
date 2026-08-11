@@ -144,7 +144,7 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,018 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,843–3,747 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 789–1,601 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **333,969 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **334,051 tokens** — loaded only when a skill points at it |
 
 **A typical request loads 5,665–7,266 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
@@ -266,7 +266,7 @@ colour for severity must be separate from the brand accent. Tabular figures.
 No horizontal scroll at 390px.
 ```
 
-**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 333,969 available.
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 334,051 available.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
@@ -310,7 +310,9 @@ Two taste defects, both found by diffing our references against external sources
 - **`h-screen` was banned in prose three times and shipped in code five.** `RES-03` keys on the literal `min-h-screen`, so a bare `h-screen` matched nothing — the same blind spot Gate 10 was built for, one token narrower. All five sites are definite-height containers, so `min-h-[100dvh]` would have broken them; they take `h-[100dvh]`, and `h-[100svh]` where the container is scroll-driven and `dvh` would reflow mid-scroll.
 - **Seven further findings are published unfixed** in [`docs/RELEASE_NOTES-v14.7.4.md`](docs/RELEASE_NOTES-v14.7.4.md) — including one that would invalidate ~40 of our own snippets if true, and which stays marked unverified until it is benchmarked. A pack claiming *verified rather than asserted* does not get to adopt a competitor's performance claim on authority.
 
+<!-- figures:historical — the figures v14.7.4 corrected; depth has moved since and rewriting this would falsify what that release actually did -->
 Three published figures were also wrong, two of them before this release: reference depth is **333,969**, a request costs **5,665–7,266** tokens, and the registry is **2,018** — quoted as both 2,002 and 2,018 in the same documents.
+<!-- /figures:historical -->
 
 ## Previously — v14.7.3
 
@@ -423,7 +425,7 @@ npm run gates    # all 11 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
-Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **45 of 45 test files, 205 of 205 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
+Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **45 of 45 test files, 205 of 229 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
 
 ## Issues & contributing
 

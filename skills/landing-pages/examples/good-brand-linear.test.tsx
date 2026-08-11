@@ -23,4 +23,8 @@ describe('good-brand-linear', () => {
     await user.click(btn);
     expect(btn).toBeInTheDocument();
   });
+  it('resolves into a named issues list', async () => {
+    render(<Component />);
+    expect(await screen.findByLabelText('Issues list')).toBeInTheDocument();
+  });
 });

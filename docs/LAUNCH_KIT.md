@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,969 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 205 tests · 17 semantic + 42 syntactic = 59 constraints · 22 evals · 13 regression cases · registry 2,018 tokens · heaviest request 7,266 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 334,051 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 22 evals · 13 regression cases · registry 2,018 tokens · heaviest request 7,266 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
@@ -119,7 +119,7 @@ It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 7,266 tokens.
-Reference material available: 333,969 tokens.
+Reference material available: 334,051 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -220,7 +220,7 @@ A registry rather than a document:
 - 19 skills, 789–1,601 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 94 references, 333,969 tokens. Loaded only when a skill routes to one.
+- 94 references, 334,051 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **5,665 to 7,266 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.

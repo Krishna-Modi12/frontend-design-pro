@@ -20,4 +20,9 @@ describe('good-playwright', () => {
     render(<Component />);
     expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
   });
+  it('names the dashboard heading and its search box', () => {
+    render(<Component />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Playwright CI Dashboard/i);
+    expect(screen.getByPlaceholderText('Search test suites…')).toBeInTheDocument();
+  });
 });
