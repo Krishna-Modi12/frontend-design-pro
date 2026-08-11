@@ -106,8 +106,8 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 | Layer | Cost |
 |---|---|
 | Registry (always) | ~1,800 |
-| One skill | 789–1,572 |
-| Core deps | 2,689–3,593 |
+| One skill | 789–1,601 |
+| Core deps | 2,843–3,747 |
 | **Typical request** | **~5,665–7,266** |
 | Available depth (loaded only on demand) | **333,969** |
 

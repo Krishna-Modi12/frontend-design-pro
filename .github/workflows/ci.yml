@@ -86,6 +86,13 @@ jobs:
         if: failure() && steps.chain.outcome == 'failure'
         run: npx vitest run --reporter=basic
 
+      # Broken out even though Gate 10 is not, because a figure failure is only
+      # actionable as a list. The chain tail-truncates its output, and "64
+      # drifts" without the 64 file:line pairs tells you nothing you can fix.
+      - name: Gate 11 — Documented figures
+        if: failure() && steps.chain.outcome == 'failure'
+        run: python3 scripts/check_figures.py
+
       - name: Parser regression proof
         if: failure() && steps.chain.outcome == 'failure'
         run: node scripts/parser_regression_test.js

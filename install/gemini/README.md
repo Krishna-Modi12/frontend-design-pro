@@ -16,7 +16,7 @@ standard does not cover.
 
 The CLI has a real filesystem, so the registry works as designed: `GEMINI.md`
 routes, and the matched `skills/{id}/SKILL.md` and its references are opened as
-files rather than pasted. Roughly 5,000–6,300 tokens per request instead of the
+files rather than pasted. Roughly 5,665–7,266 tokens per request instead of the
 whole pack.
 
 ## Gemini API — manual

@@ -14,7 +14,7 @@ lives there cannot reach a second session working the same tree.
 ## 1. Spot check — five minutes, before touching anything
 
 ```bash
-python scripts/build_release.py --dry-run 2>&1 | tail -20   # 10 gates
+python scripts/build_release.py --dry-run 2>&1 | tail -20   # 11 gates
 git status --short | wc -l
 git fetch origin && git log --oneline -1 origin/main         # are you even current?
 ```
