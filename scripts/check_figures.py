@@ -429,6 +429,17 @@ SCAN: Sequence[str] = (
     # why it drifted to "53 constraints" and stayed there. A file that states a
     # figure is a claim surface whether or not a consumer ever opens it.
     "tools/screenshots/*.mjs",
+    # The issue template asks a reporter which gate should have caught their bug
+    # and then lists the gates; the workflows describe what they run. Both were
+    # two gates behind — the template could not express "Gate 11 missed it"
+    # because it stopped at 9.
+    ".github/ISSUE_TEMPLATE/*.md",
+    ".github/workflows/*.yml",
+    # Added with the community health files, which quote the figures at a
+    # contributor as instructions. A wrong count here sends someone to argue
+    # with a gate that is right.
+    "CONTRIBUTING.md",
+    "SECURITY.md",
 )
 
 # Wholesale exemptions: records that were accurate when written. Rewriting them
@@ -673,6 +684,71 @@ def check_arithmetic() -> List[Finding]:
     return findings
 
 
+# A pass ratio: "229 of 229 tests", "45/45 files", "22/22 eval cases". These
+# documents only ever report a green run — the whole point of Gate 7 is that a
+# red suite blocks the build, so a released document cannot honestly say some
+# fraction passed. The two halves must therefore be equal, and that is checkable
+# without knowing what the number should be.
+_RATIO = re.compile(
+    r"(?<![\d,])(\d{1,4})\s*(?:of|/)\s*(\d{1,4})\s+"
+    r"(tests?|test files?|files|eval cases?|golds?)\b"
+)
+
+# …except when the ratio is narrating a failure, where an unequal one is the
+# whole content. "29 of 39 files died before running a single assertion" and
+# "28 of 37 test files fail at import time" are both true records of a red run;
+# correcting them to 39/39 and 37/37 would erase the history the passage exists
+# to keep. Both surfaced on the first run of this check.
+_RATIO_OK_IF = re.compile(
+    r"\b(fail\w*|died?|broke\w*|crash\w*|error\w*|regress\w*)\b|\b(?:did|could|would)\s+not\b",
+    re.I,
+)
+
+# The suppressor is tested against a window around the match, not the whole
+# line. These paragraphs run to 400 characters, and a line-wide test let
+# "What the suite does and does not prove" — a clause 200 characters away about
+# something else entirely — silence a genuinely wrong ratio in the README.
+_RATIO_WINDOW = 40
+
+
+def check_pass_ratios() -> List[Finding]:
+    """
+    Catch "205 of 229 tests" — a claim that 24 tests fail, in a document whose
+    sentence says the suite passes.
+
+    This is the shape a blanket substitution leaves behind. When the suite grew,
+    a search-and-replace moved the total and left the numerator on the old
+    value, and the result read as a two-thirds-green build in the README, in
+    TESTING.md and twice in ARCHITECTURE.md. No anchored figure could catch it:
+    the gate would have to know the true test count, and counting tests
+    statically means parsing `it.each` and loops. Equality needs no such
+    knowledge, and it is exactly the property that was violated.
+    """
+    findings: List[Finding] = []
+    for path in _scan_files():
+        rel = path.relative_to(ROOT).as_posix()
+        if "RATIO" in EXEMPT.get(rel, {}):
+            continue
+        lines = path.read_text(encoding="utf-8", errors="replace").split("\n")
+        historical, _ = _historical_lines(lines, rel)
+        for i, line in enumerate(lines, 1):
+            if i in historical:
+                continue
+            for m in _RATIO.finditer(line):
+                passed, total, noun = m.group(1), m.group(2), m.group(3)
+                if passed == total:
+                    continue
+                near = line[max(0, m.start() - _RATIO_WINDOW):m.end() + _RATIO_WINDOW]
+                if _RATIO_OK_IF.search(near):
+                    continue
+                findings.append(Finding(
+                    "ratio", rel, i, "PASS-RATIO",
+                    f"{passed} of {total} {noun}", f"{total} of {total} {noun}",
+                    line.strip()[:150],
+                ))
+    return findings
+
+
 # ── Check 3 — metadata.json vs the filesystem ────────────────────────────────
 
 def check_metadata(truth: Dict[str, object]) -> List[Finding]:
@@ -758,7 +834,7 @@ def main() -> None:
             print(f"  {name:20} {v:>6,}")
         sys.exit(0)
 
-    findings = (check_anchored(truth) + check_arithmetic()
+    findings = (check_anchored(truth) + check_arithmetic() + check_pass_ratios()
                 + check_metadata(truth) + check_changelog_sync())
 
     if "--json" in sys.argv:

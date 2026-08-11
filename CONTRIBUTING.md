@@ -46,7 +46,7 @@ and paste the tail into the description.
 It takes about two minutes. Narrower checks while you iterate:
 
 ```bash
-npm test             # 205 tests across 45 files, ~11s
+npm test             # 229 tests across 45 files, ~23s
 npm run typecheck    # tsc --noEmit strict over every example
 npm run constraints  # the 42 regex constraints over skills/
 npm run figures      # every documented count and token figure vs. the filesystem
