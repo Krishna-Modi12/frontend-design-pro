@@ -424,6 +424,11 @@ SCAN: Sequence[str] = (
     "demo/landing-page/lib/*.ts",
     "demo/landing-page/*.json",
     "skills/agent-ops/references/token-optimization.md",
+    # The screenshot harness is not shipped, but its header explains what the
+    # gates do and does it in numbers — and being outside this list is exactly
+    # why it drifted to "53 constraints" and stayed there. A file that states a
+    # figure is a claim surface whether or not a consumer ever opens it.
+    "tools/screenshots/*.mjs",
 )
 
 # Wholesale exemptions: records that were accurate when written. Rewriting them
@@ -599,6 +604,13 @@ def check_anchored(truth: Dict[str, object]) -> List[Finding]:
                 # sentence nobody wrote.
                 if not first.strip() or not second.strip():
                     continue
+                # In a block comment every continuation line carries a leader,
+                # so "obeys 53" / " * constraints" joins to "53  * constraints"
+                # and no pattern matches across it. Stripped only for source
+                # files: in markdown a leading "*" starts a list item, and
+                # joining a sentence onto a bullet would invent a claim.
+                if path.suffix not in {".md", ".html"}:
+                    second = re.sub(r"^\s*(?:\*|//|#)\s?", "", second)
                 joined = f"{first} {second}"
                 for m in re.finditer(fig.pattern, joined):
                     if m.start() >= len(first) or m.end() <= len(first) + 1:
