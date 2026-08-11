@@ -230,7 +230,7 @@ That is enforced rather than intended: a gate fails the build if any skill excee
 rot as content gets added.
 
 The other difference is that the quality claims are machine-checked — 59 constraints
-(17 AST checks through the TypeScript compiler API, 42 regex) across 10 release-blocking
+(17 AST checks through the TypeScript compiler API, 42 regex) across 11 release-blocking
 gates. If a gate fails, no archive is produced.
 
 Whether that's better for you depends on your host. Real lazy loading needs an agent
@@ -249,9 +249,9 @@ You shouldn't, and the pack doesn't ask you to. It is a constraint system, not a
 quality guarantee.
 
 What's actually verified on every release: gold examples compile under `tsc --noEmit`
-with strict and noImplicitAny; 17 semantic constraints run over the AST; 35 regex
+with strict and noImplicitAny; 17 semantic constraints run over the AST; 42 regex
 constraints run over the source; the showcase demo gets a real `next build` against
-its actually-installed dependencies. Nine gates, all release-blocking — a failure
+its actually-installed dependencies. Eleven gates, all release-blocking — a failure
 means no archive gets built at all.
 
 What is not verified, stated plainly because you'd find it anyway: the suite runs

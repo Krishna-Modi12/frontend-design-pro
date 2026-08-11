@@ -218,6 +218,32 @@ def _n(v) -> str:
     return f"{v:,}"
 
 
+_ONES = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+         "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+         "sixteen", "seventeen", "eighteen", "nineteen")
+_TENS = ("", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
+         "eighty", "ninety")
+
+# Alternation used by the *-WORD figures. Longest-first so "seventeen" is not
+# matched as "seven", which would capture a wrong value and report a wrong
+# expectation.
+_WORD_ALT = "|".join(sorted(
+    set(_ONES) | {f"{t}{sep}{o}" for t in _TENS[2:] for o in _ONES[1:10] for sep in ("-",)}
+    | set(_TENS[2:]),
+    key=len, reverse=True,
+))
+
+
+def _word(v) -> str:
+    """Spell a count the way prose does: 11 -> eleven, 42 -> forty-two."""
+    n = int(v)
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        return _TENS[n // 10] + (f"-{_ONES[n % 10]}" if n % 10 else "")
+    return str(n)          # nobody writes a three-digit count in words
+
+
 # Context that makes a number something other than a current measurement.
 # Applied to every figure, because each of these produced a false positive on
 # the first run and each would produce one again in a document not yet written.
@@ -342,7 +368,45 @@ FIGURES: Sequence[Figure] = (
         r"|`core/\*\.md`\s*\((\d{1,2})\s+files\)",
         lambda t: (str(t["core_files"]),),
     ),
+    # CONSTRAINTS above only matches a bare or CI-qualified count, so a
+    # *qualified* half — "35 regex constraints" — sailed past it while being
+    # wrong by seven. Split counts get their own figures rather than a looser
+    # CONSTRAINTS pattern, because 17, 42 and 59 are three different truths and
+    # one pattern that matched all three could not say which was meant.
+    Figure(
+        "CONSTRAINTS-REGEX",
+        "regex/syntactic half of the constraint count",
+        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b",
+        lambda t: (str(t["regex_constraints"]),),
+    ),
+    Figure(
+        "CONSTRAINTS-AST",
+        "AST/semantic half of the constraint count",
+        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b",
+        lambda t: (str(t["parser_constraints"]),),
+    ),
+    # Figures spelled as words were a stated blind spot of this gate, and the
+    # blind spot had something living in it: a public triage document said
+    # "Nine gates, all release-blocking" long after there were eleven. A count
+    # is no less a claim for being spelled out.
+    #
+    # Captures are lower-cased before comparison — see the `-WORD` branch in the
+    # scan loop — so a sentence-initial "Eleven gates" is not a false positive.
+    Figure(
+        "GATES-WORD",
+        "gate count, spelled out",
+        rf"(?i)\b({_WORD_ALT})\s+(?:named\s+|blocking\s+|release-blocking\s+)?gates\b",
+        lambda t: (_word(t["release_gates"]),),
+    ),
 )
+
+# There is deliberately no SKILLS-WORD. It was written, and it produced eight
+# false positives to one true one: "when two skills match, the more specific
+# wins", "adding two skills cost 103 tokens", "routes to exactly one
+# skills/{id}/SKILL.md". A spelled number before "skills" nearly always counts
+# a subset or a step, not the corpus — whereas gates are a fixed roster, so
+# "N gates" is a claim about all of them. The noun has to be one that only the
+# total can occupy, or the gate gets muted for noise and stops being read.
 
 # Surfaces that make claims about the pack. Reference files are content, not
 # claims, and are excluded — see the module docstring for the one exception.
@@ -482,6 +546,29 @@ def check_anchored(truth: Dict[str, object]) -> List[Finding]:
             f, ln = msg.rsplit(":", 1)[0], int(msg.split(":")[1].split()[0])
             findings.append(Finding("marker", rel, ln, "HISTORICAL",
                                     msg.split(" ", 1)[1], "a closed marker with a stated reason", ""))
+        def judge(fig: Figure, text: str, m, line_no: int, display: str):
+            """One match, judged. Returns a Finding when it is drift, else None."""
+            # A figure's pattern may hold alternates; the captures that actually
+            # fired are the ones to judge.
+            got = tuple(g for g in m.groups() if g is not None)
+            if not got or _suppressed(text, m.start(), fig.forbid):
+                return None
+            word_figure = fig.id.endswith("-WORD")
+            if word_figure:
+                # "Eleven gates" opening a sentence is the same claim as
+                # "eleven gates" inside one.
+                got = tuple(g.lower() for g in got)
+            expected = _expect_range(truth, got) if fig.id == "RANGE" else fig.expect(truth)
+            if len(got) != len(expected) or got == expected:
+                return None
+            # Rounding tolerance is arithmetic and cannot apply to a word — and
+            # int("eleven") would raise here.
+            if (not word_figure and len(got) == 1
+                    and _is_rounding(got[0], int(expected[0].replace(",", "")))):
+                return None
+            return Finding("figure", rel, line_no, fig.id,
+                           " / ".join(got), " / ".join(expected), display)
+
         for fig in FIGURES:
             if fig.id in exemptions:
                 continue
@@ -489,21 +576,36 @@ def check_anchored(truth: Dict[str, object]) -> List[Finding]:
                 if i in historical:
                     continue
                 for m in re.finditer(fig.pattern, line):
-                    # A figure's pattern may hold alternates; the captures that
-                    # actually fired are the ones to judge.
-                    got = tuple(g for g in m.groups() if g is not None)
-                    if not got or _suppressed(line, m.start(), fig.forbid):
+                    found = judge(fig, line, m, i, line.strip()[:150])
+                    if found:
+                        findings.append(found)
+            # Second pass — figures that straddle a hard wrap.
+            #
+            # Prose here is wrapped at ~80 characters, and a line-by-line scan
+            # cannot see a claim split across the fold. "35 regex" ended one line
+            # and "constraints" began the next in a *public* triage document, so
+            # that count sat seven wrong for as long as this gate had existed
+            # while the gate called the file clean. Any figure is one unlucky
+            # wrap away from the same fate, so this is not a special case.
+            #
+            # Only matches crossing the join are reported: anything contained in
+            # either line was judged above, and reporting it twice teaches a
+            # reader to skim the output.
+            for i in range(1, len(lines)):
+                if i in historical or i + 1 in historical:
+                    continue
+                first, second = lines[i - 1], lines[i]
+                # A blank line ends a paragraph. Joining across one invents a
+                # sentence nobody wrote.
+                if not first.strip() or not second.strip():
+                    continue
+                joined = f"{first} {second}"
+                for m in re.finditer(fig.pattern, joined):
+                    if m.start() >= len(first) or m.end() <= len(first) + 1:
                         continue
-                    expected = _expect_range(truth, got) if fig.id == "RANGE" else fig.expect(truth)
-                    if len(got) != len(expected) or got == expected:
-                        continue
-                    if len(got) == 1 and _is_rounding(got[0], int(expected[0].replace(",", ""))):
-                        continue
-                    findings.append(Finding(
-                        "figure", rel, i, fig.id,
-                        " / ".join(got), " / ".join(expected),
-                        line.strip()[:150],
-                    ))
+                    found = judge(fig, joined, m, i, joined.strip()[:150])
+                    if found:
+                        findings.append(found)
     return findings
 
 

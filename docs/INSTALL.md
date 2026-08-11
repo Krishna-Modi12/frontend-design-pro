@@ -15,7 +15,7 @@ that exact name is what makes the path the installer writes a path that exists.
 what it would write first, and nothing is overwritten without `--force`.
 
 This gives you the tree on `main`, which CI checks on every push. The numbered
-route below gives you the released `.skill`, which is built only after all 10
+route below gives you the released `.skill`, which is built only after all 11
 gates pass — the difference matters if you want the artifact that cannot exist
 while anything is red.
 
