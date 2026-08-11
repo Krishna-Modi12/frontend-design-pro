@@ -215,11 +215,23 @@ component inventing its own distance and delay.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 ```
 
-- `prefers-reduced-motion`: disable ALL animations for opt-out users
+**Never write `* { animation: none }` as the global fallback.** `animation: none`
+removes the animation, so `animationend` and `transitionend` never fire — any
+component that gates unmount, cleanup or a state change on those events hangs
+forever, for exactly the users who opted out of motion. A near-zero duration
+removes the motion and still fires the event on the next frame.
+
+- `prefers-reduced-motion`: reduce motion to opacity or nothing — not zero animation. Movement is the objection; a crossfade usually still reads as calm.
+- Scoped overrides are the better tool: name the element and give it its resting state (`.reveal { opacity: 1; transform: none; }`), so nothing lands invisible.
 - Touch devices: no hover-dependent animations
 - Keyboard actions: NEVER animate command palette or keyboard shortcut results
 

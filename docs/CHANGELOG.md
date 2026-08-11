@@ -4,6 +4,51 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.7.4] — 2026-08-11
+
+Two taste defects found by the research layer, both in reference prose that no
+gate reads for correctness. Both were contradictions: the pack stated a rule and
+then shipped code breaking it, in the same skill.
+
+### Fixed
+
+- **The reduced-motion snippet was the harmful form.** `animation-framework.md`
+  and `animation-recipes.md` both prescribed
+  `* { animation: none !important; transition: none !important; }`.
+  `animation: none` removes the animation, so **`animationend` and
+  `transitionend` never fire** — any component gating unmount, cleanup or a state
+  change on those events hangs forever, for exactly the users who asked for less
+  motion. Replaced with the near-zero-duration form
+  (`animation-duration: 0.01ms`), which removes the motion and still fires the
+  event on the next frame.
+
+  It also contradicted the rest of the pack: `motion-direction.md` says "replace
+  movement with opacity, or nothing" and `scroll-experience.md` already did it
+  correctly. The prose now says reduce rather than abolish, and recommends scoped
+  overrides that name an element's resting state, so nothing lands invisible.
+
+- **`h-screen` was banned in prose three times and shipped in code five.**
+  `RES-03` keys on the literal `min-h-screen`, so a bare `h-screen` matched
+  nothing. The prescribed blocks in `scroll-experience.md` (×2), `spline.md`,
+  `brand-core.md` and `brand-design-systems.md` now use `h-[100dvh]` — and
+  `h-[100svh]` for the two scroll-driven containers, where `dvh` reflows
+  mid-scroll as mobile browser chrome collapses. All five are definite-height
+  containers whose children use `h-full` or which rely on `sticky`, so
+  `min-h-[100dvh]` would have broken them; the defect was `screen`, not `min-`.
+
+### Changed
+
+- Figures re-derived from a green gate chain: reference depth 333,709 →
+  **333,969** (the prose fixes above), and a request now costs **5,665–7,266**
+  tokens against a documented 5,511–7,112. The registry figure was stated as both
+  2,002 and 2,018 in the same documents; **2,018** is current. The two sentences
+  recording the registry's historical growth from 1,895 were left alone.
+
+### Known issues
+
+Seven further findings from the same research pass are documented in
+`docs/RELEASE_NOTES-v14.7.4.md` and deliberately not fixed here.
+
 ## [14.7.3] — 2026-08-10
 
 Competitor survey widened from four packs to eight, and `metadata.json`'s

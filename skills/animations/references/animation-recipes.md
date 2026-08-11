@@ -103,7 +103,7 @@ function AnimatedNumber({
 function Typewriter({ text, duration = 2 }: { text: string; duration?: number }) {
   return (
     <span
-      className="overflow-hidden whitespace-nowrap border-r-2 border-current"
+      className="typewriter overflow-hidden whitespace-nowrap border-r-2 border-current"
       style={{
         width: `${text.length}ch`,
         animation: `typing ${duration}s steps(${text.length}) forwards,
@@ -125,7 +125,12 @@ const typewriterCSS = `
   50% { border-color: transparent; }
 }
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; }
+  .typewriter {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    width: ${text.length}ch;                /* settled state: the full text, typed */
+    border-color: transparent !important;   /* and no caret left blinking */
+  }
 }
 `
 ```

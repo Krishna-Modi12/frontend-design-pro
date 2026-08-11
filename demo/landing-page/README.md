@@ -32,7 +32,7 @@ constraints run on the project.
 | On the page | Source |
 |---|---|
 | 19 skills · 59 constraints · 10 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 333,709 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
+| 333,969 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
 | 5,000–6,300 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
 | Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
 | Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |

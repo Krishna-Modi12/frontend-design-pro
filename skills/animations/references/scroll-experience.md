@@ -86,7 +86,7 @@ function ParallaxHero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);   // fades out
 
   return (
-    <div ref={ref} className="relative h-screen overflow-hidden">
+    <div ref={ref} className="relative h-[100svh] overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0">
         <img src="/hero-bg.jpg" alt="" className="w-full h-[150%] object-cover" />
       </motion.div>
@@ -231,7 +231,7 @@ function ScrubVideo({ src }: { src: string }) {
   return (
     <div className="relative h-[400vh]">
       <video ref={ref} muted playsInline preload="auto" poster="/hero-poster.jpg"
-             className="sticky top-0 h-screen w-full object-cover" />
+             className="sticky top-0 h-[100svh] w-full object-cover" />
     </div>
   );
 }

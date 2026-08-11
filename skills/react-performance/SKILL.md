@@ -1,7 +1,7 @@
 ---
 name: react-performance
 description: React/Next.js performance — waterfalls, bundle size, RSC, memoization, rendering, virtualization, Core Web Vitals.
-version: "14.7.3"
+version: "14.7.4"
 core-deps:
   - core/component-api.md
   - core/validate-checklist.md
