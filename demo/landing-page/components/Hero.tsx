@@ -113,7 +113,7 @@ interface BudgetFact {
  * skill exceeds it.
  */
 const BUDGET: BudgetFact[] = [
-  { id: "per-request", label: "Loaded per request", value: "5,000–6,300 tokens" },
+  { id: "per-request", label: "Loaded per request", value: "5,665–7,266 tokens" },
   { id: "skills-read", label: "Skills read", value: "exactly one" },
   { id: "ceiling", label: "Hard ceiling", value: "8,000 tokens" },
 ];

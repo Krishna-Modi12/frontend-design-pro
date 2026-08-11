@@ -26,7 +26,7 @@ A: Yes. `SKILL.md` carries the identity, behavioural preamble, anti-slop wall, t
 
 ## Q: Why is there a feature freeze / no v14.3.0 yet?
 
-A: Because the pack considers itself functionally done — 19 skills, 94 references, 333,969 tokens of on-demand depth, 59 machine-enforced constraints, 10 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
+A: Because the pack considers itself functionally done — 19 skills, 94 references, 333,969 tokens of on-demand depth, 59 machine-enforced constraints, 11 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
 
 The freeze lifts on any **one** of three documented, evidence-based triggers, quoted from `MAINTENANCE.md`:
 
@@ -69,7 +69,7 @@ A: Yes — `ARCHITECTURE.md`'s "Adding to the pack" section is the exact, gate-c
 2. References in `skills/new-skill/references/`, each cited in that skill's Reference Index — an uncited reference gets flagged by the path-integrity stage (this is exactly how `brand-design-systems.md` was caught orphaned — see `CHANGELOG.md`'s v14.2.1 entry)
 3. At least one example in `skills/new-skill/examples/` — Gate 8b fails a skill that ships with none
 4. One new row in the `SKILL.md` registry table: id, path, trigger keywords, core dep
-5. `npm run gates` — all 10 gates, must be green
+5. `npm run gates` — all 11 gates, must be green
 
 Two related rules from the same doc, if your new skill also adds a gold example or a new kind of check: every `good-*.tsx` needs a matching `good-*.test.tsx` (Gate 7 fails a gold with no 1:1 test), and a genuinely new semantic rule needs both a check in `scripts/parser_constraints.js` and a divergence case in `scripts/parser_regression_test.js` proving it beats the regex it replaces.
 

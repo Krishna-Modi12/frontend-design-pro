@@ -1,7 +1,7 @@
 ---
 name: data-tables
 description: Tables, grids, charts and dashboards — sorting, filtering, pagination, selection, KPIs, data fetching.
-version: "14.7.4"
+version: "14.8.0"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md

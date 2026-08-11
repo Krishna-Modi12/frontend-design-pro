@@ -22,7 +22,7 @@ and loading it is neither possible nor the intent.
 5. Read a `frontend-design-pro/skills/{id}/references/*.md` file **only** when the
    routed skill's Reference Index points at it for this specific task. Open it —
    do not paraphrase it from memory.
-6. Budget **8,000 tokens**. A correctly routed request lands near 5,000–6,300.
+6. Budget **8,000 tokens**. A correctly routed request lands near 5,665–7,266.
 
 Before building a page, site, app or dashboard, read
 `frontend-design-pro/core/user-intake.md` and ask what is load-bearing. Building
