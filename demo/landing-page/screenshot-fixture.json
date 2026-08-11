@@ -25,7 +25,7 @@
     },
     {
       "id": "reference-tokens",
-      "value": "333,610",
+      "value": "333,709",
       "label": "Reference tokens",
       "caption": "Across 94 files. None of it enters the context window by default.",
       "source": "metadata.json · stats.reference_depth_tokens"

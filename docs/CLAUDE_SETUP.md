@@ -37,13 +37,13 @@ Desktop projects have no filesystem, so lazy loading degrades: Claude retrieves 
 
 ## Claude.ai (no project)
 
-Paste `SKILL.md` into the conversation and attach the one or two `skills/{id}/` files you need. This is the least good option: 320k tokens of references cannot be attached, so you get the routing rules and the anti-slop wall without the depth.
+Paste `SKILL.md` into the conversation and attach the one or two `skills/{id}/` files you need. This is the least good option: 330k tokens of references cannot be attached, so you get the routing rules and the anti-slop wall without the depth.
 
 ## Verifying it took
 
 Ask: **"Which skill did you load, and what did it cost?"**
 
-A correctly wired agent answers with one skill id, its core deps, and a token figure in the 5,511–7,112 range — for example *"`skills/landing-pages/SKILL.md` plus `core/design-tokens.md`, `core/accessibility-baseline.md` and `core/validate-checklist.md`, about 4,700 tokens."*
+A correctly wired agent answers with one skill id, its core deps, and a token figure in the 5,665–7,266 range — for example *"`skills/landing-pages/SKILL.md` plus `core/design-tokens.md`, `core/accessibility-baseline.md` and `core/validate-checklist.md`, about 4,700 tokens."*
 
 If it says it read everything, or cannot name the skill, it is not routing — it is improvising over whatever it retrieved.
 

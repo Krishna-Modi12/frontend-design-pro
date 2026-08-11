@@ -28,7 +28,7 @@ const SKELETON_SLOTS = ["lead", "second", "third", "fourth"] as const;
  *
  * The track is `2fr 1fr 1fr 1fr`, and the type scale is uneven to match. Note
  * the ceiling on the narrow cells: at `lg` a 1fr column is ~192px, and
- * "333,610" set in a monospace face at `text-5xl` is ~202px — the brief's own
+ * "333,709" set in a monospace face at `text-5xl` is ~202px — the brief's own
  * `text-5xl sm:text-6xl` cannot coexist with the track the brief also specifies,
  * so the narrow cells stop at `text-4xl` and only the lead figure goes large.
  */

@@ -10,7 +10,7 @@ Flat derivative of [LAUNCH_KIT.md](LAUNCH_KIT.md), which stays **canonical** —
 - **Every post now names the installer.** One command, ten agents, each in its own native rules format — the most concrete adoption story the pack has, and it appeared in none of the four posts.
 - The "no screenshot of the showcase" limitation was **false** and is replaced with the caveat that is real: the screenshot is captured by hand, not in CI, so it can go stale.
 
-Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,709 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 205 tests · 17 semantic + 42 syntactic = 59 constraints · 10 gates · registry 2,018 tokens · heaviest request 7,112 tokens.
+Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 94 references · 333,709 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 205 tests · 17 semantic + 42 syntactic = 59 constraints · 11 gates · registry 2,018 tokens · heaviest request 7,112 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
@@ -54,7 +54,7 @@ What's enforced, rather than asserted:
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.
-- 10 blocking gates, and the archive is unzipped and re-verified against its
+- 11 blocking gates, and the archive is unzipped and re-verified against its
   own extracted copy before release. No manual builds.
 
 Installing it is one command. Ten agents get their own native rules file —
@@ -132,7 +132,7 @@ Depth is free because it's lazy.
 
 4/ Quality is machine-enforced, not asserted.
 
-10 blocking gates. 55 examples compile under tsc strict. 17 semantic
+11 blocking gates. 55 examples compile under tsc strict. 17 semantic
 constraints run through the TypeScript compiler API. 42 regex constraints.
 22 evals.
 
@@ -222,7 +222,7 @@ and usability are in direct conflict.
 A registry rather than a document:
 
 - `SKILL.md` — 2,018 tokens, always loaded. Routing table + anti-slop wall.
-- 19 skills, 789–1,572 tokens each. **One** loads per request.
+- 19 skills, 789–1,601 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 94 references, 333,709 tokens. Loaded only when a skill routes to one.
@@ -232,7 +232,7 @@ if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
 
-10 blocking gates in `scripts/build_release.py`, ~45 seconds:
+11 blocking gates in `scripts/build_release.py`, ~45 seconds:
 
 1. Pre-flight — token ceiling, version consistency across three files
 2. Frontmatter — 17/19 skills declare deps that exist

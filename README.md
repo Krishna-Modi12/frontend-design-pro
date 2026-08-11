@@ -4,7 +4,7 @@
 
 A machine-enforced frontend UI/UX skill pack — 19 auto-routing skills, 94 on-demand references, and 59 constraints that a build script actually runs.
 
-**10 release-blocking gates · 17 semantic AST checks · 42 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
+**11 release-blocking gates · 17 semantic AST checks · 42 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
 
 Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
 
@@ -42,7 +42,7 @@ your project root, so the path the installer writes is the path that exists.
 `setup.sh` then detects your agent and writes its native rules file.
 
 Prefer the gated archive over a git tree? Every release attaches a `.skill`
-built only after all 10 gates pass — the tree on `main` is checked by CI, but
+built only after all 11 gates pass — the tree on `main` is checked by CI, but
 the archive is the artifact that cannot exist while anything is red:
 
 ```bash
@@ -137,16 +137,16 @@ One skill loads per request. You never name it — the **Try saying** column is 
 
 ## Architecture — registry + lazy loading
 
-The pack is not a document. It is a **registry that routes**: a monolithic 320k-token pack could not be loaded at all.
+The pack is not a document. It is a **registry that routes**: a monolithic 330k-token pack could not be loaded at all.
 
 | Layer | What it is | Cost |
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,018 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,689–3,593 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 789–1,572 tokens — one per request |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,843–3,747 tokens — the deps one skill declares |
+| `skills/{id}/SKILL.md` | One skill file | 789–1,601 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **333,709 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,511–7,112 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 2,002 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,665–7,266 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 ## Core files (8)
 
@@ -270,7 +270,28 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.3
+## What's new in v14.8.0
+
+**Gate 11 — the figure gate.** `CLAUDE.md` has named the same defect as this repo's worst for several releases: *"No gate validates prose. Counts and token figures are hardcoded across ~30 documents and go stale silently."* Every gate read code. The thing that kept breaking was arithmetic in markdown.
+
+[`scripts/check_figures.py`](scripts/check_figures.py) recomputes every figure from the filesystem — never from `metadata.json`, which it audits instead — and fails the build on any document that disagrees. Its figures are matched by **shape and context**, not against a list of known-stale literals, so it catches the *next* drift rather than only this one. It also checks that stated deltas subtract correctly, which is the shape a partial sweep leaves behind.
+
+**First run: 64 drifts.**
+
+<!-- figures:historical — this list names the superseded figures in order to record that they were wrong; rewriting them to today's values would delete the correction -->
+
+- **The per-request band was wrong in 17 live files**, two of them shipped inside the archive — `AGENT_SYSTEM_PROMPT.md` told an agent its own budget was 5,511–7,112 when it was **5,665–7,266**. A second, rounder band (5,000–6,300) circulated in five more files, including this project's own homepage, already disagreeing with the first before either went stale.
+- **`ARCHITECTURE.md`'s per-skill budget table was wrong in all 19 rows — and had been hand-re-derived twice in the preceding release**, by commits whose messages read *"re-derive every figure"*. It was stale again the moment that release shipped. That is the argument for the gate rather than a footnote to it: the manual process was performed correctly, twice, and still produced a wrong table.
+- **Three documents claimed two skills grew the registry by 103 tokens** between endpoints that subtract to 107 and 123. A blanket substitution had moved the endpoints and left the deltas; only `docs/CHANGELOG.md` kept the self-consistent original, because `CLAUDE.md` forbids rewriting it.
+- **"Nine named gates" sat above a ten-row table.** Gates 2 and 8 reported 17/17 for 19 skills, gate 5 reported 39/39 for 45 golds, path integrity claimed 87 cited references against 95, and `audit-report.html` still said 56 constraints.
+
+<!-- /figures:historical -->
+
+Exemptions carry a written reason, per file and per figure. Historical records — `docs/CHANGELOG.md`, `docs/RELEASE_NOTES-*` — are exempt wholesale: they were accurate when cut, and a gate demanding they match today's figures would be demanding the record be falsified. What it still cannot see: figures spelled as words, and documents outside its scan list.
+
+Gates 10 → **11**.
+
+## Previously — v14.7.3
 
 A review pass, not a feature pass — everything here was found by judging what already shipped.
 
@@ -357,11 +378,11 @@ Two new skills, both **generative** — design computed at runtime rather than a
 - **Both skills are dependency-free.** Pure React and DOM APIs, with the OKLab conversion matrices written inline rather than pulling in a colour library. This pack installs none of its examples' peer dependencies by design, and this release does not become the exception.
 - **The demo apps are off their vulnerable Next.** `demo/showcase` was pinned to 15.3.9, carrying HIGH advisories including SSRF in Server Actions and a Middleware/Proxy bypass in App Router; both runnable apps are now on 15.5.23. `postcss` and `sharp` remain flagged inside Next's own dependency tree, where the only remedy npm offers is Next 16 — that is recorded rather than quietly carried.
 - **A test-environment gap that was hiding failures.** `window.localStorage` arrives in the suite as a bare object with no methods on it. That is worse than it sounds: correct code wraps storage in `try/catch` for Safari private mode, so the broken stub never threw — it silently took the catch path, and a test asserting "the preference was saved" would have passed for the wrong reason.
-- **Adding two skills cost 103 tokens.** The registry went 1,895 → 2,002 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
+- **Adding two skills cost 103 tokens.** The registry went 1,895 → 1,998 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
 
 ## Verification
 
-Every release is produced by `scripts/build_release.py` with 10 blocking gates:
+Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 
 1. **Pre-flight** — clean tree, token budget, version consistency, no version-string leaks
 2. **Frontmatter** — every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist
@@ -377,7 +398,7 @@ Then: path integrity, reference-depth audit, a **release source guard** that ref
 
 ```bash
 npm install
-npm run gates    # all 10 gates, no archive
+npm run gates    # all 11 gates, no archive
 npm run build    # gated archive → dist/
 ```
 
@@ -385,11 +406,11 @@ Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passe
 
 ## Issues & contributing
 
-Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 10 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
+Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 11 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
 
 Sending code:
 
-- All changes must pass the 10 gates — CI runs them on every push and PR
+- All changes must pass the 11 gates — CI runs them on every push and PR
 - New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
 - New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
 - New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`

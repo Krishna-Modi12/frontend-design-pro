@@ -340,6 +340,25 @@ def gate_chain() -> tuple[bool, list]:
     if r.returncode: print(r.stdout[-2000:])
     all_ok &= record("References", ref_ok, ref_detail)
 
+    # Figures — the gate for the defect this repo has shipped more often than any
+    # other. Every gate above reads code; the thing that keeps going wrong is
+    # arithmetic in markdown, and the only defence was remembering to sweep ~30
+    # files by hand. On its first run it found the per-request band stale in 17
+    # live files — two of them shipped inside the archive, so the file that tells
+    # an agent its own token budget carried the wrong number — a 19-row per-skill
+    # table in which every row was wrong, and a sentence claiming two skills cost
+    # "103 tokens" between endpoints that subtract to 123.
+    r = run([PY, str(SCRIPTS / "check_figures.py")])
+    fig_ok = r.returncode == 0
+    ff = re.search(r"\[FIGURES\] (\d+) drift\(s\) · (\d+) files", r.stdout)
+    fig_detail = (
+        f"{ff.group(2)} claim surfaces, figures derived from the filesystem "
+        f"({ff.group(1)} drifts)"
+        if ff else "figure checker produced no summary line"
+    )
+    if r.returncode: print(r.stdout[-3000:])
+    all_ok &= record("Figures", fig_ok, fig_detail)
+
     r = run([PY, str(SCRIPTS / "test_v12_pipeline.py"), str(REPO / "AGENT_SYSTEM_PROMPT.md")])
     # The label was hardcoded "9/9 stage markers" while the checker actually
     # scored 7/9 — two extra checks had been failing silently for three majors.

@@ -13,10 +13,11 @@ Because of that claim, the standing posture here is **judge before building**. R
 ## Commands
 
 ```bash
-npm run gates        # python scripts/build_release.py --dry-run  — all 10 gates, builds nothing. THE check.
+npm run gates        # python scripts/build_release.py --dry-run  — all 11 gates, builds nothing. THE check.
 npm run build        # full gated release: gates + archive + smoke test + release notes
 npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
 npm run constraints  # Gate 5 only — 42 regex constraints over skills/
+npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 205 tests, ~35s
@@ -72,7 +73,7 @@ asserts the result at compile time, `IsAny` tripwire included.
 
 ## Architecture: registry + lazy loading
 
-A monolithic pack of ~320k tokens cannot be loaded at all, so the pack is not a document — it is a **registry that routes**.
+A monolithic pack of ~330k tokens cannot be loaded at all, so the pack is not a document — it is a **registry that routes**.
 
 | Tier | Loaded |
 |---|---|
@@ -81,7 +82,7 @@ A monolithic pack of ~320k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,511–7,112 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,665–7,266 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -114,7 +115,7 @@ Write new golds by modelling closely on an existing one (`skills/landing-pages/e
 - **Version-leak scan.** Pre-flight fails if the *current* version string appears in any file outside an allowlist: `metadata.json`, `README.md`, `package.json`, `docs/CHANGELOG.md`, anything under `skills/`, `.github/workflows/`, `demo/showcase/`, and any `RELEASE_NOTES-*`. **This file is not on that list** — never write the current version literal into `CLAUDE.md`, `docs/MAINTENANCE.md`, or any other doc. A *branch name* containing the version counts as a leak too.
 - **Version bumps touch three places** and Gates 1–2 fail on any being out of step: `metadata.json`, a new top `## [x.y.z]` header in `docs/CHANGELOG.md`, and the `version:` line in **every** `skills/*/SKILL.md`.
 - **Published figures are LF/git-index measurements**, not Windows working-tree ones. A CRLF checkout measures marginally higher, so `build_release.py` run locally on Windows prints larger numbers than the canonical ones. Do not "correct" the docs back to a local Windows reading.
-- **No gate validates prose.** Skill/reference/example counts and token figures are hardcoded across ~30 documents and go stale silently — this is the single most repeated defect in this repo's history, and several releases exist only to correct it. Any change to the counts means sweeping `README.md`, `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `docs/USAGE.md`, `docs/LAUNCH_*.md`, `docs/MAINTENANCE.md`, `install/*/README.md` and `skills/agent-ops/references/token-optimization.md`. Re-derive from a green `--dry-run`; never hand-edit. **Leave `docs/RELEASE_NOTES-*` and prior `CHANGELOG.md` entries alone** — they were accurate when cut, and rewriting them falsifies the record.
+- **Documented figures are gated now — run `npm run figures` before you argue with it.** Counts and token figures hardcoded across ~30 documents going stale silently was the single most repeated defect in this repo's history, and several releases exist only to correct it. Gate 11 (`scripts/check_figures.py`) recomputes every figure from the filesystem and fails the build on any document that disagrees, so a count change no longer depends on remembering the sweep list. It also checks that stated deltas subtract correctly — `A → B … C tokens` where `B - A ≠ C` is the shape that kept slipping through, when a blanket substitution moved an endpoint and left the delta behind. (Writing that example with real numbers fails the gate, which is the gate working.) What it still cannot see: figures spelled as words ("nine gates"), and anything in a document outside `SCAN`. **Leave `docs/RELEASE_NOTES-*` and prior `CHANGELOG.md` entries alone** — they were accurate when cut, rewriting them falsifies the record, and the gate exempts them for that reason.
 
 ## Git discipline
 
@@ -124,7 +125,7 @@ Two concurrent agent sessions against this working directory caused three bad re
 - `.githooks/pre-commit` blocks any commit adding **5+ new files** and prints the list, so you cannot sweep another writer's work in by accident. It fires for the lock owner too — that is the point. Override with `FDP_ALLOW_CONCURRENT=1 git commit …` only after confirming every listed path is yours. Install with `git config core.hooksPath .githooks` (per-clone, cannot be committed).
 - `git fetch` and check `git log --oneline -1` before every commit, tag and push.
 
-Releases: tag must be annotated (`git tag -a`). Pushing a `v*` tag fires `.github/workflows/release.yml`, which re-runs all 10 gates on a clean runner and publishes a public GitHub Release with the archive attached — so the tag push is the irreversible step, not the commit.
+Releases: tag must be annotated (`git tag -a`). Pushing a `v*` tag fires `.github/workflows/release.yml`, which re-runs all 11 gates on a clean runner and publishes a public GitHub Release with the archive attached — so the tag push is the irreversible step, not the commit.
 
 ## Policy
 

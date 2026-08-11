@@ -4,6 +4,80 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.8.0] — 2026-08-11
+
+**Gate 11 — the figure gate.** `CLAUDE.md` has named the same defect as this
+repo's worst for several releases:
+
+> No gate validates prose. Skill/reference/example counts and token figures are
+> hardcoded across ~30 documents and go stale silently — this is the single most
+> repeated defect in this repo's history.
+
+Every gate read code. The thing that kept breaking was arithmetic in markdown,
+defended only by remembering to sweep a list of files after every change that
+moved a count.
+
+### What the gate does
+
+`scripts/check_figures.py` recomputes every figure from the filesystem — never
+from `metadata.json`, which it audits instead — and fails the build on any
+document that disagrees. Token figures are LF-normalised, so it reports the same
+numbers on Windows and on ubuntu-latest; a gate whose entire job is arithmetic
+cannot have a platform-dependent answer.
+
+Four checks:
+
+1. **Anchored figures.** Each is a regex matching the *shape and context* of a
+   figure, not a list of known-stale literals — so the next drift is caught, not
+   only this one.
+2. **Arithmetic consistency.** `A → B … C tokens` must satisfy `B - A = C`. This
+   is the shape a partial sweep leaves behind: an endpoint updated, a delta not.
+3. **`metadata.json` against the tree.** Twelve derivable stats.
+4. **`metadata.json`'s changelog against this file.** The two drifted apart once
+   already and passed a green chain twice, because nothing compared them.
+
+### What the first run found — 64 drifts
+
+- **The per-request band was wrong in 17 live files**, two of them shipped inside
+  the archive. `AGENT_SYSTEM_PROMPT.md` told an agent its own budget was
+  5,511–7,112 when it was 5,665–7,266.
+- **A second, rounder band was circulating in five more files** — 5,000–6,300,
+  including on the product's own homepage — already disagreeing with the first
+  before either went stale.
+- **`ARCHITECTURE.md`'s per-skill budget table was wrong in all 19 rows**, and
+  had been hand-re-derived *twice in the preceding release*, by commits whose
+  messages read "re-derive every figure". It was stale again the moment that
+  release shipped. That is the argument for the gate rather than a footnote to
+  it: the manual process was performed correctly, twice, and still produced a
+  wrong table.
+- **Three documents claimed two skills grew the registry by 103 tokens** between
+  endpoints that subtract to 107 and 123. A blanket substitution had moved the
+  endpoints and left the deltas; only this file kept the self-consistent
+  original, because `CLAUDE.md` forbids rewriting it.
+- **"Nine named gates" sat above a ten-row table.** Gates 2 and 8 reported 17/17
+  for 19 skills, gate 5 reported 39/39 for 45 golds, path integrity claimed 87
+  cited references against 95, `GEMINI_SETUP.md` said "the 17 routers",
+  `audit-report.html` said 56 constraints, and the rounded "~320k" depth was 4%
+  low against 333,709.
+
+All fixed. Second run: 0.
+
+### Boundaries
+
+Exemptions carry a written reason, per file and per figure — an exemption
+without one is indistinguishable from a bug someone silenced. Historical records
+are exempt wholesale: this file and `docs/RELEASE_NOTES-*` were accurate when
+cut, and a gate demanding they match today's figures would be demanding the
+record be falsified.
+
+What it still cannot see: figures spelled as words ("nine gates"), and any
+document outside its `SCAN` list.
+
+Gates 10 → **11**. No constraint behaviour changed; no skill, reference or
+example was added.
+
+---
+
 ## [14.7.3] — 2026-08-10
 
 Competitor survey widened from four packs to eight, and `metadata.json`'s
