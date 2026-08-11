@@ -114,7 +114,15 @@ defects; batching the rest into a taste patch would have made it unreviewable.
 | F8 | `animation-framework.md` bans bare `linear`/`ease` outright; `motion-direction.md` correctly permits `linear` inside progress bars. Constant-velocity motion that eases is a defect, not a refinement — the rule should carve out constant motion rather than forbid the keyword | Low |
 | F9 | Stagger band documented as 30–60 ms against an upstream 30–80 ms. Ours is a deliberate tightening, recorded here so it is not "fixed" back | Low |
 
-Two further gaps, neither a finding against the pack itself:
+Three further gaps, none a finding against the pack itself:
+
+- **`--bump-patch` does not bump README's "What's new in vX" heading**, though it
+  bumps `metadata.json`, the changelog and all 19 skill frontmatters. Stage 6
+  catches the mismatch and deletes the archive — but Stage 6 only runs on a real
+  build, so `--dry-run` is green right up until the tag is pushed and the release
+  job fails. This release hit exactly that. The check is doing its job; the gap is
+  that the bump and the check know about different files, and only one of them
+  runs before you tag.
 
 - **`RES-03` still keys on `min-h-screen`.** Widening it to `\bh-screen\b` is the
   obvious follow-up, but it would then fire on the deliberate `// WRONG` example

@@ -270,7 +270,17 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
-## What's new in v14.7.3
+## What's new in v14.7.4
+
+Two taste defects, both found by diffing our references against external sources rather than by reading our own pack. Both are the same shape: **a rule stated in prose, and code breaking it in the same skill.**
+
+- **The reduced-motion snippet was the harmful form.** Two references prescribed `* { animation: none !important }`. That does not shorten the animation, it removes it — so `animationend` and `transitionend` **never fire**, and any component gating unmount or cleanup on those events hangs forever, for exactly the users who asked for less motion. The near-zero-duration form removes the motion and still fires the event. It was also an internal contradiction: `motion-direction.md` says *"replace movement with opacity, or nothing"*, and `scroll-experience.md` already did it correctly.
+- **`h-screen` was banned in prose three times and shipped in code five.** `RES-03` keys on the literal `min-h-screen`, so a bare `h-screen` matched nothing — the same blind spot Gate 10 was built for, one token narrower. All five sites are definite-height containers, so `min-h-[100dvh]` would have broken them; they take `h-[100dvh]`, and `h-[100svh]` where the container is scroll-driven and `dvh` would reflow mid-scroll.
+- **Seven further findings are published unfixed** in [`docs/RELEASE_NOTES-v14.7.4.md`](docs/RELEASE_NOTES-v14.7.4.md) — including one that would invalidate ~40 of our own snippets if true, and which stays marked unverified until it is benchmarked. A pack claiming *verified rather than asserted* does not get to adopt a competitor's performance claim on authority.
+
+Three published figures were also wrong, two of them before this release: reference depth is **333,969**, a request costs **5,665–7,266** tokens, and the registry is **2,018** — quoted as both 2,002 and 2,018 in the same documents.
+
+## Previously — v14.7.3
 
 A review pass, not a feature pass — everything here was found by judging what already shipped.
 
