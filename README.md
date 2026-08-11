@@ -429,7 +429,9 @@ Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passe
 
 Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 11 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
 
-Sending code:
+**Security problems do not go in the issue tracker** — [SECURITY.md](SECURITY.md) has the private reporting route and explains what counts as a vulnerability in a pack that has no runtime. Reference material that would make an agent write insecure code is in scope; this repo has already shipped fixes for two such defects.
+
+Sending code — [CONTRIBUTING.md](CONTRIBUTING.md) is the full guide, including the traps that will fail your build before you understand why. The short version:
 
 - All changes must pass the 11 gates — CI runs them on every push and PR
 - New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
@@ -445,6 +447,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout,
 **Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [ChatGPT](docs/CHATGPT_SETUP.md) · [OpenAI API](docs/OPENAI_API_SETUP.md) · [Copilot](docs/COPILOT_SETUP.md) · [Gemini](docs/GEMINI_SETUP.md) · [Generic](docs/INSTALL.md) · [Compatibility matrix](docs/AGENT_COMPATIBILITY.md)
 
 **Reference** — [Usage](docs/USAGE.md) · [Architecture](docs/ARCHITECTURE.md) · [Testing](docs/TESTING.md) · [Known gaps](docs/ARCHITECTURE.md#known-gaps) · [Maintenance policy](docs/MAINTENANCE.md) · [Demo prompts](docs/DEMO_PROMPTS.md) · [Changelog](docs/CHANGELOG.md)
+
+**Taking part** — [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md)
 
 ## License
 

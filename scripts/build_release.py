@@ -413,7 +413,13 @@ def gate_chain() -> tuple[bool, list]:
 
         vitest = _find_bin("vitest")
         if vitest:
-            vr = run([vitest, "run", "--reporter=basic"], timeout=900)
+            # `basic` was deprecated in vitest 3 and REMOVED in 4, where an
+            # unknown name is treated as a path to a custom reporter module —
+            # so the flag failed with ERR_LOAD_URL from loadCustomReporterModule
+            # and the gate reported "vitest FAILED" for a suite that was green.
+            # `default` prints the same two summary lines the regexes below
+            # match, and exists in every version this project has used.
+            vr = run([vitest, "run", "--reporter=default"], timeout=900)
             # The summary carries SGR colour codes even when redirected, and the
             # reporter splits itself across both streams — so join them and strip
             # before matching. Reading the raw stdout matched nothing and reported
@@ -471,7 +477,75 @@ def path_integrity() -> bool:
         txt = (sk.parent / "SKILL.md").read_text(encoding="utf-8")
         for ref in sk.glob("*.md"):
             if ref.name not in txt: warn(f"{sk.parent.name}: {ref.name} not cited in its Reference Index")
+    # every relative markdown link in the repo resolves
+    if not markdown_links(): ok = False
     return ok
+
+
+# Directories that are not ours to police: vendored code, build output, caches.
+_LINK_SKIP_DIRS = {"node_modules", ".git", "dist", "__pycache__", ".next", ".venv"}
+
+# The historical record quotes broken things on purpose. `docs/CHANGELOG.md`
+# describes the day `[Releases](../../releases)` 404'd and the day a
+# `![](screenshot.png)` pointed at nothing — naming the defect is the entry's
+# whole content. Demanding those resolve would demand the record be falsified,
+# which is the same reason Gate 11 exempts these two surfaces.
+_LINK_EXEMPT = ("docs/CHANGELOG.md", "docs/RELEASE_NOTES-")
+
+_FENCE = re.compile(r"```.*?```|~~~.*?~~~", re.S)
+_INLINE_CODE = re.compile(r"`[^`\n]*`")
+_MD_LINK = re.compile(r"\[[^\]]*\]\(\s*([^)\s]+?)\s*(?:\"[^\"]*\")?\)")
+
+
+def markdown_links() -> bool:
+    """
+    Does every relative link in the repo's markdown point at something real?
+
+    Nothing checked this until now. The gates read code; `check_figures.py`
+    reads the numbers in prose; no gate read the *pointers* in prose. That is
+    the same blind spot that let the archive ship 137 dead `docs/*.md`
+    references for eleven releases — a link is only ever exercised by a reader,
+    and a reader is exactly who no gate simulates.
+
+    Two parsing rules, each load-bearing:
+      · fenced blocks are stripped, because a link inside ``` is sample text
+      · inline code spans are stripped, because prose quoting a bad link —
+        "`docs/INSTALL.md` linked `[Releases](../../releases)`" — is describing
+        one, not making one. Both existing hits in this repo were that shape.
+
+    This lives in Stage 3 rather than becoming Gate 12 on purpose. A twelfth
+    gate would move a figure published in ~30 documents, and re-deriving that
+    everywhere to add a check is a poor trade when the check is squarely path
+    integrity, which is what Stage 3 already is.
+    """
+    files = [p for p in ROOT.rglob("*.md")
+             if not (_LINK_SKIP_DIRS & set(p.parts))]
+    broken: list[str] = []
+    checked = 0
+    for p in files:
+        rel = p.relative_to(ROOT).as_posix()
+        if any(rel.startswith(x) for x in _LINK_EXEMPT):
+            continue
+        text = p.read_text(encoding="utf-8", errors="replace")
+        stripped = _INLINE_CODE.sub(" ", _FENCE.sub(" ", text))
+        for m in _MD_LINK.finditer(stripped):
+            target = m.group(1)
+            if target.startswith(("http://", "https://", "mailto:", "#", "<")):
+                continue
+            checked += 1
+            path = target.split("#", 1)[0]
+            if not path:
+                continue
+            if not (p.parent / path).resolve().exists():
+                broken.append(f"{rel}:{stripped[:m.start()].count(chr(10)) + 1} → {target}")
+    if broken:
+        for b in broken[:25]:
+            bad(f"dead link: {b}")
+        if len(broken) > 25:
+            bad(f"… and {len(broken) - 25} more")
+        return False
+    ok_(f"all {checked} relative markdown links resolve across {len(files)} files")
+    return True
 
 
 # ── Stage 4 — Token budget ───────────────────────────────────────────────────
