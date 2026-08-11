@@ -534,6 +534,34 @@ def gate_showcase() -> bool:
 # exactly the audience the adapters were written for.
 ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo", "install"]
 ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE", "setup.sh", "setup.ps1"]
+
+# The consumer-facing half of docs/. These ship because the archive told people
+# to read them and then did not contain them: 22 shipped files carried 137
+# references to docs/*.md, including all 14 install/*/README.md — the per-agent
+# setup instructions — and the last line setup.sh prints. Anyone taking the
+# gated-archive route the README recommends followed a pointer into nothing.
+#
+# The split is by audience, not by size. A consumer needs the compatibility
+# matrix and their host's setup guide; they do not need MAINTENANCE.md's freeze
+# policy, REVIEW_PROTOCOL.md's session checklist or the launch copy, and
+# shipping those would be shipping the project's internal process to its users.
+# Cost of the set below is ~89 KB against a ~1.9 MB archive.
+ARCHIVE_DOCS = [
+    "AGENT_COMPATIBILITY.md", "INSTALL.md", "USAGE.md", "ARCHITECTURE.md",
+    "FAQ.md", "TESTING.md", "DEMO_PROMPTS.md",
+    "CLAUDE_SETUP.md", "CURSOR_SETUP.md", "CHATGPT_SETUP.md",
+    "COPILOT_SETUP.md", "GEMINI_SETUP.md", "OPENAI_API_SETUP.md",
+]
+
+# Links the archive cannot satisfy locally, rewritten to the tag they shipped
+# under so they resolve and match the archive's own contents. Pinning to the tag
+# rather than main matters: an archive is a snapshot, and pointing a v14.x reader
+# at whatever main says today is how a document starts lying.
+_REPO_URL = "https://github.com/Krishna-Modi12/frontend-design-pro/blob"
+# _meta/CHANGELOG.md is exempt. It is the historical record, its links were
+# correct in the repo where each entry was written, and rewriting it to suit the
+# archive falsifies it — the same rule the figure gate follows.
+_LINK_REWRITE_EXEMPT = {"_meta/CHANGELOG.md"}
 EXCLUDE_TOP = {"src"}
 EXCLUDE_PATTERNS = re.compile(r"(^|/)(\.git|node_modules|__pycache__|test_outputs|\.next|out)(/|$)|\.(tmp|bak|draft|pyc)$")
 
@@ -549,6 +577,11 @@ def build_archive(version: str) -> Path:
     if CHANGELOG.exists():                              # docs/CHANGELOG.md → _meta/ in archive
         (staging / "_meta").mkdir(parents=True, exist_ok=True)
         shutil.copy2(CHANGELOG, staging / "_meta/CHANGELOG.md")
+    for name in ARCHIVE_DOCS:                           # consumer-facing docs/ → archive docs/
+        src = REPO / "docs" / name
+        if src.exists():
+            (staging / "docs").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, staging / "docs" / name); count += 1
     for item in ARCHIVE_FROM_SRC:                       # src/* flattened → archive root
         src = ROOT / item
         if not src.exists(): continue
@@ -562,6 +595,54 @@ def build_archive(version: str) -> Path:
                     dest = staging / p.relative_to(ROOT)
                     dest.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(p, dest); count += 1
+    # Any docs/ pointer the archive still cannot satisfy becomes an absolute,
+    # tag-pinned URL. Everything in ARCHIVE_DOCS resolves locally and is left
+    # alone, so this only touches the internal docs a consumer has no local copy
+    # of — currently just README.md's citations of the freeze policy and the
+    # review protocol.
+    shipped_docs = {f"docs/{n}" for n in ARCHIVE_DOCS}
+    # The changelog ships — just at a different path. Repointing beats linking
+    # out to GitHub for a file the reader already has in their hand.
+    RELOCATED = {"docs/CHANGELOG.md": "_meta/CHANGELOG.md"}
+    rewritten = repointed = 0
+    for p in list(staging.rglob("*.md")) + [staging / "setup.sh", staging / "setup.ps1"]:
+        if not p.exists():
+            continue
+        rel = p.relative_to(staging).as_posix()
+        if rel in _LINK_REWRITE_EXEMPT:
+            continue
+        text = original = p.read_text(encoding="utf-8")
+        for old, new_path in RELOCATED.items():
+            if old in text:
+                repointed += text.count(old)
+                text = text.replace(old, new_path)
+
+        def _link(m):
+            nonlocal rewritten
+            target = m.group(1)
+            if target in shipped_docs:
+                return m.group(0)
+            rewritten += 1
+            return f"]({_REPO_URL}/v{version}/{target})"
+
+        def _code(m):
+            """A backticked path is still an instruction to go open something.
+            Inline code cannot carry a URL, so it becomes a real link."""
+            nonlocal rewritten
+            target = m.group(1)
+            if target in shipped_docs:
+                return m.group(0)
+            rewritten += 1
+            return f"[`{target}`]({_REPO_URL}/v{version}/{target})"
+
+        text = re.sub(r"\]\((docs/[A-Za-z_-]+\.md)\)", _link, text)
+        text = re.sub(r"(?<!\[)`(docs/[A-Za-z_-]+\.md)`(?!\])", _code, text)
+        if text != original:
+            p.write_text(text, encoding="utf-8", newline="\n")
+    if rewritten or repointed:
+        print(f"      {rewritten} unshippable docs/ link(s) pinned to v{version}; "
+              f"{repointed} repointed to their archive location")
+
     DIST.mkdir(exist_ok=True)
     archive = DIST / f"frontend-design-pro-v{version}.skill"
     if archive.exists(): archive.unlink()
@@ -723,6 +804,37 @@ def archive_content_checks(base: Path, version: str) -> bool:
             bad(f"archive CHANGELOG tops out at {m.group(1)}, expected {version}"); ok = False
         elif m:
             ok_(f"archive CHANGELOG tops out at {version}")
+
+    # Every local path a shipped file tells the reader to open must be in the
+    # archive. This shipped broken for the pack's entire life: 22 files carried
+    # 137 references to docs/*.md and the archive contained no docs/ at all —
+    # including all 14 per-agent setup guides and the last line setup.sh prints,
+    # on the gated-archive route the README recommends. A pointer into nothing
+    # is worse than no pointer, because the reader assumes they unzipped it wrong.
+    dead: list = []
+    for p in sorted(base.rglob("*.md")) + [base / "setup.sh", base / "setup.ps1"]:
+        if not p.exists():
+            continue
+        rel = p.relative_to(base).as_posix()
+        if rel in _LINK_REWRITE_EXEMPT:
+            continue
+        text = p.read_text(encoding="utf-8", errors="replace")
+        # Deliberately the same two shapes the archive rewriter handles, with
+        # the same exclusions, so the check and the fix cannot disagree. The
+        # lookarounds skip a backticked path used as a link's display text —
+        # `[`docs/x.md`](https://…)` resolves via its URL and is not a dead
+        # local pointer.
+        cited = set(re.findall(r"\]\((docs/[A-Za-z_-]+\.md)\)", text))
+        cited |= set(re.findall(r"(?<!\[)`(docs/[A-Za-z_-]+\.md)`(?!\])", text))
+        for target in cited:
+            if not (base / target).exists():
+                dead.append(f"{rel} → {target}")
+    if dead:
+        bad(f"{len(dead)} reference(s) to files absent from the archive:")
+        for d in sorted(dead)[:10]: print(f"      {d}")
+        ok = False
+    else:
+        ok_(f"every docs/ path cited by a shipped file resolves inside the archive")
 
     # Same exclusions the archive itself applies, or generated build output
     # (a PNG under .next/ or node_modules/) would be "missing" by design and
