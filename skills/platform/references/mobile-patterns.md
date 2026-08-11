@@ -10,7 +10,7 @@ Version: 10.15.0
 Use `min-h-[100dvh]` over `h-screen`. The `dvh` unit accounts for dynamic viewport changes (browser chrome appearing/disappearing). `svh` (small viewport height) is the smallest the viewport will ever be — use it when you need content to never overflow regardless of browser chrome.
 
 ```tsx
-// WRONG — h-screen clips content behind mobile browser chrome
+// WRONG — violates RES-03. h-screen clips content behind mobile browser chrome
 <div className="h-screen">...</div>
 
 // RIGHT — dvh fills the current dynamic viewport

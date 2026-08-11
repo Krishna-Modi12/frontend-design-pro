@@ -607,7 +607,7 @@ Ready-to-use CSS + component patterns extracted directly from brand analysis.
 // Sidebar component
 function LinearSidebar({ items, active }: SidebarProps) {
   return (
-    <nav className="w-[240px] h-screen bg-[--bg] border-r border-[--border] flex flex-col py-3">
+    <nav className="w-[240px] h-[100dvh] bg-[--bg] border-r border-[--border] flex flex-col py-3">
       {items.map(item => (
         <a
           key={item.href}

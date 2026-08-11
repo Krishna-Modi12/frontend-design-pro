@@ -1,7 +1,7 @@
 ---
 name: testing
 description: Component testing — Vitest, Testing Library, jest-axe, Playwright e2e, Storybook stories, mock policy.
-version: "14.7.3"
+version: "14.7.4"
 core-deps:
   - core/component-api.md
   - core/validate-checklist.md
