@@ -15,8 +15,8 @@ that has the right strings and none of the files.
 The failure this exists to catch is quiet. A missing or wrong base path leaves
 a page that still returns 200 and renders as unstyled HTML — it reads like a
 CSS bug and is a routing one. Composing two apps makes it likelier rather than
-less: the showcase's assets have to carry /showcase and the landing page's must
-not, and one shared config drives both.
+less: the landing page's assets have to carry /landing-page and the showcase's
+must not, and one shared config drives both.
 """
 
 from __future__ import annotations
@@ -55,9 +55,10 @@ def main(argv: list[str]) -> int:
     # The entry points a visitor actually lands on. Checking assets alone would
     # pass an upload that lost a page entirely.
     required = {
-        "the landing page (site root)": site / "index.html",
-        "the showcase (/showcase/)": site / "showcase" / "index.html",
-        "the overview endpoint the landing page reads on mount": site / "api" / "site" / "overview",
+        "the showcase (site root)": site / "index.html",
+        "the landing page (/landing-page/)": site / "landing-page" / "index.html",
+        "the overview endpoint the landing page reads on mount":
+            site / "landing-page" / "api" / "site" / "overview",
     }
     missing_pages = [label for label, path in required.items() if not path.is_file()]
     for label in missing_pages:

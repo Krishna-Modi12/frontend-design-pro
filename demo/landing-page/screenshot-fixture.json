@@ -15,6 +15,11 @@
     "Values are irregular on purpose: the anti-slop wall bans round data, because 1,000",
     "deploys and 50% faster are what a generated page says when nobody measured anything.",
     "",
+    "No entry carries a \"source\" key, because none of these is copied from anywhere. If",
+    "you ever add one that is — \"source\": \"metadata.json · stats.release_gates\" — Gate 11",
+    "reads that key and fails the build when the value drifts from the stat it names. That",
+    "check exists because this file once served the pack's own counts and went stale.",
+    "",
     "Shape is fixed by PlatformMetric, exported from components/MetricsStrip.tsx.",
     "Recapture instructions: .github/SCREENSHOT_CONTRIBUTION.md"
   ],
