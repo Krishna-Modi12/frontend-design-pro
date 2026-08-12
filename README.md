@@ -392,7 +392,22 @@ No horizontal scroll at 390px.
 
 ## Release history
 
-## What's new in v14.8.1
+## What's new in v14.9.0
+
+**Eight of the ten references our own gold examples cite did not exist.** Six `good-*.tsx` open with a `// Source doctrine:` line naming where their rules come from. Ten references are named across those six files; **two resolved**. Each missing one was planned in an ingestion batch that ran out of context budget before the file was written — the comment shipped, the reference never did.
+
+No gate could see it. Stage 3 path integrity reads *backticked* `` `references/…md` `` paths inside `skills/*/SKILL.md`; these are unbackticked comments in `.tsx`, which is neither the file nor the syntax it looks at. Eight dead pointers survived every green build for as long as the examples have existed. Stage 3 now walks the examples too, and **was verified to fail before it was trusted** — run against the previous release it names all eight.
+
+**The pack ships a marketplace manifest for the first time.** `.claude-plugin/` was blocked for three research batches on a real fear: that a `skills` array would make a host load all nineteen skills, turning a router into the monolith it exists to replace. Surveying `microsoft/agent-skills` retired it — nobody enumerates, and one plugin ships 40 `SKILL.md` behind a single directory pointer.
+
+But their pointer is not ours, and copying it would have been the bug. Behind Microsoft's `./skills/` are the skills they want registered; behind ours are the nineteen the router exists to hide. We ship `"skills": ["./"]` — the root that holds the router — and [`.claude-plugin/README.md`](.claude-plugin/README.md) records why, since JSON carries no comments. This is a declaration, not a proof: nothing surveyed documents what a host does on load, so the first listing carries an obligation to confirm **one** skill registers rather than nineteen.
+
+<details>
+<summary><b>Earlier releases — v14.8.1 back to v14.5.0</b></summary>
+
+<br>
+
+## Previously — v14.8.1
 
 **The archive told people to read files it did not contain.** 22 shipped files carried 137 references to `docs/*.md`, and the archive had no `docs/` directory at all — including all 14 per-agent setup guides and the last line `setup.sh` prints, on the gated-archive route this README recommends.
 
@@ -401,11 +416,6 @@ It had been broken for the pack's entire life, and was found by doing the thing 
 The 13 consumer-facing docs now ship inside the archive (~89 KB — split by audience, not size: you need your host's setup guide, not our freeze policy). `docs/CHANGELOG.md` repoints to `_meta/CHANGELOG.md`, where it actually ships. Anything still unshippable becomes an absolute URL **pinned to its tag** rather than `main` — an archive is a snapshot, and pointing a v14.x reader at today's `main` is how a document starts lying.
 
 Stage 6 now asserts that every `docs/` path cited by a shipped file resolves inside the archive, using the same link shapes and exclusions as the rewriter, so the check and the fix cannot disagree.
-
-<details>
-<summary><b>Earlier releases — v14.8.0 back to v14.5.0</b></summary>
-
-<br>
 
 ## Previously — v14.8.0
 
