@@ -1,7 +1,7 @@
 ---
 name: react-performance
 description: React/Next.js performance — waterfalls, bundle size, RSC, memoization, rendering, virtualization, Core Web Vitals. Use when the complaint is speed or the task is an audit — slow pages, request waterfalls, oversized bundles, unnecessary re-renders, long lists, Core Web Vitals, Server Component boundaries, lazy loading, prefetching.
-version: "14.9.0"
+version: "14.10.0"
 core-deps:
   - core/component-api.md
   - core/validate-checklist.md

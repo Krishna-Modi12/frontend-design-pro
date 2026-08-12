@@ -27,7 +27,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **96** | **337,392 tokens** | **2,088 tokens** | **5,794–7,394** | **59** | **11** |
+| **19** | **97** | **339,838 tokens** | **2,099 tokens** | **5,876–7,476** | **59** | **11** |
 
 </div>
 
@@ -89,7 +89,7 @@ It installs as **one** skill, which is the shape this pack needs: the root `SKIL
 > npx skills add Krishna-Modi12/frontend-design-pro --list --full-depth  # the router plus all 19 behind it, as peers
 > ```
 >
-> The default is the one you want. `--full-depth` turns a 2,088-token registry into nineteen skills competing to match your request, which is the architecture this pack exists to avoid.
+> The default is the one you want. `--full-depth` turns a 2,099-token registry into nineteen skills competing to match your request, which is the architecture this pack exists to avoid.
 
 The installer sends anonymous install telemetry by default; `DISABLE_TELEMETRY=1 npx skills add …` opts out. That is the CLI's behaviour, not the pack's — see [what this pack does on your machine](#what-this-pack-does-on-your-machine).
 
@@ -169,7 +169,7 @@ The remaining hosts need a web UI or a merge into a file your repo owns, so they
 | **[Cursor](docs/CURSOR_SETUP.md)** | 1. Unzip into the workspace <br> 2. Create `.cursor/rules/*.mdc` with the routing instructions (legacy: `.cursorrules`) <br> 3. `@`-reference `SKILL.md` the first time in Chat/Composer <br> ⚠️ May paraphrase a reference instead of reading it — `@`-reference the specific file if output drifts generic |
 | **[ChatGPT Custom GPT](docs/CHATGPT_SETUP.md)** | 1. Create a Custom GPT <br> 2. Upload `SKILL.md` + the `core/*.md` files a typical request needs + 2–3 relevant skill routers <br> 3. Paste routing instructions into Instructions <br> ⚠️ 20-file knowledge cap total — curate a subset, retrieval search not lazy loading |
 | **[OpenAI API](docs/OPENAI_API_SETUP.md)** | 1. Put `SKILL.md` (+ known-relevant skill/core files) in the system message for a narrow integration <br> 2. Or build a function-calling loop that fetches pack files by path for real per-request loading <br> ⚠️ No built-in gate-script awareness — wire it in yourself if enforcement matters |
-| **[GitHub Copilot](docs/COPILOT_SETUP.md)** | 1. Unzip into the repo <br> 2. Create `.github/copilot-instructions.md` with a *short* routing instruction (not the full `AGENT_SYSTEM_PROMPT.md`) <br> 3. Optional: path-scoped `.github/instructions/*.instructions.md` with `applyTo` <br> ⚠️ Always-loaded in full, not fetch-on-demand — the 96 references are out of reach unless pasted by hand |
+| **[GitHub Copilot](docs/COPILOT_SETUP.md)** | 1. Unzip into the repo <br> 2. Create `.github/copilot-instructions.md` with a *short* routing instruction (not the full `AGENT_SYSTEM_PROMPT.md`) <br> 3. Optional: path-scoped `.github/instructions/*.instructions.md` with `applyTo` <br> ⚠️ Always-loaded in full, not fetch-on-demand — the 97 references are out of reach unless pasted by hand |
 | **[Gemini](docs/GEMINI_SETUP.md)** | 1. Put `SKILL.md` in the system instruction (add `core/*.md` + skill routers too for a broad integration — the large context window absorbs it) <br> 2. For true on-demand loading, wire function-calling to fetch pack files by path <br> ⚠️ Static context by default, not lazy loading — a big window makes the cost affordable, not free |
 
 **Don't see your agent?** [`install/`](install/) adds adapters for Windsurf, Continue.dev, Aider and OpenAI Codex CLI — untested against the matrix, but following each host's documented rules format. [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
@@ -214,7 +214,7 @@ One skill loads per request. You never name it — the **Try saying** column is 
 | [`react-performance`](skills/react-performance/SKILL.md) | Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals | *"This page has a 4s LCP. Find the waterfall and fix it."* |
 | [`web-interface`](skills/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas | *"Review this component. What's wrong with it that I'm not seeing?"* |
 | [`testing`](skills/testing/SKILL.md) | Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy | *"Write tests for this form — including the validation errors and an axe pass."* |
-| [`platform`](skills/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
+| [`platform`](skills/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
 
 ### Meta
 
@@ -234,12 +234,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,088 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,843–3,747 tokens — the deps one skill declares |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,099 tokens** — always loaded |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,914–3,818 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 843–1,674 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **337,392 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **339,838 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,794–7,394 tokens, not 337,392.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,876–7,476 tokens, not 339,838.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -382,7 +382,7 @@ colour for severity must be separate from the brand accent. Tabular figures.
 No horizontal scroll at 390px.
 ```
 
-**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 337,392 available.
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 339,838 available.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
@@ -392,7 +392,22 @@ No horizontal scroll at 390px.
 
 ## Release history
 
-## What's new in v14.9.0
+## What's new in v14.10.0
+
+**The pack was written touch-first, and never said what changes when the pointer is precise.** `platform` carried nine references — mobile, React Native, email, i18n, SEO, Stripe, AI SDK and two agent-ops files — and nothing at all about desktop. [`references/desktop-patterns.md`](skills/platform/references/desktop-patterns.md) closes it.
+
+The value is not the topic. It is that three of our own rules read differently there, and the pack had never said so: we enforce ≥44×44px targets everywhere, but on a pointer-only surface the **WCAG AA floor is 24×24 CSS px**; the 4pt scale is unchanged but desktop density is a choice of *step* within it, 8 rather than 4; and hover is an enhancement on touch but the **primary affordance** on desktop, where a pointer resting on a control with no feedback reads as broken. It also names the constraint the mobile-first material never states — a desktop app is stared at for hours, so motion is judged on its hundredth repetition, not its first.
+
+**Reconciling that found a wrong specification citation in a core file.** `core/accessibility-baseline.md` claimed *"Targets ≥44×44px with ≥24px spacing (§2.5.8)"* — a AAA number attributed to an AA criterion. §2.5.8 *Target Size (Minimum)* is AA and asks for 24×24; the 44×44 figure is §2.5.5 *Target Size (Enhanced)*, which is AAA. The 44px rule is right and unchanged, a deliberate house rule stricter than AA; the citation behind it was wrong, in one of the eight files loaded on every matched request. No gate reads a specification number and none can — this surfaced only because an ingested source disagreed.
+
+Also: **Skiper UI** joins the shadcn ecosystem catalogue, flagged as the one entry with a paid tier. **`brand-extraction.md` gains palette sourcing for things that are not brands** — paintings, film grades and terminal themes behave differently and carry different rights, and a palette derived from a work is an evocation, never a reproduction.
+
+<details>
+<summary><b>Earlier releases — v14.9.0 back to v14.5.0</b></summary>
+
+<br>
+
+## Previously — v14.9.0
 
 **Eight of the ten references our own gold examples cite did not exist.** Six `good-*.tsx` open with a `// Source doctrine:` line naming where their rules come from. Ten references are named across those six files; **two resolved**. Each missing one was planned in an ingestion batch that ran out of context budget before the file was written — the comment shipped, the reference never did.
 
@@ -401,11 +416,6 @@ No gate could see it. Stage 3 path integrity reads *backticked* `` `references/�
 **The pack ships a marketplace manifest for the first time.** `.claude-plugin/` was blocked for three research batches on a real fear: that a `skills` array would make a host load all nineteen skills, turning a router into the monolith it exists to replace. Surveying `microsoft/agent-skills` retired it — nobody enumerates, and one plugin ships 40 `SKILL.md` behind a single directory pointer.
 
 But their pointer is not ours, and copying it would have been the bug. Behind Microsoft's `./skills/` are the skills they want registered; behind ours are the nineteen the router exists to hide. We ship `"skills": ["./"]` — the root that holds the router — and [`.claude-plugin/README.md`](.claude-plugin/README.md) records why, since JSON carries no comments. This is a declaration, not a proof: nothing surveyed documents what a host does on load, so the first listing carries an obligation to confirm **one** skill registers rather than nineteen.
-
-<details>
-<summary><b>Earlier releases — v14.8.1 back to v14.5.0</b></summary>
-
-<br>
 
 ## Previously — v14.8.1
 
@@ -487,7 +497,7 @@ The v14.7.1 check covered four packs. It now covers eight, against one narrow, f
 
 | Pack | Rules enforced mechanically? | Own reference material gated? |
 |---|---|---|
-| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 96 references and blocks the archive |
+| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 97 references and blocks the archive |
 | impeccable | 46 detector rules | **No** — 14 test targets, but `test:detector` runs against `tests/fixtures/antipatterns`. Nothing points the detector at `skill/reference/*.md` |
 | ui-ux-pro-max-skill | No | No — `validate:csv` / `check:assets` are schema and asset validation; the design guidance is a self-graded pre-delivery checklist |
 | `anthropics/skills` frontend-design | No | No — the directory is `SKILL.md` and `LICENSE.txt` |

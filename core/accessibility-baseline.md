@@ -24,7 +24,7 @@ Normal text ≥4.5:1, large text ≥3:1, non-text UI ≥3:1. Never convey meanin
 
 ## Touch and motion
 
-Targets ≥44×44px with ≥24px spacing (§2.5.8). `touch-action: manipulation`. Any drag interaction needs a single-pointer alternative (§2.5.7). Help stays in a consistent position (§3.2.6). Never re-ask for data already given in the session (§3.3.7). No cognitive-test CAPTCHA without an alternative (§3.3.8). `prefers-reduced-motion` disables animation, autoplay, parallax and auto-rotation.
+Targets ≥44×44px — that is §2.5.5, which is **AAA**, and this pack's house rule. The **AA** floor is §2.5.8: 24×24 CSS px, or smaller with ≥24px of clear spacing. Hold 44 wherever a surface can be touched; `platform/references/desktop-patterns.md` is the one place the 24px floor applies, and it says which to pick and why. `touch-action: manipulation`. Any drag interaction needs a single-pointer alternative (§2.5.7). Help stays in a consistent position (§3.2.6). Never re-ask for data already given in the session (§3.3.7). No cognitive-test CAPTCHA without an alternative (§3.3.8). `prefers-reduced-motion` disables animation, autoplay, parallax and auto-rotation.
 
 ## States
 
