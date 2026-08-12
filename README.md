@@ -1,12 +1,52 @@
+<div align="center">
+
 # frontend-design-pro
 
-**Your AI agent already writes React. This makes it write React that doesn't look AI-generated.**
+**Your AI agent already writes React.**
+**This makes it write React that doesn't look AI-generated.**
 
-A machine-enforced frontend UI/UX skill pack — 19 auto-routing skills, 94 on-demand references, and 59 constraints that a build script actually runs.
+[![Release](https://img.shields.io/github/v/release/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=1f6feb&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/releases)
+[![Gates](https://img.shields.io/github/actions/workflow/status/Krishna-Modi12/frontend-design-pro/ci.yml?branch=main&style=for-the-badge&label=gates&color=2ea043&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=8957e5&labelColor=161b22)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=d29922&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/stargazers)
 
-**11 release-blocking gates · 17 semantic AST checks · 42 syntactic checks · strict TypeScript compilation · a 1:1 test for every gold example.**
+[![Live demo](https://img.shields.io/badge/live%20demo-showcase-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
 
-Most prompt packs tell an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
+**[Live demo](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
+
+</div>
+
+---
+
+A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt packs *tell* an agent what good UI looks like. This one proves it: every example compiles under `tsc --strict`, passes AST analysis, and ships with a test — and no archive can be built unless all of that is green.
+
+> [!NOTE]
+> **The whole claim is that it is verified rather than asserted.** Every number below is recomputed from the filesystem by a release-blocking gate. When a document and a gate disagree, the gate is right.
+
+<div align="center">
+
+| Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **19** | **94** | **334,051 tokens** | **2,018 tokens** | **5,665–7,266** | **59** | **11** |
+
+</div>
+
+---
+
+## Table of contents
+
+- [What actually changes in your output](#what-actually-changes-in-your-output)
+- [Install in 30 seconds](#install-in-30-seconds)
+- [The 19 skills](#the-19-skills)
+- [Architecture — registry + lazy loading](#architecture--registry--lazy-loading)
+- [Demos](#demos)
+- [The pack, pointed at itself](#the-pack-pointed-at-itself)
+- [Release history](#release-history)
+- [Verification](#verification)
+- [Issues & contributing](#issues--contributing)
+- [Docs](#docs)
+
+---
 
 ## What actually changes in your output
 
@@ -28,6 +68,8 @@ These are not style preferences. Each row is a check that fails a build, with th
 
 The full list of 59 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
+---
+
 ## Install in 30 seconds
 
 Run this from the root of the project you want the agent to work on:
@@ -36,20 +78,16 @@ Run this from the root of the project you want the agent to work on:
 git clone --depth 1 https://github.com/Krishna-Modi12/frontend-design-pro && bash frontend-design-pro/setup.sh
 ```
 
-That is the whole install. The clone directory is named `frontend-design-pro` on
-purpose — every adapter references `frontend-design-pro/SKILL.md` relative to
-your project root, so the path the installer writes is the path that exists.
-`setup.sh` then detects your agent and writes its native rules file.
+That is the whole install. The clone directory is named `frontend-design-pro` on purpose — every adapter references `frontend-design-pro/SKILL.md` relative to your project root, so the path the installer writes is the path that exists. `setup.sh` then detects your agent and writes its native rules file.
 
-Prefer the gated archive over a git tree? Every release attaches a `.skill`
-built only after all 11 gates pass — the tree on `main` is checked by CI, but
-the archive is the artifact that cannot exist while anything is red:
-
-```bash
-gh release download --repo Krishna-Modi12/frontend-design-pro --pattern '*.skill'
-unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
-bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
-```
+> [!TIP]
+> **Prefer the gated archive over a git tree?** Every release attaches a `.skill` built only after all 11 gates pass. The tree on `main` is checked by CI, but the archive is the artifact that cannot exist while anything is red.
+>
+> ```bash
+> gh release download --repo Krishna-Modi12/frontend-design-pro --pattern '*.skill'
+> unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
+> bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
+> ```
 
 **Not sure, or using something not listed? Install the cross-agent file:**
 
@@ -72,7 +110,10 @@ annual/monthly toggle. Not the usual three equal cards.
 
 The agent matches your wording against the registry, loads **one** skill plus its dependencies, and builds. **No slash commands, no prefixes** — routing is on natural-language trigger keywords.
 
-### Per-host setup
+<details>
+<summary><b>Per-host setup — the exact path for each of the manual hosts</b></summary>
+
+<br>
 
 The remaining hosts need a web UI or a merge into a file your repo owns, so they stay manual. Every row is the real setup path, not an approximation.
 
@@ -88,7 +129,11 @@ The remaining hosts need a web UI or a merge into a file your repo owns, so they
 
 **Don't see your agent?** [`install/`](install/) adds adapters for Windsurf, Continue.dev, Aider and OpenAI Codex CLI — untested against the matrix, but following each host's documented rules format. [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
 
+</details>
+
 `SKILL.md` is self-contained, so no system-prompt setup is required. If your host supports a system prompt, [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) is a registry-native drop-in that makes the loading protocol and the validation contract explicit. Full guide: [docs/USAGE.md](docs/USAGE.md).
+
+---
 
 ## The 19 skills
 
@@ -110,7 +155,7 @@ One skill loads per request. You never name it — the **Try saying** column is 
 |---|---|---|
 | [`design-system`](skills/design-system/SKILL.md) | Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff | *"Build me a token system from this brand colour, with a dark mode that isn't just inverted."* |
 | [`design-principles`](skills/design-principles/SKILL.md) | The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction | *"Critique this layout. Why does it feel cluttered, and what's the actual fix?"* |
-| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: <url> — dark, developer tool."* |
+| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: &lt;url&gt; — dark, developer tool."* |
 | [`animations`](skills/animations/SKILL.md) | Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion | *"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion."* |
 | [`component-patterns`](skills/component-patterns/SKILL.md) | Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit | *"Give me an animated headline like Aceternity's, but keyboard-accessible."* |
 | [`iconography`](skills/iconography/SKILL.md) | Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration | *"These icons look off next to the text — fix the sizing and optical alignment."* |
@@ -133,7 +178,10 @@ One skill loads per request. You never name it — the **Try saying** column is 
 | [`ai-ui-generation`](skills/ai-ui-generation/SKILL.md) | Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships | *"Render components from this JSON schema, and validate before it hits the DOM."* |
 | [`agent-ops`](skills/agent-ops/SKILL.md) | The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration | *"You keep re-reading the same files. Set up a context budget."* |
 
-**No keyword match?** The agent asks one clarifying question rather than guessing — that behaviour is part of the contract, not a fallback.
+> [!IMPORTANT]
+> **No keyword match?** The agent asks one clarifying question rather than guessing — that behaviour is part of the contract, not a fallback.
+
+---
 
 ## Architecture — registry + lazy loading
 
@@ -148,7 +196,10 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 **A typical request loads 5,665–7,266 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-## Core files (8)
+<details>
+<summary><b>The 8 core files, and when each one loads</b></summary>
+
+<br>
 
 Every skill inherits `accessibility-baseline` and `validate-checklist` whenever it produces code; the rest load only when a skill declares them.
 
@@ -163,6 +214,10 @@ Every skill inherits `accessibility-baseline` and `validate-checklist` whenever 
 | `core/validate-checklist.md` | All 59 constraints (17 parser + 42 regex, unique IDs) with pass criteria |
 | `core/user-intake.md` | Six questions to ask before building a site — and when not to ask them |
 
+</details>
+
+---
+
 ## Demos
 
 Four projects generated by the skill routing itself — the pack eating its own cooking. Copy the prompt for any of them from [docs/DEMO_PROMPTS.md](docs/DEMO_PROMPTS.md) and try it yourself.
@@ -172,7 +227,7 @@ Four projects generated by the skill routing itself — the pack eating its own 
 | [`demo/landing-page/`](demo/landing-page/) | **Runnable Next.js app** | `landing-pages` + `core/design-tokens.md` | This pack's own homepage — editorial hero over nine unedited lines of `SKILL.md`, a constraint wall printing real IDs, tabular-nums metric strip, asymmetric registry bento |
 | [`demo/dashboard/`](demo/dashboard/) | Stub-typed | `data-tables` + `react-performance` + `core/component-api.md` | Sortable table with all four states, `next/dynamic` chart, `content-visibility` |
 | [`demo/auth-form/`](demo/auth-form/) | Stub-typed | `forms` + `core/component-api.md` | RHF + Zod, `aria-describedby` errors, OAuth, jest-axe test |
-| [`demo/showcase/`](demo/showcase/) | **Runnable Next.js app** | `landing-pages` + `threejs-3d` + `forms` | R3F hero, bento grid, pricing, testimonials, validated form — see [See It In Action](#see-it-in-action) below |
+| [`demo/showcase/`](demo/showcase/) | **Runnable Next.js app** | `landing-pages` + `threejs-3d` + `forms` | R3F hero, bento grid, pricing, testimonials, validated form |
 
 The two stub-typed demos are checked by the same suites as the gold examples — `tsc --noEmit` strict, 17 AST constraints, 42 regex constraints:
 
@@ -187,7 +242,8 @@ Those read source. Nothing in the gate chain starts a browser, so the demos are 
 npm run demos:verify
 ```
 
-That check exists because it found four defects a green 9/9 chain had passed: a stylesheet that silently did nothing, a page that scrolled sideways on a phone, a `<dl>` with a stray `<p>` in it, and a chart hidden from screen readers but still in the tab order.
+> [!WARNING]
+> That check exists because it found four defects a green 9/9 chain had passed: a stylesheet that silently did nothing, a page that scrolled sideways on a phone, a `<dl>` with a stray `<p>` in it, and a chart hidden from screen readers but still in the tab order.
 
 If you lift `demo/landing-page/` into a project, take [`tokens.css`](demo/landing-page/tokens.css) with it and import it after Tailwind — its palette is addressed through named utilities (`bg-surface-page`, `text-ink-muted`), and Tailwind only emits those for tokens registered at build time. `dashboard` and `auth-form` carry their own tokens at runtime and need nothing.
 
@@ -223,9 +279,11 @@ npm install
 npm run dev   # http://localhost:3000
 ```
 
-## See It In Action
+### See it in action
 
-**[Open the live showcase →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone. Redeployed from `main` whenever `demo/showcase/` changes.
+> [!TIP]
+> **[Open the live showcase →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
+> Redeployed from `main` whenever `demo/showcase/` changes. What you see is the output of the routing described below, not a mock-up of it.
 
 [`demo/showcase/`](demo/showcase/) is one of two projects in `demo/` that break the stub-typed convention above on purpose — the other is [`landing-page/`](demo/landing-page/). It is a real, standalone Next.js 15 + React 19 + Tailwind v4 app — its own `package.json`, real installed dependencies (React Three Fiber + drei, React Hook Form + Zod), a dev server that actually boots. It's a cinematic dark-mode landing page for a fictional AI analytics product, "Nexus" — near-black OKLCH surface, single acid-green accent, an asymmetric bento grid, a WebGL particle hero, and a validated contact form.
 
@@ -245,11 +303,16 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 Above-the-fold, default viewport, reduced motion off, captured via a headless Chromium driving the real dev server — not staged, not retouched. If a future change to `demo/showcase` makes this stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
+---
+
 ## The pack, pointed at itself
 
 [**`docs/audit-report.html`**](docs/audit-report.html) — open it in a browser — is a hardening audit of this repository, built by giving the pack the same brief you would give it for a client. It is the honest test: a pack that claims to stop AI-looking output should be able to produce a page that does not look AI-generated, about its own defects, without exemptions.
 
-**The exact prompt:**
+<details>
+<summary><b>The exact prompt, and what the brief refuses</b></summary>
+
+<br>
 
 ```
 Build a single-page audit report for a developer tool that publishes
@@ -272,6 +335,12 @@ No horizontal scroll at 390px.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
+</details>
+
+---
+
+## Release history
+
 ## What's new in v14.8.1
 
 **The archive told people to read files it did not contain.** 22 shipped files carried 137 references to `docs/*.md`, and the archive had no `docs/` directory at all — including all 14 per-agent setup guides and the last line `setup.sh` prints, on the gated-archive route this README recommends.
@@ -281,6 +350,11 @@ It had been broken for the pack's entire life, and was found by doing the thing 
 The 13 consumer-facing docs now ship inside the archive (~89 KB — split by audience, not size: you need your host's setup guide, not our freeze policy). `docs/CHANGELOG.md` repoints to `_meta/CHANGELOG.md`, where it actually ships. Anything still unshippable becomes an absolute URL **pinned to its tag** rather than `main` — an archive is a snapshot, and pointing a v14.x reader at today's `main` is how a document starts lying.
 
 Stage 6 now asserts that every `docs/` path cited by a shipped file resolves inside the archive, using the same link shapes and exclusions as the rewriter, so the check and the fix cannot disagree.
+
+<details>
+<summary><b>Earlier releases — v14.8.0 back to v14.5.0</b></summary>
+
+<br>
 
 ## Previously — v14.8.0
 
@@ -405,21 +479,29 @@ Two new skills, both **generative** — design computed at runtime rather than a
 - **A test-environment gap that was hiding failures.** `window.localStorage` arrives in the suite as a bare object with no methods on it. That is worse than it sounds: correct code wraps storage in `try/catch` for Safari private mode, so the broken stub never threw — it silently took the catch path, and a test asserting "the preference was saved" would have passed for the wrong reason.
 - **Adding two skills cost 103 tokens.** The registry went 1,895 → 1,998 — about 51 tokens each, which is exactly what the marginal-cost figure derived from a single skill predicted. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there.
 
+</details>
+
+---
+
 ## Verification
 
 Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 
-1. **Pre-flight** — clean tree, token budget, version consistency, no version-string leaks
-2. **Frontmatter** — every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist
-3. **Compile** — `tsc --noEmit` strict + `noImplicitAny` over every example
-4. **Semantic** — 17 AST constraints via the TypeScript compiler API
-5. **Syntactic** — 42 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy)
-6. **Pipeline** — `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves
-7. **Evals + coverage** — 22 eval cases; every gold has a test
-8. **Budget + registry** — every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves
-9. **Showcase build** — `demo/showcase/` (the real, installed Next.js app) builds clean under `next build` against its actual vendor typings
+| # | Gate | What it proves |
+|---|---|---|
+| 1 | **Pre-flight** | Clean tree, token budget, version consistency, no version-string leaks |
+| 2 | **Frontmatter** | Every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist |
+| 3 | **Compile** | `tsc --noEmit` strict + `noImplicitAny` over every example |
+| 4 | **Semantic** | 17 AST constraints via the TypeScript compiler API |
+| 5 | **Syntactic** | 42 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy) |
+| 6 | **Pipeline** | `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves |
+| 7 | **Evals + coverage** | 22 eval cases; every gold has a test; the suite runs and passes |
+| 8 | **Budget + registry** | Every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves |
+| 9 | **Showcase build** | `demo/showcase/` builds clean under `next build` against its actual vendor typings |
+| 10 | **References** | The constraints run over `skills/*/references/*.md`, not just the examples |
+| 11 | **Figures** | Every documented count and token figure recomputed from the filesystem |
 
-Then: path integrity, reference-depth audit, a **release source guard** that refuses to build unless `HEAD` is `origin/main` with a clean tree, archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive and checks what it claims — the version it announces, the changelog it tops out at, and that every demo image actually shipped.
+Then: path integrity — including that every relative link in the repo's markdown resolves — a reference-depth audit, a **release source guard** that refuses to build unless `HEAD` is `origin/main` with a clean tree, the archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive and checks what it claims: the version it announces, the changelog it tops out at, that every demo image actually shipped, and that no shipped file points at a document the archive does not contain.
 
 ```bash
 npm install
@@ -429,11 +511,14 @@ npm run build    # gated archive → dist/
 
 Gate 7 asserts 1:1 test coverage, strict compilation, **and that the suite passes**: **45 of 45 test files, 229 of 229 tests**. It runs in CI on every push and pull request to `main` — the same `build_release.py --dry-run` that refuses to build an archive when it is not true. Gate 7 degrades rather than lies: a fresh clone with no `npm install` has neither `tsc` nor `vitest`, and the gate names which layers actually ran instead of implying all three did. What the suite does and does not prove is in [docs/TESTING.md](docs/TESTING.md).
 
+---
+
 ## Issues & contributing
 
 Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pro/issues) with the file path, the host you ran it on, and which of the 11 gates should have caught it — naming the gate that missed it is the most useful thing in the report. Feature requests are counted rather than closed: ten distinct ones for the same capability is a threshold, not a queue. The policy is in [docs/MAINTENANCE.md](docs/MAINTENANCE.md), and the triage replies are published in [docs/RESPONSE_TEMPLATES.md](docs/RESPONSE_TEMPLATES.md) rather than kept private.
 
-**Security problems do not go in the issue tracker** — [SECURITY.md](SECURITY.md) has the private reporting route and explains what counts as a vulnerability in a pack that has no runtime. Reference material that would make an agent write insecure code is in scope; this repo has already shipped fixes for two such defects.
+> [!CAUTION]
+> **Security problems do not go in the issue tracker** — [SECURITY.md](SECURITY.md) has the private reporting route and explains what counts as a vulnerability in a pack that has no runtime. Reference material that would make an agent write insecure code is in scope; this repo has already shipped fixes for two such defects.
 
 Sending code — [CONTRIBUTING.md](CONTRIBUTING.md) is the full guide, including the traps that will fail your build before you understand why. The short version:
 
@@ -446,6 +531,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout,
 
 **The pack was under a feature freeze from v14.2.2 through 2026-08-02**, when it was overridden by owner directive to ship the accumulated staging work. Future freezes observe the thresholds in [docs/MAINTENANCE.md](docs/MAINTENANCE.md) — 10 distinct requests for one feature, 5 confirmed bugs, or two actively monitored weeks — unless an override is documented the same way. Bug fixes and broken-link fixes are always welcome, freeze or not.
 
+---
+
 ## Docs
 
 **Setup** — [Claude](docs/CLAUDE_SETUP.md) · [Cursor](docs/CURSOR_SETUP.md) · [ChatGPT](docs/CHATGPT_SETUP.md) · [OpenAI API](docs/OPENAI_API_SETUP.md) · [Copilot](docs/COPILOT_SETUP.md) · [Gemini](docs/GEMINI_SETUP.md) · [Generic](docs/INSTALL.md) · [Compatibility matrix](docs/AGENT_COMPATIBILITY.md)
@@ -454,6 +541,12 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout,
 
 **Taking part** — [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md)
 
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+<div align="center">
+<sub>Built by <a href="https://github.com/Krishna-Modi12">Krishna Modi</a> · Every figure on this page is recomputed from the filesystem by Gate 11</sub>
+</div>
