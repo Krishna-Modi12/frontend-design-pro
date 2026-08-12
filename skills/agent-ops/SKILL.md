@@ -1,6 +1,6 @@
 ---
 name: agent-ops
-description: Agent operating discipline — token budgeting, cross-session memory, self-improvement loops, self-verification, parallel work, and subagent orchestration.
+description: Agent operating discipline — token budgeting, cross-session memory, self-improvement loops, self-verification, parallel work, and subagent orchestration. Use when the work is the agent's own process rather than the UI it produces — deciding what to load, persisting a correction so it sticks, verifying a change before reporting done, or dispatching subagents. Not for building dashboards or persistence UI.
 version: "14.8.1"
 core-deps:
   - core/agent-behavior.md
@@ -44,6 +44,7 @@ Load only for the specific task:
 | Identifying independent work, batching tool calls, avoiding shared-state races | `references/parallelization.md` |
 | Decomposing tasks across subagents, grounding prompts, owning integration | `references/subagent-orchestration.md` |
 | Packaging a pack for cross-agent discovery — depth-2 walk, portable frontmatter, transport caps | `references/skill-packaging.md` |
+| Why loading less improves accuracy, not just cost — attention U-curve, the four degradation modes, where to put conclusions in a long reference | `references/context-engineering.md` |
 
 ## Constraints
 No claim of "done" without a run/compile/test step actually executed · no persisted memory fact without a staleness signal · no parallel dispatch across tasks that share a file or mutable state · no subagent prompt that omits facts already known to the dispatcher · no re-reading a file already fully in context without a stated reason.

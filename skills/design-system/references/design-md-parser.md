@@ -28,12 +28,30 @@ The parser matches headings case-insensitively and trims surrounding whitespace.
 | **Typography** | `Typography`, `Fonts`, `Type Scale`, `Typeface`, `Font Stack` |
 | **Spacing** | `Spacing`, `Layout`, `Grid`, `Space Scale`, `Spacing Scale` |
 | **Motion** | `Motion`, `Animation`, `Transitions`, `Timing`, `Motion Design` |
-| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules`, `Responsive Behavior`, `Agent Prompt Guide`, `Depth & Elevation` |
-| **Atmosphere** | `Atmosphere`, `Tone`, `Mood`, `Aesthetic`, `Dials` |
+| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules`, `Responsive Behavior`, `Agent Prompt Guide`, `Elevation & Depth`, `Depth & Elevation`, `Components`, `Shapes`, `Iteration Guide`, `Known Gaps` |
+| **Atmosphere** | `Atmosphere`, `Tone`, `Mood`, `Aesthetic`, `Dials`, `Overview` |
 
 Matching logic: strip leading `#` characters (any Markdown heading level), lowercase, strip punctuation, compare against the synonym list. First match wins.
 
-The last three Rules variants are extended sections in wide use across the ecosystem — `VoltAgent/awesome-design-md` catalogues 73+ real-world files carrying them. They hold prose rather than token declarations, so they route to **Rules**, the natural-language channel that reaches the generation prompt verbatim. A heading that matches nothing is dropped in silence, which is the failure this prevents. One caveat worth stating: `Depth & Elevation` often carries literal shadow values, and there is no elevation extraction rule — those arrive as text for the model to honour, not as `--shadow-*` tokens.
+The extended Rules variants are sections in wide use across the ecosystem. They hold prose rather than token declarations, so they route to **Rules**, the natural-language channel that reaches the generation prompt verbatim. A heading that matches nothing is dropped in silence, which is the failure this table prevents.
+
+The variant list was measured against the 74 files in `VoltAgent/awesome-design-md` rather than assumed, and the count corrected two mistakes:
+
+| Heading as really written | Files | Was |
+|---|---|---|
+| `Elevation & Depth` | **63** | unmatched — we listed only the reversed order |
+| `Depth & Elevation` | 10 | matched |
+| `Overview` | 64 | unmatched |
+| `Components` | 64 | unmatched |
+| `Shapes` | 63 | unmatched |
+| `Iteration Guide` | 50 | unmatched |
+| `Known Gaps` | 43 | unmatched |
+
+The word order is the instructive one: the table matched the spelling used by ten files and missed the one used by sixty-three, in the corpus it cites as its own justification. A synonym list that compares literal strings will have that bug wherever a heading is a coordinated pair — **list both orders**.
+
+`Overview` routes to **Atmosphere** rather than Rules because it is where intent prose lives, and intent is what the atmosphere channel exists to carry. The `design.md` specification argues this is the most load-bearing section in the document: *"the quality of a generated design is determined less by the precision of its values than by how clearly the intent is described."* Dropping it was the most expensive of the seven misses.
+
+One caveat worth stating: `Elevation & Depth` often carries literal shadow values, and there is no elevation extraction rule — those arrive as text for the model to honour, not as `--shadow-*` tokens.
 
 ---
 

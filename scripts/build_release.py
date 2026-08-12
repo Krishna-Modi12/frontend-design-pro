@@ -200,6 +200,30 @@ def _frontmatter(path):
             fm[key] = v if v else []
     return fm
 
+# A host decides whether to load a skill by reading `description:`, and a list of
+# topics gives it nothing to match on. Ours listed topics: 0 of 19 stated a
+# condition until v14.9.0, while the root registry always had one.
+#
+# The reason this is a build gate and not a style note is that two supported
+# install paths make a sub-skill's description its ONLY activation signal.
+# Measured against the shipped CLI rather than assumed:
+#
+#   npx skills add <repo> --list               -> Found 1 skill   (the router)
+#   npx skills add <repo> --list --full-depth  -> Found 20 skills (all of them)
+#
+# `--full-depth` and `--skill <name>` both hand the host the sub-skill files
+# directly, and a directory-pointer manifest would do the same. On those paths
+# the registry's Trigger Keywords column is never read.
+_ACTIVATION = re.compile(r"\buse (?:this skill )?(?:when|for)\b", re.I)
+
+
+def _description(text):
+    """The description value, folded scalars included, up to the next top-level key."""
+    m = re.search(r"(?ms)^description:[ \t]*(?:[>|][-+]?)?[ \t]*\n?(.*?)(?=^[A-Za-z][\w-]*:|\Z)",
+                  text.split("---", 2)[1] if text.startswith("---") else "")
+    return " ".join(m.group(1).split()) if m else ""
+
+
 def gate_frontmatter():
     hdr("GATE 2 — SKILL FRONTMATTER")
     ok = True
@@ -213,7 +237,16 @@ def gate_frontmatter():
             bad(f"{sk.parent.name}: version {fm.get('version')} != {target}"); ok = False
         for dep in fm.get("core-deps", []):
             if not (ROOT / dep).exists(): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
-    if ok: ok_(f"all {len(list(ROOT.glob('skills/*/SKILL.md')))} skill files declare valid frontmatter")
+        desc = _description(sk.read_text(encoding="utf-8"))
+        if desc and not _ACTIVATION.search(desc):
+            bad(f"{sk.parent.name}: description names topics but no activation "
+                f"condition — add 'Use when …' so a host knows when to load it")
+            ok = False
+    if not _ACTIVATION.search(_description(SKILL_MD.read_text(encoding="utf-8"))):
+        bad("SKILL.md (root): the registry's own description states no activation "
+            "condition — this is the one a host reads first"); ok = False
+    n = len(list(ROOT.glob('skills/*/SKILL.md')))
+    if ok: ok_(f"all {n} skill files declare valid frontmatter, and {n + 1} descriptions state when to load")
     return ok
 
 def gate_budget():

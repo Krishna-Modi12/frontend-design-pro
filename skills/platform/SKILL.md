@@ -1,6 +1,6 @@
 ---
 name: platform
-description: Platform surfaces — mobile/PWA, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI.
+description: Platform surfaces — mobile/PWA, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI. Use when the work targets a platform surface rather than a generic component — mobile and PWA patterns, React Native/Expo, internationalization and RTL, SEO and metadata, Stripe payments, transactional email, AI chat and streaming UI.
 version: "14.8.1"
 core-deps:
   - core/component-api.md

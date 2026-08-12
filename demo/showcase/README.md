@@ -10,6 +10,17 @@ produces a working application, not just type-checked snippets.
 
 It's a cinematic dark-mode SaaS landing page for a fictional AI analytics product, "Nexus."
 
+> **Known violation — the name.** The anti-slop wall bans placeholder brand names
+> and lists Nexus among them. This demo predates that ban and is a real instance
+> of it. The rename is deliberately not bundled with the rule: it touches sixteen
+> files including `package-lock.json`, and it invalidates the committed
+> `screenshot.png`, which can only be regenerated through the browser harness in
+> `tools/screenshots/` (deliberately outside CI — see
+> `.github/SCREENSHOT_CONTRIBUTION.md`). Stated here rather than quietly omitted
+> from the wall, because a pack that bans what it ships and does not say so is
+> carrying the context-clash defect described in
+> `skills/agent-ops/references/context-engineering.md`.
+
 ## Running it
 
 ```bash

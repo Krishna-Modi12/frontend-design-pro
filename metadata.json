@@ -105,7 +105,7 @@
     "style_presets": 5,
     "validation_checks": 25,
     "ci_constraints": 59,
-    "reference_files": 94,
+    "reference_files": 96,
     "gsap_plugins": 12,
     "shortcodes": 57,
     "example_files": 55,
@@ -139,8 +139,8 @@
     "behavioral_principles": 4,
     "skills": 19,
     "core_files": 8,
-    "reference_depth_tokens": 334051,
-    "registry_tokens": 2018,
+    "reference_depth_tokens": 337392,
+    "registry_tokens": 2088,
     "ci_constraints_detail": "59 checks across 59 distinct IDs (17 parser AST + 42 regex)"
   },
   "changelog": {

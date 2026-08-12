@@ -810,6 +810,80 @@ def check_landing_fixture() -> List[Finding]:
     return findings
 
 
+# ── Check 3c — summary tables, read by their own header row ──────────────────
+
+# Header cell -> the truth key that column is claiming. Only unambiguous names:
+# a column headed "Files" or "Total" could mean anything and is skipped.
+_TABLE_COLUMNS: Dict[str, str] = {
+    "skills": "skills",
+    "references": "reference_files",
+    "depth": "reference_depth_tokens",
+    "always loaded": "registry_tokens",
+    "constraints": "ci_constraints",
+    "gates": "release_gates",
+    "core": "core_files",
+    "examples": "example_files",
+    "tests": "test_files",
+}
+_CELL_NUM = re.compile(r"(\d[\d,]*)")
+
+
+def check_summary_tables(truth: Dict[str, object]) -> List[Finding]:
+    """A markdown table states its figures in cells, and the noun is in the
+    header row rather than beside the number.
+
+    Every other check here keys on an adjacent word — "N gates", "N tokens of
+    depth". That works in prose and fails completely on `| **19** | **94** |`,
+    where the cell holds a bare number and the only thing identifying it sits a
+    row above. The README's headline table carried two wrong figures — 94
+    references and 2,018 registry tokens — through a green chain, in the most
+    widely read table in the project, while the two cells beside them that
+    happen to carry the word "tokens" were caught and corrected.
+
+    So: read the header, map each column to a figure, and check the row beneath.
+    """
+    findings: List[Finding] = []
+    for path in _scan_files():
+        rel = path.relative_to(ROOT).as_posix()
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        lines = text.replace("\r\n", "\n").split("\n")
+        # Marked historical regions are exempt here for the same reason they are
+        # everywhere else: a table inside one is a record of what was true then.
+        historical, _ = _historical_lines(lines, rel)
+        for i, line in enumerate(lines):
+            if line.count("|") < 3:
+                continue
+            heads = [c.strip().strip("*` ").lower() for c in line.strip().strip("|").split("|")]
+            cols = {n: _TABLE_COLUMNS[h] for n, h in enumerate(heads) if h in _TABLE_COLUMNS}
+            # Need at least two recognised columns; one is too weak a signal and
+            # would fire on any table with a "Gates" column of prose.
+            if len(cols) < 2 or i + 2 >= len(lines):
+                continue
+            if not set(lines[i + 1].strip()) <= set("|-: "):
+                continue          # row after the header must be the separator
+            if (i + 3) in historical:
+                continue
+            cells = [c.strip() for c in lines[i + 2].strip().strip("|").split("|")]
+            for n, key in cols.items():
+                if n >= len(cells) or key not in truth:
+                    continue
+                m = _CELL_NUM.search(cells[n])
+                if not m:
+                    continue
+                shown = m.group(1).replace(",", "")
+                expected = str(truth[key])
+                if shown != expected:
+                    findings.append(Finding(
+                        "table", rel, i + 3, f"{heads[n]} ({key})",
+                        m.group(1), f"{int(expected):,}",
+                        lines[i + 2].strip()[:110],
+                    ))
+    return findings
+
+
 # ── Check 4 — the two changelogs agree ───────────────────────────────────────
 
 def check_changelog_sync() -> List[Finding]:
@@ -876,7 +950,7 @@ def main() -> None:
 
     findings = (check_anchored(truth) + check_arithmetic() + check_pass_ratios()
                 + check_metadata(truth) + check_landing_fixture()
-                + check_changelog_sync())
+                + check_summary_tables(truth) + check_changelog_sync())
 
     if "--json" in sys.argv:
         print(json.dumps([f._asdict() for f in findings], indent=2))
@@ -884,7 +958,8 @@ def main() -> None:
 
     n_files = len(_scan_files())
     print(f"\n[FIGURES] {len(FIGURES)} anchored figures + arithmetic + metadata "
-          f"+ landing fixture + changelog sync, over {n_files} claim surfaces\n")
+          f"+ landing fixture + summary tables + changelog sync, over "
+          f"{n_files} claim surfaces\n")
 
     if findings:
         by_file: Dict[str, List[Finding]] = {}

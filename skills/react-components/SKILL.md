@@ -1,6 +1,6 @@
 ---
 name: react-components
-description: Reusable React component APIs — buttons, cards, modals, tabs, dropdowns, shadcn/Radix primitives, compound components.
+description: Reusable React component APIs — buttons, cards, modals, tabs, dropdowns, shadcn/Radix primitives, compound components. Use when building or refining a single reusable component or a small family of them — button, card, modal, dropdown, tabs, accordion, tooltip, badge, avatar, select, popover — or when the request mentions shadcn/ui, Radix, compound components, forwardRef, CVA or asChild. Not for a whole page (landing-pages).
 version: "14.8.1"
 core-deps:
   - core/component-api.md
