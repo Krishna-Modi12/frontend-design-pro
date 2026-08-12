@@ -225,6 +225,8 @@ npm run dev   # http://localhost:3000
 
 ## See It In Action
 
+**[Open the live showcase →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone. Redeployed from `main` whenever `demo/showcase/` changes.
+
 [`demo/showcase/`](demo/showcase/) is one of two projects in `demo/` that break the stub-typed convention above on purpose — the other is [`landing-page/`](demo/landing-page/). It is a real, standalone Next.js 15 + React 19 + Tailwind v4 app — its own `package.json`, real installed dependencies (React Three Fiber + drei, React Hook Form + Zod), a dev server that actually boots. It's a cinematic dark-mode landing page for a fictional AI analytics product, "Nexus" — near-black OKLCH surface, single acid-green accent, an asymmetric bento grid, a WebGL particle hero, and a validated contact form.
 
 ```bash
