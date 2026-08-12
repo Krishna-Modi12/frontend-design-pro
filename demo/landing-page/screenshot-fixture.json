@@ -2,47 +2,46 @@
   "_comment": [
     "Response body for GET /api/site/overview, the endpoint app/page.tsx reads on mount.",
     "",
-    "Every figure below is copied from metadata.json, and the exact key is named on each",
-    "entry so a reader can check it rather than take it. They are committed here rather",
-    "than computed so the capture is reproducible: screenshot.png is captured against",
-    "exactly this payload, and a recapture only moves pixels when the UI actually changed.",
+    "These are operating figures for Switchyard, which is a FICTIONAL product — they are",
+    "demo content, not measurements of anything. They are committed rather than computed",
+    "so the capture is reproducible: screenshot.png is captured against exactly this",
+    "payload, and a recapture only moves pixels when the UI actually changed.",
     "",
-    "metadata.json is the authority. When a stat moves there it has to move here too, and",
-    "the screenshot has to be recaptured in the same commit — CLAUDE.md names drifting",
-    "counts as this repo's single most repeated defect, and this page is one more place",
-    "for one to drift.",
+    "Deliberately no figure about frontend-design-pro itself. The previous version of this",
+    "page served the pack's own counts from here, two of them drifted out of step with",
+    "metadata.json, and the page shipped a wrong constraint count and a wrong gate count",
+    "on a screenshot in the repo README. A fictional product cannot drift.",
+    "",
+    "Values are irregular on purpose: the anti-slop wall bans round data, because 1,000",
+    "deploys and 50% faster are what a generated page says when nobody measured anything.",
     "",
     "Shape is fixed by PlatformMetric, exported from components/MetricsStrip.tsx.",
     "Recapture instructions: .github/SCREENSHOT_CONTRIBUTION.md"
   ],
   "metrics": [
     {
-      "id": "skills",
-      "value": "19",
-      "label": "Skills",
-      "caption": "One is matched per request by trigger keyword, and one is loaded. Never two.",
-      "source": "metadata.json · stats.skills"
+      "id": "deploys",
+      "value": "1,284",
+      "label": "Deploys this week",
+      "caption": "Across every environment, counted at the point traffic actually moved."
     },
     {
-      "id": "reference-tokens",
-      "value": "334,051",
-      "label": "Reference tokens",
-      "caption": "Across 94 files. None of it enters the context window by default.",
-      "source": "metadata.json · stats.reference_depth_tokens"
+      "id": "rollback",
+      "value": "47.2s",
+      "label": "Median reverse",
+      "caption": "From the command to the last instance draining. p95 is 2m 09s."
     },
     {
-      "id": "constraints",
-      "value": "59",
-      "label": "Constraints",
-      "caption": "17 read the TypeScript AST, 42 read the source. Six of them are on this page.",
-      "source": "metadata.json · stats.ci_constraints"
+      "id": "failure-rate",
+      "value": "0.31%",
+      "label": "Change failure rate",
+      "caption": "Rollouts that reversed within an hour. The yard held 46 more before they moved."
     },
     {
-      "id": "gates",
-      "value": "11",
-      "label": "Blocking gates",
-      "caption": "A red gate refuses to build the archive. There is no override flag.",
-      "source": "metadata.json · stats.release_gates"
+      "id": "services",
+      "value": "217",
+      "label": "Services in the yard",
+      "caption": "Each one with its own error budget and its own siding."
     }
   ]
 }

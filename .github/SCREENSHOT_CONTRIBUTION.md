@@ -9,7 +9,7 @@ Four demo screenshots are linked from the root `README.md` — one per project i
 | `demo/dashboard/screenshot.png` (+ `-full`) | same | light |
 | `demo/auth-form/screenshot.png` (+ `-full`) | same | light |
 
-These exist because everything else in this repository is machine-checked — 10 release-blocking gates, 59 constraints, a `next build` on the showcase in CI — and none of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.
+These exist because everything else in this repository is machine-checked — 11 release-blocking gates, 59 constraints, a `next build` on the showcase in CI — and none of that is visible to somebody deciding in ten seconds whether to install the pack. One honest screenshot does work that no gate can.
 
 **No gate checks these images.** They go stale silently the moment the UI under them changes, and a stale screenshot is a worse failure mode than a missing one: it actively misrepresents the current app. If you change anything under a `demo/` project, recapture its image in the same PR.
 
@@ -47,7 +47,7 @@ npm run screenshots -- showcase        # opt-in, see below
 
 Its own [README](../tools/screenshots/README.md) covers how it is assembled and the traps inside it. Two things matter when reading a capture:
 
-- **`landing-page` compiles `demo/landing-page/tokens.css` itself.** It addresses its palette through named utilities (`bg-surface-page`, `text-ink-muted`, `border-surface-border`, `ring-accent`), and Tailwind only emits those for tokens registered at build time — which is why that file is imported by the app's own `globals.css` rather than restated anywhere. A capture cannot drift from what the demo ships.
+- **`landing-page` compiles `demo/landing-page/tokens.css` itself.** It addresses its palette through named utilities (`bg-surface-page`, `text-ink-muted`, `border-surface-border`, `ring-accent`), and Tailwind only emits those for tokens registered at build time — which is why that file is imported by the app's own `globals.css` rather than restated anywhere. `@theme` is a compiler directive: shipped in a runtime `<style>` it is dropped as an unknown at-rule and every one of those utilities silently resolves to nothing. A capture cannot drift from what the demo ships.
 - **`dashboard` and `auth-form` need nothing.** Both address their palettes through arbitrary `bg-[var(--color-surface)]` utilities against a `:root` block they inject themselves. Registering tokens on their behalf would let the harness flatter them into looking better than they are.
 
 `showcase` is opt-in: its hero is a WebGL particle field seeded at random, so every capture differs and running it by default would dirty that file on every run. The other three regenerate near-deterministically — a multi-kilobyte diff means something really moved, a few bytes is antialiasing noise.

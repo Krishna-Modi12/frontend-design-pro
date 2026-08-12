@@ -1,5 +1,5 @@
 /**
- * frontend-design-pro — the runtime half of the token layer.
+ * Switchyard — the runtime half of the token layer.
  *
  * Everything here is plain CSS a browser can act on directly, injected once by
  * the page shell so it resolves for every <section>, <header> and <footer>

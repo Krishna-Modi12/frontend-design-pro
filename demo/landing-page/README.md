@@ -1,101 +1,108 @@
-# demo/landing-page
+# `demo/landing-page` — Switchyard
 
-The product homepage for this pack, built under the pack's own rules.
+A dark-mode SaaS landing page for **Switchyard**, a fictional release-orchestration
+product. It is sample output: the page the pack produces from the prompt recorded
+in [`docs/DEMO_PROMPTS.md`](../../docs/DEMO_PROMPTS.md), built under the pack's own
+rules, with nothing on it hand-waved.
 
-It is not a template with the names swapped. Every figure on the page traces to a
-file in this repo, the code panel in the hero is nine unedited lines of
-`SKILL.md`, and each rule on the constraint wall prints the ID that the suite
-actually reports when it fails. If a claim on the page cannot be checked against
-the repo in under a minute, it does not belong on the page.
+Switchyard does not exist. The quotes on the page are invented, and the page says
+so. It is the same arrangement as [`demo/showcase/`](../showcase/), which is a
+page for the fictional "Nexus".
 
 ## Run it
 
 ```bash
 cd demo/landing-page
 npm install
-npm run dev      # http://localhost:3000
+npm run dev            # http://localhost:3000
 ```
 
 ```bash
-npm run typecheck   # tsc --noEmit, strict + noUncheckedIndexedAccess
-npm run build       # next build
+npm run typecheck      # tsc --noEmit, strict, with noUncheckedIndexedAccess
+npm run build          # server build — what `next start` and the harnesses need
+npm start
 ```
 
-This app has its own `package.json` and installed dependencies, so it is excluded
-from the stub-typed regime the other demos share — `demo/tsconfig.json` and
-`tools/screenshots/tsconfig.json` both skip it. It is **not** exempt from the
-content rules: the 17 AST constraints run on every file here, and the 42 regex
-constraints run on the project.
-
-## Where the numbers come from
-
-| On the page | Source |
-|---|---|
-| 19 skills · 59 constraints · 11 blocking gates | `metadata.json` → `stats.skills`, `stats.ci_constraints`, `stats.release_gates` |
-| 334,051 reference tokens across 94 files | `metadata.json` → `stats.reference_depth_tokens`, `stats.reference_files` |
-| 5,665–7,266 tokens loaded per request | `docs/AGENT_COMPATIBILITY.md` |
-| Six skill descriptions | each `skills/{id}/SKILL.md` frontmatter, verbatim |
-| Six constraint IDs | `core/validate-checklist.md`, cross-checked against `scripts/parser_constraints.js` and `scripts/test_constraints.py` |
-| The hero code panel | `SKILL.md` lines 60–68, unedited |
-| Install commands | `README.md` → Install in 30 seconds |
-| Fourteen adapters, ten automatic | the `install/` directory — `mode` is whether `install/{id}/.manual` exists, the same marker both setup scripts read — and its README's own untested column |
-
-**The hero's line numbers move when the registry table above them does.** The two
-most recently added skills pushed the loading protocol down by two lines, from
-58–66 to 60–68. Re-check `ROUTER_EXCERPT` in `components/Hero.tsx` against
-`SKILL.md` before recapturing.
-
-There is deliberately no test-suite figure on the page, though the reason has
-changed. It used to be that the sources disagreed — `metadata.json`, `README.md`
-and `docs/TESTING.md` each named a different count, so any number on the homepage
-would have contradicted the repo. They now agree: **45 test files, 229 tests**.
-The figure stays off because four metrics is what the strip is sized for and the
-constraint count is the one that carries the argument, not because it is unsafe
-to state.
-
-The four figures cross the network from `/api/site/overview`; everything else is
-structural and lives in `lib/content.ts`. **When a stat changes, update
-`screenshot-fixture.json` as well as `metadata.json`** — `CLAUDE.md` names
-drifting counts as this repo's single most repeated defect, and this page is now
-one more place for one to drift.
+The parent repo installs none of these dependencies. This app has its own
+`package.json` and its own lockfile, and `demo/tsconfig.json` excludes it from
+the stub-typed regime the other demos use, so it type-checks against real
+vendor typings.
 
 ## Four things that will bite you
 
-**The static export is opt-in, and must stay that way.** `NEXT_OUTPUT_EXPORT=1`
-turns on `output: "export"` for the GitHub Pages deploy; nothing else sets it.
-Making it the default breaks the screenshot and verify harnesses outright —
-`tools/screenshots/lib/next-server.mjs` starts every demo with `next start`,
-which refuses to run against an exported build, and those are the only two
-checks in this repo that render anything.
+**The static export is opt-in, and must stay that way.**
+
+```bash
+NEXT_OUTPUT_EXPORT=1 npm run build     # static export in out/
+```
+
+`tools/screenshots/lib/next-server.mjs` starts every demo with `next start`, and
+`next start` refuses to run at all against an exported build. An unconditional
+export takes down `npm run screenshots` and `npm run demos:verify` together —
+the only two checks in this repo that render anything. Everything else reads
+source.
 
 The other half of that problem is solved rather than avoided: an export drops
-*dynamic* route handlers, so `/api/site/overview` used to 404 and leave the page
-in its error state permanently. The handler is now `force-static`, so Next
-evaluates it at build time and writes the response into the output. `next dev`
-still re-reads `screenshot-fixture.json` per request — verified, not assumed, so
-editing the fixture still shows up on reload.
+*dynamic* route handlers, so `/api/site/overview` would 404 and leave the page in
+its error state permanently. The handler is `force-static`, so Next evaluates it
+at build time and writes the response into the output. `next dev` still re-reads
+`screenshot-fixture.json` per request — verified, not assumed — so editing the
+fixture still shows up on reload.
 
 **A deployed build serves from a sub-path, and `fetch` does not know that.**
 Next rewrites its own asset URLs from `basePath` but not the URLs you hand to
 `fetch`. `app/page.tsx` reads `NEXT_PUBLIC_BASE_PATH` for exactly this reason; a
-root-anchored `/api/site/overview` would 404 under the deploy and render as a
-convincing imitation of a broken endpoint.
+root-anchored `/api/site/overview` would 404 under a sub-path deploy and render
+as a convincing imitation of a broken endpoint. `next.config.ts` takes the
+private `NEXT_BASE_PATH` — a client component can only read the public one.
 
-**The PostCSS plugin is `@tailwindcss/postcss`, not `tailwindcss`.** The plugin
-moved out of the main package in Tailwind v4. The v3 spelling fails the build
-with an error that does not mention the rename.
+**PostCSS names `@tailwindcss/postcss`, not `tailwindcss`.** The plugin moved out
+of the main package in Tailwind v4; the v3 key fails the build outright. There is
+no `autoprefixer` either — v4 prefixes through Lightning CSS.
 
-**Import order in `app/globals.css` is load-bearing.** Tailwind, then
-`../tokens.css`, then the `@theme inline` font block — and `inline` is required
-on that last one, because `--font-geist-sans` does not exist until the `geist`
-package sets it on `<html>` at runtime. Plain `@theme` there bakes in an
-unresolved reference and the page silently falls back to the system stack.
+**`tokens.css` is separate from `lib/tokens.ts`, and the split is load-bearing.**
+`@theme` is a Tailwind compiler directive, not CSS. It has to live in a stylesheet
+the build reads, or every utility built from it — `bg-surface-page`,
+`text-ink-muted`, `ring-accent` — silently resolves to nothing, with no error
+anywhere. `lib/tokens.ts` carries only plain CSS that is valid at runtime, and
+reads the palette back as `var(--color-*)` rather than restating it.
 
-## Notes on the components
+Lifting the palette into another project means taking `tokens.css` and importing
+it **after** Tailwind. Import order in `app/globals.css` is deliberate and
+commented.
 
-`forwardRef` appears once, on `CtaButton`. `core/component-api.md` scopes that
-requirement to interactive components; a `<section>` wrapper is reached by its
-`id`, so forwarding a ref to one is ceremony. The pack version is deliberately
-absent from the footer: `demo/landing-page/` is not on the version-leak allowlist
-in `scripts/build_release.py`, so printing the current version fails a blocking
-gate.
+## Where the page's own rules come from
+
+Every constraint the page holds itself to is one the pack enforces on its
+examples, and the suite runs on this directory too:
+
+```bash
+python scripts/test_constraints.py --dir demo --recursive --project
+node scripts/parser_constraints.js demo/landing-page/components/*.tsx
+```
+
+The visible ones: no equal-height card grid — the bento runs 2+1+1 over 1+2+1 and
+the metric strip on a `2fr 1fr 1fr 1fr` track; OKLCH only, no hex; Geist rather
+than Inter; `min-h-[100dvh]` rather than the `screen` variant; ease-out on every
+transition; `tabular-nums` on every figure; a real fetch with four real states
+rather than a `setTimeout` skeleton; `forwardRef` on the one interactive control
+that needs it rather than on every wrapper.
+
+The figures come from [`screenshot-fixture.json`](screenshot-fixture.json), served
+by the demo's own `/api/site/overview`, so the capture is deterministic and a
+recapture only moves pixels when the UI actually changed.
+
+**No figure on this page describes `frontend-design-pro`.** The version before
+this one quoted the pack's own counts and two of them drifted — it rendered
+"Six of 53" against a real count of 59, and a gate count that was one behind, on
+a screenshot linked from the repo README. A page about a fictional product has
+nothing to keep in step.
+
+## Recapture
+
+```bash
+npm run screenshots -- landing-page
+```
+
+1920×1080 above the fold plus a full-page pass, quantised under a 500 KB cap.
+Details in [`.github/SCREENSHOT_CONTRIBUTION.md`](../../.github/SCREENSHOT_CONTRIBUTION.md).

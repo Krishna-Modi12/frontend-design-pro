@@ -1,220 +1,124 @@
 import type { ReactElement } from "react";
 import CtaButton from "./CtaButton";
 import { sectionShell } from "../lib/tokens";
+import { HERO, REPO_URL, TERMINAL } from "../lib/content";
+import type { TerminalLine } from "../lib/content";
 
 export interface HeroProps {
-  /** Repository the primary CTA points at. Passed in so the URL lives in one place. */
-  repoUrl: string;
-}
-
-/** One line of the excerpt, carrying its real line number in `SKILL.md`. */
-interface SourceLine {
-  no: number;
-  text: string;
+  /** Anchor the secondary action scrolls to. */
+  detailHref: string;
 }
 
 /**
- * `SKILL.md` lines 60–68, verbatim. The line numbers are rendered rather than
- * decorative: this is the whole router, and a reader who thinks the page is
- * marketing can open the file and diff it against what is on screen.
- *
- * Copied rather than read at build time on purpose — the demo is documented as
- * liftable into another project, and a build that reaches two directories up
- * for a file outside its own tree stops being liftable.
- *
- * The cost of that copy is that these numbers move whenever the registry table
- * above them gains a row. Two new skills shifted them by two on the way in.
- * Re-check them against `SKILL.md` before recapturing the screenshot.
+ * Colour per line kind, resolved at module scope so the map is built once
+ * rather than on every render.
  */
-const ROUTER_EXCERPT: SourceLine[] = [
-  { no: 60, text: "## Loading protocol" },
-  { no: 61, text: "" },
-  { no: 62, text: "1. Read this file — always (2.0k)." },
-  { no: 63, text: "2. Match trigger keywords → pick one skill." },
-  { no: 64, text: "3. Load `skills/{id}/SKILL.md` (0.8–1.6k — measured, not estimated)." },
-  {
-    no: 65,
-    text: "4. Load its listed core deps (0.6–0.9k each) plus the accessibility baseline when producing code.",
-  },
-  {
-    no: 66,
-    text: "5. Each skill has its own `references/` for depth — load a reference **only** when the skill file points you there for the specific task.",
-  },
-  {
-    no: 67,
-    text: "6. **Budget ≤8,000 tokens.** Over budget: drop the deepest reference first, note the omission.",
-  },
-  { no: 68, text: "7. No keyword match → ask ONE clarifying question. Never guess." },
-];
-
-type SegmentKind = "heading" | "path" | "strong" | "plain";
-
-interface Segment {
-  /** Stable across renders: line number plus the offset the run starts at. */
-  id: string;
-  kind: SegmentKind;
-  text: string;
-}
-
-const SEGMENT_INK: Record<SegmentKind, string> = {
-  heading: "text-ink-faint",
-  path: "text-accent",
-  strong: "text-ink",
-  plain: "text-ink-muted",
+const LINE_TONE: Record<TerminalLine["kind"], string> = {
+  prompt: "text-ink",
+  cont: "text-ink",
+  out: "text-ink-muted",
+  flag: "text-accent",
+  ok: "text-ink-muted",
 };
 
-/** Backticked paths and **bold** runs, in one pass, keeping their delimiters. */
-const MARKUP = /(`[^`]+`|\*\*[^*]+\*\*)/g;
+/** What the shell prints in the gutter. A wrapped command gets `>`, not `$`. */
+const LINE_MARKER: Record<TerminalLine["kind"], string> = {
+  prompt: "$ ",
+  cont: "> ",
+  out: "  ",
+  flag: "  ",
+  ok: "  ",
+};
 
 /**
- * Module scope, not a hook: the excerpt is a constant, so re-tokenising it on
- * every render would be work with no input that can change.
- */
-function tokenize(line: SourceLine): Segment[] {
-  if (line.text.startsWith("## ")) {
-    return [{ id: `${line.no}:0`, kind: "heading", text: line.text }];
-  }
-
-  const segments: Segment[] = [];
-  let offset = 0;
-
-  for (const part of line.text.split(MARKUP)) {
-    if (part.length === 0) {
-      continue;
-    }
-    const kind: SegmentKind = part.startsWith("`")
-      ? "path"
-      : part.startsWith("**")
-        ? "strong"
-        : "plain";
-    segments.push({ id: `${line.no}:${offset}`, kind, text: part });
-    offset += part.length;
-  }
-
-  return segments;
-}
-
-const TOKENISED: { line: SourceLine; segments: Segment[] }[] = ROUTER_EXCERPT.map(
-  (line: SourceLine) => ({ line, segments: tokenize(line) }),
-);
-
-interface BudgetFact {
-  id: string;
-  label: string;
-  value: string;
-}
-
-/**
- * The cost per use, which is a different claim from the inventory in the strip
- * below: that one is what exists, this is what a request actually pays for it.
+ * 7:5, not 6:6. An even split reads as two columns of equal importance and
+ * gives the headline the same room as the illustration beside it; 7:5 says
+ * which one is the argument. The rule under the title is the page's one loud
+ * gesture — everything else is a hairline.
  *
- * Figures from `docs/AGENT_COMPATIBILITY.md` and step 6 of the protocol in the
- * panel opposite. The ceiling is not advisory — Gate 8a fails the build when a
- * skill exceeds it.
+ * `min-h-[100dvh]`, and deliberately not Tailwind's `screen` variant of it:
+ * `100vh` on mobile Safari is the height with the browser chrome hidden, so
+ * that hero is taller than the window it lives in and the first scroll goes
+ * nowhere. `RES-03` enforces this, and it matches on the literal — including
+ * inside a comment, which is why this one describes the class instead of
+ * spelling it.
  */
-const BUDGET: BudgetFact[] = [
-  { id: "per-request", label: "Loaded per request", value: "5,665–7,266 tokens" },
-  { id: "skills-read", label: "Skills read", value: "exactly one" },
-  { id: "ceiling", label: "Hard ceiling", value: "8,000 tokens" },
-];
-
-/**
- * The headline steps down to `text-5xl` on mobile rather than starting at
- * `text-7xl`: "frontend-design-pro" at 72px is wider than a 390px viewport even
- * after the hyphen break, and `npm run demos:verify` fails a page that scrolls
- * sideways.
- */
-export default function Hero({ repoUrl }: HeroProps): ReactElement {
+export default function Hero({ detailHref }: HeroProps): ReactElement {
   return (
     <section
-      id="overview"
+      id="top"
       className="flex min-h-[100dvh] flex-col justify-center border-b border-surface-border"
     >
-      <div className={`${sectionShell} grid items-center gap-14 pt-24 lg:grid-cols-12 lg:gap-16`}>
-        <div className="lg:col-span-7">
-          <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">
-            Skill pack · MIT · React · Next.js · Tailwind
-          </p>
+      <div className={sectionShell}>
+        <div className="grid items-center gap-12 py-20 lg:grid-cols-12 lg:gap-16">
+          {/* `min-w-0` on both columns. A grid item defaults to
+              `min-width: auto`, which refuses to shrink below its content's
+              min-content width — so the terminal panel below, whose longest
+              line is wider than a 390px viewport, pushed its own column out
+              instead of scrolling inside its scroll container. The body
+              scrolled 72px sideways and the `overflow-x-auto` never engaged. */}
+          <div className="min-w-0 lg:col-span-7">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+              {HERO.eyebrow}
+            </p>
 
-          <h1 className="mt-6 text-balance break-words text-5xl font-semibold tracking-tighter sm:text-7xl lg:text-8xl">
-            frontend-design-pro
-          </h1>
+            <h1 className="mt-6 text-balance text-6xl font-semibold tracking-tighter sm:text-7xl lg:text-8xl">
+              {HERO.title}
+            </h1>
 
-          <div aria-hidden="true" className="mt-8 h-1.5 w-32 rounded-full bg-accent" />
+            {/* The accent rule. Fixed width, not full-bleed — a full-width bar
+                under a heading is a divider; a short one is a mark. */}
+            <div className="mt-6 h-1 w-24 rounded-full bg-accent" />
 
-          <p className="mt-8 max-w-lg text-pretty text-lg leading-relaxed text-ink-muted">
-            Your agent loads exactly one skill. Not fifty thousand tokens of slop.
-          </p>
+            <p className="mt-8 max-w-xl text-pretty text-lg leading-relaxed text-ink">
+              {HERO.lede}
+            </p>
+            <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-ink-muted">
+              {HERO.body}
+            </p>
 
-          <p className="mt-4 max-w-lg text-pretty text-sm leading-relaxed text-ink-faint">
-            A registry that routes instead of a document that gets pasted. The rules
-            below are not advice — they are the checks that refuse to build a release.
-          </p>
-
-          <div className="mt-10 flex flex-wrap gap-3">
-            <CtaButton href={repoUrl} variant="primary" external>
-              Read the rules
-            </CtaButton>
-            <CtaButton href="#registry" variant="secondary">
-              See the registry
-            </CtaButton>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <CtaButton href={REPO_URL} rel="noreferrer">
+                {HERO.primaryCta}
+              </CtaButton>
+              <CtaButton href={detailHref} variant="outline">
+                {HERO.secondaryCta}
+              </CtaButton>
+            </div>
           </div>
-        </div>
 
-        <div className="lg:col-span-5">
-          <figure className="m-0">
+          {/* The panel is a region rather than a figure: it scrolls on its own
+              at narrow widths, and anything scrollable needs to be reachable
+              from the keyboard, which needs a name and a tabstop. */}
+          <div className="min-w-0 lg:col-span-5">
             <div
-              role="region"
-              aria-label="SKILL.md router, lines 60 to 68"
               tabIndex={0}
-              className="overflow-x-auto rounded-xl border border-surface-border bg-surface-sunken p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-page"
+              role="region"
+              aria-label="Switchyard command line session: a rollout is held behind another, then queued to follow it"
+              className="overflow-x-auto rounded-xl border border-surface-border bg-surface-sunken p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <pre className="m-0 font-mono text-[0.8125rem] leading-relaxed">
-                <code className="grid grid-cols-[2.25rem_1fr] gap-x-3">
-                  {TOKENISED.map(
-                    ({ line, segments }: { line: SourceLine; segments: Segment[] }) => (
-                      <span key={line.no} className="contents">
-                        <span
-                          data-metric="true"
-                          aria-hidden="true"
-                          className="select-none text-right text-ink-faint/70"
-                        >
-                          {line.no}
-                        </span>
-                        <span className="whitespace-pre-wrap break-words">
-                          {segments.map((segment: Segment) => (
-                            <span key={segment.id} className={SEGMENT_INK[segment.kind]}>
-                              {segment.text}
-                            </span>
-                          ))}
-                        </span>
+                <code>
+                  {TERMINAL.map((line) => (
+                    <span key={line.id} className={`block ${LINE_TONE[line.kind]}`}>
+                      {/* `select-none` so copying the block yields runnable
+                          commands rather than a transcript with prompts in it. */}
+                      <span className="select-none text-accent">
+                        {LINE_MARKER[line.kind]}
                       </span>
-                    ),
-                  )}
+                      {line.text}
+                    </span>
+                  ))}
                 </code>
               </pre>
             </div>
-            <figcaption className="mt-3 text-xs text-ink-faint">
-              <code className="font-mono">SKILL.md</code> lines 60–68, unedited. Every
-              other file in the pack is reached from here.
-            </figcaption>
-          </figure>
+            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
+              The second command is the whole product: the yard already knew the
+              scheduler was moving, so the rollout waits for it instead of
+              finding out downstream.
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className={`${sectionShell} mt-16 pb-14`}>
-        <dl className="flex flex-wrap gap-x-14 gap-y-5 border-t border-surface-border pt-6">
-          {BUDGET.map((fact: BudgetFact) => (
-            <div key={fact.id}>
-              <dt className="text-xs uppercase tracking-[0.14em] text-ink-faint">
-                {fact.label}
-              </dt>
-              <dd data-metric="true" className="mt-1.5 text-sm text-accent">
-                {fact.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   );

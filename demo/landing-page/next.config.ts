@@ -2,30 +2,35 @@ import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
 
 /**
- * `output: "export"` is opt-in through NEXT_OUTPUT_EXPORT, not the default.
+ * `output: "export"` is opt-in through NEXT_OUTPUT_EXPORT, never the default.
  *
- * This file used to say there was no static export at all. Two things stood in
- * the way and only one of them was ever permanent:
+ * The brief asks for a static export, and a static export is available — but it
+ * cannot be the default, for one reason that is not going away:
+ * `tools/screenshots/lib/next-server.mjs` starts every demo with `next start`,
+ * and `next start` refuses to run at all against an exported build. Making the
+ * export unconditional takes down `npm run screenshots` and `npm run
+ * demos:verify` together, and those are the only two checks in this repo that
+ * render anything. Every other gate reads source.
  *
- *   - The metric strip reads `/api/site/overview` on mount, and an export drops
- *     dynamic route handlers — the endpoint would 404 and the page would render
- *     its error state forever. Solved: the handler is `force-static`, so Next
- *     evaluates it at build time and writes the response into the output.
- *   - `tools/screenshots/lib/next-server.mjs` starts every demo with
- *     `next start`, which refuses to run at all against an exported build. That
- *     one is permanent, and it is why the export is opt-in rather than default:
- *     `npm run screenshots` and `npm run demos:verify` are the only checks in
- *     this repo that render anything, and an unconditional export takes both
- *     down.
+ * The metric strip's route handler is `force-static`, so Next evaluates it at
+ * build time and writes the response into the output — the endpoint survives
+ * the export rather than 404-ing the page into its error state forever.
  *
- * So: `next dev`, `next start` and the harnesses all keep the server build they
- * need, and only the Pages workflow asks for the export.
+ *   npm run build                      → server build; `next start` works
+ *   NEXT_OUTPUT_EXPORT=1 npm run build → static export in out/
  */
 const isExport = process.env.NEXT_OUTPUT_EXPORT === "1";
 
 /**
  * A project Pages site is served from /<repo>, and Next bakes asset URLs in at
  * build time. Empty in dev and under `next start`, which serve from the root.
+ *
+ * Two variables, deliberately, and the workflow sets both to the same value.
+ * `basePath` rewrites links and assets but does **not** rewrite a raw `fetch`,
+ * so the metric strip has to prefix its own request — and a client component
+ * can only read an env var that survives into the bundle, which means the
+ * `NEXT_PUBLIC_` prefix. This file is server-side and takes the private name.
+ * See `app/page.tsx`.
  */
 const basePath = process.env.NEXT_BASE_PATH ?? "";
 

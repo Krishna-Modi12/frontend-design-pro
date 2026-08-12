@@ -1,75 +1,111 @@
 import type { ReactElement } from "react";
 import { cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
 
-/** The six marks. Geometric, one per card, never a numbered badge — the registry
- *  is a lookup table, not a sequence, and 01/02/03 would imply an order. */
-export type FeatureMark = "bracket" | "dot" | "line" | "diamond" | "arc" | "square";
+/** The inline marks. Geometric, one per card, drawn rather than imported. */
+export type FeatureMark = "bracket" | "arrow" | "rings" | "track" | "grid" | "seal";
 
-export interface RegistrySkill {
-  /** The real directory under `skills/`, and the key. */
+export interface RegistryFeature {
   id: string;
   title: string;
-  /** Verbatim `description:` from that skill's own frontmatter. */
-  description: string;
+  body: string;
   mark: FeatureMark;
+  /** Tailwind span class, or "" for a single column. Spans are uneven on purpose. */
   span: string;
 }
 
 export interface BentoFeaturesProps {
-  skills: RegistrySkill[];
-  /** How many skills exist in total, so six cards are not read as all of them. */
-  totalSkills: number;
+  features: RegistryFeature[];
 }
 
-const MARK_PATH: Record<FeatureMark, string> = {
-  bracket: "M9 2H2v12h7",
-  dot: "M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8",
-  line: "M2 8h12",
-  diamond: "M8 2l6 6-6 6-6-6z",
-  arc: "M2 13A6 6 0 0 1 14 13",
-  square: "M3 3h10v10H3z",
+/** The geometry, keyed by mark. Only the inner shapes differ. */
+const MARK_SHAPES: Record<FeatureMark, ReactElement> = {
+  bracket: <path d="M7 3H4v14h3M13 3h3v14h-3" />,
+  arrow: <path d="M16 10H4M9 5l-5 5 5 5" />,
+  rings: (
+    <>
+      <circle cx="10" cy="10" r="2.5" />
+      <circle cx="10" cy="10" r="7" opacity="0.5" />
+    </>
+  ),
+  track: <path d="M3 6h14M3 14h9a5 5 0 0 0 5-5" />,
+  grid: <path d="M3 3h6v6H3zM11 3h6v6h-6zM3 11h6v6H3zM11 11h6v6h-6z" />,
+  seal: (
+    <>
+      <circle cx="10" cy="8" r="5" />
+      <path d="M7 12.5 6 18l4-2 4 2-1-5.5" />
+    </>
+  ),
 };
 
-export default function BentoFeatures({
-  skills,
-  totalSkills,
-}: BentoFeaturesProps): ReactElement {
+/**
+ * Marks are inline SVG rather than an icon package. Six shapes is not worth a
+ * dependency, and the only icon rule in the pack is that an icon-only *control*
+ * carries an accessible name — these are decoration beside a heading that
+ * already says the thing, so they are hidden from the accessibility tree and
+ * contribute nothing to it.
+ *
+ * One <svg> with its attributes written out, rather than six sharing a spread
+ * object. The spread version was the first thing written here and `A11Y-01`
+ * rejected it: an attribute that reaches the element through `{...common}` is
+ * invisible to the AST checker, which is the same reason it is invisible to
+ * every other reviewer. `aria-hidden` has to be legible where the element is.
+ */
+function Mark({ kind }: { kind: FeatureMark }): ReactElement {
   return (
-    <section id="registry" className={sectionShell}>
+    <svg
+      width={20}
+      height={20}
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {MARK_SHAPES[kind]}
+    </svg>
+  );
+}
+
+/**
+ * Twelve columns, six cards, spans that do not divide evenly: 2+1+1 on the
+ * first row and 1+2+1 on the second. Equal-height card grids are the first
+ * item on the anti-slop wall — six identical boxes say every capability weighs
+ * the same, which is never true of a real product and is the single most
+ * reliable tell that a page was generated rather than composed.
+ */
+export default function BentoFeatures({ features }: BentoFeaturesProps): ReactElement {
+  return (
+    <section id="what-it-does" className={sectionShell}>
       <div className={sectionSpacing}>
         <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-          The registry
+          What the yard does
         </h2>
-        <p className="mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-ink-muted">
-          Six of {totalSkills} skills, each a real directory under{" "}
-          <code className="font-mono text-ink">skills/</code>. The description on
-          every card is that skill&rsquo;s own frontmatter, copied without edits.
+        <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-ink-muted">
+          Six capabilities, and the two that carry the product are the two given
+          the room.
         </p>
 
-        <ul className="mt-10 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
-          {skills.map((skill: RegistrySkill) => (
-            <li key={skill.id} className={`${cardShell} ${skill.span} p-6`}>
-              <svg viewBox="0 0 16 16" aria-hidden="true" className="h-4 w-4 text-accent">
-                <path
-                  d={MARK_PATH[skill.mark]}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              <h3 className="mt-5 text-lg font-semibold tracking-tight text-ink">
-                {skill.title}
+        <div className="mt-12 grid gap-4 lg:grid-cols-4">
+          {features.map((feature) => (
+            <article
+              key={feature.id}
+              className={`${cardShell} ${feature.span} flex flex-col p-6 lg:p-8`}
+            >
+              <span className="text-accent">
+                <Mark kind={feature.mark} />
+              </span>
+              <h3 className="mt-5 text-balance text-lg font-semibold tracking-tight">
+                {feature.title}
               </h3>
-              <p className="mt-1 font-mono text-xs text-accent">skills/{skill.id}/</p>
               <p className="mt-3 text-pretty text-sm leading-relaxed text-ink-muted">
-                {skill.description}
+                {feature.body}
               </p>
-            </li>
+            </article>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

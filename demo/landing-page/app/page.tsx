@@ -1,39 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import Hero from "../components/Hero";
 import MetricsStrip from "../components/MetricsStrip";
 import type { PlatformMetric } from "../components/MetricsStrip";
-import ConstraintWall from "../components/ConstraintWall";
 import BentoFeatures from "../components/BentoFeatures";
-import InstallMatrix from "../components/InstallMatrix";
+import SocialProof from "../components/SocialProof";
 import Footer from "../components/Footer";
 import {
-  ADAPTERS,
-  ENFORCED_RULES,
-  REGISTRY_SKILLS,
+  FEATURES,
+  FOOTER_NOTE,
+  PRODUCT,
   REPO_URL,
-  TOTAL_CONSTRAINTS,
-  TOTAL_SKILLS,
+  TESTIMONIALS,
 } from "../lib/content";
 import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
-
-/** Everything the page reads from the network. One request, one failure mode. */
-interface PageData {
-  metrics: PlatformMetric[];
-}
-
-type LoadState =
-  | { readonly phase: "loading" }
-  | { readonly phase: "ready"; readonly data: PageData }
-  | { readonly phase: "failed"; readonly reason: string };
-
-/**
- * Real when CI sets it, honest when it does not. A hardcoded short SHA would be
- * a fabrication on a page whose argument is that its numbers are checkable.
- */
-const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? "local";
 
 /**
  * A project Pages site is served from /<repo>, and Next rewrites its own asset
@@ -44,94 +26,127 @@ const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? "local";
  */
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "Rules", href: "#rules" },
-  { label: "Registry", href: "#registry" },
-  { label: "Install", href: "#install" },
+/**
+ * The commit this page was built from, injected by CI. Falls back to "local"
+ * rather than to an invented hash — a fabricated build ref on a page that
+ * prints a build ref is worse than no build ref.
+ */
+const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? "local";
+
+const NAV = [
+  { id: "what-it-does", label: "What it does" },
+  { id: "numbers", label: "Numbers" },
+  { id: "who-uses-it", label: "Who uses it" },
 ];
 
-export default function LandingPage(): ReactElement {
-  const [state, setState] = useState<LoadState>({ phase: "loading" });
+interface MetricsState {
+  status: "loading" | "error" | "ready";
+  metrics: PlatformMetric[];
+  /** Why it failed, in the interface's voice. Never a raw exception. */
+  reason?: string;
+}
 
-  const load = useCallback(async (): Promise<void> => {
-    setState({ phase: "loading" });
-    try {
-      const response = await fetch(`${BASE_PATH}/api/site/overview`, {
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) {
-        setState({ phase: "failed", reason: `the overview endpoint answered ${response.status}` });
-        return;
-      }
-      const data: PageData = await response.json();
-      setState({ phase: "ready", data });
-    } catch {
-      // fetch() rejects only on a transport failure; anything else is an ok:false.
-      setState({ phase: "failed", reason: "the request never reached us" });
-    }
-  }, []);
+export default function Page(): ReactElement {
+  const [state, setState] = useState<MetricsState>({
+    status: "loading",
+    metrics: [],
+  });
 
+  /**
+   * A real request with a real abort. The anti-slop wall bans mount-time
+   * `setTimeout` loaders specifically — a skeleton on a timer is a skeleton
+   * pretending to wait for something, and it is the cheapest tell that nobody
+   * wired the page to anything.
+   */
   useEffect(() => {
-    void load();
-  }, [load]);
+    const controller = new AbortController();
 
-  const isLoading = state.phase === "loading";
-  const error = state.phase === "failed" ? state.reason : null;
-  const metrics = state.phase === "ready" ? state.data.metrics : [];
+    async function load(): Promise<void> {
+      try {
+        const response = await fetch(`${BASE_PATH}/api/site/overview`, {
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          setState({
+            status: "error",
+            metrics: [],
+            reason: `The overview endpoint answered ${response.status}.`,
+          });
+          return;
+        }
+        const payload: { metrics?: PlatformMetric[] } = await response.json();
+        setState({ status: "ready", metrics: payload.metrics ?? [] });
+      } catch {
+        // `fetch` rejects only on a transport failure — anything the server
+        // actually answered is an `ok: false` and was handled above. An abort
+        // lands here too, and must not be reported as a failure: the component
+        // is unmounting and there is nobody left to tell.
+        if (controller.signal.aborted) return;
+        setState({
+          status: "error",
+          metrics: [],
+          reason: "The request never reached us.",
+        });
+      }
+    }
+
+    void load();
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="min-h-[100dvh] bg-surface-page text-ink antialiased">
-      <style>{tokenStyles}</style>
+      <style dangerouslySetInnerHTML={{ __html: tokenStyles }} />
 
+      {/* First tabstop on the page. Anything with a <nav> needs one, or a
+          keyboard reader walks the whole header before reaching the content. */}
       <a
-        href="#overview"
-        className={`${focusRing} sr-only rounded-lg bg-surface-elevated px-4 py-3 text-sm font-medium focus-visible:not-sr-only focus-visible:absolute focus-visible:start-4 focus-visible:top-4 focus-visible:z-20`}
+        href="#main"
+        className={`${focusRing} sr-only rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50`}
       >
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-10 border-b border-surface-border bg-surface-page/85 backdrop-blur">
-        <div className={`${sectionShell} flex h-16 items-center justify-between gap-6`}>
-          <p className="font-mono text-sm font-medium tracking-tight">
-            frontend-design-pro
-          </p>
-
-          <nav aria-label="Sections" className="hidden md:block">
-            <ul className="flex list-none items-center gap-1 p-0">
-              {NAV_LINKS.map((link: { label: string; href: string }) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg px-3 text-sm text-ink-muted transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none`}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
+      <header className="sticky top-0 z-40 border-b border-surface-border bg-surface-page/85 backdrop-blur">
+        <div className={`${sectionShell} flex h-16 items-center justify-between`}>
           <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg border border-surface-border-strong px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent motion-reduce:transition-none`}
+            href="#top"
+            className={`${focusRing} rounded font-mono text-sm font-medium tracking-tight`}
           >
-            GitHub
+            {PRODUCT}
           </a>
+
+          <nav aria-label="Sections" className="flex items-center gap-1">
+            {NAV.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`${tapTarget} ${focusRing} hidden items-center rounded-lg px-3 text-sm text-ink-muted transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none sm:inline-flex`}
+              >
+                {item.label}
+              </a>
+            ))}
+            <a
+              href={REPO_URL}
+              rel="noreferrer"
+              className={`${tapTarget} ${focusRing} ml-2 inline-flex items-center rounded-lg border border-surface-border-strong px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent motion-reduce:transition-none`}
+            >
+              The pack
+            </a>
+          </nav>
         </div>
       </header>
 
-      <main>
-        <Hero repoUrl={REPO_URL} />
-
-        <MetricsStrip metrics={metrics} isLoading={isLoading} error={error} />
-
-        <ConstraintWall rules={ENFORCED_RULES} totalConstraints={TOTAL_CONSTRAINTS} />
-
-        <BentoFeatures skills={REGISTRY_SKILLS} totalSkills={TOTAL_SKILLS} />
-
-        <InstallMatrix adapters={ADAPTERS} repoUrl={REPO_URL} />
+      <main id="main">
+        <Hero detailHref="#what-it-does" />
+        <MetricsStrip
+          metrics={state.metrics}
+          status={state.status}
+          errorMessage={state.reason}
+        />
+        <BentoFeatures features={FEATURES} />
+        <SocialProof testimonials={TESTIMONIALS} disclosure={FOOTER_NOTE} />
       </main>
 
       <Footer repoUrl={REPO_URL} buildSha={BUILD_SHA} />
