@@ -770,6 +770,46 @@ def check_metadata(truth: Dict[str, object]) -> List[Finding]:
     return findings
 
 
+# ── Check 3b — the landing page's fixture vs the source it cites ─────────────
+
+_FIXTURE = Path("demo/landing-page/screenshot-fixture.json")
+_STATS_KEY = re.compile(r"stats\.(\w+)")
+
+
+def check_landing_fixture() -> List[Finding]:
+    """`demo/landing-page` renders four figures from a committed fixture, and
+    every entry names the `metadata.json` key it was copied from.
+
+    That provenance is the whole check: read the key each entry cites and
+    compare. Nothing else here could — the figure lives in a `"value"` string
+    with its noun in a sibling `"label"`, so the prose patterns that catch
+    "11 gates" in markdown see two unrelated JSON fields and pass. The fixture
+    sat one behind on `release_gates` through the release that added Gate 11,
+    and was published as the pack's own homepage saying so.
+    """
+    path = ROOT / _FIXTURE
+    if not path.is_file():
+        return []
+    stats = json.loads((ROOT / "metadata.json").read_text(encoding="utf-8")).get("stats", {})
+    fixture = json.loads(path.read_text(encoding="utf-8"))
+    findings: List[Finding] = []
+
+    for metric in fixture.get("metrics", []):
+        key_match = _STATS_KEY.search(str(metric.get("source", "")))
+        if not key_match or key_match.group(1) not in stats:
+            continue
+        key = key_match.group(1)
+        shown = str(metric.get("value", "")).replace(",", "").strip()
+        expected = str(stats[key])
+        if shown != expected:
+            findings.append(Finding(
+                "fixture", _FIXTURE.as_posix(), 0, f'{metric.get("label", key)} ({key})',
+                str(metric.get("value")), f"{int(expected):,}" if expected.isdigit() else expected,
+                f'cites metadata.json → stats.{key}',
+            ))
+    return findings
+
+
 # ── Check 4 — the two changelogs agree ───────────────────────────────────────
 
 def check_changelog_sync() -> List[Finding]:
@@ -835,7 +875,8 @@ def main() -> None:
         sys.exit(0)
 
     findings = (check_anchored(truth) + check_arithmetic() + check_pass_ratios()
-                + check_metadata(truth) + check_changelog_sync())
+                + check_metadata(truth) + check_landing_fixture()
+                + check_changelog_sync())
 
     if "--json" in sys.argv:
         print(json.dumps([f._asdict() for f in findings], indent=2))
@@ -843,7 +884,7 @@ def main() -> None:
 
     n_files = len(_scan_files())
     print(f"\n[FIGURES] {len(FIGURES)} anchored figures + arithmetic + metadata "
-          f"+ changelog sync, over {n_files} claim surfaces\n")
+          f"+ landing fixture + changelog sync, over {n_files} claim surfaces\n")
 
     if findings:
         by_file: Dict[str, List[Finding]] = {}

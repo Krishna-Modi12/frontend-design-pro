@@ -39,7 +39,7 @@
     },
     {
       "id": "gates",
-      "value": "10",
+      "value": "11",
       "label": "Blocking gates",
       "caption": "A red gate refuses to build the archive. There is no override flag.",
       "source": "metadata.json · stats.release_gates"
