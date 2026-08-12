@@ -1,0 +1,117 @@
+name: Deploy showcase to Pages
+
+# demo/showcase is the only artifact in this repo a stranger can evaluate
+# without installing anything. It has been buildable since Gate 9 was added and
+# reachable by nobody, because a Next.js app that only exists in a git tree is
+# a screenshot with extra steps.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'demo/showcase/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race to publish. Not cancel-in-progress: a half-finished
+# deploy that gets cancelled can leave the site serving a partial upload.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # A project site is served from /<repo>. Next bakes asset URLs at build time,
+  # so this has to be known here rather than resolved in the browser.
+  BASE_PATH: /frontend-design-pro
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: demo/showcase/package-lock.json
+
+      # `npm ci` alone, matching the showcase job in ci.yml: an `|| npm install`
+      # fallback makes a stale lockfile look like a passing build.
+      - name: Install showcase dependencies
+        working-directory: demo/showcase
+        run: npm ci
+
+      - name: Static export
+        working-directory: demo/showcase
+        env:
+          NEXT_OUTPUT_EXPORT: '1'
+          NEXT_BASE_PATH: ${{ env.BASE_PATH }}
+        run: npx next build
+
+      # Gate 9 builds the server output; this job ships an export. That split is
+      # only safe if something checks the export, and this is that something.
+      #
+      # It resolves every asset the page references against the files actually
+      # in the upload, rather than pattern-matching the HTML — because the
+      # failure being gated is "does this 404 when served", and the honest way
+      # to ask that is to look for the file. A missing base path renders as
+      # unstyled HTML that still returns 200, which reads like a CSS bug and is
+      # a routing one, and no gate upstream of here can see it.
+      - name: Verify the export would actually serve
+        working-directory: demo/showcase
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, re, sys
+
+          base = os.environ["BASE_PATH"]
+          out = pathlib.Path("out")
+          index = out / "index.html"
+          if not index.is_file():
+              sys.exit("::error::the export produced no out/index.html")
+
+          html = index.read_text(encoding="utf-8")
+          refs = set(re.findall(r'["\'(]((?:%s)?/_next/[^"\'\s)\\]+)' % re.escape(base), html))
+          if not refs:
+              sys.exit("::error::index.html references no /_next/ asset at all — "
+                       "this is not the export we think it is")
+
+          unprefixed = sorted(r for r in refs if not r.startswith(base + "/"))
+          missing = sorted(
+              r for r in refs
+              if r.startswith(base + "/") and not (out / r[len(base) + 1:]).is_file()
+          )
+
+          for r in unprefixed:
+              print(f"::error::asset URL is missing {base}: {r}")
+          for r in missing:
+              print(f"::error::asset URL resolves to no file in the upload: {r}")
+          if unprefixed or missing:
+              sys.exit(1)
+
+          print(f"✓ {len(refs)} referenced assets all carry {base} and exist in the upload")
+          PY
+
+      # Pages serves the uploaded artifact directly rather than running Jekyll,
+      # so this is belt-and-braces — but Jekyll strips directories beginning
+      # with an underscore, and everything Next emits lives in _next/.
+      - name: Disable Jekyll
+        run: touch demo/showcase/out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: demo/showcase/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
