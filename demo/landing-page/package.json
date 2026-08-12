@@ -1,8 +1,8 @@
 {
-  "name": "frontend-design-pro-landing",
+  "name": "switchyard-landing",
   "version": "0.1.0",
   "private": true,
-  "description": "demo/landing-page as a standalone Next.js app — the product homepage for this pack, built under the pack's own rules. Every figure on the page traces to a file in this repo.",
+  "description": "demo/landing-page — a dark-mode SaaS landing page for a fictional deploy-pipeline product, generated under this pack's own rules. Sample output, not a real service.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

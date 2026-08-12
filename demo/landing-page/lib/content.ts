@@ -1,176 +1,156 @@
 /**
- * The page's structural content — everything that is not a figure.
+ * Switchyard — the page's structural content.
  *
- * Figures cross the network from `/api/site/overview` because they change when
- * the pack changes. These do not: they are the shape of the repo, and if one of
- * them goes stale it is because a directory was renamed, which is a code change,
- * not a data change.
+ * ────────────────────────────────────────────────────────────────────────────
+ * Switchyard is a FICTIONAL product. It does not exist, the quotes below were
+ * written for this demo, and the people and companies attributed to them are
+ * invented. This file is sample output: it shows what the pack generates from
+ * the prompt recorded in `docs/DEMO_PROMPTS.md`, in the same way
+ * `demo/showcase/` is a page for the fictional "Nexus".
  *
- * Every string here was copied out of the repo. The source is named above each
- * block so it can be re-derived rather than trusted.
+ * Nothing here states a figure about `frontend-design-pro` itself. That is
+ * deliberate — the previous version of this page quoted the pack's own counts,
+ * two of them drifted, and it rendered "Six of 53" while the real count was 59.
+ * A demo that markets a fictional product has no figures that can go stale.
+ * ────────────────────────────────────────────────────────────────────────────
+ *
+ * Live figures cross the network from `/api/site/overview`, because a metric
+ * strip that cannot be empty or fail is not a metric strip. Everything in this
+ * file is structure, and structure only changes when the page does.
  */
-import type { EnforcedRule } from "../components/ConstraintWall";
-import type { RegistrySkill } from "../components/BentoFeatures";
-import type { Adapter } from "../components/InstallMatrix";
+import type { RegistryFeature } from "../components/BentoFeatures";
+import type { Testimonial } from "../components/SocialProof";
 
+export const PRODUCT = "Switchyard";
+
+/** Every outbound link on the page. A demo links to the pack, not to a fiction. */
 export const REPO_URL = "https://github.com/Krishna-Modi12/frontend-design-pro";
 
-/** metadata.json · stats.skills and stats.ci_constraints. */
-export const TOTAL_SKILLS = 19;
-export const TOTAL_CONSTRAINTS = 53;
+export const HERO = {
+  eyebrow: "Release orchestration · self-hosted · runs beside your cluster",
+  title: PRODUCT,
+  lede: "Route every release through a yard that already knows what is on the track.",
+  body: "Hold a rollout on a siding, move traffic by the increment you choose, and reverse the whole consist from one key — without opening a war room to find out what else is moving.",
+  primaryCta: "Read the rollout guide",
+  secondaryCta: "See what it does",
+} as const;
 
 /**
- * `descriptions` are the verbatim `description:` line from each
- * `skills/{id}/SKILL.md` frontmatter. Titles are the human form of the same
- * directory name — note `threejs-3d` and `animations`, which are the real IDs.
+ * The hero's right column: a real session against the CLI, not a screenshot of
+ * one. Kept to short lines so it never overflows at 390px, and rendered as text
+ * so it is selectable, searchable and readable by a screen reader.
  */
-export const REGISTRY_SKILLS: RegistrySkill[] = [
+export interface TerminalLine {
+  id: string;
+  /** `cont` is a wrapped command — a shell marks those `>`, never `$` again. */
+  kind: "prompt" | "cont" | "out" | "flag" | "ok";
+  text: string;
+}
+
+export const TERMINAL: TerminalLine[] = [
+  { id: "l1", kind: "prompt", text: "switchyard roll api@4b21f0c --to 10%" },
+  { id: "l2", kind: "out", text: "consist  api · worker · scheduler" },
+  { id: "l3", kind: "out", text: "holding  2 services already moving" },
+  { id: "l4", kind: "flag", text: "  ! scheduler is mid-rollout (38%)" },
+  { id: "l5", kind: "flag", text: "  ! blast radius would reach checkout" },
+  { id: "l6", kind: "out", text: "" },
+  // Wrapped at the shell's own continuation, not because it was too long to
+  // think about: at 54 characters this line ran past the panel and the capture
+  // showed a command cut off mid-word. The panel scrolls, but a screenshot
+  // cannot, and the screenshot is what most people see.
+  { id: "l7", kind: "prompt", text: "switchyard roll api@4b21f0c --to 10% \\" },
+  { id: "l8", kind: "cont", text: "  --after scheduler" },
+  { id: "l9", kind: "ok", text: "queued on siding 3 · starts in 4m12s" },
+  { id: "l10", kind: "ok", text: "reverse with: switchyard back api" },
+];
+
+/**
+ * Six capabilities, six spans that do not divide evenly — 2+1+1 over 1+2+1.
+ * An equal-weight grid tells a reader every feature matters the same amount,
+ * which is never true and is the first thing that makes a page look generated.
+ */
+export const FEATURES: RegistryFeature[] = [
   {
-    id: "landing-pages",
-    title: "Landing pages",
-    description:
-      "Marketing pages — heroes, pricing, testimonials, bento grids, social proof, CTAs, empty states, onboarding.",
+    id: "progressive",
+    title: "Progressive rollout",
+    body: "Move traffic in the increments you name — 1%, 10%, a single availability zone, one customer. Each step holds until its error budget clears, and a step that does not clear never advances on its own.",
     mark: "bracket",
     span: "lg:col-span-2",
   },
   {
-    id: "forms",
-    title: "Forms",
-    description:
-      "Forms and auth — validation, RHF + Zod, error states, checkout, login/signup, OTP/MFA, payments.",
-    mark: "dot",
-    span: "lg:col-span-1",
+    id: "reverse",
+    title: "One-key reverse",
+    body: "Roll the whole consist back to the last good revision, including the config and the migration guard, in one command.",
+    mark: "arrow",
+    span: "",
   },
   {
-    id: "threejs-3d",
-    title: "Three.js and R3F",
-    description:
-      "3D web experiences with React Three Fiber — scenes, geometry, materials, lighting, shaders, post-processing, model loading, raycasting.",
-    mark: "diamond",
-    span: "lg:col-span-1",
+    id: "radius",
+    title: "Blast radius",
+    body: "See which services a change can reach before it moves, derived from real call traffic rather than a diagram somebody drew in 2023.",
+    mark: "rings",
+    span: "",
   },
   {
-    id: "animations",
-    title: "Animations",
-    description:
-      "Motion — easing and timing rules, Framer Motion, GSAP, scroll-driven experiences, view transitions, reduced motion.",
-    mark: "arc",
-    span: "lg:col-span-1",
+    id: "sidings",
+    title: "Preview sidings",
+    body: "Every branch gets a full environment on a siding, torn down when the branch merges.",
+    mark: "track",
+    span: "",
   },
   {
-    id: "agent-ops",
-    title: "Agent ops",
-    description:
-      "Agent operating discipline — token budgeting, cross-session memory, self-improvement loops, self-verification, parallel work, and subagent orchestration.",
-    mark: "line",
+    id: "graph",
+    title: "Dependency graph",
+    body: "The yard keeps its own map of what depends on what, rebuilt from traces every night. When two rollouts would collide, the second one waits instead of finding out in production.",
+    mark: "grid",
     span: "lg:col-span-2",
   },
   {
-    id: "iconography",
-    title: "Iconography",
-    description:
-      "Icon systems — sizing, weight matching, colour inheritance, hit areas, SVG accessibility, and avatar patterns.",
-    mark: "square",
-    span: "lg:col-span-1",
+    id: "audit",
+    title: "Signed audit trail",
+    body: "Who moved what, when, and which approval let it through — signed, exportable, and boring on purpose.",
+    mark: "seal",
+    span: "",
   },
 ];
 
 /**
- * core/validate-checklist.md, cross-checked against the suite that reports each
- * ID — `scripts/parser_constraints.js` for the AST three,
- * `scripts/test_constraints.py` for the regex three.
+ * Invented quotes for an invented product, in the same register as
+ * `demo/showcase/`. Two wide and one narrow, so the row does not read as a
+ * three-up template. Each names something specific enough to be falsifiable if
+ * the product were real — a vague testimonial is placeholder copy wearing a
+ * name.
  */
-export const ENFORCED_RULES: EnforcedRule[] = [
+export const TESTIMONIALS: Testimonial[] = [
   {
-    id: "TYP-02",
-    enforcer: "regex",
-    rule: "No Inter as the display face",
-    detail:
-      "Roboto, Arial, Poppins, DM Sans and Space Grotesk fail the same check. The default typeface is the fastest way to make three unrelated products look like one.",
+    id: "t1",
+    quote:
+      "We moved from a Thursday release train to twelve deploys a day without adding anyone to the on-call rotation. The part that did it was the hold — engineers stopped asking in chat whether it was safe to ship, because the yard already knew.",
+    name: "Priya Raghunathan",
+    role: "Staff engineer, platform",
+    company: "Northbound Logistics",
+    span: "lg:col-span-2",
   },
   {
-    id: "TOK-01",
-    enforcer: "regex",
-    rule: "OKLCH tokens, never hex",
-    detail:
-      "A hex value in a token definition fails. OKLCH is what makes a lightness ramp hold its hue instead of drifting grey in the middle.",
+    id: "t2",
+    quote:
+      "The dependency graph caught a migration that would have taken checkout down with it. That one catch paid for the year.",
+    name: "Tomas Lindqvist",
+    role: "Director of engineering",
+    company: "Ferrule",
+    span: "lg:col-span-2",
   },
+  // The narrow column, so the quote is written short rather than wrapped short.
+  // A long quote here came out eight lines of four words in the capture.
   {
-    id: "SLOP-01",
-    enforcer: "regex",
-    rule: "No placeholder names",
-    detail:
-      "The two stock filler names fail outright — printing them here would trip this rule on this very file. It is the cheapest tell that nobody read the output before shipping it.",
-  },
-  {
-    id: "MOTION-01",
-    enforcer: "AST",
-    rule: "Reduced motion has to work",
-    detail:
-      "The parser checks for a real matchMedia call, hook, media query or motion-reduce: variant. A prefers-reduced-motion block that sets nothing does not count.",
-  },
-  {
-    id: "DELAY-01-AST",
-    enforcer: "AST",
-    rule: "No fake loading states",
-    detail:
-      "A setTimeout gating state inside a mount effect is a skeleton pretending to wait for a request that was never made.",
-  },
-  {
-    id: "TS-01-AST",
-    enforcer: "AST",
-    rule: "Declared prop types must be used",
-    detail:
-      "An exported Props interface that nothing is typed with is documentation of an API the component does not have.",
+    id: "t3",
+    quote: "Median rollback went from eleven minutes with a runbook to one command.",
+    name: "Dede Okonkwo",
+    role: "SRE lead",
+    company: "Cartage",
+    span: "",
   },
 ];
 
-/**
- * install/README.md — the adapter table, including its own untested column.
- *
- * `mode` is not editorial: it is whether `install/{id}/.manual` exists on disk,
- * which is the same file both setup scripts read to decide what they may write.
- * A manual adapter is one no installer should touch — a user-level directory, a
- * web upload, or a file the repo already owns.
- */
-export const ADAPTERS: Adapter[] = [
-  { id: "agents", mode: "auto", untested: false, installs: "AGENTS.md — read by ~30 hosts" },
-  {
-    id: "cursor",
-    mode: "auto",
-    untested: false,
-    installs: ".cursor/rules/frontend-design-pro.mdc",
-  },
-  {
-    id: "copilot",
-    mode: "auto",
-    untested: false,
-    installs: ".github/copilot-instructions.md",
-  },
-  {
-    id: "cline",
-    mode: "auto",
-    untested: true,
-    installs: ".clinerules/frontend-design-pro.md",
-  },
-  { id: "roo", mode: "auto", untested: true, installs: ".roo/rules/frontend-design-pro.md" },
-  { id: "zed", mode: "auto", untested: true, installs: ".rules" },
-  { id: "gemini", mode: "auto", untested: false, installs: "GEMINI.md (Gemini CLI)" },
-  {
-    id: "windsurf",
-    mode: "auto",
-    untested: true,
-    installs: ".windsurf/rules/frontend-design-pro.md",
-  },
-  {
-    id: "continue",
-    mode: "auto",
-    untested: true,
-    installs: ".continue/rules/frontend-design-pro.md",
-  },
-  { id: "aider", mode: "auto", untested: true, installs: "CONVENTIONS.md" },
-  { id: "claude", mode: "manual", untested: false, installs: "unzip into ~/.claude/skills/" },
-  { id: "chatgpt", mode: "manual", untested: false, installs: "Custom GPT knowledge upload" },
-  { id: "codex", mode: "manual", untested: false, installs: "AGENTS.md merge" },
-  { id: "generic", mode: "manual", untested: false, installs: "any other host" },
-];
+export const FOOTER_NOTE =
+  "Switchyard is a fictional product. This page is sample output from the frontend-design-pro skill pack, generated under its own rules.";

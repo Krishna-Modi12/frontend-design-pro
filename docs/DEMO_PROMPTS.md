@@ -2,7 +2,9 @@
 
 Copy any of these into your agent with `frontend-design-pro` loaded to reproduce the corresponding demo.
 
-For the three stub-typed demos below, no verbatim record of the original prompt survives in this repo — subagent prompts aren't part of the committed history. What's here is a prompt that reproduces what's actually in each demo's source today, checked against it rather than reconstructed from memory. `demo/showcase/`'s prompt is different: it's quoted exactly from `demo/showcase/README.md`, which documented it verbatim from the start.
+Two of these are verbatim and two are not, which is worth knowing before you compare output against the demo.
+
+`demo/showcase/` is quoted exactly from `demo/showcase/README.md`, which documented it from the start. `demo/landing-page/` is quoted exactly from the brief that rebuilt it. For the two stub-typed demos — `dashboard` and `auth-form` — no verbatim record survives, because subagent prompts were never part of the committed history; what's here is a prompt that reproduces what is in each demo's source today, checked against it rather than recalled.
 
 ---
 
@@ -10,11 +12,13 @@ For the three stub-typed demos below, no verbatim record of the original prompt 
 
 **Prompt:**
 
-> Create a dark-mode SaaS landing page: a hero with a live-updating platform metric strip, a features section, a pricing table, and a testimonials section with regional/verification detail in the footer. Handle the whole page as one load state — loading, ready, or failed — rather than letting one section succeed while another shows broken data next to it.
+> Create a dark-mode SaaS landing page with asymmetric bento features, a metric strip with tabular numerics, and social proof. Near-black background, acid-green accent, Geist font. No equal-card grids. No Inter.
 
 **Skills loaded:** `landing-pages` + `core/design-tokens.md`
 
-**What it demonstrates:** Dark OKLCH surface, asymmetric bento features, tabular-nums pricing, skip link.
+**What it demonstrates:** Dark OKLCH surface at a single hue, asymmetric bento (2+1+1 over 1+2+1), tabular-nums metric strip on an uneven track, skip link, and four real states behind a real fetch.
+
+**The product is fictional.** "Switchyard" does not exist; the page says so on itself. Two bans in that prompt are the pack's own anti-slop wall restated by the user — the page is checked against them by `python scripts/test_constraints.py --dir demo --recursive --project`, not trusted to have obeyed.
 
 ---
 

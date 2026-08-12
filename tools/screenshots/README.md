@@ -56,9 +56,9 @@ avoid.
 
 `app/globals.css` imports `demo/landing-page/tokens.css` — the demo's own token
 file, not a restatement of it. That import is load-bearing: `landing-page` is the
-one demo that addresses its palette through named utilities (`bg-surface`,
-`text-ink`, `border-hairline`, `ring-accent`, `shadow-lift`), and Tailwind only
-emits those for tokens registered at build time. `dashboard` and `auth-form` are
+one demo that addresses its palette through named utilities (`bg-surface-page`,
+`bg-surface-elevated`, `text-ink-muted`, `border-surface-border`, `ring-accent`),
+and Tailwind only emits those for tokens registered at build time. `dashboard` and `auth-form` are
 deliberately not imported: both use arbitrary `bg-[var(--color-surface)]`
 utilities against a `:root` block they inject themselves, so they need nothing
 here — and registering tokens on their behalf would let this harness flatter them

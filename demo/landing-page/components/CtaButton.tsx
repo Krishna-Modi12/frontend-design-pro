@@ -1,51 +1,38 @@
 import { forwardRef } from "react";
-import type { ReactNode } from "react";
+import type { AnchorHTMLAttributes, ReactElement } from "react";
 import { focusRing, tapTarget } from "../lib/tokens";
 
-export interface CtaButtonProps {
-  /** Where it goes. Every CTA on this page is a link, so there is no onClick. */
-  href: string;
-  /** `primary` is the acid fill; `secondary` is the hairline outline. */
-  variant: "primary" | "secondary";
-  children: ReactNode;
-  /** Set on the outbound GitHub link so the tab is not hijacked silently. */
-  external?: boolean;
+export interface CtaButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  /** `solid` carries the accent; `outline` is the quieter second action. */
+  variant?: "solid" | "outline";
 }
 
-const VARIANT: Record<CtaButtonProps["variant"], string> = {
-  primary:
-    "bg-accent text-accent-ink hover:shadow-[0_0_0_6px_var(--color-accent-glow)] " +
-    "font-semibold",
-  secondary:
-    "border border-surface-border-strong text-ink hover:border-accent " +
-    "hover:text-accent font-medium",
+const VARIANT: Record<"solid" | "outline", string> = {
+  solid: "bg-accent text-accent-ink hover:bg-accent/90",
+  outline:
+    "border border-surface-border-strong text-ink hover:border-accent hover:text-accent",
 };
 
 /**
- * The one interactive primitive on the page, so it is the one thing that
- * forwards a ref — `core/component-api.md` scopes that requirement to
- * interactive components, not to every section wrapper that happens to render a
- * <div>. A section can be reached by its `id`; a control a shell needs to focus
- * cannot.
+ * `forwardRef` lives here rather than on the section wrappers.
+ * `core/component-api.md` scopes the requirement to interactive components —
+ * something has to be able to focus this, scroll it into view, or measure it.
+ * A <section> that nothing ever calls a method on does not need a handle, and
+ * forwarding one everywhere is cargo cult rather than API design.
  *
- * The transition names its properties. PERF-04 bans the blanket keyword — it
- * animates layout properties nobody asked it to, and it cannot be spelled here
- * either, because the regex half of that check reads comments too.
+ * Transitions are duration-150 ease-out: entrances and hovers decelerate.
+ * `ease-in` accelerates into a stop, which reads as the UI flinching, and the
+ * anti-slop wall bans it for entrances.
  */
 const CtaButton = forwardRef<HTMLAnchorElement, CtaButtonProps>(function CtaButton(
-  { href, variant, children, external = false },
+  { variant = "solid", className = "", children, ...rest },
   ref,
-) {
-  const outbound = external
-    ? { target: "_blank", rel: "noreferrer noopener" }
-    : {};
-
+): ReactElement {
   return (
     <a
       ref={ref}
-      href={href}
-      {...outbound}
-      className={`${tapTarget} ${focusRing} ${VARIANT[variant]} inline-flex items-center justify-center rounded-xl px-6 text-sm transition-[color,background-color,border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none`}
+      className={`${tapTarget} ${focusRing} ${VARIANT[variant]} ${className} inline-flex items-center justify-center rounded-lg px-5 text-sm font-medium transition-colors duration-150 ease-out motion-reduce:transition-none`}
+      {...rest}
     >
       {children}
     </a>

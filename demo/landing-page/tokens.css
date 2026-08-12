@@ -1,5 +1,5 @@
 /**
- * frontend-design-pro — design tokens, registered with Tailwind at build time.
+ * Switchyard — design tokens, registered with Tailwind at build time.
  *
  * `@theme` is a Tailwind compiler directive, not CSS. It has to be compiled,
  * which means it has to live in a stylesheet the build reads — a browser handed
@@ -16,32 +16,43 @@
  *
  * One material, one hue: every surface step holds H=270 and moves only in
  * lightness, which is what keeps a dark shell from reading as five unrelated
- * greys stacked on each other. OKLCH only — no hex anywhere — and the deepest
- * surface is oklch(10% 0.015 270) rather than pure black, so elevation stays
- * legible on OLED and the hairlines do not disappear.
+ * greys stacked on each other. OKLCH only — no hex anywhere.
  *
  * Values here are the single source of truth. `lib/tokens.ts` must not restate
  * them — it reads them back as `var(--color-*)`.
  */
 
 @theme {
-  --color-surface-page: oklch(10% 0.015 270);
-  --color-surface-elevated: oklch(16% 0.02 270);
-  --color-surface-sunken: oklch(13% 0.018 270);
-  --color-surface-border: oklch(24% 0.03 270 / 0.4);
-  --color-surface-border-strong: oklch(34% 0.035 270 / 0.7);
+  /* The four the brief fixes. */
+  --color-surface-page: oklch(12% 0.02 270);
+  --color-surface-elevated: oklch(18% 0.02 270);
+  --color-accent: oklch(70% 0.25 145);
+  --color-ink: oklch(95% 0.01 270);
 
-  /* The ink ramp the brief implies but never declares. Without it `layout.tsx`
-     has to spell an arbitrary OKLCH literal into a class name, and the body
-     colour stops being a token anything else can reference. Each step is
-     checked against --color-surface-page: 15.4:1, 9.1:1, 5.0:1. */
-  --color-ink: oklch(96% 0.01 270);
+  /* Derived, so nothing downstream has to spell a literal into a class name.
+     Elevation is a lighter surface, never a shadow — a blurred shadow on a
+     near-black ground reads as smudge, not as height. */
+  --color-surface-sunken: oklch(15% 0.02 270);
+  --color-surface-border: oklch(26% 0.03 270 / 0.45);
+  --color-surface-border-strong: oklch(36% 0.035 270 / 0.7);
+
+  /* The ink ramp the brief implies but never declares.
+
+     Measure both grounds, not just the page. `faint` started at L=58%, which is
+     4.74:1 on --color-surface-page and passes — and 4.39:1 on
+     --color-surface-elevated, which fails AA. Seven elements were affected: the
+     four metric captions and the three testimonial roles, every one of them
+     inside a card. axe found them; nothing that reads source could have.
+     At L=63% it is 5.80:1 on the page and 5.37:1 on elevated. */
   --color-ink-muted: oklch(76% 0.015 270);
-  --color-ink-faint: oklch(58% 0.018 270);
+  --color-ink-faint: oklch(63% 0.018 270);
 
-  --color-accent: oklch(72% 0.26 145);
-  --color-accent-glow: oklch(72% 0.26 145 / 0.12);
-  /* Text sitting ON the accent, not beside it — the primary CTA's own foreground. */
+  /* oklch(70% 0.25 145) sits outside sRGB — the browser gamut-maps it to about
+     chroma 0.22, which costs 8.5:1 → 8.2:1 against the page and nothing else.
+     Kept at the brief's value on purpose: it degrades cleanly on sRGB and
+     renders at full saturation on a wide-gamut display. */
+  --color-accent-glow: oklch(70% 0.25 145 / 0.12);
+  /* Text sitting ON the accent, not beside it — the primary CTA's foreground. */
   --color-accent-ink: oklch(18% 0.04 145);
 
   --color-error: oklch(70% 0.19 25);
