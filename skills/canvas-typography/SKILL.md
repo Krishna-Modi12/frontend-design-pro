@@ -1,6 +1,6 @@
 ---
 name: canvas-typography
-description: Generative and kinetic typography — particle text, scramble and decode effects, text on a path, and variable-font axis animation. Canvas 2D and CSS, with the accessible text always in the DOM.
+description: Generative and kinetic typography — particle text, scramble and decode effects, text on a path, and variable-font axis animation. Canvas 2D and CSS, with the accessible text always in the DOM. Use when the type itself is the effect — letters assembling from particles, a headline decoding character by character, words on a curve, a weight axis moving with scroll. Not for choosing a typeface or a scale (design-system), nor for general motion (animations).
 version: "14.8.1"
 core-deps:
   - core/design-tokens.md

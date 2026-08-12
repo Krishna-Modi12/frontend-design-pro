@@ -27,7 +27,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **94** | **334,051 tokens** | **2,018 tokens** | **5,665–7,266** | **59** | **11** |
+| **19** | **96** | **337,392 tokens** | **2,088 tokens** | **5,794–7,394** | **59** | **11** |
 
 </div>
 
@@ -37,6 +37,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 - [What actually changes in your output](#what-actually-changes-in-your-output)
 - [Install in 30 seconds](#install-in-30-seconds)
+- [What this pack does on your machine](#what-this-pack-does-on-your-machine)
 - [The 19 skills](#the-19-skills)
 - [Architecture — registry + lazy loading](#architecture--registry--lazy-loading)
 - [Demos](#demos)
@@ -72,22 +73,46 @@ The full list of 59 lives in [`core/validate-checklist.md`](core/validate-checkl
 
 ## Install in 30 seconds
 
+```bash
+npx skills add Krishna-Modi12/frontend-design-pro
+```
+
+One command, no clone, no setup script. It detects every agent you have installed and wires the pack into each.
+
+It installs as **one** skill, which is the shape this pack needs: the root `SKILL.md` router arrives with `core/` and all 19 `skills/` beside it, so lazy loading still works. Verified against a clean directory — 19 of 19 registry rows and 6 of 6 declared core deps resolve inside the install.
+
+> [!WARNING]
+> **Do not pass `--full-depth`.** That flag tells the installer to keep walking subdirectories even when a root `SKILL.md` exists, which installs all twenty skills as peers instead of one router over nineteen. Measured, not assumed:
+>
+> ```bash
+> npx skills add Krishna-Modi12/frontend-design-pro --list               # one entry — the router
+> npx skills add Krishna-Modi12/frontend-design-pro --list --full-depth  # the router plus all 19 behind it, as peers
+> ```
+>
+> The default is the one you want. `--full-depth` turns a 2,088-token registry into nineteen skills competing to match your request, which is the architecture this pack exists to avoid.
+
+The installer sends anonymous install telemetry by default; `DISABLE_TELEMETRY=1 npx skills add …` opts out. That is the CLI's behaviour, not the pack's — see [what this pack does on your machine](#what-this-pack-does-on-your-machine).
+
+<details>
+<summary><b>Or install from the git tree / the gated archive</b></summary>
+
 Run this from the root of the project you want the agent to work on:
 
 ```bash
 git clone --depth 1 https://github.com/Krishna-Modi12/frontend-design-pro && bash frontend-design-pro/setup.sh
 ```
 
-That is the whole install. The clone directory is named `frontend-design-pro` on purpose — every adapter references `frontend-design-pro/SKILL.md` relative to your project root, so the path the installer writes is the path that exists. `setup.sh` then detects your agent and writes its native rules file.
+The clone directory is named `frontend-design-pro` on purpose — every adapter references `frontend-design-pro/SKILL.md` relative to your project root, so the path the installer writes is the path that exists. `setup.sh` then detects your agent and writes its native rules file.
 
-> [!TIP]
-> **Prefer the gated archive over a git tree?** Every release attaches a `.skill` built only after all 11 gates pass. The tree on `main` is checked by CI, but the archive is the artifact that cannot exist while anything is red.
->
-> ```bash
-> gh release download --repo Krishna-Modi12/frontend-design-pro --pattern '*.skill'
-> unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
-> bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
-> ```
+**Prefer the gated archive over a git tree?** Every release attaches a `.skill` built only after all 11 gates pass. The tree on `main` is checked by CI, but the archive is the artifact that cannot exist while anything is red.
+
+```bash
+gh release download --repo Krishna-Modi12/frontend-design-pro --pattern '*.skill'
+unzip frontend-design-pro-v*.skill -d ./   # pack lands at ./frontend-design-pro/
+bash frontend-design-pro/setup.sh          # detects the agent, writes its native rules file
+```
+
+</details>
 
 **Not sure, or using something not listed? Install the cross-agent file:**
 
@@ -100,6 +125,26 @@ bash frontend-design-pro/setup.sh agents   # writes AGENTS.md
 Ten adapters install automatically: `agents` · `cursor` · `copilot` · `cline` · `roo` · `zed` · `gemini` (CLI) · `windsurf` · `continue` · `aider`. Four are manual because no installer should write them — Claude Code (a user-level skills directory), ChatGPT (a web upload), Codex (an `AGENTS.md` your repo already owns), and anything unlisted.
 
 `setup.sh --list` names every adapter, `setup.sh cursor` skips detection, `--dry-run` shows what it would write, and nothing is overwritten without `--force`. `setup.ps1` is the PowerShell port. The files it copies live in [`install/`](install/) if you would rather place them yourself.
+
+### What this pack does on your machine
+
+You are about to let an agent load this into a repository that probably has secrets in it, and `npx skills add` means most people will never see the tree first. So, plainly:
+
+- **It is markdown and TypeScript files.** Nothing in the pack runs. The agent *reads* it; the `.tsx` examples are read too, not executed — no build step, no postinstall, no bundled binary.
+- **It makes no network calls and collects no telemetry.** No analytics endpoint, no beacon, no phone-home. Two example files call `fetch()`, and both are demonstrating a real loading state in code you would copy — they run only if you run them.
+- **The only thing that executes is `setup.sh` / `setup.ps1`**, which you can read in full. Between them they invoke `basename`, `cp`, `dirname`, `find`, `mkdir` and `printf`. No `eval`, no `curl`, no `sudo`, no elevation.
+- **It needs no credentials, keys or environment variables**, and reads none.
+- **It writes only adapter rules files** into your project, all listed by `setup.sh --dry-run` before anything is written, and never overwrites without `--force`.
+
+Verify rather than trust it — these are the checks, not a summary of them:
+
+```bash
+grep -nE 'curl|wget|eval|exec|sudo|base64' setup.sh setup.ps1        # expect: no matches
+grep -rlE 'sendBeacon|XMLHttpRequest|axios|new WebSocket' skills/     # expect: no matches
+bash setup.sh --dry-run                                              # every path it would write
+```
+
+The one caveat is the installer, not the pack: `npx skills` sends anonymous install telemetry by default. `DISABLE_TELEMETRY=1` turns it off, and the git-clone and archive routes above never involve it at all.
 
 Then just ask for what you want, in plain language:
 
@@ -124,7 +169,7 @@ The remaining hosts need a web UI or a merge into a file your repo owns, so they
 | **[Cursor](docs/CURSOR_SETUP.md)** | 1. Unzip into the workspace <br> 2. Create `.cursor/rules/*.mdc` with the routing instructions (legacy: `.cursorrules`) <br> 3. `@`-reference `SKILL.md` the first time in Chat/Composer <br> ⚠️ May paraphrase a reference instead of reading it — `@`-reference the specific file if output drifts generic |
 | **[ChatGPT Custom GPT](docs/CHATGPT_SETUP.md)** | 1. Create a Custom GPT <br> 2. Upload `SKILL.md` + the `core/*.md` files a typical request needs + 2–3 relevant skill routers <br> 3. Paste routing instructions into Instructions <br> ⚠️ 20-file knowledge cap total — curate a subset, retrieval search not lazy loading |
 | **[OpenAI API](docs/OPENAI_API_SETUP.md)** | 1. Put `SKILL.md` (+ known-relevant skill/core files) in the system message for a narrow integration <br> 2. Or build a function-calling loop that fetches pack files by path for real per-request loading <br> ⚠️ No built-in gate-script awareness — wire it in yourself if enforcement matters |
-| **[GitHub Copilot](docs/COPILOT_SETUP.md)** | 1. Unzip into the repo <br> 2. Create `.github/copilot-instructions.md` with a *short* routing instruction (not the full `AGENT_SYSTEM_PROMPT.md`) <br> 3. Optional: path-scoped `.github/instructions/*.instructions.md` with `applyTo` <br> ⚠️ Always-loaded in full, not fetch-on-demand — the 94 references are out of reach unless pasted by hand |
+| **[GitHub Copilot](docs/COPILOT_SETUP.md)** | 1. Unzip into the repo <br> 2. Create `.github/copilot-instructions.md` with a *short* routing instruction (not the full `AGENT_SYSTEM_PROMPT.md`) <br> 3. Optional: path-scoped `.github/instructions/*.instructions.md` with `applyTo` <br> ⚠️ Always-loaded in full, not fetch-on-demand — the 96 references are out of reach unless pasted by hand |
 | **[Gemini](docs/GEMINI_SETUP.md)** | 1. Put `SKILL.md` in the system instruction (add `core/*.md` + skill routers too for a broad integration — the large context window absorbs it) <br> 2. For true on-demand loading, wire function-calling to fetch pack files by path <br> ⚠️ Static context by default, not lazy loading — a big window makes the cost affordable, not free |
 
 **Don't see your agent?** [`install/`](install/) adds adapters for Windsurf, Continue.dev, Aider and OpenAI Codex CLI — untested against the matrix, but following each host's documented rules format. [docs/AGENT_COMPATIBILITY.md](docs/AGENT_COMPATIBILITY.md) has the full matrix; [docs/INSTALL.md](docs/INSTALL.md) covers generic setup.
@@ -189,12 +234,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,018 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,088 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,843–3,747 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 789–1,601 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **334,051 tokens** — loaded only when a skill points at it |
+| `skills/{id}/SKILL.md` | One skill file | 843–1,674 tokens — one per request |
+| `skills/{id}/references/` | Deep material | **337,392 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,665–7,266 tokens, not 333,000.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,794–7,394 tokens, not 337,392.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -337,7 +382,7 @@ colour for severity must be separate from the brand accent. Tabular figures.
 No horizontal scroll at 390px.
 ```
 
-**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 334,051 available.
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 337,392 available.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
@@ -432,7 +477,7 @@ The v14.7.1 check covered four packs. It now covers eight, against one narrow, f
 
 | Pack | Rules enforced mechanically? | Own reference material gated? |
 |---|---|---|
-| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 94 references and blocks the archive |
+| **frontend-design-pro** | 59 (17 AST + 42 regex) | **Yes** — Gate 10 runs 19 ban-shaped constraints over all 96 references and blocks the archive |
 | impeccable | 46 detector rules | **No** — 14 test targets, but `test:detector` runs against `tests/fixtures/antipatterns`. Nothing points the detector at `skill/reference/*.md` |
 | ui-ux-pro-max-skill | No | No — `validate:csv` / `check:assets` are schema and asset validation; the design guidance is a self-graded pre-delivery checklist |
 | `anthropics/skills` frontend-design | No | No — the directory is `SKILL.md` and `LICENSE.txt` |

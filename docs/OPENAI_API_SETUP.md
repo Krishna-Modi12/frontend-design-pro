@@ -6,7 +6,7 @@ Neither approach gives you what Claude Code gets natively: an agent with real fi
 
 ## Option A — static context (simplest, fine for small integrations)
 
-Put `SKILL.md` (~2,018 tokens) in the system/developer message, plus whichever `skills/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
+Put `SKILL.md` (~2,088 tokens) in the system/developer message, plus whichever `skills/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
 
 ```python
 from openai import OpenAI

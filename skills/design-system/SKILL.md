@@ -1,6 +1,6 @@
 ---
 name: design-system
-description: Design tokens, OKLCH palettes, typography scales, spacing, theming, dark mode, brand systems, Figma handoff.
+description: Design tokens, OKLCH palettes, typography scales, spacing, theming, dark mode, brand systems, Figma handoff. Use when the token system itself is the work — palettes, type and spacing scales, theming and dark mode, brand-inspired aesthetics, font pairing, Figma-to-code translation. Not for applying tokens inside one component (react-components).
 version: "14.8.1"
 core-deps:
   - core/design-tokens.md
@@ -51,6 +51,7 @@ Load only for the specific task:
 | Matching a real brand — official-source extraction protocol, never from memory | `references/brand-extraction.md` |
 | Tone vocabulary, background effects, Design Thinking protocol | `references/aesthetic-direction.md` |
 | Auto Layout → code, variable extraction | `references/figma-to-code.md` |
+| Tokens leaving the browser — DTCG, Style Dictionary, Tokens Studio, and where hex is legitimate | `references/token-interop.md` |
 | Parsing a supplied DESIGN.md into `@theme` | `references/design-md-parser.md` |
 | Style presets (soft/minimal/brutalist/glass/neo) | `references/styles/*.md` |
 
