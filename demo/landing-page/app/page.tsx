@@ -35,6 +35,15 @@ type LoadState =
  */
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? "local";
 
+/**
+ * A project Pages site is served from /<repo>, and Next rewrites its own asset
+ * URLs but not the ones you hand to `fetch`. A root-anchored path would leave
+ * the prefix off, 404, and drop the page into its error state — which is a
+ * convincing imitation of a broken endpoint. Empty in dev and under
+ * `next start`, both of which serve from the root.
+ */
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Rules", href: "#rules" },
   { label: "Registry", href: "#registry" },
@@ -47,7 +56,7 @@ export default function LandingPage(): ReactElement {
   const load = useCallback(async (): Promise<void> => {
     setState({ phase: "loading" });
     try {
-      const response = await fetch("/api/site/overview", {
+      const response = await fetch(`${BASE_PATH}/api/site/overview`, {
         headers: { Accept: "application/json" },
       });
       if (!response.ok) {

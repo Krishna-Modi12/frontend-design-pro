@@ -59,13 +59,27 @@ structural and lives in `lib/content.ts`. **When a stat changes, update
 drifting counts as this repo's single most repeated defect, and this page is now
 one more place for one to drift.
 
-## Three things that will bite you
+## Four things that will bite you
 
-**There is no static export.** `output: "export"` drops route handlers, so
-`/api/site/overview` would 404 and the page would render its error state
-permanently. It also breaks the screenshot and verify harnesses outright:
+**The static export is opt-in, and must stay that way.** `NEXT_OUTPUT_EXPORT=1`
+turns on `output: "export"` for the GitHub Pages deploy; nothing else sets it.
+Making it the default breaks the screenshot and verify harnesses outright —
 `tools/screenshots/lib/next-server.mjs` starts every demo with `next start`,
-which refuses to run against an exported build.
+which refuses to run against an exported build, and those are the only two
+checks in this repo that render anything.
+
+The other half of that problem is solved rather than avoided: an export drops
+*dynamic* route handlers, so `/api/site/overview` used to 404 and leave the page
+in its error state permanently. The handler is now `force-static`, so Next
+evaluates it at build time and writes the response into the output. `next dev`
+still re-reads `screenshot-fixture.json` per request — verified, not assumed, so
+editing the fixture still shows up on reload.
+
+**A deployed build serves from a sub-path, and `fetch` does not know that.**
+Next rewrites its own asset URLs from `basePath` but not the URLs you hand to
+`fetch`. `app/page.tsx` reads `NEXT_PUBLIC_BASE_PATH` for exactly this reason; a
+root-anchored `/api/site/overview` would 404 under the deploy and render as a
+convincing imitation of a broken endpoint.
 
 **The PostCSS plugin is `@tailwindcss/postcss`, not `tailwindcss`.** The plugin
 moved out of the main package in Tailwind v4. The v3 spelling fails the build

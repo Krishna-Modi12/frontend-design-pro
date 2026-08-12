@@ -11,6 +11,16 @@ import { NextResponse } from "next/server";
  * `next dev` shows up on reload instead of at the next restart — the fixture is
  * the thing a contributor changes when a stat moves.
  */
+/**
+ * Evaluated once at build time rather than per request, so the endpoint
+ * survives `output: "export"` — an export drops dynamic route handlers, and
+ * without this the deployed page would render its error state permanently.
+ *
+ * The read-from-disk comment above still holds where it matters: `next dev`
+ * re-runs this handler, so editing the fixture still shows up on reload.
+ */
+export const dynamic = "force-static";
+
 export async function GET(): Promise<NextResponse> {
   const fixture = join(process.cwd(), "screenshot-fixture.json");
 

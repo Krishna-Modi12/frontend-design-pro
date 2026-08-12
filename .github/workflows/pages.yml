@@ -1,15 +1,22 @@
 name: Deploy showcase to Pages
 
-# demo/showcase is the only artifact in this repo a stranger can evaluate
-# without installing anything. It has been buildable since Gate 9 was added and
-# reachable by nobody, because a Next.js app that only exists in a git tree is
-# a screenshot with extra steps.
+# The two demos in demo/ that actually run are the only artifacts here a
+# stranger can evaluate without installing anything. Both were reachable by
+# nobody until this workflow existed.
+#
+# demo/landing-page is the front door: it is this pack's own homepage, and it
+# explains what the pack is. demo/showcase is a sample of what the pack
+# produces — a fictional analytics product — so it sits at /showcase/ where a
+# visitor meets it already knowing what they are looking at. Publishing the
+# sample at the root, which is what this workflow did first, drops people onto
+# a convincing fake startup with no idea why.
 
 on:
   push:
     branches: [main]
     paths:
       - 'demo/showcase/**'
+      - 'demo/landing-page/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -38,73 +45,70 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-          cache-dependency-path: demo/showcase/package-lock.json
+          cache-dependency-path: |
+            demo/landing-page/package-lock.json
+            demo/showcase/package-lock.json
 
       # `npm ci` alone, matching the showcase job in ci.yml: an `|| npm install`
       # fallback makes a stale lockfile look like a passing build.
+      - name: Install landing-page dependencies
+        working-directory: demo/landing-page
+        run: npm ci
+
       - name: Install showcase dependencies
         working-directory: demo/showcase
         run: npm ci
 
-      - name: Static export
-        working-directory: demo/showcase
+      # NEXT_PUBLIC_BASE_PATH is separate from NEXT_BASE_PATH on purpose. Next
+      # rewrites its own asset URLs from the config, but not the ones handed to
+      # fetch() — app/page.tsx reads /api/site/overview and needs the prefix
+      # inlined into the client bundle to find it.
+      - name: Export the landing page (site root)
+        working-directory: demo/landing-page
         env:
           NEXT_OUTPUT_EXPORT: '1'
           NEXT_BASE_PATH: ${{ env.BASE_PATH }}
+          NEXT_PUBLIC_BASE_PATH: ${{ env.BASE_PATH }}
+          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
         run: npx next build
 
-      # Gate 9 builds the server output; this job ships an export. That split is
-      # only safe if something checks the export, and this is that something.
-      #
-      # It resolves every asset the page references against the files actually
-      # in the upload, rather than pattern-matching the HTML — because the
-      # failure being gated is "does this 404 when served", and the honest way
-      # to ask that is to look for the file. A missing base path renders as
-      # unstyled HTML that still returns 200, which reads like a CSS bug and is
-      # a routing one, and no gate upstream of here can see it.
-      - name: Verify the export would actually serve
+      - name: Export the showcase (/showcase/)
         working-directory: demo/showcase
+        env:
+          NEXT_OUTPUT_EXPORT: '1'
+          NEXT_BASE_PATH: ${{ env.BASE_PATH }}/showcase
+        run: npx next build
+
+      - name: Compose the site
         run: |
-          python3 - <<'PY'
-          import os, pathlib, re, sys
+          set -euo pipefail
+          mkdir -p site
+          cp -r demo/landing-page/out/. site/
+          mkdir -p site/showcase
+          cp -r demo/showcase/out/. site/showcase/
+          # Pages serves the uploaded artifact directly rather than running
+          # Jekyll, so this is belt-and-braces — but Jekyll strips directories
+          # beginning with an underscore, and everything Next emits is in _next/.
+          touch site/.nojekyll
 
-          base = os.environ["BASE_PATH"]
-          out = pathlib.Path("out")
-          index = out / "index.html"
-          if not index.is_file():
-              sys.exit("::error::the export produced no out/index.html")
-
-          html = index.read_text(encoding="utf-8")
-          refs = set(re.findall(r'["\'(]((?:%s)?/_next/[^"\'\s)\\]+)' % re.escape(base), html))
-          if not refs:
-              sys.exit("::error::index.html references no /_next/ asset at all — "
-                       "this is not the export we think it is")
-
-          unprefixed = sorted(r for r in refs if not r.startswith(base + "/"))
-          missing = sorted(
-              r for r in refs
-              if r.startswith(base + "/") and not (out / r[len(base) + 1:]).is_file()
-          )
-
-          for r in unprefixed:
-              print(f"::error::asset URL is missing {base}: {r}")
-          for r in missing:
-              print(f"::error::asset URL resolves to no file in the upload: {r}")
-          if unprefixed or missing:
-              sys.exit(1)
-
-          print(f"✓ {len(refs)} referenced assets all carry {base} and exist in the upload")
-          PY
-
-      # Pages serves the uploaded artifact directly rather than running Jekyll,
-      # so this is belt-and-braces — but Jekyll strips directories beginning
-      # with an underscore, and everything Next emits lives in _next/.
-      - name: Disable Jekyll
-        run: touch demo/showcase/out/.nojekyll
+      # Gate 9 builds a server bundle of one of these apps; this job ships static
+      # exports of both. That split is only safe if something checks the export,
+      # and this is that something.
+      #
+      # It resolves every asset each page references against the files actually
+      # in the upload, rather than pattern-matching the HTML — the failure being
+      # gated is "does this 404 when served", and the honest way to ask that is
+      # to look for the file. A missing or wrong base path renders as unstyled
+      # HTML that still returns 200, which reads like a CSS bug and is a routing
+      # one. Composing two apps at different prefixes makes it likelier, not
+      # less: the showcase's assets have to carry /showcase and the landing
+      # page's must not.
+      - name: Verify the composed site would actually serve
+        run: python3 .github/workflows/verify_pages_site.py site "$BASE_PATH"
 
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: demo/showcase/out
+          path: site
 
   deploy:
     needs: build
