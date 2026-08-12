@@ -1,0 +1,16 @@
+{
+  "name": "frontend-design-pro",
+  "owner": {
+    "name": "Krishna Modi",
+    "url": "https://github.com/Krishna-Modi12"
+  },
+  "plugins": [
+    {
+      "name": "frontend-design-pro",
+      "source": "./",
+      "description": "Machine-enforced frontend UI/UX skill pack for AI agents — registry + lazy loading, 19 auto-routing skills behind one router, verified by 11 release-blocking gates.",
+      "category": "design",
+      "license": "MIT"
+    }
+  ]
+}

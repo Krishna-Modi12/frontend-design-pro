@@ -1,5 +1,5 @@
 // GOLD: JSON → UI through a closed component registry.
-// Source doctrine: references/component-registry.md, references/openui.md.
+// Source doctrine: references/generative-ui-runtimes.md, references/generation-patterns.md.
 //   • The registry is the allow-list. A generated payload names a component; it
 //     never supplies one. Anything not in the map renders a visible fallback
 //     instead of throwing, because a model WILL emit a node you did not ship.

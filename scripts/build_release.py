@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parent.parent          # repo root (v13)
 REPO = ROOT
 SKILL_MD = REPO / "SKILL.md" if (REPO / "SKILL.md").exists() else ROOT / "SKILL.md"
 CHANGELOG = (REPO / "docs/CHANGELOG.md") if (REPO / "docs/CHANGELOG.md").exists() else (ROOT / "_meta/CHANGELOG.md")
+PLUGIN_JSON = ROOT / ".claude-plugin/plugin.json"
 DIST = REPO / "dist"
 SCRIPTS = ROOT / "scripts"
 PY = sys.executable
@@ -54,7 +55,15 @@ ALLOWED_VERSION_FILES = {"metadata.json", "README.md", "package.json",
 # Lockfiles are exempt too: they pin arbitrary third-party package versions that
 # can coincidentally collide with this pack's own version string, which is not
 # a leak of this pack's own version.
-ALLOWED_VERSION_GLOBS = ("skills/", ".github/workflows/", "demo/showcase/")
+# `.claude-plugin/` states the version because a marketplace manifest must — it
+# is the artifact a host reads to decide what it is installing. Verified to be a
+# hard prerequisite and not a precaution: writing plugin.json before this entry
+# existed failed Stage 1 on `.claude-plugin/plugin.json:4`. Because that makes it
+# a FOURTH place the version lives, `bump_patch()` rewrites it and Gate 2 asserts
+# it matches — an unbumped, ungated version location goes stale in silence, which
+# is this repo's most repeated defect.
+ALLOWED_VERSION_GLOBS = ("skills/", ".github/workflows/", "demo/showcase/",
+                         ".claude-plugin/")
 ALLOWED_VERSION_FILENAMES = {"package-lock.json"}
 
 # Single source of truth for the version every skill must declare. Previously
@@ -202,7 +211,9 @@ def _frontmatter(path):
 
 # A host decides whether to load a skill by reading `description:`, and a list of
 # topics gives it nothing to match on. Ours listed topics: 0 of 19 stated a
-# condition until v14.9.0, while the root registry always had one.
+# condition until this gate was added, while the root registry always had one.
+# (Naming the release here would leak it — `scripts/` is not on the version
+# allowlist, and the pre-flight scan reads comments like any other line.)
 #
 # The reason this is a build gate and not a style note is that two supported
 # install paths make a sub-skill's description its ONLY activation signal.
@@ -245,6 +256,13 @@ def gate_frontmatter():
     if not _ACTIVATION.search(_description(SKILL_MD.read_text(encoding="utf-8"))):
         bad("SKILL.md (root): the registry's own description states no activation "
             "condition — this is the one a host reads first"); ok = False
+    # The plugin manifest is the fourth place the version lives, and the only one
+    # outside this gate's glob. It is on the version-leak allowlist, so nothing
+    # else would ever notice it going stale.
+    if PLUGIN_JSON.exists():
+        pv = json.loads(PLUGIN_JSON.read_text(encoding="utf-8")).get("version")
+        if pv != _version():
+            bad(f".claude-plugin/plugin.json: version {pv} != {_version()}"); ok = False
     n = len(list(ROOT.glob('skills/*/SKILL.md')))
     if ok: ok_(f"all {n} skill files declare valid frontmatter, and {n + 1} descriptions state when to load")
     return ok
@@ -510,8 +528,41 @@ def path_integrity() -> bool:
         txt = (sk.parent / "SKILL.md").read_text(encoding="utf-8")
         for ref in sk.glob("*.md"):
             if ref.name not in txt: warn(f"{sk.parent.name}: {ref.name} not cited in its Reference Index")
+    # doctrine headers inside the examples themselves
+    if not example_doctrine(): ok = False
     # every relative markdown link in the repo resolves
     if not markdown_links(): ok = False
+    return ok
+
+
+# The check above reads `skills/*/SKILL.md` and looks for BACKTICKED paths. A
+# gold example names its sources in a plain `//` comment on line 2, unbackticked,
+# in a `.tsx` — which is neither file nor syntax, so eight dead pointers survived
+# every green build. `references/phosphor.md`, `openui.md` and `aceternity.md`
+# were each planned in a batch that ran out of context budget before the file was
+# written; the comment shipped, the reference never did.
+#
+# Verified to FAIL before it was trusted: run against the tree at d034fb7 it
+# names all eight. A check that has never failed on the defect it targets is
+# decoration — the same standard Gate 6 was held to.
+#
+# Deliberately Stage 3 and not Gate 12, following `markdown_links()` directly
+# above: a twelfth gate moves a figure published in ~30 documents, and this is
+# squarely path integrity, which is what Stage 3 already is.
+_DOCTRINE = re.compile(r"^//\s*Source doctrine:\s*(.+)$", re.M)
+_DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?references/[\w./-]+\.md")
+
+
+def example_doctrine() -> bool:
+    ok, cited, missing = True, 0, 0
+    for ex in sorted(ROOT.glob("skills/*/examples/*.tsx")):
+        for line in _DOCTRINE.findall(ex.read_text(encoding="utf-8")):
+            for rel in _DOCTRINE_REF.findall(line):
+                cited += 1
+                if not (ex.parent.parent / rel).resolve().exists():
+                    bad(f"{ex.parent.parent.name}: {ex.name} cites missing doctrine {rel}")
+                    missing += 1; ok = False
+    if not missing: ok_(f"all {cited} example doctrine references resolve")
     return ok
 
 
@@ -1152,7 +1203,16 @@ def bump_patch():
         t = sk.read_text(encoding="utf-8")
         sk.write_text(re.sub(r'^version:\s*"?[\d.]+"?', f'version: "{new}"', t, count=1, flags=re.M),
                       encoding="utf-8")
-    print(f"bumped to {new} (metadata + changelog + {len(list(ROOT.glob('skills/*/SKILL.md')))} skill files)")
+    # Fourth version location. Gate 2 asserts this matches, so forgetting it here
+    # fails the very next gate run rather than shipping a stale manifest.
+    plugin = ""
+    if PLUGIN_JSON.exists():
+        d = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        d["version"] = new
+        PLUGIN_JSON.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8")
+        plugin = " + plugin.json"
+    print(f"bumped to {new} (metadata + changelog + "
+          f"{len(list(ROOT.glob('skills/*/SKILL.md')))} skill files{plugin})")
     return new
 
 
