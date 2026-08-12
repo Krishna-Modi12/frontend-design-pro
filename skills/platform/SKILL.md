@@ -1,7 +1,7 @@
 ---
 name: platform
-description: Platform surfaces — mobile/PWA, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI. Use when the work targets a platform surface rather than a generic component — mobile and PWA patterns, React Native/Expo, internationalization and RTL, SEO and metadata, Stripe payments, transactional email, AI chat and streaming UI.
-version: "14.9.0"
+description: Platform surfaces — mobile/PWA, desktop, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI. Use when the work targets a platform surface rather than a generic component — mobile and PWA patterns, desktop and Electron/Tauri conventions, React Native/Expo, internationalization and RTL, SEO and metadata, Stripe payments, transactional email, AI chat and streaming UI.
+version: "14.10.0"
 core-deps:
   - core/component-api.md
   - core/accessibility-baseline.md
@@ -16,8 +16,8 @@ Work that targets a platform surface rather than a generic component: mobile-nat
 React 19 · Next.js App Router · Expo (RN) · next-intl · Stripe · React Email + Resend · Vercel AI SDK
 
 ## Core Rules
-1. **Mobile is not a narrow desktop.** Bottom tab nav for primary navigation, bottom sheets over centre modals, pull-to-refresh where a list is the content, `env(safe-area-inset-*)` on anything full-bleed.
-2. **Touch targets ≥44×44px** with ≥24px spacing; `touch-action: manipulation`; `overscroll-behavior: contain` in sheets and drawers.
+1. **Mobile is not a narrow desktop** — and desktop is not a wide phone. Bottom tab nav for primary navigation, bottom sheets over centre modals, pull-to-refresh where a list is the content, `env(safe-area-inset-*)` on anything full-bleed. On a pointer surface, none of those four transfer: see `references/desktop-patterns.md`.
+2. **Touch targets ≥44×44px** with ≥24px spacing; `touch-action: manipulation`; `overscroll-behavior: contain` in sheets and drawers. 44 is the house rule and WCAG §2.5.5 (AAA); the AA floor in §2.5.8 is 24×24 and applies only to pointer-only chrome.
 3. **React Native is a different renderer, not different rules.** `SafeAreaView`, `Pressable` (never a bare `TouchableOpacity` for primary actions), `FlatList` with `keyExtractor`, Reanimated for motion, 44pt targets, dark mode via `useColorScheme`.
 4. **i18n from the start.** `next-intl` routing, ICU messages, `Intl.*` for dates/numbers/currency, RTL via CSS logical properties (never `margin-left`), copy expansion budget of ~30% for German.
 5. **SEO is structural.** Next.js metadata API, Open Graph, JSON-LD, sitemap and robots, canonical URLs, and Core Web Vitals as the ranking-relevant part — LCP image `priority`, no CLS from unsized media.
@@ -42,6 +42,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | Bottom nav, sheets, pull-to-refresh, PWA, safe areas | `references/mobile-patterns.md` |
+| Desktop — hover affordance, 24px pointer floor, shortcuts, multi-window, density | `references/desktop-patterns.md` |
 | Expo Router, Reanimated, NativeWind, FlatList, haptics | `references/react-native.md` |
 | next-intl routing, pluralization, RTL, locale switcher | `references/i18n.md` |
 | Metadata API, JSON-LD, sitemap, Core Web Vitals | `references/seo.md` |

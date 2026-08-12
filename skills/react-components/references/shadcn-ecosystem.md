@@ -228,6 +228,11 @@ npx shadcn@latest add "https://magicui.design/r/magic-card"
 - Free animated components, good variety
 - Best for: general landing pages
 
+**Skiper UI** (`skiper-ui.com`)
+- Animated components behind a **free/pro split** — the only entry here that gates part of its catalogue. Check the tier before promising a component to a client
+- Client-rendered catalogue: the component list does not appear in the page source, so an agent fetching the URL gets a loading shell, not an inventory. Browse it, do not scrape it
+- Best for: motion-led marketing surfaces, once the licence question is settled
+
 ### Tier 2 — Component Animations
 
 **Animata** (`animata.design`)

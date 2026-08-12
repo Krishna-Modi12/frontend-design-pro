@@ -4,6 +4,71 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.10.0] — 2026-08-12
+
+**The pack was written touch-first, and never said what changes when the pointer
+is precise.** `platform` carried nine references — mobile, React Native, email,
+i18n, SEO, Stripe, AI SDK and two agent-ops files — and nothing at all about
+desktop. `references/desktop-patterns.md` closes it.
+
+The value is not the topic, it is that three of our own rules read differently
+there, and the pack had never said so:
+
+- **Target size.** We enforce ≥44×44px everywhere. On a pointer-only surface the
+  WCAG AA floor is 24×24 CSS px, and the new file says which to pick and why.
+- **Spacing.** The 4pt scale is unchanged; desktop density is a choice of *step*
+  within it — 8 rather than 4 — not a different scale.
+- **Hover.** An enhancement on touch, the primary affordance on desktop. A
+  pointer resting on a control with no feedback reads as broken.
+
+It also names a constraint the mobile-first material never states: a desktop app
+is stared at for hours, so motion is judged on its hundredth repetition rather
+than its first. A 600ms springy hover is charming in a demo and exhausting by
+lunchtime.
+
+### A wrong WCAG citation in a core file
+
+Reconciling the above against `core/accessibility-baseline.md` found it claiming
+**"Targets ≥44×44px with ≥24px spacing (§2.5.8)"**. That attributes a AAA number
+to an AA success criterion: **§2.5.8 Target Size (Minimum) is AA and asks for
+24×24**; the 44×44 figure is **§2.5.5 Target Size (Enhanced)**, which is AAA.
+
+The 44px rule itself is right and unchanged — it is a deliberate house rule
+stricter than AA. What was wrong was the citation behind it, in one of the eight
+files loaded on every matched request. No gate reads a specification number, and
+none can; this was found by ingesting a source that disagreed.
+
+### Two smaller additions
+
+- **Skiper UI** joins `shadcn-ecosystem.md` — the only entry in that catalogue
+  with a paid tier, which is worth knowing before promising a component, and a
+  client-rendered listing that returns a loading shell to anything that fetches
+  it rather than browses it.
+- **Sourcing a palette from something that is not a brand** — `brand-extraction.md`
+  covered brands with a published palette and had nothing for "make it feel like
+  a Vermeer". Paintings, film grades and terminal themes each behave differently
+  and carry different rights; the section says so, and insists a palette derived
+  from a work is labelled an evocation rather than a reproduction.
+
+### Sources surveyed and deliberately not used
+
+`obra/superpowers` (271k★) and `gsd-build/get-shit-done` (64.7k★) are
+software-development methodology — TDD, worktrees, debugging, plan execution.
+Real quality, wrong domain for a design pack, and the parts that do apply are
+already in `agent-ops/references/skill-packaging.md`. `theme-factory-addon`'s
+100 themes duplicate our 161 OKLCH palettes in hex; only its *method* was worth
+taking. `genjutsu`'s SwiftUI and Jetpack Compose skills are out of scope for a
+React and web pack. Recorded so the next survey does not re-open them.
+
+**A correction to an earlier audit:** `JuliusBrussee/caveman` was reported as an
+unattributed source. It is not — `metadata.json` lists the repository in
+`sources` and the 10.13.0 changelog entry names it. The audit checked
+`docs/CHANGELOG.md` and reference `Source:` lines and never checked the sources
+array.
+
+Gate count unchanged at **11**. References 96 → 97; depth 337,392 → 339,838
+tokens; a request now costs 5,865–7,465.
+
 ## [14.9.0] — 2026-08-12
 
 **Eight of the ten references our own gold examples cite did not exist, and the

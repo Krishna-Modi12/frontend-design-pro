@@ -46,6 +46,37 @@ user, work from a screenshot they supply, or agree on an archetype from `brand-c
 explicit stand-in. Silently inventing a palette and presenting it as the brand's is the failure
 this whole protocol prevents.
 
+## Sourcing a palette from something that is not a brand
+
+Everything above assumes the target is a company with a published palette. The
+adjacent case — "make it feel like a Vermeer", "give me the Blade Runner
+grade" — has no authoritative surface to fetch, and the protocol above has
+nothing to say about it. `patrickkrebs/theme-factory-addon` (Apache-2.0) works
+this way at scale, and the useful part is its honesty about what the result is.
+
+**A palette derived from a painting or a film is an evocation, not a
+reproduction, and must be labelled as one.** There is no canonical hex spec for a
+canvas: the pigment, the photograph of it, and the screen all disagree. Say
+"derived from" and name the work.
+
+Three sources that behave differently and are worth distinguishing:
+
+| Source | What you get | The catch |
+|---|---|---|
+| **A painting** | Hand-picked dominant colours from the work | No canonical values. Check the work is public domain before naming it in shipped copy — most pre-1930 painters are; the *photograph* of a work may not be |
+| **A film still or a grade** | A mood with a deliberate cast, already colour-graded for a screen | Cinematography is authored and recent work is in copyright. Evoke the palette, never ship the frame |
+| **An editor or terminal theme** | A palette already proven at small type on a dark surface, with contrast tested by daily use | Built for syntax tokens, not for UI roles. It gives you a ramp, not a semantic mapping |
+
+The mechanical step is the same as `references/color-palettes.md` teaches for an
+image: sample by median cut, never by averaging — averaging a six-colour painting
+returns mud. Then map the extracted ramp onto semantic roles deliberately, since
+the source has no notion of "surface" or "danger", and check every pair against
+the contrast floors before calling it a theme.
+
+Pairing the palette with type in the same artefact is the part worth copying:
+a theme that names a display face and a body face beside its ramp is usable
+immediately, where a bare palette still needs `references/font-pairings.md`.
+
 ## Additional AI-design tells
 
 Three patterns not on the registry's anti-slop wall, each a reliable signal that a layout was

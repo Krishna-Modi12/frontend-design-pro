@@ -1,7 +1,7 @@
 ---
 name: animations
 description: Motion — easing and timing rules, Framer Motion, GSAP, scroll-driven experiences, view transitions, reduced motion. Use when something has to move — entrances and exits, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, marquees, physics-based movement.
-version: "14.9.0"
+version: "14.10.0"
 core-deps:
   - core/design-tokens.md
   - core/accessibility-baseline.md
