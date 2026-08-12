@@ -1,5 +1,5 @@
 // GOLD: Spotlight card — pointer-reactive surface without a render per frame.
-// Source doctrine: references/aceternity.md, references/interaction-patterns.md.
+// Source doctrine: references/react-bits.md (wrapper effects), references/componentry.md.
 //   • The pointer position lives in two CSS custom properties, not in state.
 //     Setting state on pointermove re-renders the subtree at input frequency —
 //     120Hz on a modern trackpad — and turns a decoration into a jank source.

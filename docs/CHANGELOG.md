@@ -4,6 +4,85 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.9.0] — 2026-08-12
+
+**Eight of the ten references our own gold examples cite did not exist, and the
+pack ships a marketplace manifest for the first time.**
+
+### The examples cited files that were never written
+
+Six `good-*.tsx` open with a `// Source doctrine:` line naming the references
+their rules come from. Ten references are named across those six files. **Two
+resolved.** `phosphor.md`, `openui.md`, `aceternity.md`, `component-registry.md`,
+`interaction-patterns.md`, `visual-hierarchy.md`, `gestalt.md` and
+`component-api.md` were each planned in an ingestion batch that ran out of
+context budget before the file was written — the comment shipped, the reference
+never did.
+
+No gate could see it. Stage 3 path integrity reads **backticked** `` `references/…md` ``
+paths inside `skills/*/SKILL.md`; these are unbackticked comments in `.tsx`,
+which is neither the file nor the syntax it looks at. Eight dead pointers
+survived every green build for as long as the examples have existed.
+
+Stage 3 now also walks `skills/*/examples/*.tsx`, reads the doctrine header and
+resolves each path against the skill directory. **It was verified to fail before
+it was trusted**: run against the tree at `d034fb7` it names all eight, which is
+the same standard Gate 6 was held to. It extends Stage 3 rather than becoming
+Gate 12 for the reason `markdown_links()` gives directly above it — a twelfth
+gate moves a figure published in ~30 documents to buy a check that is squarely
+path integrity.
+
+Each comment is repointed at the reference that actually carries the doctrine it
+describes, verified line by line rather than guessed: the Gestalt-proximity rule
+in `good-visual-hierarchy.tsx` lands on `laws-of-ux.md`, which states Von
+Restorff as *"exactly one primary CTA per view"* and Similarity as *"same visual
+weight ⇒ same importance"*; the spotlight card lands on `react-bits.md`, whose
+wrapper-effects section names the effect. The `§6–7` in
+`good-composition-patterns.tsx` was wrong twice over — those sections are
+Performance and Error Boundaries; compound components are `§1`.
+
+The eight missing files are **not** written here. That is 8 new references, 8
+Reference Index rows and a `reference_files` move, and it is the next minor's
+work.
+
+### Distribution: `.claude-plugin/`
+
+Every install route this pack offered began with a manual step, while a
+marketplace entry is a command — the most plausible explanation for distribution
+sitting at zero. The manifest was blocked for three research batches on a real
+fear: their `skills` arrays might make a host load all nineteen of ours, turning
+a router into the monolith it exists to replace.
+
+Surveying `microsoft/agent-skills` retired it. Nobody enumerates — all seven of
+their plugins use a single directory pointer, and `azure-sdk-python` ships **40**
+`SKILL.md` behind one entry.
+
+**Their pointer is not ours, and copying it would have been the bug.** Behind
+Microsoft's `./skills/` are the skills they want registered. Behind ours are the
+nineteen the router exists to hide. `"skills": ["./skills/"]` would register all
+nineteen as peers — the `--full-depth` inversion `docs/INSTALL.md` tells people
+never to trigger, arriving by a different door. We ship `"skills": ["./"]`, the
+root that holds the router, and `.claude-plugin/README.md` records why, since
+JSON carries no comments.
+
+This is a declaration, not a proof: nothing surveyed documents what a host does
+on load. Committing the file publishes nothing — a listing is a separate
+submission — so the obligation is to add the marketplace locally, confirm **one**
+skill registers rather than nineteen, and withdraw the file if it is nineteen.
+
+### The manifest's version field, and the gate that watches it
+
+`version` in `plugin.json` is the fourth place this pack's version lives.
+`.claude-plugin/` had to join the version-leak allowlist for it to exist at all —
+**verified as a build-breaker rather than assumed**, since writing the file first
+failed Stage 1 on `.claude-plugin/plugin.json:4`. But an allowlisted path is one
+nothing checks, and a version location that no bump updates and no gate reads
+goes stale in silence, which is this repo's most repeated defect. So
+`bump_patch()` rewrites it and Gate 2 asserts it matches `metadata.json` — that
+assertion was also confirmed to fire before it was trusted.
+
+Gate count is unchanged at **11**. No constraint, figure or token budget moved.
+
 ## [14.8.1] — 2026-08-11
 
 **The archive told people to read files it did not contain.**

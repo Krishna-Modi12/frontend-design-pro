@@ -1,5 +1,5 @@
 // GOLD: Composition patterns — compound components, lifted state, asChild, CVA.
-// Source doctrine: references/component-api.md §6–7 (vercel-labs/composition-patterns).
+// Source doctrine: references/react-patterns.md §1, references/shadcn.md (vercel-labs/composition-patterns).
 //   • No boolean-prop proliferation — structure is visible at the call site
 //   • State lifted into a provider; no prop drilling
 //   • Context shaped as { state, actions, meta } for dependency injection

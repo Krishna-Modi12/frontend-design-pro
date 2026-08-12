@@ -1,7 +1,7 @@
 ---
 name: component-patterns
 description: Patterns from modern component libraries — animated text, wrapper effects, ambient backgrounds, and composed UI, with the accessibility and performance rules they usually omit. Use when pulling a pattern from a third-party library — animated text, magnetic/tilt/spotlight effects, ambient backgrounds, carousels, docks, bento grids — or when asked for "something like Aceternity, React Bits or Cult UI". Not for building a component API from scratch (react-components).
-version: "14.8.1"
+version: "14.9.0"
 core-deps:
   - core/component-api.md
 ---
