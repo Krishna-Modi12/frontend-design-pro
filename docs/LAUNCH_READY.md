@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 99 references · 344,251 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 11 gates · registry 2,099 tokens · heaviest request 7,266 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 100 references · 346,279 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 11 gates · registry 2,099 tokens · heaviest request 7,476 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
@@ -28,7 +28,7 @@ worth having is bigger than the window it has to fit in.
 frontend-design-pro is a registry instead of a document. SKILL.md is 2,018
 tokens — identity, an anti-slop wall, and a 19-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
-primitives that skill declares, and leaves the other 344,251 tokens of
+primitives that skill declares, and leaves the other 346,279 tokens of
 reference material on disk.
 
 Measured, not estimated: the heaviest possible request loads 7,266 tokens.
@@ -102,7 +102,7 @@ It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
 Heaviest possible request: 7,266 tokens.
-Reference material available: 344,251 tokens.
+Reference material available: 346,279 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -198,7 +198,7 @@ A registry rather than a document:
 - 19 skills, 843–1,718 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 99 references, 344,251 tokens. Loaded only when a skill routes to one.
+- 100 references, 346,279 tokens. Loaded only when a skill routes to one.
 
 Measured per-request load: **5,665 to 7,266 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
