@@ -9,6 +9,7 @@ Usage:
   python scripts/build_release.py            # full gated release
   python scripts/build_release.py --dry-run  # run all gates + checks, build nothing
   python scripts/build_release.py --bump-patch  # increment patch in metadata.json + CHANGELOG, then release
+                                                # (stops at pre-flight until README's "What's new" names the new version)
 
 Exit 0 only if every gate passed (and, unless --dry-run, an archive was built and smoke-tested).
 """
@@ -1239,6 +1240,17 @@ def bump_patch():
         plugin = " + plugin.json"
     print(f"bumped to {new} (metadata + changelog + "
           f"{len(list(ROOT.glob('skills/*/SKILL.md')))} skill files{plugin})")
+    # README's "What's new" heading is the FIFTH version location, and the only one
+    # nothing here rewrites — deliberately. A stub would put the new version above
+    # the previous release's prose, which reads as current and is a worse lie than
+    # a stale heading; the changelog gets a stub because an auto-bump entry is an
+    # honest thing to say and "what's new" is not. Pre-flight now fails on the
+    # mismatch, so say what is required rather than letting that look like a
+    # malfunction. The bump is not idempotent — re-running it bumps again.
+    stale = announced_version(README) if README.exists() else None
+    if stale is not None and stale != new:
+        print(f"  ! README still announces v{stale} — pre-flight will fail until it announces v{new}")
+        print(f"  ! write that section, then re-run WITHOUT --bump-patch")
     return new
 
 
