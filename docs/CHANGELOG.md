@@ -4,7 +4,7 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
-## [14.10.0] — 2026-08-12
+## [14.10.0] — 2026-08-13
 
 **The pack was written touch-first, and never said what changes when the pointer
 is precise.** `platform` carried nine references — mobile, React Native, email,
@@ -66,8 +66,124 @@ unattributed source. It is not — `metadata.json` lists the repository in
 `docs/CHANGELOG.md` and reference `Source:` lines and never checked the sources
 array.
 
-Gate count unchanged at **11**. References 96 → 97; depth 337,392 → 339,838
-tokens; a request now costs 5,865–7,465.
+### The ingestion sprint — 53 sources, all closed
+
+The pack's ingestion ledger had five sources never touched, seven reference files
+promised by gold-example doctrine headers and never written, two fetches recorded
+as failures, and three catalogue entries left at a single line. All of it is now
+resolved, and the most useful outcome is how much of it turned out to be recorded
+wrongly rather than left undone.
+
+**Five records that were wrong about their own failure.**
+
+- `CloudAI-X/threejs-skills` was logged as serving empty `.claude/skills/*` paths.
+  **There is no `.claude/` directory in that repo** — the ten skill files sit at
+  `skills/*/SKILL.md`, and the fetch looked in a path that never existed. The
+  licence is MIT, declared in the README body rather than a LICENSE file. Three
+  references carried no provenance at all while the changelog called their
+  content non-verbatim; they now state the divergence as measured — 0 of 10
+  upstream files mention React Three Fiber, 8 pass raw hex to `THREE.Color`
+  against `3D-05`, and 3 drive `requestAnimationFrame` against `3D-02`.
+- `alchaincyf/huashu-design` was recorded as a failed fetch yielding ~4 KB. It
+  carries **~500 KB across 32 reference files**, written in Chinese — which is why
+  it was under-read, not because anything returned empty.
+- `ui.aceternity.com` and `21st.dev` were logged as client-rendered listings a
+  fetch could not read. Both return full content; **only `phosphoricons.com`
+  actually behaves that way.**
+- `JuliusBrussee/caveman`, corrected above.
+
+**Five of the seven promised references should not be written.** Measured against
+what the pack now carries: `component-registry.md` is covered twice over in
+`ai-ui-generation`, `gestalt.md` by the five Gestalt laws in `laws-of-ux.md`,
+`interaction-patterns.md` by `react-bits.md`'s pattern rules, `aceternity.md` by
+the ecosystem catalogue, and `openui.md` by nothing worth having — OpenUI's
+transferable principles are provider abstraction and environment configuration,
+which is infrastructure rather than UI. The v14.9.0 repoint was right for a
+reason nobody stated at the time: those files were missing largely because the
+pack had covered them elsewhere.
+
+**Four new references, each closing a gap the pack could demonstrate.**
+
+- `iconography/references/phosphor.md` — Phosphor was named in nine places and
+  two style directions routed to it, with nothing saying how it differs. Six
+  weights, `fill` as a state rather than decoration, duotone's broken
+  `currentColor` inheritance, the portal that escapes `IconContext`, and
+  `mirrored` as an RTL prop no other common set provides.
+- `design-principles/references/visual-hierarchy.md` — the skill promised
+  hierarchy reasoning in its `description:` and its When to Use, and none of its
+  four references delivered it. Rank stated in words before any size is chosen;
+  five devices with a rule to spend one or two rather than stacking all five;
+  a text-contrast ramp whose tertiary tier still clears 4.5:1; and two checkable
+  tests, squint and remove-the-device.
+- `animations/references/animation-pitfalls.md` — five failures that survive a
+  green build: an animation advanced by `setTimeout` cannot be seeked, any
+  `getBoundingClientRect` before `document.fonts.ready` measures the fallback
+  face, `transform: scale()` blurs text where `zoom` does not, four properties
+  silently flatten `preserve-3d`, and control-picture codepoints render as tofu.
+- `design-system/references/cjk-typography.md` — the type guidance assumed Latin
+  throughout and `i18n.md` covered routing and RTL without saying that a CJK
+  locale needs typography work instead. The fallback chain puts the **Latin** face
+  first so Han falls through to the CJK face; Han has no italic, so
+  `font-synthesis: none` and `text-emphasis: dot`; Latin display tracking inverts;
+  and a CJK font file is 5–15 MB, which caps a page at two families.
+
+**`color-palettes.md` now says how to derive a palette** rather than only listing
+161 of them — sample from brand, content or cultural context; converge in OKLCH
+to 2–3 chromatics and a lightness ramp; then write one sentence saying why. If
+that sentence cannot be written, the palette was copied. The chroma-by-area table
+explains this file's own gradient ban better than the ban does.
+
+**`framer-motion.md` §5 states the relationship the presets come from** —
+critical damping = 2 × √(stiffness × mass) — and adds the no-overshoot row that
+`desktop-patterns.md` argued for without the pack providing one.
+
+Closed as reasoned rejections: `thedotmack/claude-mem` (agent memory
+infrastructure), `teamchong/pxpipe` (a context proxy — it changes how context
+reaches a model, not how an agent writes frontend code), and
+`blog.uxtweak.com`, whose verdict now lives in `laws-of-ux.md`: 20 of its 23 laws
+were already present and the three absences are deliberate.
+
+### Fixed — a check that was verified against the wrong shape
+
+`design-md-parser.md` matched headings by string equality. v14.9.0 corrected its
+synonym table against the 74 files in `VoltAgent/awesome-design-md`; re-running
+that measurement **in the shape the corpus really has** shows the fix was
+invisible in a tenth of it. **Ten of the 74 files number their sections, and a
+leading `1.` defeats the entire table** — including the four variants that
+correction had just added.
+
+Measured over the same corpus plus `heygen-com/hyperframes`' shipped `DESIGN.md`,
+753 top-level headings: string equality dropped **95**; whole-word matching with
+a veto list drops **2**, and both of those should drop. No heading changes
+channel. The probe is archived beside the corpus and reads the synonym table out
+of the reference file, so its numbers cannot drift from the file they describe.
+
+### Fixed — five figures Gate 11 could not see
+
+Gate 11 reported 0 drift while `docs/ARCHITECTURE.md` published a 19-row
+per-skill budget table in which every number was stale, a reference count of 94
+against 99, a ceiling of 7,266 against 7,476, and a canonical depth of 334,051.
+Eleven further claims across ten files carried `~330k`/`~333k`/`~334k`.
+
+Five distinct blind spots: a figure written `N files` rather than `N references`
+is unmatched; the `REFERENCES` forbid reads 50 characters backwards and misfires
+on a table row whose preceding cell ends in a backticked path; `RANGE` matches a
+dashed pair, so a table listing one value per line is unscanned; `DEPTH`'s
+trailing `(?![\d,])` drops any figure a sentence follows with a comma; and the
+`(\d{3},\d{3})` pattern cannot see a `k` suffix at all.
+
+The figures are corrected and the five cases are written into `CLAUDE.md` beside
+its existing *what it still cannot see* list. **The gate itself is untouched** —
+each fix carries false-positive risk across 85 surfaces, and a gate change earns
+its own pass with negative controls rather than riding along with the correction
+it suggested.
+
+`README.md`'s Gate 10 paragraph keeps its 94 files and `~333k`: it sits under
+*Previously — v14.6.0* and records what that gate found on its first run, so it
+is wrapped in `figures:historical` rather than rewritten.
+
+Gate count unchanged at **11**. References 96 → 101; depth 337,392 → 349,445
+tokens; a request now costs 5,912–7,476.
 
 ## [14.9.0] — 2026-08-12
 
