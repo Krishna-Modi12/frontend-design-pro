@@ -4,7 +4,7 @@ Every number on this page was read off a green `python scripts/build_release.py 
 
 ## The problem this solves
 
-A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 330k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
+A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 344k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
 
 So the pack is not a document. It is a **registry that routes**.
 
@@ -15,37 +15,37 @@ So the pack is not a document. It is a **registry that routes**.
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,099 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,843, 2,919, 3,011 or 3,747 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **843–1,718 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 94 deep references | **343,695 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 99 deep references | **343,695 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```text
-iconography         5,665   ← lightest
-landing-pages       5,716
-testing             5,726
-data-tables         5,747
-ai-ui-generation    5,773
-forms               5,816
-react-performance   5,832
-web-interface       5,859
-design-system       5,864
-threejs-3d          5,926
-color-themes        5,964
-animations          5,965
-platform            5,979
-react-components    5,981
-component-patterns  6,088
-agent-ops           6,185
-design-principles   6,462
-canvas-typography   6,871
-design-research     7,266   ← heaviest
+iconography         5,912   ← lightest
+landing-pages       5,932
+testing             5,932
+data-tables         5,951
+ai-ui-generation    5,986
+forms               6,023
+react-performance   6,039
+web-interface       6,067
+design-system       6,109
+threejs-3d          6,129
+animations          6,170
+color-themes        6,183
+react-components    6,212
+platform            6,294
+component-patterns  6,314
+agent-ops           6,448
+design-principles   6,731
+canvas-typography   7,090
+design-research     7,476   ← heaviest
 ```
 
-The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,106 tokens, while `design-research` is the second-largest router in the pack at 1,501 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
+The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,173 tokens, while `design-research` is the second-largest router in the pack at 1,559 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,266 tokens against 343,695 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,476 tokens against 343,695 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
-> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 334,051, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
+> **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 343,695, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
 The registry is the reason adding skills is cheap, and the generative-design pair gave the cleanest measurement of it so far: **two** skills grew `SKILL.md` from 1,895 to 1,998 tokens — 103 tokens for both, **~51 each**, which is what the earlier single-skill figure predicted. Marginal cost of a skill is about 51 tokens of always-loaded context, plus however much on-demand depth you give it. `canvas-typography` and `color-themes` added 8 references and 65,000 tokens of depth between them, and none of that is loaded unless a request routes to it.
 
@@ -111,7 +111,7 @@ A parser-regression proof runs alongside gate 4: 13 synthetic cases, each provin
 ### Why gate 10 exists
 
 Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 99
-references are ~333k tokens and are the part an agent actually opens for depth,
+references are ~344k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
 the chain that the product's central claim rests on.

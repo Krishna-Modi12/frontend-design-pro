@@ -58,7 +58,7 @@ Before writing any code:
 3. **Load exactly one `skills/{id}/SKILL.md`.** One skill, not several.
 4. **Load the Core Dependencies** named in that skill's frontmatter (`core-deps`), plus `core/accessibility-baseline.md` and `core/validate-checklist.md` whenever the task produces code.
 5. **Budget: ≤8,000 tokens total.** A typical request lands at 5,912–7,476 — registry + one skill + its declared deps. Over budget: drop the deepest reference first and **say which** in your output.
-6. **Load a `skills/{id}/references/*.md` file only when the loaded skill file points you at it** for the specific task. That is where the ~333k tokens of depth lives; none of it is loaded by default.
+6. **Load a `skills/{id}/references/*.md` file only when the loaded skill file points you at it** for the specific task. That is where the ~344k tokens of depth lives; none of it is loaded by default.
 7. **Most specific skill wins.** "form validation" → `forms`, not `react-components`. "icon button sizing" → `iconography`, not `react-components`.
 8. **No keyword match → ask ONE clarifying question.** Never guess a skill.
 
