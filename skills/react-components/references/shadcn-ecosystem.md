@@ -212,17 +212,27 @@ npx shadcn@latest add "https://magicui.design/r/magic-card"
 - Globe, beam effects, animated lists
 - Best for: hero sections, marketing pages
 
-**Aceternity UI** (`aceternity-ui.com`)
-```bash
-# Copy-paste components from aceternity-ui.com
-```
-- Trending animated components — "cards that tilt", "spotlight" effects
-- Parallax cards, 3D card rotate, background beams
+**Aceternity UI** (`ui.aceternity.com` — **not** `aceternity-ui.com`, which is a
+different site; the wrong domain shipped here for several releases)
+- Tailwind + Motion, shadcn-compatible, copy-paste rather than installed
+- ~14 categories, read from the live index 2026-08-13: backgrounds and effects ·
+  cards · scroll and parallax · text effects · buttons · loaders · navigation ·
+  inputs · overlays · carousels · bento and layout grids · data visualisation
+  (timeline, globe, world map) · cursor and pointer · 3D
 - Best for: portfolio, agency, SaaS marketing
+- **Licence caveat, and it is the reason this entry is longer than the rest:**
+  the component index states no explicit open-source licence, while inviting
+  copy-paste, and a paid All-Access tier sits alongside the free components.
+  Check the licence on the specific component before shipping it — an
+  unlicensed snippet pasted into a client repo is the copy-paste problem this
+  section exists to manage, not a styling question
 
 **Cult UI** (`cult-ui.com`)
 - Curated hand-crafted animations, fewer but higher quality
 - Best for: premium/selective use
+- Still three lines because the site returned **HTTP 429 on two attempts**
+  (2026-08-13) rather than because it was judged thin. Recorded so the next pass
+  retries the fetch instead of re-deciding it was not worth reading
 
 **Eldora UI** (`eldora.ui.beer`)
 - Free animated components, good variety
@@ -413,7 +423,7 @@ npx shadcn@latest add "https://registry.url/r/component-name"
 
 | Registry | Specialty |
 |---|---|
-| **21st.dev** | Open source npm for shadcn components |
+| **21st.dev** | ~12,000 components from 700+ authors, indexed per author. Notable for *how* it distributes: each component ships as a **prompt** aimed at Claude Code, Cursor, v0 and Lovable, not only as source — the registry format is becoming agent-facing. It also mirrors the big catalogues (Aceternity, Magic UI, shadcn/ui, Origin UI, Geist), so search it before visiting them individually |
 | **registry.directory** | Curated directory of all registries |
 | **origin-ui** | Beautiful Next.js components |
 | **kibo-ui** | Comprehensive complex app components |
