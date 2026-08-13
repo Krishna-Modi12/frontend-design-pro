@@ -1,5 +1,5 @@
 // GOLD: Icon buttons — optical sizing, weight pairing, and the label rule.
-// Source doctrine: references/icon-systems.md.
+// Source doctrine: references/icon-systems.md, references/phosphor.md (weight pairing).
 //   • An icon that carries meaning gets an accessible name; a decorative one is
 //     hidden from the tree entirely. There is no third case, and "both" is a bug:
 //     an aria-hidden icon inside a labelled button is correct, an unlabelled

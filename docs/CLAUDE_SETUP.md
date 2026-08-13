@@ -43,7 +43,7 @@ Paste `SKILL.md` into the conversation and attach the one or two `skills/{id}/` 
 
 Ask: **"Which skill did you load, and what did it cost?"**
 
-A correctly wired agent answers with one skill id, its core deps, and a token figure in the 5,876–7,476 range — for example *"`skills/landing-pages/SKILL.md` plus `core/design-tokens.md`, `core/accessibility-baseline.md` and `core/validate-checklist.md`, about 4,700 tokens."*
+A correctly wired agent answers with one skill id, its core deps, and a token figure in the 5,912–7,476 range — for example *"`skills/landing-pages/SKILL.md` plus `core/design-tokens.md`, `core/accessibility-baseline.md` and `core/validate-checklist.md`, about 4,700 tokens."*
 
 If it says it read everything, or cannot name the skill, it is not routing — it is improvising over whatever it retrieved.
 

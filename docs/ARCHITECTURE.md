@@ -14,8 +14,8 @@ So the pack is not a document. It is a **registry that routes**.
 |---|---|---|---|
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,099 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,843, 2,919, 3,011 or 3,747 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **843–1,674 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 94 deep references | **340,596 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/SKILL.md` | One skill router | **843–1,718 tokens** | exactly one per request |
+| `skills/{id}/references/*.md` | 94 deep references | **343,695 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
@@ -43,7 +43,7 @@ design-research     7,266   ← heaviest
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,106 tokens, while `design-research` is the second-largest router in the pack at 1,501 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,266 tokens against 340,596 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,266 tokens against 343,695 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 334,051, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
@@ -97,7 +97,7 @@ dist/                    build output, gitignored
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 229/229 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 19/19 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
-| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 97 references, 19 skill routers and 8 core files | 122 files · 0 violations |
+| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 99 references, 19 skill routers and 8 core files | 122 files · 0 violations |
 | 11 | Figures | every documented count and token figure recomputed from the filesystem and compared against the prose: 9 anchored figures, stated deltas that must subtract correctly, `metadata.json` against the tree, and its changelog against `docs/CHANGELOG.md` | 74 claim surfaces · 0 drifts |
 
 Then, non-negotiable but not numbered: **path integrity** (95 skill-cited references resolve), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
@@ -110,7 +110,7 @@ A parser-regression proof runs alongside gate 4: 13 synthetic cases, each provin
 
 ### Why gate 10 exists
 
-Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 97
+Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 99
 references are ~333k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
@@ -188,6 +188,6 @@ Running it found four things that compiling it could not, which is the argument 
 
 Per-file causes, what the suite does and does not prove, and the measurement pitfall that made a hanging import look like memory pressure: [TESTING.md](TESTING.md).
 
-**`design-system/references/brand-design-systems.md` was orphaned** — present on disk, absent from its skill's Reference Index, so nothing could route to it. A citation was added; 76/97 references now resolve with none orphaned.
+**`design-system/references/brand-design-systems.md` was orphaned** — present on disk, absent from its skill's Reference Index, so nothing could route to it. A citation was added; 76/99 references now resolve with none orphaned.
 
 **`AGENT_SYSTEM_PROMPT.md` was pre-registry** — 28 of the 31 paths it cited did not exist, and it had no concept of the registry. Rewritten. The lesson is worth keeping: **Gate 6 had been guarding it the whole time by checking that its section headings were present**, which they were. Structural checks do not catch semantic rot. Gate 6 now resolves every path the prompt cites, rejects pre-registry `references/` and `_meta/` prefixes, and rejects bare reference filenames — and that check was verified to *fail* against the old file before it was trusted.
