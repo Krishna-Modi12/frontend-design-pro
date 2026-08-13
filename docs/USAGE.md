@@ -7,7 +7,7 @@
 ```
 You:    "Build a pricing page for a developer tool"
 Agent:  matches "pricing" → loads skills/landing-pages/SKILL.md + core/design-tokens.md
-        (~5,665 tokens, not the 339,838 available)
+        (~5,665 tokens, not the 340,596 available)
 ```
 
 You never name a skill. If you *want* to force one, say its name — "use the data-tables skill" — and the agent will honour it.
@@ -109,6 +109,6 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 | One skill | 843–1,674 |
 | Core deps | 2,914–3,818 |
 | **Typical request** | **~5,876–7,476** |
-| Available depth (loaded only on demand) | **339,838** |
+| Available depth (loaded only on demand) | **340,596** |
 
 If you're on a small context window, say "keep it brief" — the agent will skip deep references and note the omission.
