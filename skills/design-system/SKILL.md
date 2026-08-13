@@ -45,6 +45,7 @@ Load only for the specific task:
 | 161 industry-mapped OKLCH palettes | `references/color-palettes.md` |
 | Dark mode architecture, next-themes, inversion rules | `references/dark-mode.md` |
 | 57 font pairings, reflex-font ban list, selection process | `references/font-pairings.md` |
+| CJK text — fallback-chain order, no-italic substitutes, kinsoku and punctuation, inverted letter-spacing, 5–15 MB font budget | `references/cjk-typography.md` |
 | Top brand profiles + implementation templates | `references/brand-core.md` |
 | 30+ additional brand profiles | `references/brand-extended.md` |
 | 68 public design systems, 9 categories — replicate a brand's feeling, not its IP | `references/brand-design-systems.md` |

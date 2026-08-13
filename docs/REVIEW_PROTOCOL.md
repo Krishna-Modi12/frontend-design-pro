@@ -1,7 +1,7 @@
 # Review protocol
 
 The default posture on this repo is **judge before building**. It has 19 skills,
-100 references and a gate chain that is green almost all of the time — so the
+101 references and a gate chain that is green almost all of the time — so the
 failure mode is no longer "the build breaks", it is "everything passes and the
 docs say something untrue". Every release in this project's history that had to
 be corrected was corrected for prose, not for code.
