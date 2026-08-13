@@ -4,7 +4,81 @@
 > Agents MUST emit OKLCH in component code per SKILL.md BUILD — never raw hex.
 > Legacy systems: convert at build time; do not hand-translate.
 
-Source: nextlevelbuilder/ui-ux-pro-max-skill (161 palettes condensed) + taste-skill
+Source: nextlevelbuilder/ui-ux-pro-max-skill (161 palettes condensed) + taste-skill.
+Derivation protocol below from `alchaincyf/huashu-design` (MIT).
+
+## Read this before copying anything below
+
+**The palettes in this file are anchors, not recipes.** Lifting one verbatim is
+the highest-volume way to produce slop with good taste: a hundred briefs sampling
+the same catalogue return a hundred identical products, and the colour stops
+carrying any information about the thing it is colouring. Derive instead, so the
+palette becomes evidence about *this* content.
+
+### Sample → Converge → Argue
+
+**1 · Sample.** Take the primary from one of three places, never from invention:
+
+- **Brand assets** — eyedrop the logo or existing identity. See
+  `references/brand-extraction.md` for the full protocol.
+- **Real content** — the dominant colour of the actual product photography,
+  screenshots or artwork the interface will carry.
+- **Cultural context** — the colour memory the subject already owns (below).
+
+Inventing a colour means drawing from the model's prior, and that draw returns
+the same handful of fashionable hues every time. A colour sampled from the
+content arrives with a reason already attached.
+
+**2 · Converge.** Reduce to **2–3 chromatic colours plus one neutral ramp.**
+Write the neutrals as a lightness series — `L 0.15 / 0.35 / 0.65 / 0.92 / 0.98` —
+and keep the chromatics apart by **hue ≥60°** or **lightness ≥0.3**. OKLCH earns
+its place here: its `L` is perceptually uniform, so a lightness series *is* a
+hierarchy, where a pile of independent hex values is only a list.
+
+**3 · Argue.** Write one sentence saying why this colour, and put it in the
+delivery notes or a token comment:
+
+```css
+@theme {
+  /* ochre sampled from the client's logo, chroma cut to 0.08 to read as ink */
+  --color-brand: oklch(58% 0.08 62);
+}
+```
+
+**If you cannot write that sentence, you are copying a recipe.** The sentence is
+the self-check, not a ceremony — it is the cheapest available test for whether a
+palette was chosen or defaulted to.
+
+### Chroma by area — why muted reads as expensive
+
+Ink on paper cannot reach a screen's maximum saturation: the CMYK gamut is
+narrower, paper absorbs, and ambient light reflects off it. Decades of print have
+trained the eye to read that physical dullness as quality. Lowering chroma on
+screen borrows that memory deliberately.
+
+| Use | OKLCH chroma | Reads as |
+|---|---|---|
+| Large background fields | `0.01–0.04` | Paper. Comfortable to sit in front of |
+| Brand and accent colour | `0.08–0.15` | Ink — present without turning plastic |
+| Small emphasis (buttons, links) | `0.15–0.22` | Alive, and only because the area is small |
+| Above `0.25`, full-bleed | Use with intent | Screen-fluorescent. Right only where "electronic" is the point |
+
+The gradient ban in **Forbidden Color Patterns** below and this table are the same
+rule seen twice: the purple-to-pink default is high-chroma across a large area,
+which is why it reads as generated regardless of the hues chosen.
+
+### Same hue, different cultural coordinates
+
+Choosing a colour is choosing a reference, not a wavelength. Each pair below is
+one hue name at two very different addresses:
+
+| Hue | One reading | Another | What moved |
+|---|---|---|---|
+| Red | Palace vermilion — orange-leaning, greyed, low `L` and `C` → traditional, formal | Soft-drink red — high-chroma true red → retail, appetite | Chroma alone takes it from a temple wall to a shelf |
+| Blue | Indigo dye — deep, violet-grey → handmade, quiet | SaaS tech blue → efficiency, product | The second is the model's default draw. Ask whether it was chosen |
+| Green | Matcha — yellow-leaning, desaturated → natural, calm | Terminal green — near-fluorescent → hacker, machine | Same name, opposite century |
+| Yellow | Gamboge and mustard — brown-grey cast → vintage print | Signal yellow → warning, play | The grey decides whether it is an old page or a hard hat |
+| White | Cream paper-white → warm, editorial | Pure white → clinical, Swiss | A 2% shift in temperature is the whole personality |
 
 ## Universal Token Structure
 
