@@ -51,6 +51,7 @@ Load only for the specific task:
 | Scroll-driven patterns, parallax, pinning | `references/scroll-experience.md` |
 | Smooth/momentum scroll — Lenis options, RAF loop, GSAP ticker handoff, reduced-motion gating | `references/lenis-smooth-scroll.md` |
 | React View Transition API, CSS recipes, Next.js integration | `references/view-transitions.md` |
+| An animation that renders wrong — seekability, font-load measurement, `zoom` vs `scale` text blur, flattened `preserve-3d`, missing glyphs | `references/animation-pitfalls.md` |
 
 ## Constraints
 `MOTION-01` reduced-motion is functional, not a string mention · `MOTION-02` no bare `ease-in` in entrance context · `PERF-04` no `transition: all` · duration 80–600ms (800ms page transitions) · no infinite animation without user control · transform/opacity only · OKLCH tokens · TypeScript strict.

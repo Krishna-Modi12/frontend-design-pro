@@ -382,6 +382,34 @@ export function DynamicStagger({ items }: { items: string[] }) {
 | Bouncy | 300 | 10 | 1 | Visible bounce — good for playful elements |
 | Gentle | 120 | 20 | 1 | Smooth, natural — good for content reveals |
 | Slow | 80 | 20 | 1 | Deliberate, heavy — good for large layout shifts |
+| No-overshoot | 300 | 35 | 1 | Settles without crossing the target — repeated interactions |
+
+### The number that decides whether it bounces
+
+The presets are a shortcut for one relationship, and knowing it beats memorising
+the table:
+
+**critical damping = 2 × √(stiffness × mass)**
+
+Below that value the spring overshoots and comes back; at it, the spring reaches
+the target in the shortest time possible without ever crossing it; above it,
+there is still no overshoot but the settle is slower. Every row above follows
+from that one line — Bouncy sits at 10 against a critical value of ~35, and
+Snappy at 30 against ~40, which is why it is described as *minimal* overshoot
+rather than none.
+
+The no-overshoot row matters more than it looks. `platform/references/desktop-patterns.md`
+argues that motion on a repeated interaction is judged on its hundredth
+repetition, and overshoot is the part that wears out — but the pack had no preset
+that satisfied its own rule. For `stiffness: 300, mass: 1` the critical value is
+`2 × √300 ≈ 34.6`, so **35 is the cheapest damping that never crosses the
+target**. Going much higher only makes it sluggish.
+
+*(Prompted by `199-biotechnologies/motion-dev-animations-skill` (MIT), which ships
+a no-bounce preset the pack was missing. Its `stiffness: 300, damping: 50` is
+labelled "critically damped" and is overdamped by the formula above — it does
+avoid overshoot, which is usually the actual goal, at the cost of a slower
+settle. The row above is derived from the formula rather than copied.)*
 
 ```tsx
 import { motion } from "motion/react";
