@@ -73,7 +73,7 @@ asserts the result at compile time, `IsAny` tripwire included.
 
 ## Architecture: registry + lazy loading
 
-A monolithic pack of ~330k tokens cannot be loaded at all, so the pack is not a document — it is a **registry that routes**.
+A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a document — it is a **registry that routes**.
 
 | Tier | Loaded |
 |---|---|
@@ -82,7 +82,7 @@ A monolithic pack of ~330k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,912–7,476 tokens against ~334k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,912–7,476 tokens against ~344k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 

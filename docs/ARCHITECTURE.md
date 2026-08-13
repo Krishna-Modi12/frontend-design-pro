@@ -4,7 +4,7 @@ Every number on this page was read off a green `python scripts/build_release.py 
 
 ## The problem this solves
 
-A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 330k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
+A skill pack is competing with the user's own prompt for context. Load everything and you win the argument about comprehensiveness and lose the one that matters: a monolithic pack with 344k tokens of frontend knowledge cannot be loaded at all, and even a 50k-token subset leaves no room to work in a 32k window.
 
 So the pack is not a document. It is a **registry that routes**.
 
@@ -111,7 +111,7 @@ A parser-regression proof runs alongside gate 4: 13 synthetic cases, each provin
 ### Why gate 10 exists
 
 Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 99
-references are ~333k tokens and are the part an agent actually opens for depth,
+references are ~344k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
 the chain that the product's central claim rests on.

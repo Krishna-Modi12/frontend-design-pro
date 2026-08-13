@@ -6,7 +6,7 @@ Before writing or editing anything a user sees in a browser — components, page
 layouts, styles, animation, forms, dashboards — read
 `frontend-design-pro/SKILL.md` first.
 
-It is a registry, not a document. Do not read the whole pack; it is ~333k tokens
+It is a registry, not a document. Do not read the whole pack; it is ~344k tokens
 and loading it is neither possible nor the intent.
 
 ## Loading protocol
