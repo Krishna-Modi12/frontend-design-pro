@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parent.parent          # repo root (v13)
 REPO = ROOT
 SKILL_MD = REPO / "SKILL.md" if (REPO / "SKILL.md").exists() else ROOT / "SKILL.md"
 CHANGELOG = (REPO / "docs/CHANGELOG.md") if (REPO / "docs/CHANGELOG.md").exists() else (ROOT / "_meta/CHANGELOG.md")
+README = REPO / "README.md"
 PLUGIN_JSON = ROOT / ".claude-plugin/plugin.json"
 DIST = REPO / "dist"
 SCRIPTS = ROOT / "scripts"
@@ -126,6 +127,18 @@ def tokens(path: Path) -> int:
     return path.stat().st_size // 4
 
 
+def announced_version(readme: Path) -> str | None:
+    """The version a README's "What's new" heading claims, or None if it has none.
+
+    One reader, two callers: pre-flight reads the source tree, Stage 6 reads the
+    unzipped archive. Written out twice the two regexes could drift, and then a
+    heading shape one accepts and the other rejects passes the dry run and fails
+    after the tag is pushed — which is the failure this reader exists to prevent.
+    """
+    m = re.search(r"^##\s*What's new in v([\d.]+)", readme.read_text(encoding="utf-8"), re.M)
+    return m.group(1) if m else None
+
+
 # ── Stage 1 — Pre-flight ─────────────────────────────────────────────────────
 def preflight(version: str) -> bool:
     hdr("STAGE 1 — PRE-FLIGHT")
@@ -154,14 +167,27 @@ def preflight(version: str) -> bool:
         t = tokens(skill)
         (ok_ if t <= 6000 else bad)(f"SKILL.md {t} tokens (≤6000)"); passed &= t <= 6000
 
-    # 3. metadata version == latest CHANGELOG header
+    # 3. metadata version == latest CHANGELOG header == README's "What's new" heading.
+    #    The README leg is checked HERE and not only in Stage 6 because Stage 6 reads
+    #    the archive, and only a real build produces one — so a stale heading is
+    #    invisible to --dry-run, which is what CI and every contributor actually run.
+    #    Twice now a tag was pushed on a green dry run and died in post-build smoke,
+    #    after the irreversible step. Same reader as Stage 6 so the two cannot
+    #    disagree about what the heading says.
     meta = json.loads((ROOT / "metadata.json").read_text(encoding="utf-8"))
     m = re.search(r"^##\s*\[([\d.]+)\]", CHANGELOG.read_text(encoding="utf-8"), re.M)
     changelog_v = m.group(1) if m else None
-    if meta["version"] == changelog_v == version:
-        ok_(f"version {version} consistent across metadata.json + CHANGELOG")
+    readme_v = announced_version(README) if README.exists() else None
+    if readme_v is None:
+        # Absent is not stale, and Stage 6 warns rather than fails on it too: a
+        # README with no release-history section claims no version to be wrong about.
+        warn("README has no \"What's new\" heading — nothing to check")
+    if meta["version"] == changelog_v == version and readme_v in (None, version):
+        ok_(f"version {version} consistent across metadata.json + CHANGELOG"
+            f"{' + README' if readme_v else ''}")
     else:
-        bad(f"version mismatch: metadata={meta['version']} changelog={changelog_v} target={version}"); passed = False
+        bad(f"version mismatch: metadata={meta['version']} changelog={changelog_v} "
+            f"readme={readme_v} target={version}"); passed = False
 
     # 4. no stray version strings outside the allowlist
     leaks = []
@@ -1001,11 +1027,11 @@ def archive_content_checks(base: Path, version: str) -> bool:
     readme = base / "README.md"
     if not readme.exists():
         bad("archive has no README.md"); return False
-    m = re.search(r"^##\s*What's new in v([\d.]+)", readme.read_text(encoding="utf-8"), re.M)
-    if not m:
+    announced = announced_version(readme)
+    if announced is None:
         warn("archive README has no \"What's new\" heading — nothing to check")
-    elif m.group(1) != version:
-        bad(f"archive README announces v{m.group(1)} but this is v{version}"); ok = False
+    elif announced != version:
+        bad(f"archive README announces v{announced} but this is v{version}"); ok = False
     else:
         ok_(f"archive README announces v{version}")
 
