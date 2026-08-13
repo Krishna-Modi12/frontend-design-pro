@@ -199,8 +199,16 @@ it when the shot exceeds a WebGL budget. Three details decide whether it locks t
   buffered, so scrubbing stalls or snaps. Fetch once, seek an object URL.
 - **Never assign `currentTime` from the scroll event.** Lerp toward it in a RAF loop — the
   discipline `lenis-smooth-scroll.md` applies to scroll position, applied to time.
-- **Encode short GOPs**, or seeks land on the wrong frame. Ship separate 16:9 and 9:16 encodes
-  rather than `object-cover` cropping one.
+- **Keyframe density is a device tier, not a constant.** A decoder's seek cost scales with how
+  many frames it must decode from the nearest keyframe, so a master that scrubs cleanly on a
+  laptop stutters on a phone. Encode twice — desktop `-g 8` at 1080p/CRF 20, mobile `-g 4` at
+  720p/CRF 23: twice the keyframes for roughly half the seek-decode work, and half the bytes on
+  cellular. `-g 1` (all-intra) buys instant seeks at a large size cost, for when scrubbing still
+  stutters. Ship separate 16:9 and 9:16 encodes rather than `object-cover` cropping one.
+
+The tier numbers come from `oso95/scroll-world`, whose pipeline scrubs commissioned video. Its
+asset procurement does not transfer to generated code; the encoding discipline does, and it turns
+"short GOPs" — which cannot be followed — into a number that can.
 
 ```tsx
 function ScrubVideo({ src }: { src: string }) {
@@ -239,6 +247,12 @@ function ScrubVideo({ src }: { src: string }) {
 
 `muted` and `playsInline` are load-bearing — iOS refuses programmatic seeking without them.
 Under reduced motion the effect returns early and `poster` stands in.
+
+**Cut the poster from the encode, one per orientation.** The single `poster` above is landscape
+and the section ships two encodes, so a portrait phone paints a poster the first video frame then
+replaces — a visible flash. Extract each poster from frame 0 of the encode it fronts rather than
+authoring it separately: when two artifacts have to agree, derive one from the other instead of
+maintaining both. Same argument as deriving this pack's documented figures from a gate run.
 
 ## prefers-reduced-motion — scroll animations
 

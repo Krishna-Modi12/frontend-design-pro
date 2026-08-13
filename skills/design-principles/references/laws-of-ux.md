@@ -61,3 +61,15 @@ Source: lawsofux.com (Jon Yablonski, CC BY-NC-ND 4.0). Not a reading list — ea
 ## How to apply in review
 
 Pick the failing law, not a vague adjective. "This nav has 11 items — Miller's Law says chunk to ≤7" beats "this feels cluttered". A law names the mechanism, which makes the fix arguable and testable.
+
+## Three laws deliberately absent
+
+Surveyed against `blog.uxtweak.com/ux-laws-and-principles` (23 named laws, read 2026-08-12): 20 of the 23 are already above. The three that are not are omissions, not gaps, and should stay out.
+
+| Absent | Why |
+|---|---|
+| **KISS** | A restatement of Occam's Razor, which is already here. Two names for one rule is a second thing to keep in sync |
+| **Hofstadter's Law** | About estimating schedules, not interfaces. Nothing an agent can check in a component |
+| **Yerkes–Dodson** | An arousal-performance curve from 1908 whose interface application is contested. Stating it loosely enough to be usable would license almost any decision |
+
+Recorded so a later pass does not re-ingest the source. The general test it illustrates: a law earns a row here only if it forces a *checkable* consequence — a count, a threshold, a ban. One that resolves to "use judgement" costs tokens in an always-routed file and buys nothing.

@@ -2,6 +2,7 @@
 
 Route: `BUILD_3D`, `ADD_3D_INTERACTION` → +threejs-interaction. Shortcode `[3d-interaction]`.
 Load after: `threejs-fundamentals.md`.
+Source: topic scope from `CloudAI-X/threejs-skills` (MIT); the R3F-first treatment is this pack's and is **not a verbatim extraction** — see `threejs-fundamentals.md` for what diverges and why.
 
 ## R3F pointer events (raycasting, done for you)
 
