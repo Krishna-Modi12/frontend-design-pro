@@ -28,10 +28,20 @@ The parser matches headings case-insensitively and trims surrounding whitespace.
 | **Typography** | `Typography`, `Fonts`, `Type Scale`, `Typeface`, `Font Stack` |
 | **Spacing** | `Spacing`, `Layout`, `Grid`, `Space Scale`, `Spacing Scale` |
 | **Motion** | `Motion`, `Animation`, `Transitions`, `Timing`, `Motion Design` |
-| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules`, `Responsive Behavior`, `Agent Prompt Guide`, `Elevation & Depth`, `Depth & Elevation`, `Components`, `Shapes`, `Iteration Guide`, `Known Gaps` |
+| **Rules** | `Do's and Don'ts`, `Rules`, `Guidelines`, `Constraints`, `Design Rules`, `Responsive Behavior`, `Agent Prompt Guide`, `Elevation & Depth`, `Depth & Elevation`, `Elevation`, `Shadows`, `Border Radius`, `Components`, `Shapes`, `Iteration Guide`, `Known Gaps` |
 | **Atmosphere** | `Atmosphere`, `Tone`, `Mood`, `Aesthetic`, `Dials`, `Overview` |
 
-Matching logic: strip leading `#` characters (any Markdown heading level), lowercase, strip punctuation, compare against the synonym list. First match wins.
+## Matching logic
+
+**Match on whole-word containment, never on string equality.** Five steps:
+
+1. Strip leading `#` characters (any heading level), lowercase, reduce punctuation to spaces, split into words.
+2. **Drop a leading list number.** `1.`, `2)`, `03 —` — this step alone recovers most of what the table used to miss.
+3. Fold a trailing plural: `components` → `component`, so a synonym matches either form.
+4. **Veto the tooling sections.** If any word is `configuration · config · install · installation · setup · import · assets · credits · license · changelog · roadmap · contributing · usage · resources · links · references`, drop the heading. These are real sections that carry no design values, and matching them would push a Mintlify config block into the generation prompt.
+5. Otherwise route to the first channel whose synonym appears as a **contiguous run of words** anywhere in the heading. First match wins.
+
+Step 5 is what makes the table survive a qualifier. `Animation Guidelines` contains `Animation` → Motion; `Component Patterns` and `Component Stylings` contain `Component` → Rules. Equality could not see any of them, and no amount of enumerating variants closes that class — the next document writes `Motion Guidelines`.
 
 The extended Rules variants are sections in wide use across the ecosystem. They hold prose rather than token declarations, so they route to **Rules**, the natural-language channel that reaches the generation prompt verbatim. A heading that matches nothing is dropped in silence, which is the failure this table prevents.
 
@@ -48,6 +58,14 @@ The variant list was measured against the 74 files in `VoltAgent/awesome-design-
 | `Known Gaps` | 43 | unmatched |
 
 The word order is the instructive one: the table matched the spelling used by ten files and missed the one used by sixty-three, in the corpus it cites as its own justification. A synonym list that compares literal strings will have that bug wherever a heading is a coordinated pair — **list both orders**.
+
+### Why that fix was not enough, measured the same way
+
+Re-run over the same 74 files plus `heygen-com/hyperframes`' shipped `DESIGN.md` — 753 top-level headings — string equality dropped **95**. Whole-word matching with the veto list drops **2**, and both of those are correct (`Mintlify Configuration`, `Brand Assets`). No heading changes channel, so nothing that routed before routes differently.
+
+The dominant cause was not exotic. **Ten of the 74 files number their sections, and a leading `1.` defeats the entire table** — including `6. Depth & Elevation`, `7. Do's and Don'ts`, `8. Responsive Behavior` and `9. Agent Prompt Guide`, the exact variants the correction above had just added. A fix measured only against unnumbered headings was invisible in a tenth of the corpus it was verified on.
+
+The lesson generalises past this file: **when a check is corrected against a corpus, re-run it over that corpus in the shape the corpus really has** — numbered, qualified, pluralised — rather than against the clean spellings the fix was written for.
 
 `Overview` routes to **Atmosphere** rather than Rules because it is where intent prose lives, and intent is what the atmosphere channel exists to carry. The `design.md` specification argues this is the most load-bearing section in the document: *"the quality of a generated design is determined less by the precision of its values than by how clearly the intent is described."* Dropping it was the most expensive of the seven misses.
 
