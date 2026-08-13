@@ -7,14 +7,9 @@ import MetricsStrip from "../components/MetricsStrip";
 import type { PlatformMetric } from "../components/MetricsStrip";
 import BentoFeatures from "../components/BentoFeatures";
 import SocialProof from "../components/SocialProof";
+import CtaBar from "../components/CtaBar";
 import Footer from "../components/Footer";
-import {
-  FEATURES,
-  FOOTER_NOTE,
-  PRODUCT,
-  REPO_URL,
-  TESTIMONIALS,
-} from "../lib/content";
+import { FEATURES, PRODUCT, REPO_URL, TESTIMONIALS } from "../lib/content";
 import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
 
 /**
@@ -34,9 +29,9 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? "local";
 
 const NAV = [
-  { id: "what-it-does", label: "What it does" },
+  { id: "how-it-works", label: "How it works" },
   { id: "numbers", label: "Numbers" },
-  { id: "who-uses-it", label: "Who uses it" },
+  { id: "teams", label: "Teams" },
 ];
 
 interface MetricsState {
@@ -112,7 +107,8 @@ export default function Page(): ReactElement {
         <div className={`${sectionShell} flex h-16 items-center justify-between`}>
           <a
             href="#top"
-            className={`${focusRing} rounded font-mono text-sm font-medium tracking-tight`}
+            data-display
+            className={`${focusRing} rounded text-lg font-medium tracking-normal`}
           >
             {PRODUCT}
           </a>
@@ -122,7 +118,7 @@ export default function Page(): ReactElement {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`${tapTarget} ${focusRing} hidden items-center rounded-lg px-3 text-sm text-ink-muted transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none sm:inline-flex`}
+                className={`${tapTarget} ${focusRing} hidden items-center rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none sm:inline-flex`}
               >
                 {item.label}
               </a>
@@ -130,7 +126,7 @@ export default function Page(): ReactElement {
             <a
               href={REPO_URL}
               rel="noreferrer"
-              className={`${tapTarget} ${focusRing} ml-2 inline-flex items-center rounded-lg border border-surface-border-strong px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent motion-reduce:transition-none`}
+              className={`${tapTarget} ${focusRing} ms-2 inline-flex items-center rounded-lg border border-surface-border-strong bg-surface-raised px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent hover:text-accent motion-reduce:transition-none`}
             >
               The pack
             </a>
@@ -139,14 +135,15 @@ export default function Page(): ReactElement {
       </header>
 
       <main id="main">
-        <Hero detailHref="#what-it-does" />
+        <Hero primaryHref="#start" secondaryHref="#how-it-works" />
         <MetricsStrip
           metrics={state.metrics}
           status={state.status}
           errorMessage={state.reason}
         />
         <BentoFeatures features={FEATURES} />
-        <SocialProof testimonials={TESTIMONIALS} disclosure={FOOTER_NOTE} />
+        <SocialProof testimonials={TESTIMONIALS} />
+        <CtaBar href={REPO_URL} />
       </main>
 
       <Footer repoUrl={REPO_URL} buildSha={BUILD_SHA} />

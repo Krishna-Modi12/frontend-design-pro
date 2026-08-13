@@ -4,17 +4,25 @@
  * 1. Tailwind first, so its `@theme` defaults exist to be extended.
  * 2. `../tokens.css` second — the palette, liftable into another project on its
  *    own. It uses plain `@theme` because its values are literal OKLCH.
- * 3. `@theme inline` last, and only for the fonts. `inline` is what makes a
- *    token whose value is a `var()` resolve at use-site rather than being
- *    frozen at build time — and `--font-geist-sans` does not exist until the
- *    `geist` package sets it on <html> at runtime. Plain `@theme` here would
- *    bake in an unresolved reference and the page would fall back to the
- *    system stack with no error anywhere.
+ * 3. The font families last.
+ *
+ * Two blocks, and the difference matters. `--font-display` and `--font-sans`
+ * are literal family names, so plain `@theme` is correct: the families exist as
+ * soon as the stylesheet loads. `--font-mono` reads `var(--font-geist-mono)`,
+ * which does not exist until the `geist` package sets it on <html> at runtime —
+ * that one needs `@theme inline`, which is what makes a token whose value is a
+ * `var()` resolve at use-site instead of being frozen at build time. Plain
+ * `@theme` there would bake in an unresolved reference and every figure on the
+ * page would quietly fall back to the system stack with no error anywhere.
  */
 @import "tailwindcss";
 @import "../tokens.css";
 
+@theme {
+  --font-display: "Fraunces Variable", ui-serif, Georgia, Cambria, serif;
+  --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
 @theme inline {
-  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }

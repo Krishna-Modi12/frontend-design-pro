@@ -25,7 +25,11 @@ const AXE_SOURCE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 
 const ROUTES = [
-  { name: "landing-page", route: "/landing-page", schemes: ["dark"] },
+  // Single-scheme by design: it pins `color-scheme: light` and ships no dark
+  // variant, so a second pass would re-check identical pixels under a different
+  // label. Checked as "light" rather than "dark" so the log names what actually
+  // rendered — the page was light for a full run while this still said dark.
+  { name: "landing-page", route: "/landing-page", schemes: ["light"] },
   // Both ship a prefers-color-scheme: dark variant, so both surfaces are checked.
   { name: "dashboard", route: "/dashboard", schemes: ["light", "dark"] },
   { name: "auth-form", route: "/auth-form", schemes: ["light", "dark"] },

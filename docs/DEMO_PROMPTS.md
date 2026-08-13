@@ -12,13 +12,25 @@ Two of these are verbatim and two are not, which is worth knowing before you com
 
 **Prompt:**
 
-> Create a dark-mode SaaS landing page with asymmetric bento features, a metric strip with tabular numerics, and social proof. Near-black background, acid-green accent, Geist font. No equal-card grids. No Inter.
+> Build a landing page for Bellwether — a fictional tool that rehearses a pending database schema change against a mirror of production traffic and reports what it would lock before it reaches the primary.
+>
+> Do not use any of the three AI-design defaults. I am not asking for them, so the "unless the brief asks" exemption does not apply — and specifically not near-black with a single acid accent. Go light: a cool porcelain ground, deep blue-black ink, one deep cobalt accent, and semantic colour only inside data. OKLCH throughout, one hue for every neutral, and measure contrast on the raised surface as well as on the page.
+>
+> Typography carries this page. A high-contrast editorial serif for display, with its optical-size axis left on automatic and its personality axes pinned flat; a grotesque for UI and body; a mono for figures only. Never Inter, Roboto, Poppins, DM Sans or Space Grotesk.
+>
+> The hero is 7:5 and starts immediately under the header — no dead band above the headline. Beside it, render what the product actually produces: a rehearsal report for one migration, carrying the statement, rows touched, traffic replayed, lock duration, an hourly write profile marking the window it recommends, and a verdict in prose. Not a terminal window.
+>
+> Then a four-figure metric strip on an uneven track, fed by a real route handler with genuine loading, error and empty branches; a six-cell bento where no two rows share a shape; three testimonials at two widths; a CTA bar with risk-reversal microcopy; and a footer that says on the page that Bellwether is not real.
+>
+> No equal-height card grids. No gradient on a heading. No raw hex. Organic figures — and not the ones the rules themselves use as examples. WCAG 2.2 AA, verified in a browser rather than asserted.
 
 **Skills loaded:** `landing-pages` + `core/design-tokens.md`
 
-**What it demonstrates:** Dark OKLCH surface at a single hue, asymmetric bento (2+1+1 over 1+2+1), tabular-nums metric strip on an uneven track, skip link, and four real states behind a real fetch.
+**What it demonstrates:** A light OKLCH palette at a single neutral hue with measured contrast on two grounds, a variable-font display face driven by its own axes, an asymmetric bento where the tall cell carries the evidence for its own claim, a tabular-nums metric strip on an uneven track, a skip link, and four real states behind a real fetch.
 
-**The product is fictional.** "Switchyard" does not exist; the page says so on itself. Two bans in that prompt are the pack's own anti-slop wall restated by the user — the page is checked against them by `python scripts/test_constraints.py --dir demo --recursive --project`, not trusted to have obeyed.
+**This prompt declines an exemption the previous one took.** The anti-slop wall bans three AI-design defaults *unless the brief asks for them*, and the brief that produced the earlier version of this page asked for one by name: "near-black background, acid-green accent". That page broke no rule and still looked like every generated developer-tool page on the internet — which is the outcome the wall exists to prevent. Taking a documented exemption is not the same as making a decision, so this brief refuses it in as many words.
+
+**The product is fictional.** "Bellwether" does not exist; the page says so on itself rather than only in a source comment. The bans in the prompt are the pack's own wall restated by the user, and the page is checked against them by `python scripts/test_constraints.py --dir demo --recursive --project` rather than trusted to have obeyed — which caught a violation in this very rebuild, in a code comment that named a banned utility while explaining why it was banned.
 
 ---
 

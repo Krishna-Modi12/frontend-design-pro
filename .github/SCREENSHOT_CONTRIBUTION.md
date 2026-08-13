@@ -5,7 +5,7 @@ Four demo screenshots are linked from the root `README.md` — one per project i
 | Image | Linked from | Surface |
 |---|---|---|
 | `demo/showcase/screenshot.png` | **See It In Action** | dark |
-| `demo/landing-page/screenshot.png` (+ `-full`) | **Demos → What they look like** | dark |
+| `demo/landing-page/screenshot.png` (+ `-full`) | **Demos → What they look like** | light |
 | `demo/dashboard/screenshot.png` (+ `-full`) | same | light |
 | `demo/auth-form/screenshot.png` (+ `-full`) | same | light |
 
@@ -18,9 +18,9 @@ These exist because everything else in this repository is machine-checked — 11
 Every image, regardless of which demo:
 
 - **1920×1080**, above-the-fold, default viewport. No zoomed-out full-page capture that shrinks the type past legibility.
-- **Under 500 KB.** Palette-quantised PNG at 256 colours holds the current set between 41 KB and 116 KB with no visible banding.
+- **Under 500 KB.** Palette-quantised PNG at 256 colours holds the current above-the-fold set between 41 KB and 118 KB with no visible banding. The full-page passes run larger — `landing-page` is the heaviest at 252 KB — and are still well inside the cap.
 - **Reduced motion off**, so animated surfaces render their real state rather than the static fallback.
-- The demo's **own** colour scheme — `landing-page` and `showcase` are dark; `dashboard` and `auth-form` default to light and ship a `prefers-color-scheme: dark` variant. Capture what the demo actually is.
+- The demo's **own** colour scheme — `showcase` is dark and `landing-page` is light, each pinning `color-scheme` and shipping no variant; `dashboard` and `auth-form` default to light and ship a `prefers-color-scheme: dark` variant. Capture what the demo actually is, and keep the scheme in `tools/screenshots/capture.mjs` and `verify.mjs` in step with it — `landing-page` was light for a full run while both still said dark, which cost nothing but logged a lie.
 - **No dev-server artifacts.** The Next.js dev-tools badge sits bottom-left and must not appear. Capture against a production build, or set `devIndicators: false`.
 
 `screenshot-full.png` companions are linked, not inline: full-page, scaled to 1440 wide so they stay under the same cap.

@@ -19,7 +19,9 @@ export interface MetricsStripProps {
  * Asymmetric track: the first column takes twice the width of the other three.
  * Four equal columns is the arrangement that makes a metric strip look
  * generated — it implies the four numbers are interchangeable, and they are
- * not. The first one is the headline; the rest qualify it.
+ * not. The first one is the headline; the rest qualify it. The same reasoning
+ * puts the accent on that first value alone: colour here is hierarchy, and four
+ * cobalt numbers in a row would flatten the thing the width is trying to say.
  *
  * Every number carries `data-metric`, which is what `lib/tokens.ts` hangs the
  * monospace + `tabular-nums` rule on. Proportional figures are different widths
@@ -37,7 +39,7 @@ export default function MetricsStrip({
     <section
       id="numbers"
       aria-label="Operating figures"
-      className="border-y border-surface-border bg-surface-elevated"
+      className="border-y border-surface-border bg-surface-sunken"
     >
       <div className={`${sectionShell} py-12 lg:py-16`}>
         <MetricsBody metrics={metrics} status={status} errorMessage={errorMessage} />
@@ -76,8 +78,9 @@ function MetricsBody({
     return (
       <div className={`${alertShell} p-5`} role="alert">
         <p className="text-sm font-medium text-ink">Figures are not available.</p>
-        <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-          {errorMessage ?? "The overview endpoint did not answer. Everything else on this page is unaffected."}
+        <p className="mt-1 text-sm leading-relaxed text-ink-secondary">
+          {errorMessage ??
+            "The overview endpoint did not answer. Everything else on this page is unaffected."}
         </p>
       </div>
     );
@@ -86,10 +89,10 @@ function MetricsBody({
   if (metrics.length === 0) {
     return (
       <div className={`${alertShell} p-5`}>
-        <p className="text-sm font-medium text-ink">No figures yet.</p>
-        <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-          A yard reports once it has moved something. Run a rollout and this
-          strip fills in.
+        <p className="text-sm font-medium text-ink">Nothing rehearsed yet.</p>
+        <p className="mt-1 text-sm leading-relaxed text-ink-secondary">
+          These figures start once the first pull request opens against a watched
+          database. Point Bellwether at a replica and this strip fills in.
         </p>
       </div>
     );
@@ -100,18 +103,20 @@ function MetricsBody({
     // else. A flat run of dt, dd, dt, dd is valid but ungroupable; a <div> in
     // a <dl> may only wrap a complete term group, which is what this is.
     <dl className={TRACK}>
-      {metrics.map((metric) => (
+      {metrics.map((metric, index) => (
         <div key={metric.id}>
           <dd
             data-metric
-            className="text-4xl font-semibold tracking-tight text-accent lg:text-5xl"
+            className={`text-4xl font-semibold tracking-tight lg:text-5xl ${
+              index === 0 ? "text-accent" : "text-ink"
+            }`}
           >
             {metric.value}
           </dd>
-          <dt className="mt-3 font-mono text-xs uppercase tracking-[0.16em] text-ink-muted">
+          <dt data-label className="mt-3 text-xs text-ink-muted">
             {metric.label}
           </dt>
-          <dd className="mt-3 text-sm leading-relaxed text-ink-faint">
+          <dd className="mt-3 text-sm leading-relaxed text-ink-secondary text-pretty">
             {metric.caption}
           </dd>
         </div>

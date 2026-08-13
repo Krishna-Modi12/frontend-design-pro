@@ -1,123 +1,118 @@
 import type { ReactElement } from "react";
 import CtaButton from "./CtaButton";
+import RehearsalReport from "./RehearsalReport";
+import {
+  HEADLINE_LEAD,
+  HEADLINE_REST,
+  PROOF_POINTS,
+  REPORT,
+  SUBHEAD,
+  TAGLINE,
+} from "../lib/content";
 import { sectionShell } from "../lib/tokens";
-import { HERO, REPO_URL, TERMINAL } from "../lib/content";
-import type { TerminalLine } from "../lib/content";
 
 export interface HeroProps {
-  /** Anchor the secondary action scrolls to. */
-  detailHref: string;
+  /** The one action the page is asking for. */
+  primaryHref: string;
+  /** The quieter second action, for a reader not ready to commit. */
+  secondaryHref: string;
 }
 
 /**
- * Colour per line kind, resolved at module scope so the map is built once
- * rather than on every render.
- */
-const LINE_TONE: Record<TerminalLine["kind"], string> = {
-  prompt: "text-ink",
-  cont: "text-ink",
-  out: "text-ink-muted",
-  flag: "text-accent",
-  ok: "text-ink-muted",
-};
-
-/** What the shell prints in the gutter. A wrapped command gets `>`, not `$`. */
-const LINE_MARKER: Record<TerminalLine["kind"], string> = {
-  prompt: "$ ",
-  cont: "> ",
-  out: "  ",
-  flag: "  ",
-  ok: "  ",
-};
-
-/**
- * 7:5, not 6:6. An even split reads as two columns of equal importance and
- * gives the headline the same room as the illustration beside it; 7:5 says
- * which one is the argument. The rule under the title is the page's one loud
- * gesture — everything else is a hairline.
+ * Editorial 7:5. The headline column takes the wider track because the type is
+ * the visual here — at 80px in a high-contrast serif the words are the image,
+ * and a 6:6 split would give the report room it does not need at the cost of
+ * breaking the headline onto more lines than it should take.
  *
- * `min-h-[100dvh]`, and deliberately not Tailwind's `screen` variant of it:
- * `100vh` on mobile Safari is the height with the browser chrome hidden, so
- * that hero is taller than the window it lives in and the first scroll goes
- * nowhere. `RES-03` enforces this, and it matches on the literal — including
- * inside a comment, which is why this one describes the class instead of
- * spelling it.
+ * ── The dead band is gone, deliberately ──────────────────────────────────────
+ *
+ * The previous hero was `min-h-[100dvh]` and centred its content, which pushed
+ * the headline roughly 40% down a 1080px viewport and left an empty near-black
+ * field above it. Every gate passed. It looked like nothing had loaded.
+ *
+ * `min-h-[100dvh]` lives on the page shell instead, which is what the anti-slop
+ * wall actually asks for — it bans the static-viewport height utility in favour
+ * of the dynamic one, not that every hero fill a viewport. Vertical space here
+ * is `pt-16 pb-24`: composed, and roughly a third of what the old hero spent on
+ * nothing.
+ *
+ * The banned utility is not named in prose anywhere in this app, deliberately.
+ * RES-03 is a regex over source, so a comment explaining the rule reads as a
+ * violation of it — and Tailwind scans comments too, so writing the class name
+ * here also emitted a real `min-height: 100vh` utility into the stylesheet that
+ * nothing used. Both were live in the first draft of this file.
  */
-export default function Hero({ detailHref }: HeroProps): ReactElement {
+export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactElement {
   return (
-    <section
-      id="top"
-      className="flex min-h-[100dvh] flex-col justify-center border-b border-surface-border"
-    >
-      <div className={sectionShell}>
-        <div className="grid items-center gap-12 py-20 lg:grid-cols-12 lg:gap-16">
-          {/* `min-w-0` on both columns. A grid item defaults to
-              `min-width: auto`, which refuses to shrink below its content's
-              min-content width — so the terminal panel below, whose longest
-              line is wider than a 390px viewport, pushed its own column out
-              instead of scrolling inside its scroll container. The body
-              scrolled 72px sideways and the `overflow-x-auto` never engaged. */}
-          <div className="min-w-0 lg:col-span-7">
-            <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-              {HERO.eyebrow}
-            </p>
+    <section aria-labelledby="hero-heading" className="border-b border-surface-border">
+      <div
+        className={`${sectionShell} grid items-start gap-x-12 gap-y-14 pb-20 pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-20`}
+      >
+        <div className="lg:col-span-7">
+          <p className="flex items-center gap-3">
+            <span aria-hidden="true" className="h-px w-8 shrink-0 bg-accent" />
+            <span data-label className="text-xs text-ink-muted">
+              {TAGLINE}
+            </span>
+          </p>
 
-            <h1 className="mt-6 text-balance text-6xl font-semibold tracking-tighter sm:text-7xl lg:text-8xl">
-              {HERO.title}
-            </h1>
+          {/* Two sentences, two treatments. The second is the claim the product
+              actually makes, so it gets the italic — a real one, from the
+              italic face imported in the layout, not a sheared roman. */}
+          <h1
+            id="hero-heading"
+            data-display
+            className="mt-7 text-[clamp(2.75rem,6.2vw,5rem)] font-medium leading-[0.98] text-ink"
+          >
+            {HEADLINE_LEAD}{" "}
+            <span className="font-normal italic text-ink-secondary">
+              {HEADLINE_REST}
+            </span>
+          </h1>
 
-            {/* The accent rule. Fixed width, not full-bleed — a full-width bar
-                under a heading is a divider; a short one is a mark. */}
-            <div className="mt-6 h-1 w-24 rounded-full bg-accent" />
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink-secondary text-pretty">
+            {SUBHEAD}
+          </p>
 
-            <p className="mt-8 max-w-xl text-pretty text-lg leading-relaxed text-ink">
-              {HERO.lede}
-            </p>
-            <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-ink-muted">
-              {HERO.body}
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-3">
-              <CtaButton href={REPO_URL} rel="noreferrer">
-                {HERO.primaryCta}
-              </CtaButton>
-              <CtaButton href={detailHref} variant="outline">
-                {HERO.secondaryCta}
-              </CtaButton>
-            </div>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <CtaButton href={primaryHref}>Start a rehearsal</CtaButton>
+            <CtaButton href={secondaryHref} variant="outline">
+              How the replay works
+            </CtaButton>
           </div>
 
-          {/* The panel is a region rather than a figure: it scrolls on its own
-              at narrow widths, and anything scrollable needs to be reachable
-              from the keyboard, which needs a name and a tabstop. */}
-          <div className="min-w-0 lg:col-span-5">
-            <div
-              tabIndex={0}
-              role="region"
-              aria-label="Switchyard command line session: a rollout is held behind another, then queued to follow it"
-              className="overflow-x-auto rounded-xl border border-surface-border bg-surface-sunken p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <pre className="m-0 font-mono text-[0.8125rem] leading-relaxed">
-                <code>
-                  {TERMINAL.map((line) => (
-                    <span key={line.id} className={`block ${LINE_TONE[line.kind]}`}>
-                      {/* `select-none` so copying the block yields runnable
-                          commands rather than a transcript with prompts in it. */}
-                      <span className="select-none text-accent">
-                        {LINE_MARKER[line.kind]}
-                      </span>
-                      {line.text}
-                    </span>
-                  ))}
-                </code>
-              </pre>
-            </div>
-            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-              The second command is the whole product: the yard already knew the
-              scheduler was moving, so the rollout waits for it instead of
-              finding out downstream.
-            </p>
-          </div>
+          {/* Trust signals within 40px of the CTA they support — 32px here.
+              Capability claims rather than a logo wall: a wall of invented
+              customer logos on a page for an invented product is a fabricated
+              screenshot with extra steps. */}
+          <ul
+            role="list"
+            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-muted"
+          >
+            {PROOF_POINTS.map((point) => (
+              <li key={point} className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="size-1 shrink-0 rounded-full bg-surface-border-strong"
+                />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="lg:col-span-5">
+          <RehearsalReport
+            id={REPORT.id}
+            verdict={REPORT.verdict}
+            verdictLabel={REPORT.verdictLabel}
+            statement={REPORT.statement}
+            target={REPORT.target}
+            rows={REPORT.rows}
+            finding={REPORT.finding}
+            trafficByHour={REPORT.trafficByHour}
+            quietWindow={REPORT.quietWindow}
+          />
         </div>
       </div>
     </section>

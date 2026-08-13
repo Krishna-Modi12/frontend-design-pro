@@ -1,67 +1,60 @@
 import type { ReactElement } from "react";
+import type { Testimonial } from "../lib/content";
 import { cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
-
-export interface Testimonial {
-  id: string;
-  quote: string;
-  name: string;
-  role: string;
-  company: string;
-  /** Tailwind span class, or "" for a single column. */
-  span: string;
-}
 
 export interface SocialProofProps {
   testimonials: Testimonial[];
-  /** Rendered under the row. States plainly that the quotes are invented. */
-  disclosure: string;
 }
 
 /**
- * Two wide, one narrow, on a five-column track — 2 + 2 + 1. A three-up row of
- * equal cards is the stock arrangement, and it forces all three quotes to the
- * same length, which is why generated testimonials all sound like the same
- * person. Different widths let a long quote be long and a short one land.
+ * Two wide, one full — never three uniform cards, which is the shape that makes
+ * invented praise look even more invented. The quotes are different lengths
+ * because real ones are, and the layout follows the copy rather than trimming
+ * the copy to fit the layout.
  *
- * The quotes are invented, for a product that does not exist. `disclosure`
- * says so on the page rather than only in a source comment — a reader of the
- * rendered page should not have to open the repo to learn that.
+ * Marked up as <figure>/<blockquote>/<figcaption>, which is the pairing that
+ * actually attributes a quotation. A <div> with a name under it in smaller text
+ * looks identical and tells a screen reader nothing about whose words these are.
  */
-export default function SocialProof({
-  testimonials,
-  disclosure,
-}: SocialProofProps): ReactElement {
+export default function SocialProof({ testimonials }: SocialProofProps): ReactElement {
   return (
-    <section id="who-uses-it" className={sectionShell}>
-      <div className={sectionSpacing}>
-        <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-          What the yard changed
+    <section
+      id="teams"
+      aria-labelledby="proof-heading"
+      className={`${sectionSpacing} border-t border-surface-border bg-surface-sunken`}
+    >
+      <div className={sectionShell}>
+        <h2
+          id="proof-heading"
+          data-display
+          className="max-w-2xl text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[1.05] text-ink"
+        >
+          {/* U+2011 non-breaking hyphen. `text-wrap: balance` still breaks at an
+              ordinary hyphen, and this heading was splitting as "The Tuesday-"
+              over "morning rule, retired." — a hyphen at the end of a display
+              line reads as a typo rather than as a line break. */}
+          The Tuesday‑morning rule, retired.
         </h2>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-5">
+        <div className="mt-12 grid gap-4 lg:grid-cols-12 lg:gap-5">
           {testimonials.map((testimonial) => (
             <figure
-              key={testimonial.id}
-              className={`${cardShell} ${testimonial.span} flex flex-col justify-between p-6 lg:p-8`}
+              key={testimonial.name}
+              className={`${cardShell} ${testimonial.span} m-0 flex flex-col p-6 lg:p-8`}
             >
-              <blockquote className="text-pretty text-base leading-relaxed text-ink">
+              <blockquote
+                data-display
+                className="text-lg leading-snug text-ink text-pretty lg:text-xl"
+              >
                 {testimonial.quote}
               </blockquote>
-              <figcaption className="mt-6 border-t border-surface-border pt-4">
-                <span className="block text-sm font-medium text-ink">
-                  {testimonial.name}
-                </span>
-                <span className="mt-1 block font-mono text-xs uppercase tracking-[0.14em] text-ink-faint">
-                  {testimonial.role} · {testimonial.company}
-                </span>
+              <figcaption className="mt-6 text-sm">
+                <span className="font-medium text-ink">{testimonial.name}</span>
+                <span className="mt-0.5 block text-ink-muted">{testimonial.role}</span>
               </figcaption>
             </figure>
           ))}
         </div>
-
-        <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
-          {disclosure}
-        </p>
       </div>
     </section>
   );
