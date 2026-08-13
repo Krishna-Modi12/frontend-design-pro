@@ -1,5 +1,5 @@
 // GOLD: Visual hierarchy — one focal point, ranked by size, weight, and space.
-// Source doctrine: references/laws-of-ux.md (Von Restorff, Similarity, Gestalt), references/designer-workflow.md.
+// Source doctrine: references/visual-hierarchy.md, references/laws-of-ux.md (Von Restorff, Similarity, Gestalt).
 //   • Exactly one primary action on the screen. Two equally-weighted buttons is
 //     not a choice offered to the user, it is a decision the designer declined
 //     to make, and it measurably slows both.

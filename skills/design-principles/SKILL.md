@@ -53,6 +53,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | The 31 UX laws as decision rules with UI consequences | `references/laws-of-ux.md` |
+| Building a rank — the five devices and how to spend them, scale ratios, text-contrast tiers, the squint and remove-the-device tests | `references/visual-hierarchy.md` |
 | Extracting a visual identity into a reusable spec; polish iteration | `references/design-dna.md` |
 | **Anti-slop reasoning, the three AI-design clusters, two-pass process, writing-as-design** | **`references/anthropic-frontend-design.md`** |
 | Design flow (grill→brief→IA→tokens→tasks→build→review), existing-code detection, 8 aesthetic philosophies, prompt order | `references/designer-workflow.md` |
