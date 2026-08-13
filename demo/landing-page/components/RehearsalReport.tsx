@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import type { ReportRow, Verdict } from "../lib/content";
-import { cardShell } from "../lib/tokens";
+import { cardInsetX, cardShell } from "../lib/tokens";
 
 export interface RehearsalReportProps {
   id: string;
@@ -44,7 +44,7 @@ export default function RehearsalReport({
 }: RehearsalReportProps): ReactElement {
   return (
     <figure className={`${cardShell} m-0 overflow-hidden`}>
-      <figcaption className="flex items-center justify-between gap-4 border-b border-surface-border px-5 py-4 sm:px-6">
+      <figcaption className={`flex items-center justify-between gap-4 border-b border-surface-border ${cardInsetX} py-5`}>
         <span data-metric className="text-sm font-medium text-ink-secondary">
           {id}
         </span>
@@ -57,7 +57,7 @@ export default function RehearsalReport({
 
       {/* The statement under rehearsal. Sunken rather than raised: this is the
           input the reader handed over, not something the product produced. */}
-      <div className="border-b border-surface-border bg-surface-sunken px-5 py-4 sm:px-6">
+      <div className={`border-b border-surface-border bg-surface-sunken ${cardInsetX} py-5`}>
         <code
           data-metric
           className="block text-[0.8125rem] leading-relaxed text-ink [overflow-wrap:anywhere]"
@@ -73,9 +73,9 @@ export default function RehearsalReport({
         {rows.map((row) => (
           <div
             key={row.label}
-            className="grid grid-cols-[1fr_auto] items-baseline gap-x-5 px-5 py-4 sm:px-6"
+            className={`grid grid-cols-[1fr_auto] items-baseline gap-x-5 ${cardInsetX} py-5`}
           >
-            <dt data-label className="col-start-1 text-xs text-ink-muted">
+            <dt data-label className="col-start-1 text-ink-muted">
               {row.label}
             </dt>
             <dd
@@ -97,7 +97,7 @@ export default function RehearsalReport({
           panel — a full colour wash behind a paragraph on a light ground turns
           the text's effective contrast into a second thing to verify, and this
           says the same thing with an edge. */}
-      <div className="border-t border-surface-border px-5 py-5 sm:px-6">
+      <div className={`border-t border-surface-border ${cardInsetX} py-5`}>
         <p className="border-s-2 border-caution ps-4 text-sm leading-relaxed text-ink-secondary text-pretty">
           {finding}
         </p>
@@ -124,9 +124,9 @@ function HourlyLoad({
   const pad = (h: number): string => String(h).padStart(2, "0");
 
   return (
-    <div className="border-t border-surface-border px-5 py-4 sm:px-6">
+    <div className={`border-t border-surface-border ${cardInsetX} py-5`}>
       <div className="flex items-baseline justify-between gap-4">
-        <span data-label className="text-xs text-ink-muted">
+        <span data-label className="text-ink-muted">
           Writes by hour
         </span>
         <span data-metric className="text-xs text-ink-muted">

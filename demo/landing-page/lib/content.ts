@@ -54,8 +54,13 @@ export const TAGLINE = "Schema change rehearsal";
 export const HEADLINE_LEAD = "Every migration runs twice.";
 export const HEADLINE_REST = "The first time, nothing is at stake.";
 
+/**
+ * Two lines at the hero's measure, not three. The landing-pages skill fixes
+ * hero subtext at two lines, and the first draft ran to three at every width —
+ * the kind of thing that is invisible in source and obvious on the page.
+ */
 export const SUBHEAD =
-  "Bellwether replays a pending schema change against a mirror of live traffic, measures what it locks and for how long, and returns a verdict you can read before anything reaches the primary.";
+  "Bellwether replays your schema change against mirrored production traffic, then reports what it locks and for how long — before it reaches the primary.";
 
 /** Technical proof, not a logo wall. Sits within 40px of the CTA pair. */
 export const PROOF_POINTS = [

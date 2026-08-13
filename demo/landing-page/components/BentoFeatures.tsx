@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import type { Feature } from "../lib/content";
-import { cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
+import SectionEyebrow from "./SectionEyebrow";
+import { cardInset, cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
 
 export interface BentoFeaturesProps {
   features: Feature[];
@@ -34,16 +35,11 @@ export default function BentoFeatures({ features }: BentoFeaturesProps): ReactEl
     >
       <div className={sectionShell}>
         <div className="max-w-2xl">
-          <p className="flex items-center gap-3">
-            <span aria-hidden="true" className="h-px w-8 shrink-0 bg-accent" />
-            <span data-label className="text-xs text-ink-muted">
-              How the replay works
-            </span>
-          </p>
+          <SectionEyebrow>How the replay works</SectionEyebrow>
           <h2
             id="features-heading"
             data-display
-            className="mt-6 text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[1.05] text-ink"
+            className="mt-5 text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[1.05] text-ink"
           >
             The rehearsal is the product.
           </h2>
@@ -58,7 +54,7 @@ export default function BentoFeatures({ features }: BentoFeaturesProps): ReactEl
           {features.map((feature) => (
             <article
               key={feature.title}
-              className={`${cardShell} ${feature.span} flex flex-col p-6 lg:p-7`}
+              className={`${cardShell} ${cardInset} ${feature.span} flex flex-col`}
             >
               <h3 data-display className="text-xl font-medium leading-snug text-ink">
                 {feature.title}

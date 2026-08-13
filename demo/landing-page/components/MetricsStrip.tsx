@@ -113,7 +113,7 @@ function MetricsBody({
           >
             {metric.value}
           </dd>
-          <dt data-label className="mt-3 text-xs text-ink-muted">
+          <dt data-label className="mt-3 text-ink-muted">
             {metric.label}
           </dt>
           <dd className="mt-3 text-sm leading-relaxed text-ink-secondary text-pretty">

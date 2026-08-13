@@ -1,6 +1,6 @@
 <div align="center">
 
-# frontend-design-pro
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/hero.svg" alt="frontend-design-pro — a skill pack for AI coding agents. Machine-enforced frontend design, verified rather than asserted." width="100%">
 
 **Your AI agent already writes React.**
 **This makes it write React that doesn't look AI-generated.**
