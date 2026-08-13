@@ -406,6 +406,22 @@ The value is not the topic. It is that three of our own rules read differently t
 
 Also: **Skiper UI** joins the shadcn ecosystem catalogue, flagged as the one entry with a paid tier. **`brand-extraction.md` gains palette sourcing for things that are not brands** — paintings, film grades and terminal themes behave differently and carry different rights, and a palette derived from a work is an evocation, never a reproduction.
 
+### The ingestion ledger is closed — 53 sources, and most of the work was correcting the record
+
+Five sources had never been touched, seven reference files were promised by gold-example headers and never written, two fetches were logged as failures, three catalogue entries sat at one line. The useful result is how much of that turned out to be **recorded wrongly rather than left undone**:
+
+- `CloudAI-X/threejs-skills` was logged as serving empty `.claude/skills/*` paths. **There is no `.claude/` directory in that repo** — the files sit at `skills/*/SKILL.md`, and the fetch looked somewhere that never existed.
+- `alchaincyf/huashu-design` was recorded as a failed fetch worth ~4 KB. It carries **~500 KB across 32 files**, in Chinese — which is why it was under-read.
+- `ui.aceternity.com` and `21st.dev` were logged as unreadable client-rendered listings. Both return full content. The catalogue also pointed at **the wrong Aceternity domain** for several releases, and never mentioned that its component index states no open-source licence while inviting copy-paste.
+
+**Five of the seven promised references should not exist.** `component-registry.md` is covered twice in `ai-ui-generation`, `gestalt.md` by the five Gestalt laws already in `laws-of-ux.md`, `interaction-patterns.md` by `react-bits.md`. Writing them would split whole topics to make a ledger row go green.
+
+**Four that should, and now do:** [`phosphor.md`](skills/iconography/references/phosphor.md) · [`visual-hierarchy.md`](skills/design-principles/references/visual-hierarchy.md), for a skill that promised hierarchy reasoning in its own routing description and delivered none · [`animation-pitfalls.md`](skills/animations/references/animation-pitfalls.md), five failures that survive a green build · [`cjk-typography.md`](skills/design-system/references/cjk-typography.md), where the fallback chain puts the **Latin** face first and Latin display tracking inverts outright.
+
+**A check verified against the wrong shape.** v14.9.0 corrected the `DESIGN.md` heading table against 74 real files. Re-running that measurement in the shape the corpus actually has: **ten of those files number their sections, and a leading `1.` defeats the entire table** — including the four variants that fix had just added. Over 753 headings, string equality dropped 95; whole-word matching drops 2, and both of those should drop.
+
+**And five figures Gate 11 could not see.** The gate reported 0 drift while `docs/ARCHITECTURE.md` published a 19-row budget table in which every number was stale. A figure written `~333k`, or `N files` instead of `N references`, or followed by a comma, is invisible to it. The figures are fixed; the five blind spots are written into `CLAUDE.md`; **the gate is deliberately untouched**, because tightening it risks false positives across 85 surfaces and deserves its own pass with negative controls.
+
 <details>
 <summary><b>Earlier releases — v14.9.0 back to v14.5.0</b></summary>
 
