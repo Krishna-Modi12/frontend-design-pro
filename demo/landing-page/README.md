@@ -1,13 +1,34 @@
-# `demo/landing-page` — Switchyard
+# `demo/landing-page` — Bellwether
 
-A dark-mode SaaS landing page for **Switchyard**, a fictional release-orchestration
-product. It is sample output: the page the pack produces from the prompt recorded
-in [`docs/DEMO_PROMPTS.md`](../../docs/DEMO_PROMPTS.md), built under the pack's own
+A light editorial landing page for **Bellwether**, a fictional tool that rehearses
+a pending database schema change against a mirror of production traffic and
+reports what it would lock before it reaches the primary. It is sample output:
+the page the pack produces from the prompt recorded in
+[`docs/DEMO_PROMPTS.md`](../../docs/DEMO_PROMPTS.md), built under the pack's own
 rules, with nothing on it hand-waved.
 
-Switchyard does not exist. The quotes on the page are invented, and the page says
-so. It is the same arrangement as [`demo/showcase/`](../showcase/), which is a
-page for the fictional "Nexus".
+Bellwether does not exist. The quotes on the page are invented, the operating
+figures are demo content, and the page says so on itself.
+
+## Why this page is light
+
+The anti-slop wall bans three AI-design defaults **unless the brief asks for
+them**. The version of this page before this one was the second of those three —
+near-black with a single acid-green accent — and it was not breaking any rule,
+because its brief asked for exactly that. It still looked like every generated
+developer-tool page on the internet, which is the outcome the wall exists to
+prevent.
+
+So the rebuild started with the brief rather than the CSS. The new one declines
+the exemption in as many words, and the palette that replaced it avoids all three
+defaults on their own terms: a **cool** porcelain ground rather than a warm cream,
+a deep cobalt accent at L=45% rather than an acid neon high in both lightness and
+chroma, and no hairline column rules anywhere. Reasoning and every measured
+contrast ratio are in [`tokens.css`](tokens.css).
+
+**Taking a documented exemption is not the same as making a decision.** That is
+the whole lesson of this demo, and it is the one thing here worth carrying into
+another project.
 
 ## Run it
 
@@ -28,7 +49,7 @@ The parent repo installs none of these dependencies. This app has its own
 the stub-typed regime the other demos use, so it type-checks against real
 vendor typings.
 
-## Four things that will bite you
+## Five things that will bite you
 
 **The static export is opt-in, and must stay that way.**
 
@@ -71,6 +92,16 @@ Lifting the palette into another project means taking `tokens.css` and importing
 it **after** Tailwind. Import order in `app/globals.css` is deliberate and
 commented.
 
+**Fraunces is imported as `full.css`, and that is not interchangeable with
+`index.css`.** The display face is chosen for its axes — `opsz` left on automatic
+so optical sizing tracks the rendered size, `SOFT` and `WONK` pinned to 0 so it
+reads as an editorial serif rather than a novelty one. Only the "full" build
+carries those axes; `index.css` ships weight alone, and the
+`font-variation-settings` in `lib/tokens.ts` would silently do nothing. The
+italic file is imported too, because the headline uses a real italic rather than
+a sheared roman — a synthesised italic on a high-contrast serif at display size
+is obvious, and invisible to every gate in this repo.
+
 ## Where the page's own rules come from
 
 Every constraint the page holds itself to is one the pack enforces on its
@@ -81,22 +112,36 @@ python scripts/test_constraints.py --dir demo --recursive --project
 node scripts/parser_constraints.js demo/landing-page/components/*.tsx
 ```
 
-The visible ones: no equal-height card grid — the bento runs 2+1+1 over 1+2+1 and
-the metric strip on a `2fr 1fr 1fr 1fr` track; OKLCH only, no hex; Geist rather
-than Inter; `min-h-[100dvh]` rather than the `screen` variant; ease-out on every
-transition; `tabular-nums` on every figure; a real fetch with four real states
-rather than a `setTimeout` skeleton; `forwardRef` on the one interactive control
-that needs it rather than on every wrapper.
+The visible ones: no equal-height card grid — the bento runs 3+3 over 3, then
+2+4, then 6, so no two rows share a shape, and the metric strip sits on a
+`2fr 1fr 1fr 1fr` track; OKLCH only, no hex; an editorial serif and a grotesque
+rather than Inter; the dynamic viewport unit rather than the static one; ease-out
+on every transition; `tabular-nums` on every figure; a real fetch with four real
+states rather than a `setTimeout` skeleton; `forwardRef` on the one interactive
+control that needs it rather than on every wrapper.
+
+One of those checks caught a real violation during this rebuild, and it is worth
+knowing about before you write a comment here: **RES-03 is a regex over source,
+so naming a banned utility in prose reads as using it.** A comment in `Hero.tsx`
+explaining why the static viewport height is banned contained the class name, and
+failed the suite — and because Tailwind scans comments for class names too, it
+had also emitted a real, unused `min-height: 100vh` rule into the stylesheet.
 
 The figures come from [`screenshot-fixture.json`](screenshot-fixture.json), served
 by the demo's own `/api/site/overview`, so the capture is deterministic and a
 recapture only moves pixels when the UI actually changed.
 
-**No figure on this page describes `frontend-design-pro`.** The version before
-this one quoted the pack's own counts and two of them drifted — it rendered
-"Six of 53" against a real count of 59, and a gate count that was one behind, on
-a screenshot linked from the repo README. A page about a fictional product has
-nothing to keep in step.
+**No figure on this page describes `frontend-design-pro`.** A version before this
+one quoted the pack's own counts and two of them drifted — it rendered "Six of 53"
+against a real count of 59, and a gate count that was one behind, on a screenshot
+linked from the repo README. A page about a fictional product has nothing to keep
+in step.
+
+That does cost something. Gate 11 reads this directory for `<number> <noun>`
+pairs, and the nouns it watches are ordinary vocabulary for a database tool — a
+foreign-key *constraint* is the obvious thing this product would talk about, and
+writing a count next to that word here would be read as a claim about the pack
+and fail the build. The copy says "checks", "rules" and "relations" instead.
 
 ## Recapture
 

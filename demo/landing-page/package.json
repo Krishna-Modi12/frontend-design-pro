@@ -1,8 +1,8 @@
 {
-  "name": "switchyard-landing",
+  "name": "bellwether-landing",
   "version": "0.1.0",
   "private": true,
-  "description": "demo/landing-page — a dark-mode SaaS landing page for a fictional deploy-pipeline product, generated under this pack's own rules. Sample output, not a real service.",
+  "description": "demo/landing-page — a light editorial landing page for a fictional schema-migration rehearsal tool, generated under this pack's own rules. Sample output, not a real service.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,17 +10,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource-variable/archivo": "5.3.0",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "geist": "1.3.1",
     "next": "15.5.23",
     "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "geist": "1.3.1"
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "tailwindcss": "4.1.14",
     "@tailwindcss/postcss": "4.1.14",
-    "typescript": "5.9.3",
+    "@types/node": "20.17.6",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "@types/node": "20.17.6"
+    "tailwindcss": "4.1.14",
+    "typescript": "5.9.3"
   }
 }

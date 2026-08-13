@@ -7,10 +7,18 @@ export interface CtaButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> 
   variant?: "solid" | "outline";
 }
 
+/**
+ * One primary style per page, paired with a ghost secondary — never two solids.
+ * On a light ground the outline variant has to sit on the raised surface rather
+ * than on nothing: a transparent button on porcelain reads as a caption with a
+ * box drawn round it, where the same treatment on a dark ground reads as a
+ * control. Its border is `border-strong`, which is the token measured at 3.28:1
+ * so the control's edge clears WCAG 1.4.11 without the label having to carry it.
+ */
 const VARIANT: Record<"solid" | "outline", string> = {
-  solid: "bg-accent text-accent-ink hover:bg-accent/90",
+  solid: "bg-accent text-accent-ink shadow-card hover:bg-accent/90",
   outline:
-    "border border-surface-border-strong text-ink hover:border-accent hover:text-accent",
+    "border border-surface-border-strong bg-surface-raised text-ink hover:border-accent hover:text-accent",
 };
 
 /**
@@ -31,7 +39,7 @@ const CtaButton = forwardRef<HTMLAnchorElement, CtaButtonProps>(function CtaButt
   return (
     <a
       ref={ref}
-      className={`${tapTarget} ${focusRing} ${VARIANT[variant]} ${className} inline-flex items-center justify-center rounded-lg px-5 text-sm font-medium transition-colors duration-150 ease-out motion-reduce:transition-none`}
+      className={`${tapTarget} ${focusRing} ${VARIANT[variant]} ${className} inline-flex items-center justify-center rounded-xl px-6 text-sm font-medium transition-colors duration-150 ease-out motion-reduce:transition-none`}
       {...rest}
     >
       {children}

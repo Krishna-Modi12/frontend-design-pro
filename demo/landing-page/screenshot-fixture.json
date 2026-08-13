@@ -2,18 +2,20 @@
   "_comment": [
     "Response body for GET /api/site/overview, the endpoint app/page.tsx reads on mount.",
     "",
-    "These are operating figures for Switchyard, which is a FICTIONAL product — they are",
+    "These are operating figures for Bellwether, which is a FICTIONAL product — they are",
     "demo content, not measurements of anything. They are committed rather than computed",
     "so the capture is reproducible: screenshot.png is captured against exactly this",
     "payload, and a recapture only moves pixels when the UI actually changed.",
     "",
-    "Deliberately no figure about frontend-design-pro itself. The previous version of this",
+    "Deliberately no figure about frontend-design-pro itself. An older version of this",
     "page served the pack's own counts from here, two of them drifted out of step with",
     "metadata.json, and the page shipped a wrong constraint count and a wrong gate count",
     "on a screenshot in the repo README. A fictional product cannot drift.",
     "",
     "Values are irregular on purpose: the anti-slop wall bans round data, because 1,000",
-    "deploys and 50% faster are what a generated page says when nobody measured anything.",
+    "migrations and 50% faster are what a generated page says when nobody measured",
+    "anything. They are also not the wall's own illustrations — 47.2% and $12,847 are the",
+    "examples it gives, and copying the example is not the same as following the rule.",
     "",
     "No entry carries a \"source\" key, because none of these is copied from anywhere. If",
     "you ever add one that is — \"source\": \"metadata.json · stats.release_gates\" — Gate 11",
@@ -25,28 +27,28 @@
   ],
   "metrics": [
     {
-      "id": "deploys",
-      "value": "1,284",
-      "label": "Deploys this week",
-      "caption": "Across every environment, counted at the point traffic actually moved."
+      "id": "rehearsals",
+      "value": "9,481",
+      "label": "Rehearsals run",
+      "caption": "Every pending schema change on every branch, not only the ones somebody remembered to check by hand."
     },
     {
-      "id": "rollback",
-      "value": "47.2s",
-      "label": "Median reverse",
-      "caption": "From the command to the last instance draining. p95 is 2m 09s."
+      "id": "median",
+      "value": "38.6s",
+      "label": "Median rehearsal",
+      "caption": "From opening the pull request to a verdict on the report. p95 is 2m 41s."
     },
     {
-      "id": "failure-rate",
-      "value": "0.31%",
-      "label": "Change failure rate",
-      "caption": "Rollouts that reversed within an hour. The yard held 46 more before they moved."
+      "id": "held",
+      "value": "1.7%",
+      "label": "Held before merge",
+      "caption": "Rehearsals that came back holding. Each one was a lock that would have landed at peak."
     },
     {
-      "id": "services",
-      "value": "217",
-      "label": "Services in the yard",
-      "caption": "Each one with its own error budget and its own siding."
+      "id": "relations",
+      "value": "2,304",
+      "label": "Relations watched",
+      "caption": "Across 41 databases, each with its own traffic profile and its own quiet window."
     }
   ]
 }

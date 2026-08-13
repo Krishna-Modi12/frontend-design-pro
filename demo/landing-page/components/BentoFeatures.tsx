@@ -1,112 +1,105 @@
 import type { ReactElement } from "react";
+import type { Feature } from "../lib/content";
 import { cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
 
-/** The inline marks. Geometric, one per card, drawn rather than imported. */
-export type FeatureMark = "bracket" | "arrow" | "rings" | "track" | "grid" | "seal";
-
-export interface RegistryFeature {
-  id: string;
-  title: string;
-  body: string;
-  mark: FeatureMark;
-  /** Tailwind span class, or "" for a single column. Spans are uneven on purpose. */
-  span: string;
-}
-
 export interface BentoFeaturesProps {
-  features: RegistryFeature[];
+  features: Feature[];
 }
 
-/** The geometry, keyed by mark. Only the inner shapes differ. */
-const MARK_SHAPES: Record<FeatureMark, ReactElement> = {
-  bracket: <path d="M7 3H4v14h3M13 3h3v14h-3" />,
-  arrow: <path d="M16 10H4M9 5l-5 5 5 5" />,
-  rings: (
-    <>
-      <circle cx="10" cy="10" r="2.5" />
-      <circle cx="10" cy="10" r="7" opacity="0.5" />
-    </>
-  ),
-  track: <path d="M3 6h14M3 14h9a5 5 0 0 0 5-5" />,
-  grid: <path d="M3 3h6v6H3zM11 3h6v6h-6zM3 11h6v6H3zM11 11h6v6h-6z" />,
-  seal: (
-    <>
-      <circle cx="10" cy="8" r="5" />
-      <path d="M7 12.5 6 18l4-2 4 2-1-5.5" />
-    </>
-  ),
-};
-
 /**
- * Marks are inline SVG rather than an icon package. Six shapes is not worth a
- * dependency, and the only icon rule in the pack is that an icon-only *control*
- * carries an accessible name — these are decoration beside a heading that
- * already says the thing, so they are hidden from the accessibility tree and
- * contribute nothing to it.
+ * Six cells on a six-column track, at four different widths, and no two rows
+ * the same shape:
  *
- * One <svg> with its attributes written out, rather than six sharing a spread
- * object. The spread version was the first thing written here and `A11Y-01`
- * rejected it: an attribute that reaches the element through `{...common}` is
- * invisible to the AST checker, which is the same reason it is invisible to
- * every other reviewer. `aria-hidden` has to be legible where the element is.
- */
-function Mark({ kind }: { kind: FeatureMark }): ReactElement {
-  return (
-    <svg
-      width={20}
-      height={20}
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      {MARK_SHAPES[kind]}
-    </svg>
-  );
-}
-
-/**
- * Twelve columns, six cards, spans that do not divide evenly: 2+1+1 on the
- * first row and 1+2+1 on the second. Equal-height card grids are the first
- * item on the anti-slop wall — six identical boxes say every capability weighs
- * the same, which is never true of a real product and is the single most
- * reliable tell that a page was generated rather than composed.
+ *   row 1   [ 3 spanning two rows ][ 3 ]
+ *   row 2   [ the tall cell cont. ][ 3 ]
+ *   row 3   [ 2 ][ 4 ]
+ *   row 4   [ 6 ]
+ *
+ * Rule 3 of the landing-pages skill is "never an equal-height card grid", and
+ * the reason is that a uniform grid asserts every feature matters the same
+ * amount — which is never true and reads, correctly, as nobody having decided.
+ * The tall cell is the argument the product rests on; the full-width cell is
+ * the outcome the reader is buying. Spans live in `lib/content.ts` beside the
+ * copy they weight, because the two are one decision.
+ *
+ * No numbered markers. The wall bans 01/02/03 on content that is not a
+ * sequence, and these are six independent claims — a reader can start anywhere.
  */
 export default function BentoFeatures({ features }: BentoFeaturesProps): ReactElement {
   return (
-    <section id="what-it-does" className={sectionShell}>
-      <div className={sectionSpacing}>
-        <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-          What the yard does
-        </h2>
-        <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-ink-muted">
-          Six capabilities, and the two that carry the product are the two given
-          the room.
-        </p>
+    <section
+      id="how-it-works"
+      aria-labelledby="features-heading"
+      className={sectionSpacing}
+    >
+      <div className={sectionShell}>
+        <div className="max-w-2xl">
+          <p className="flex items-center gap-3">
+            <span aria-hidden="true" className="h-px w-8 shrink-0 bg-accent" />
+            <span data-label className="text-xs text-ink-muted">
+              How the replay works
+            </span>
+          </p>
+          <h2
+            id="features-heading"
+            data-display
+            className="mt-6 text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[1.05] text-ink"
+          >
+            The rehearsal is the product.
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-ink-secondary text-pretty">
+            Everything else — the forecast, the quiet window, the verdict in the
+            pull request — is something the replay makes possible rather than a
+            separate feature that had to be built.
+          </p>
+        </div>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-4">
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:gap-5">
           {features.map((feature) => (
             <article
-              key={feature.id}
-              className={`${cardShell} ${feature.span} flex flex-col p-6 lg:p-8`}
+              key={feature.title}
+              className={`${cardShell} ${feature.span} flex flex-col p-6 lg:p-7`}
             >
-              <span className="text-accent">
-                <Mark kind={feature.mark} />
-              </span>
-              <h3 className="mt-5 text-balance text-lg font-semibold tracking-tight">
+              <h3 data-display className="text-xl font-medium leading-snug text-ink">
                 {feature.title}
               </h3>
-              <p className="mt-3 text-pretty text-sm leading-relaxed text-ink-muted">
+              <p className="mt-3 text-sm leading-relaxed text-ink-secondary text-pretty">
                 {feature.body}
               </p>
+              <FeatureDetail detail={feature.detail} />
             </article>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * The two figures under the tall cell. `mt-auto` is what pins them to the
+ * bottom of a cell that is taller than its copy — the parent is a flex column,
+ * so the margin absorbs the slack instead of leaving it under the paragraph.
+ *
+ * Returns null rather than being gated with `&&` at the call site. `&&` renders
+ * `0` when the left operand is a number and, more to the point here, it hides
+ * the fact that the absent case was considered at all.
+ */
+function FeatureDetail({ detail }: Pick<Feature, "detail">): ReactElement | null {
+  if (detail === undefined) return null;
+
+  return (
+    <dl className="mt-auto pt-8">
+      {detail.map((row) => (
+        <div
+          key={row.label}
+          className="flex items-baseline justify-between gap-4 border-t border-surface-border py-3"
+        >
+          <dt className="text-sm text-ink-muted">{row.label}</dt>
+          <dd data-metric className="text-2xl font-semibold text-ink">
+            {row.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }

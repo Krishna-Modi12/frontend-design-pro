@@ -50,7 +50,7 @@ const SITES = [
     // Not opt-in, unlike showcase: this page renders deterministically from a
     // committed fixture, so a recapture only moves pixels when the UI actually
     // changed.
-    shots: [{ name: "landing-page", route: "/", scheme: "dark", out: "demo/landing-page" }],
+    shots: [{ name: "landing-page", route: "/", scheme: "light", out: "demo/landing-page" }],
   },
   {
     id: "showcase",

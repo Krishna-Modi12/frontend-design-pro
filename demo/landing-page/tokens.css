@@ -1,5 +1,5 @@
 /**
- * Switchyard — design tokens, registered with Tailwind at build time.
+ * Bellwether — design tokens, registered with Tailwind at build time.
  *
  * `@theme` is a Tailwind compiler directive, not CSS. It has to be compiled,
  * which means it has to live in a stylesheet the build reads — a browser handed
@@ -14,46 +14,122 @@
  *   @import "tailwindcss";
  *   @import "../tokens.css";
  *
- * One material, one hue: every surface step holds H=270 and moves only in
- * lightness, which is what keeps a dark shell from reading as five unrelated
- * greys stacked on each other. OKLCH only — no hex anywhere.
+ * ── Why this palette is light ────────────────────────────────────────────────
+ *
+ * The anti-slop wall bans three AI-design defaults "unless the brief asks for
+ * them", and one of them is *near-black with a single bright acid accent*. The
+ * previous version of this page was exactly that, and it was not a rule
+ * violation — its brief asked for it, so the escape hatch applied. It still
+ * looked like every generated developer-tool page on the internet, which is the
+ * thing the wall exists to prevent. Taking a documented exemption is not the
+ * same as making a decision.
+ *
+ * So this brief declines the hatch. The page is light, and the three banned
+ * defaults are avoided on their own terms rather than by exemption:
+ *
+ *   cream + serif + terracotta   the ground is COOL (H=250, C=0.005), not the
+ *                               warm cream of that trio, and there is no
+ *                               terracotta anywhere. A serif carries the
+ *                               display face; one leg of a trio is not the trio.
+ *   near-black + acid accent     inverted outright — light ground, and the
+ *                               accent is a deep cobalt at L=45%, the opposite
+ *                               of an acid neon (which lives high in lightness
+ *                               and high in chroma).
+ *   broadsheet hairline columns  no multi-column justified body text, and no
+ *                               vertical rules between columns.
+ *
+ * One material, one hue: every neutral holds H=250 and moves only in lightness,
+ * which is what keeps a light shell from reading as five unrelated greys. Ink
+ * sits a little warmer at H=258 so it reads as ink rather than as a grey that
+ * lost its way. OKLCH only — no hex anywhere.
+ *
+ * ── Every ratio below is computed, not estimated ─────────────────────────────
+ *
+ * Contrast was measured by converting OKLCH → OKLab → linear sRGB → relative
+ * luminance before any of it was written down, because two values in the first
+ * draft would have failed and neither is visible to a gate that reads source.
+ * Both grounds are measured, not just the page: the previous palette shipped a
+ * muted ink that passed on the page and failed inside a card, and seven
+ * elements were affected. Ratios are quoted against `page` / `raised`.
  *
  * Values here are the single source of truth. `lib/tokens.ts` must not restate
  * them — it reads them back as `var(--color-*)`.
  */
 
 @theme {
-  /* The four the brief fixes. */
-  --color-surface-page: oklch(12% 0.02 270);
-  --color-surface-elevated: oklch(18% 0.02 270);
-  --color-accent: oklch(70% 0.25 145);
-  --color-ink: oklch(95% 0.01 270);
+  /* ── Ground ───────────────────────────────────────────────────────────────
+     Not `#FFFFFF`, which the wall bans as a page surface, and not cream. A
+     porcelain ground at 96.5% leaves room for a *lighter* raised surface, which
+     is the move that makes cards read as lifted on a light page — the inverse
+     of a dark theme, where elevation goes up in lightness from a low floor. */
+  --color-surface-page: oklch(96.5% 0.005 250);
+  --color-surface-raised: oklch(99% 0.003 250);
+  --color-surface-sunken: oklch(93.5% 0.007 250);
 
-  /* Derived, so nothing downstream has to spell a literal into a class name.
-     Elevation is a lighter surface, never a shadow — a blurred shadow on a
-     near-black ground reads as smudge, not as height. */
-  --color-surface-sunken: oklch(15% 0.02 270);
-  --color-surface-border: oklch(26% 0.03 270 / 0.45);
-  --color-surface-border-strong: oklch(36% 0.035 270 / 0.7);
+  /* ── Edges ────────────────────────────────────────────────────────────────
+     Two weights, and the difference is not decorative. `border` is a hairline
+     between panels: 1.30:1, decorative, and it is *supposed* to be quiet.
+     `border-strong` bounds interactive controls — the outline button's edge —
+     where WCAG 1.4.11 wants 3:1 against the adjacent ground. It measures
+     3.28:1 on the page. Tinted toward the surface hue rather than neutral
+     grey, per `core/design-tokens.md`. */
+  --color-surface-border: oklch(88% 0.008 250);
+  --color-surface-border-strong: oklch(62% 0.02 250);
 
-  /* The ink ramp the brief implies but never declares.
+  /* ── Ink ──────────────────────────────────────────────────────────────────
+     16.01:1 / 17.22:1 · 9.04:1 / 9.73:1 · 6.44:1 / 6.92:1.
+     `ink` is a deep blue-black, never `#000000` — the wall bans pure black as a
+     surface and it is just as wrong as a text colour on a light ground, where
+     it vibrates against the page instead of settling into it. */
+  --color-ink: oklch(21% 0.024 258);
+  --color-ink-secondary: oklch(38% 0.02 258);
+  --color-ink-muted: oklch(46% 0.016 258);
 
-     Measure both grounds, not just the page. `faint` started at L=58%, which is
-     4.74:1 on --color-surface-page and passes — and 4.39:1 on
-     --color-surface-elevated, which fails AA. Seven elements were affected: the
-     four metric captions and the three testimonial roles, every one of them
-     inside a card. axe found them; nothing that reads source could have.
-     At L=63% it is 5.80:1 on the page and 5.37:1 on elevated. */
-  --color-ink-muted: oklch(76% 0.015 270);
-  --color-ink-faint: oklch(63% 0.018 270);
+  /* ── Accent ───────────────────────────────────────────────────────────────
+     One chromatic colour on the whole page. 6.99:1 as text on the page, and
+     7.31:1 the other way round for a label sitting ON the accent, so the same
+     token serves the primary CTA's fill and the link colour without a second
+     value. In sRGB gamut at this chroma — it does not depend on the browser
+     gamut-mapping it into something dimmer. */
+  --color-accent: oklch(45% 0.18 262);
+  --color-accent-ink: oklch(98% 0.005 250);
+  --color-accent-wash: oklch(45% 0.18 262 / 0.07);
 
-  /* oklch(70% 0.25 145) sits outside sRGB — the browser gamut-maps it to about
-     chroma 0.22, which costs 8.5:1 → 8.2:1 against the page and nothing else.
-     Kept at the brief's value on purpose: it degrades cleanly on sRGB and
-     renders at full saturation on a wide-gamut display. */
-  --color-accent-glow: oklch(70% 0.25 145 / 0.12);
-  /* Text sitting ON the accent, not beside it — the primary CTA's foreground. */
-  --color-accent-ink: oklch(18% 0.04 145);
+  /* ── Semantic — inside data only ──────────────────────────────────────────
+     These carry meaning (a rehearsal passed, held, or failed) and appear
+     nowhere decorative. That restraint is the reason the page reads as
+     art-directed rather than defaulted: one accent, plus colours that are only
+     ever answering a question the reader asked.
 
-  --color-error: oklch(70% 0.19 25);
+     `caution` was the one value in this palette that had to move. At
+     oklch(55% 0.13 75) it measured 4.47:1 on the page — under AA — and it was
+     outside sRGB, so the real figure was worse than the arithmetic suggested.
+     At oklch(50% 0.1 70) it is 5.54:1 / 5.07:1 and in gamut. */
+  --color-positive: oklch(48% 0.11 158);
+  --color-caution: oklch(50% 0.1 70);
+  --color-critical: oklch(50% 0.19 25);
+
+  /* `lib/tokens.ts` builds its inline alert from `error`. Same value as
+     `critical`, named for the role the alert plays rather than the status a
+     data cell reports. */
+  --color-error: oklch(50% 0.19 25);
+
+  /* ── Elevation ────────────────────────────────────────────────────────────
+     Two layers, per `core/design-tokens.md`: a tight direct shadow for the
+     contact edge and a wider ambient one for the lift. A single blurry drop is
+     the tell of a card that was never really designed.
+
+     This is the one place a light theme genuinely differs from the dark one it
+     replaced. On a near-black ground a blurred shadow reads as smudge, so
+     elevation there had to come from a lighter surface step. On porcelain the
+     opposite holds — a raised surface is *already* near the ceiling at 99%, so
+     lightness alone cannot say "in front", and the shadow has to do the work.
+     Tinted toward the surface hue rather than neutral black, which is what
+     stops it reading as grime. */
+  --shadow-card:
+    0 1px 2px oklch(21% 0.024 258 / 0.05),
+    0 4px 16px -4px oklch(21% 0.024 258 / 0.08);
+  --shadow-lifted:
+    0 1px 2px oklch(21% 0.024 258 / 0.06),
+    0 12px 32px -8px oklch(21% 0.024 258 / 0.12);
 }
