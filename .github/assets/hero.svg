@@ -1,0 +1,857 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="frontend-design-pro — a skill pack for AI coding agents. Machine-enforced frontend design, verified rather than asserted.">
+<title>frontend-design-pro</title>
+<defs>
+  <!-- Fills are presentation ATTRIBUTES, not CSS, and that is the whole
+       defensive design of this file: the stylesheet carries nothing but
+       animation. If any proxy or renderer along the way drops it, the banner
+       degrades to a correctly-coloured static isometric field. Had the fills
+       lived in CSS, the same event would have rendered a rectangle of black
+       polygons on the project's most prominent surface.
+
+       No literal style tag appears in this comment, on purpose. One did, and a
+       regex that strips the stylesheet matched the mention inside the comment
+       instead of the real element — swallowing this entire defs block and
+       leaving a truncated, invalid comment behind. The file was fine; the tool
+       reading it was not. Naming a tag inside a comment in a file that other
+       tools regex is a trap worth not setting. -->
+  <g id="c">
+    <polygon class="t" fill="#1C2739" points="0,0 28,14 0,28 -28,14"/>
+    <polygon fill="#0E1626" points="-28,14 0,28 0,548 -28,534"/>
+    <polygon fill="#141D30" points="28,14 0,28 0,548 28,534"/>
+  </g>
+  <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0.06" stop-color="#000"/>
+    <stop offset="0.44" stop-color="#8A8A8A"/>
+    <stop offset="0.74" stop-color="#fff"/>
+  </linearGradient>
+  <mask id="fieldMask"><rect width="1200" height="420" fill="url(#fade)"/></mask>
+  <radialGradient id="glow" cx="0.74" cy="0.30" r="0.66">
+    <stop offset="0" stop-color="#12213D"/>
+    <stop offset="1" stop-color="#0A0E17"/>
+  </radialGradient>
+  <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#4C8DFF"/>
+    <stop offset="1" stop-color="#4C8DFF" stop-opacity="0"/>
+  </linearGradient>
+  <!-- The type scrim. This was an opaque rect and it left a hard vertical seam
+       straight down the banner at the edge of the text column — the one thing
+       on the image that looked like a mistake rather than a decision. A
+       gradient does the same protective job with no visible boundary. -->
+  <linearGradient id="scrim" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#0A0E17" stop-opacity="0.97"/>
+    <stop offset="0.40" stop-color="#0A0E17" stop-opacity="0.90"/>
+    <stop offset="1" stop-color="#0A0E17" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+
+<style>
+  /* One animation, staggered per column by a custom property. Custom properties
+     are the only per-instance channel available here, since every column shares
+     one stylesheet and inline style attributes are all a generator can vary. */
+  use { animation: bob 3.6s var(--d) infinite ease-in-out; }
+  .t { animation: lit 3.6s var(--d) infinite ease-in-out; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-30px); }
+  }
+  /* The crest carries the accent. Colour is doing the same job as height, half a
+     beat apart, which is what stops the field reading as a flat grid sliding. */
+  @keyframes lit {
+    0%, 100% { fill: #1C2739; }
+    50%      { fill: #3C6FC9; }
+  }
+
+  /* Motion is decoration here, and the banner has to survive without it. Rather
+     than flattening the field — which would leave a plain grid and lose the
+     shape entirely — each column freezes at the height it would have held at
+     t=0, so the wave is still there, just still. */
+  @media (prefers-reduced-motion: reduce) {
+    use { animation: none; transform: translateY(var(--y)); }
+    .t { animation: none; }
+  }
+
+</style>
+
+<rect width="1200" height="420" fill="url(#glow)"/>
+<g mask="url(#fieldMask)">
+<use href="#c" x="364" y="-62" style="--d:-0.2s;--y:-1px"/>
+<use href="#c" x="420" y="-62" style="--d:-0.2s;--y:-1.2px"/>
+<use href="#c" x="476" y="-62" style="--d:-0.3s;--y:-1.5px"/>
+<use href="#c" x="532" y="-62" style="--d:-0.3s;--y:-1.8px"/>
+<use href="#c" x="588" y="-62" style="--d:-0.3s;--y:-2.1px"/>
+<use href="#c" x="644" y="-62" style="--d:-0.3s;--y:-2.5px"/>
+<use href="#c" x="700" y="-62" style="--d:-0.4s;--y:-2.9px"/>
+<use href="#c" x="756" y="-62" style="--d:-0.4s;--y:-3.3px"/>
+<use href="#c" x="336" y="-48" style="--d:-0.2s;--y:-1.3px"/>
+<use href="#c" x="392" y="-48" style="--d:-0.3s;--y:-1.6px"/>
+<use href="#c" x="448" y="-48" style="--d:-0.3s;--y:-1.9px"/>
+<use href="#c" x="504" y="-48" style="--d:-0.3s;--y:-2.2px"/>
+<use href="#c" x="560" y="-48" style="--d:-0.3s;--y:-2.6px"/>
+<use href="#c" x="616" y="-48" style="--d:-0.4s;--y:-2.9px"/>
+<use href="#c" x="672" y="-48" style="--d:-0.4s;--y:-3.3px"/>
+<use href="#c" x="728" y="-48" style="--d:-0.4s;--y:-3.8px"/>
+<use href="#c" x="784" y="-48" style="--d:-0.4s;--y:-4.2px"/>
+<use href="#c" x="308" y="-34" style="--d:-0.3s;--y:-1.6px"/>
+<use href="#c" x="364" y="-34" style="--d:-0.3s;--y:-1.9px"/>
+<use href="#c" x="420" y="-34" style="--d:-0.3s;--y:-2.3px"/>
+<use href="#c" x="476" y="-34" style="--d:-0.3s;--y:-2.6px"/>
+<use href="#c" x="532" y="-34" style="--d:-0.4s;--y:-3px"/>
+<use href="#c" x="588" y="-34" style="--d:-0.4s;--y:-3.4px"/>
+<use href="#c" x="644" y="-34" style="--d:-0.4s;--y:-3.9px"/>
+<use href="#c" x="700" y="-34" style="--d:-0.4s;--y:-4.3px"/>
+<use href="#c" x="756" y="-34" style="--d:-0.5s;--y:-4.8px"/>
+<use href="#c" x="812" y="-34" style="--d:-0.5s;--y:-5.3px"/>
+<use href="#c" x="280" y="-20" style="--d:-0.3s;--y:-2px"/>
+<use href="#c" x="336" y="-20" style="--d:-0.3s;--y:-2.3px"/>
+<use href="#c" x="392" y="-20" style="--d:-0.3s;--y:-2.7px"/>
+<use href="#c" x="448" y="-20" style="--d:-0.4s;--y:-3.1px"/>
+<use href="#c" x="504" y="-20" style="--d:-0.4s;--y:-3.5px"/>
+<use href="#c" x="560" y="-20" style="--d:-0.4s;--y:-3.9px"/>
+<use href="#c" x="616" y="-20" style="--d:-0.4s;--y:-4.4px"/>
+<use href="#c" x="672" y="-20" style="--d:-0.5s;--y:-4.9px"/>
+<use href="#c" x="728" y="-20" style="--d:-0.5s;--y:-5.4px"/>
+<use href="#c" x="784" y="-20" style="--d:-0.5s;--y:-5.9px"/>
+<use href="#c" x="840" y="-20" style="--d:-0.5s;--y:-6.4px"/>
+<use href="#c" x="252" y="-6" style="--d:-0.3s;--y:-2.4px"/>
+<use href="#c" x="308" y="-6" style="--d:-0.4s;--y:-2.8px"/>
+<use href="#c" x="364" y="-6" style="--d:-0.4s;--y:-3.2px"/>
+<use href="#c" x="420" y="-6" style="--d:-0.4s;--y:-3.6px"/>
+<use href="#c" x="476" y="-6" style="--d:-0.4s;--y:-4px"/>
+<use href="#c" x="532" y="-6" style="--d:-0.5s;--y:-4.5px"/>
+<use href="#c" x="588" y="-6" style="--d:-0.5s;--y:-5px"/>
+<use href="#c" x="644" y="-6" style="--d:-0.5s;--y:-5.5px"/>
+<use href="#c" x="700" y="-6" style="--d:-0.5s;--y:-6px"/>
+<use href="#c" x="756" y="-6" style="--d:-0.6s;--y:-6.5px"/>
+<use href="#c" x="812" y="-6" style="--d:-0.6s;--y:-7.1px"/>
+<use href="#c" x="868" y="-6" style="--d:-0.6s;--y:-7.6px"/>
+<use href="#c" x="224" y="8" style="--d:-0.4s;--y:-2.9px"/>
+<use href="#c" x="280" y="8" style="--d:-0.4s;--y:-3.3px"/>
+<use href="#c" x="336" y="8" style="--d:-0.4s;--y:-3.7px"/>
+<use href="#c" x="392" y="8" style="--d:-0.4s;--y:-4.1px"/>
+<use href="#c" x="448" y="8" style="--d:-0.5s;--y:-4.6px"/>
+<use href="#c" x="504" y="8" style="--d:-0.5s;--y:-5.1px"/>
+<use href="#c" x="560" y="8" style="--d:-0.5s;--y:-5.6px"/>
+<use href="#c" x="616" y="8" style="--d:-0.5s;--y:-6.1px"/>
+<use href="#c" x="672" y="8" style="--d:-0.6s;--y:-6.6px"/>
+<use href="#c" x="728" y="8" style="--d:-0.6s;--y:-7.2px"/>
+<use href="#c" x="784" y="8" style="--d:-0.6s;--y:-7.7px"/>
+<use href="#c" x="840" y="8" style="--d:-0.6s;--y:-8.3px"/>
+<use href="#c" x="896" y="8" style="--d:-0.7s;--y:-8.9px"/>
+<use href="#c" x="196" y="22" style="--d:-0.4s;--y:-3.3px"/>
+<use href="#c" x="252" y="22" style="--d:-0.4s;--y:-3.8px"/>
+<use href="#c" x="308" y="22" style="--d:-0.4s;--y:-4.2px"/>
+<use href="#c" x="364" y="22" style="--d:-0.5s;--y:-4.7px"/>
+<use href="#c" x="420" y="22" style="--d:-0.5s;--y:-5.2px"/>
+<use href="#c" x="476" y="22" style="--d:-0.5s;--y:-5.7px"/>
+<use href="#c" x="532" y="22" style="--d:-0.5s;--y:-6.2px"/>
+<use href="#c" x="588" y="22" style="--d:-0.6s;--y:-6.7px"/>
+<use href="#c" x="644" y="22" style="--d:-0.6s;--y:-7.3px"/>
+<use href="#c" x="700" y="22" style="--d:-0.6s;--y:-7.8px"/>
+<use href="#c" x="756" y="22" style="--d:-0.6s;--y:-8.4px"/>
+<use href="#c" x="812" y="22" style="--d:-0.7s;--y:-9px"/>
+<use href="#c" x="868" y="22" style="--d:-0.7s;--y:-9.6px"/>
+<use href="#c" x="924" y="22" style="--d:-0.7s;--y:-10.2px"/>
+<use href="#c" x="168" y="36" style="--d:-0.4s;--y:-3.9px"/>
+<use href="#c" x="224" y="36" style="--d:-0.4s;--y:-4.3px"/>
+<use href="#c" x="280" y="36" style="--d:-0.5s;--y:-4.8px"/>
+<use href="#c" x="336" y="36" style="--d:-0.5s;--y:-5.3px"/>
+<use href="#c" x="392" y="36" style="--d:-0.5s;--y:-5.8px"/>
+<use href="#c" x="448" y="36" style="--d:-0.5s;--y:-6.3px"/>
+<use href="#c" x="504" y="36" style="--d:-0.6s;--y:-6.8px"/>
+<use href="#c" x="560" y="36" style="--d:-0.6s;--y:-7.4px"/>
+<use href="#c" x="616" y="36" style="--d:-0.6s;--y:-8px"/>
+<use href="#c" x="672" y="36" style="--d:-0.6s;--y:-8.5px"/>
+<use href="#c" x="728" y="36" style="--d:-0.7s;--y:-9.1px"/>
+<use href="#c" x="784" y="36" style="--d:-0.7s;--y:-9.7px"/>
+<use href="#c" x="840" y="36" style="--d:-0.7s;--y:-10.4px"/>
+<use href="#c" x="896" y="36" style="--d:-0.7s;--y:-11px"/>
+<use href="#c" x="952" y="36" style="--d:-0.8s;--y:-11.6px"/>
+<use href="#c" x="140" y="50" style="--d:-0.4s;--y:-4.4px"/>
+<use href="#c" x="196" y="50" style="--d:-0.5s;--y:-4.9px"/>
+<use href="#c" x="252" y="50" style="--d:-0.5s;--y:-5.4px"/>
+<use href="#c" x="308" y="50" style="--d:-0.5s;--y:-5.9px"/>
+<use href="#c" x="364" y="50" style="--d:-0.5s;--y:-6.4px"/>
+<use href="#c" x="420" y="50" style="--d:-0.6s;--y:-6.9px"/>
+<use href="#c" x="476" y="50" style="--d:-0.6s;--y:-7.5px"/>
+<use href="#c" x="532" y="50" style="--d:-0.6s;--y:-8.1px"/>
+<use href="#c" x="588" y="50" style="--d:-0.6s;--y:-8.7px"/>
+<use href="#c" x="644" y="50" style="--d:-0.7s;--y:-9.3px"/>
+<use href="#c" x="700" y="50" style="--d:-0.7s;--y:-9.9px"/>
+<use href="#c" x="756" y="50" style="--d:-0.7s;--y:-10.5px"/>
+<use href="#c" x="812" y="50" style="--d:-0.7s;--y:-11.1px"/>
+<use href="#c" x="868" y="50" style="--d:-0.8s;--y:-11.8px"/>
+<use href="#c" x="924" y="50" style="--d:-0.8s;--y:-12.4px"/>
+<use href="#c" x="980" y="50" style="--d:-0.8s;--y:-13px"/>
+<use href="#c" x="112" y="64" style="--d:-0.5s;--y:-5px"/>
+<use href="#c" x="168" y="64" style="--d:-0.5s;--y:-5.5px"/>
+<use href="#c" x="224" y="64" style="--d:-0.5s;--y:-6px"/>
+<use href="#c" x="280" y="64" style="--d:-0.6s;--y:-6.5px"/>
+<use href="#c" x="336" y="64" style="--d:-0.6s;--y:-7.1px"/>
+<use href="#c" x="392" y="64" style="--d:-0.6s;--y:-7.6px"/>
+<use href="#c" x="448" y="64" style="--d:-0.6s;--y:-8.2px"/>
+<use href="#c" x="504" y="64" style="--d:-0.7s;--y:-8.8px"/>
+<use href="#c" x="560" y="64" style="--d:-0.7s;--y:-9.4px"/>
+<use href="#c" x="616" y="64" style="--d:-0.7s;--y:-10px"/>
+<use href="#c" x="672" y="64" style="--d:-0.7s;--y:-10.6px"/>
+<use href="#c" x="728" y="64" style="--d:-0.8s;--y:-11.2px"/>
+<use href="#c" x="784" y="64" style="--d:-0.8s;--y:-11.9px"/>
+<use href="#c" x="840" y="64" style="--d:-0.8s;--y:-12.5px"/>
+<use href="#c" x="896" y="64" style="--d:-0.8s;--y:-13.2px"/>
+<use href="#c" x="952" y="64" style="--d:-0.9s;--y:-13.8px"/>
+<use href="#c" x="1008" y="64" style="--d:-0.9s;--y:-14.5px"/>
+<use href="#c" x="84" y="78" style="--d:-0.5s;--y:-5.6px"/>
+<use href="#c" x="140" y="78" style="--d:-0.5s;--y:-6.1px"/>
+<use href="#c" x="196" y="78" style="--d:-0.6s;--y:-6.6px"/>
+<use href="#c" x="252" y="78" style="--d:-0.6s;--y:-7.2px"/>
+<use href="#c" x="308" y="78" style="--d:-0.6s;--y:-7.7px"/>
+<use href="#c" x="364" y="78" style="--d:-0.6s;--y:-8.3px"/>
+<use href="#c" x="420" y="78" style="--d:-0.7s;--y:-8.9px"/>
+<use href="#c" x="476" y="78" style="--d:-0.7s;--y:-9.5px"/>
+<use href="#c" x="532" y="78" style="--d:-0.7s;--y:-10.1px"/>
+<use href="#c" x="588" y="78" style="--d:-0.7s;--y:-10.7px"/>
+<use href="#c" x="644" y="78" style="--d:-0.8s;--y:-11.4px"/>
+<use href="#c" x="700" y="78" style="--d:-0.8s;--y:-12px"/>
+<use href="#c" x="756" y="78" style="--d:-0.8s;--y:-12.7px"/>
+<use href="#c" x="812" y="78" style="--d:-0.8s;--y:-13.3px"/>
+<use href="#c" x="868" y="78" style="--d:-0.9s;--y:-14px"/>
+<use href="#c" x="924" y="78" style="--d:-0.9s;--y:-14.6px"/>
+<use href="#c" x="980" y="78" style="--d:-0.9s;--y:-15.3px"/>
+<use href="#c" x="1036" y="78" style="--d:-0.9s;--y:-15.9px"/>
+<use href="#c" x="56" y="92" style="--d:-0.5s;--y:-6.2px"/>
+<use href="#c" x="112" y="92" style="--d:-0.6s;--y:-6.7px"/>
+<use href="#c" x="168" y="92" style="--d:-0.6s;--y:-7.3px"/>
+<use href="#c" x="224" y="92" style="--d:-0.6s;--y:-7.8px"/>
+<use href="#c" x="280" y="92" style="--d:-0.6s;--y:-8.4px"/>
+<use href="#c" x="336" y="92" style="--d:-0.7s;--y:-9px"/>
+<use href="#c" x="392" y="92" style="--d:-0.7s;--y:-9.6px"/>
+<use href="#c" x="448" y="92" style="--d:-0.7s;--y:-10.2px"/>
+<use href="#c" x="504" y="92" style="--d:-0.7s;--y:-10.9px"/>
+<use href="#c" x="560" y="92" style="--d:-0.8s;--y:-11.5px"/>
+<use href="#c" x="616" y="92" style="--d:-0.8s;--y:-12.1px"/>
+<use href="#c" x="672" y="92" style="--d:-0.8s;--y:-12.8px"/>
+<use href="#c" x="728" y="92" style="--d:-0.8s;--y:-13.4px"/>
+<use href="#c" x="784" y="92" style="--d:-0.9s;--y:-14.1px"/>
+<use href="#c" x="840" y="92" style="--d:-0.9s;--y:-14.7px"/>
+<use href="#c" x="896" y="92" style="--d:-0.9s;--y:-15.4px"/>
+<use href="#c" x="952" y="92" style="--d:-0.9s;--y:-16px"/>
+<use href="#c" x="1008" y="92" style="--d:-1s;--y:-16.7px"/>
+<use href="#c" x="1064" y="92" style="--d:-1s;--y:-17.3px"/>
+<use href="#c" x="28" y="106" style="--d:-0.6s;--y:-6.8px"/>
+<use href="#c" x="84" y="106" style="--d:-0.6s;--y:-7.4px"/>
+<use href="#c" x="140" y="106" style="--d:-0.6s;--y:-8px"/>
+<use href="#c" x="196" y="106" style="--d:-0.6s;--y:-8.5px"/>
+<use href="#c" x="252" y="106" style="--d:-0.7s;--y:-9.1px"/>
+<use href="#c" x="308" y="106" style="--d:-0.7s;--y:-9.7px"/>
+<use href="#c" x="364" y="106" style="--d:-0.7s;--y:-10.4px"/>
+<use href="#c" x="420" y="106" style="--d:-0.7s;--y:-11px"/>
+<use href="#c" x="476" y="106" style="--d:-0.8s;--y:-11.6px"/>
+<use href="#c" x="532" y="106" style="--d:-0.8s;--y:-12.3px"/>
+<use href="#c" x="588" y="106" style="--d:-0.8s;--y:-12.9px"/>
+<use href="#c" x="644" y="106" style="--d:-0.8s;--y:-13.6px"/>
+<use href="#c" x="700" y="106" style="--d:-0.9s;--y:-14.2px"/>
+<use href="#c" x="756" y="106" style="--d:-0.9s;--y:-14.9px"/>
+<use href="#c" x="812" y="106" style="--d:-0.9s;--y:-15.5px"/>
+<use href="#c" x="868" y="106" style="--d:-0.9s;--y:-16.2px"/>
+<use href="#c" x="924" y="106" style="--d:-1s;--y:-16.8px"/>
+<use href="#c" x="980" y="106" style="--d:-1s;--y:-17.5px"/>
+<use href="#c" x="1036" y="106" style="--d:-1s;--y:-18.1px"/>
+<use href="#c" x="1092" y="106" style="--d:-1s;--y:-18.8px"/>
+<use href="#c" x="0" y="120" style="--d:-0.6s;--y:-7.5px"/>
+<use href="#c" x="56" y="120" style="--d:-0.6s;--y:-8.1px"/>
+<use href="#c" x="112" y="120" style="--d:-0.6s;--y:-8.7px"/>
+<use href="#c" x="168" y="120" style="--d:-0.7s;--y:-9.3px"/>
+<use href="#c" x="224" y="120" style="--d:-0.7s;--y:-9.9px"/>
+<use href="#c" x="280" y="120" style="--d:-0.7s;--y:-10.5px"/>
+<use href="#c" x="336" y="120" style="--d:-0.7s;--y:-11.1px"/>
+<use href="#c" x="392" y="120" style="--d:-0.8s;--y:-11.8px"/>
+<use href="#c" x="448" y="120" style="--d:-0.8s;--y:-12.4px"/>
+<use href="#c" x="504" y="120" style="--d:-0.8s;--y:-13px"/>
+<use href="#c" x="560" y="120" style="--d:-0.8s;--y:-13.7px"/>
+<use href="#c" x="616" y="120" style="--d:-0.9s;--y:-14.3px"/>
+<use href="#c" x="672" y="120" style="--d:-0.9s;--y:-15px"/>
+<use href="#c" x="728" y="120" style="--d:-0.9s;--y:-15.7px"/>
+<use href="#c" x="784" y="120" style="--d:-0.9s;--y:-16.3px"/>
+<use href="#c" x="840" y="120" style="--d:-1s;--y:-17px"/>
+<use href="#c" x="896" y="120" style="--d:-1s;--y:-17.6px"/>
+<use href="#c" x="952" y="120" style="--d:-1s;--y:-18.2px"/>
+<use href="#c" x="1008" y="120" style="--d:-1s;--y:-18.9px"/>
+<use href="#c" x="1064" y="120" style="--d:-1.1s;--y:-19.5px"/>
+<use href="#c" x="1120" y="120" style="--d:-1.1s;--y:-20.1px"/>
+<use href="#c" x="-28" y="134" style="--d:-0.6s;--y:-8.2px"/>
+<use href="#c" x="28" y="134" style="--d:-0.7s;--y:-8.8px"/>
+<use href="#c" x="84" y="134" style="--d:-0.7s;--y:-9.4px"/>
+<use href="#c" x="140" y="134" style="--d:-0.7s;--y:-10px"/>
+<use href="#c" x="196" y="134" style="--d:-0.7s;--y:-10.6px"/>
+<use href="#c" x="252" y="134" style="--d:-0.8s;--y:-11.2px"/>
+<use href="#c" x="308" y="134" style="--d:-0.8s;--y:-11.9px"/>
+<use href="#c" x="364" y="134" style="--d:-0.8s;--y:-12.5px"/>
+<use href="#c" x="420" y="134" style="--d:-0.8s;--y:-13.2px"/>
+<use href="#c" x="476" y="134" style="--d:-0.9s;--y:-13.8px"/>
+<use href="#c" x="532" y="134" style="--d:-0.9s;--y:-14.5px"/>
+<use href="#c" x="588" y="134" style="--d:-0.9s;--y:-15.1px"/>
+<use href="#c" x="644" y="134" style="--d:-0.9s;--y:-15.8px"/>
+<use href="#c" x="700" y="134" style="--d:-1s;--y:-16.4px"/>
+<use href="#c" x="756" y="134" style="--d:-1s;--y:-17.1px"/>
+<use href="#c" x="812" y="134" style="--d:-1s;--y:-17.7px"/>
+<use href="#c" x="868" y="134" style="--d:-1s;--y:-18.4px"/>
+<use href="#c" x="924" y="134" style="--d:-1.1s;--y:-19px"/>
+<use href="#c" x="980" y="134" style="--d:-1.1s;--y:-19.6px"/>
+<use href="#c" x="1036" y="134" style="--d:-1.1s;--y:-20.3px"/>
+<use href="#c" x="1092" y="134" style="--d:-1.1s;--y:-20.9px"/>
+<use href="#c" x="1148" y="134" style="--d:-1.2s;--y:-21.5px"/>
+<use href="#c" x="-56" y="148" style="--d:-0.7s;--y:-8.9px"/>
+<use href="#c" x="0" y="148" style="--d:-0.7s;--y:-9.5px"/>
+<use href="#c" x="56" y="148" style="--d:-0.7s;--y:-10.1px"/>
+<use href="#c" x="112" y="148" style="--d:-0.7s;--y:-10.7px"/>
+<use href="#c" x="168" y="148" style="--d:-0.8s;--y:-11.4px"/>
+<use href="#c" x="224" y="148" style="--d:-0.8s;--y:-12px"/>
+<use href="#c" x="280" y="148" style="--d:-0.8s;--y:-12.7px"/>
+<use href="#c" x="336" y="148" style="--d:-0.8s;--y:-13.3px"/>
+<use href="#c" x="392" y="148" style="--d:-0.9s;--y:-14px"/>
+<use href="#c" x="448" y="148" style="--d:-0.9s;--y:-14.6px"/>
+<use href="#c" x="504" y="148" style="--d:-0.9s;--y:-15.3px"/>
+<use href="#c" x="560" y="148" style="--d:-0.9s;--y:-15.9px"/>
+<use href="#c" x="616" y="148" style="--d:-1s;--y:-16.6px"/>
+<use href="#c" x="672" y="148" style="--d:-1s;--y:-17.2px"/>
+<use href="#c" x="728" y="148" style="--d:-1s;--y:-17.9px"/>
+<use href="#c" x="784" y="148" style="--d:-1s;--y:-18.5px"/>
+<use href="#c" x="840" y="148" style="--d:-1.1s;--y:-19.1px"/>
+<use href="#c" x="896" y="148" style="--d:-1.1s;--y:-19.8px"/>
+<use href="#c" x="952" y="148" style="--d:-1.1s;--y:-20.4px"/>
+<use href="#c" x="1008" y="148" style="--d:-1.1s;--y:-21px"/>
+<use href="#c" x="1064" y="148" style="--d:-1.2s;--y:-21.6px"/>
+<use href="#c" x="1120" y="148" style="--d:-1.2s;--y:-22.2px"/>
+<use href="#c" x="1176" y="148" style="--d:-1.2s;--y:-22.7px"/>
+<use href="#c" x="-28" y="162" style="--d:-0.7s;--y:-10.2px"/>
+<use href="#c" x="28" y="162" style="--d:-0.7s;--y:-10.9px"/>
+<use href="#c" x="84" y="162" style="--d:-0.8s;--y:-11.5px"/>
+<use href="#c" x="140" y="162" style="--d:-0.8s;--y:-12.1px"/>
+<use href="#c" x="196" y="162" style="--d:-0.8s;--y:-12.8px"/>
+<use href="#c" x="252" y="162" style="--d:-0.8s;--y:-13.4px"/>
+<use href="#c" x="308" y="162" style="--d:-0.9s;--y:-14.1px"/>
+<use href="#c" x="364" y="162" style="--d:-0.9s;--y:-14.7px"/>
+<use href="#c" x="420" y="162" style="--d:-0.9s;--y:-15.4px"/>
+<use href="#c" x="476" y="162" style="--d:-0.9s;--y:-16px"/>
+<use href="#c" x="532" y="162" style="--d:-1s;--y:-16.7px"/>
+<use href="#c" x="588" y="162" style="--d:-1s;--y:-17.3px"/>
+<use href="#c" x="644" y="162" style="--d:-1s;--y:-18px"/>
+<use href="#c" x="700" y="162" style="--d:-1s;--y:-18.6px"/>
+<use href="#c" x="756" y="162" style="--d:-1.1s;--y:-19.3px"/>
+<use href="#c" x="812" y="162" style="--d:-1.1s;--y:-19.9px"/>
+<use href="#c" x="868" y="162" style="--d:-1.1s;--y:-20.5px"/>
+<use href="#c" x="924" y="162" style="--d:-1.1s;--y:-21.1px"/>
+<use href="#c" x="980" y="162" style="--d:-1.2s;--y:-21.7px"/>
+<use href="#c" x="1036" y="162" style="--d:-1.2s;--y:-22.3px"/>
+<use href="#c" x="1092" y="162" style="--d:-1.2s;--y:-22.8px"/>
+<use href="#c" x="1148" y="162" style="--d:-1.2s;--y:-23.4px"/>
+<use href="#c" x="1204" y="162" style="--d:-1.3s;--y:-23.9px"/>
+<use href="#c" x="-56" y="176" style="--d:-0.7s;--y:-11px"/>
+<use href="#c" x="0" y="176" style="--d:-0.8s;--y:-11.6px"/>
+<use href="#c" x="56" y="176" style="--d:-0.8s;--y:-12.3px"/>
+<use href="#c" x="112" y="176" style="--d:-0.8s;--y:-12.9px"/>
+<use href="#c" x="168" y="176" style="--d:-0.8s;--y:-13.6px"/>
+<use href="#c" x="224" y="176" style="--d:-0.9s;--y:-14.2px"/>
+<use href="#c" x="280" y="176" style="--d:-0.9s;--y:-14.9px"/>
+<use href="#c" x="336" y="176" style="--d:-0.9s;--y:-15.5px"/>
+<use href="#c" x="392" y="176" style="--d:-0.9s;--y:-16.2px"/>
+<use href="#c" x="448" y="176" style="--d:-1s;--y:-16.8px"/>
+<use href="#c" x="504" y="176" style="--d:-1s;--y:-17.5px"/>
+<use href="#c" x="560" y="176" style="--d:-1s;--y:-18.1px"/>
+<use href="#c" x="616" y="176" style="--d:-1s;--y:-18.8px"/>
+<use href="#c" x="672" y="176" style="--d:-1.1s;--y:-19.4px"/>
+<use href="#c" x="728" y="176" style="--d:-1.1s;--y:-20px"/>
+<use href="#c" x="784" y="176" style="--d:-1.1s;--y:-20.6px"/>
+<use href="#c" x="840" y="176" style="--d:-1.1s;--y:-21.2px"/>
+<use href="#c" x="896" y="176" style="--d:-1.2s;--y:-21.8px"/>
+<use href="#c" x="952" y="176" style="--d:-1.2s;--y:-22.4px"/>
+<use href="#c" x="1008" y="176" style="--d:-1.2s;--y:-22.9px"/>
+<use href="#c" x="1064" y="176" style="--d:-1.2s;--y:-23.5px"/>
+<use href="#c" x="1120" y="176" style="--d:-1.3s;--y:-24px"/>
+<use href="#c" x="1176" y="176" style="--d:-1.3s;--y:-24.5px"/>
+<use href="#c" x="1232" y="176" style="--d:-1.3s;--y:-25px"/>
+<use href="#c" x="-28" y="190" style="--d:-0.8s;--y:-12.4px"/>
+<use href="#c" x="28" y="190" style="--d:-0.8s;--y:-13px"/>
+<use href="#c" x="84" y="190" style="--d:-0.8s;--y:-13.7px"/>
+<use href="#c" x="140" y="190" style="--d:-0.9s;--y:-14.3px"/>
+<use href="#c" x="196" y="190" style="--d:-0.9s;--y:-15px"/>
+<use href="#c" x="252" y="190" style="--d:-0.9s;--y:-15.7px"/>
+<use href="#c" x="308" y="190" style="--d:-0.9s;--y:-16.3px"/>
+<use href="#c" x="364" y="190" style="--d:-1s;--y:-17px"/>
+<use href="#c" x="420" y="190" style="--d:-1s;--y:-17.6px"/>
+<use href="#c" x="476" y="190" style="--d:-1s;--y:-18.2px"/>
+<use href="#c" x="532" y="190" style="--d:-1s;--y:-18.9px"/>
+<use href="#c" x="588" y="190" style="--d:-1.1s;--y:-19.5px"/>
+<use href="#c" x="644" y="190" style="--d:-1.1s;--y:-20.1px"/>
+<use href="#c" x="700" y="190" style="--d:-1.1s;--y:-20.7px"/>
+<use href="#c" x="756" y="190" style="--d:-1.1s;--y:-21.3px"/>
+<use href="#c" x="812" y="190" style="--d:-1.2s;--y:-21.9px"/>
+<use href="#c" x="868" y="190" style="--d:-1.2s;--y:-22.5px"/>
+<use href="#c" x="924" y="190" style="--d:-1.2s;--y:-23.1px"/>
+<use href="#c" x="980" y="190" style="--d:-1.2s;--y:-23.6px"/>
+<use href="#c" x="1036" y="190" style="--d:-1.3s;--y:-24.1px"/>
+<use href="#c" x="1092" y="190" style="--d:-1.3s;--y:-24.6px"/>
+<use href="#c" x="1148" y="190" style="--d:-1.3s;--y:-25.1px"/>
+<use href="#c" x="1204" y="190" style="--d:-1.3s;--y:-25.6px"/>
+<use href="#c" x="1260" y="190" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="-56" y="204" style="--d:-0.8s;--y:-13.2px"/>
+<use href="#c" x="0" y="204" style="--d:-0.9s;--y:-13.8px"/>
+<use href="#c" x="56" y="204" style="--d:-0.9s;--y:-14.5px"/>
+<use href="#c" x="112" y="204" style="--d:-0.9s;--y:-15.1px"/>
+<use href="#c" x="168" y="204" style="--d:-0.9s;--y:-15.8px"/>
+<use href="#c" x="224" y="204" style="--d:-1s;--y:-16.4px"/>
+<use href="#c" x="280" y="204" style="--d:-1s;--y:-17.1px"/>
+<use href="#c" x="336" y="204" style="--d:-1s;--y:-17.7px"/>
+<use href="#c" x="392" y="204" style="--d:-1s;--y:-18.4px"/>
+<use href="#c" x="448" y="204" style="--d:-1.1s;--y:-19px"/>
+<use href="#c" x="504" y="204" style="--d:-1.1s;--y:-19.6px"/>
+<use href="#c" x="560" y="204" style="--d:-1.1s;--y:-20.3px"/>
+<use href="#c" x="616" y="204" style="--d:-1.1s;--y:-20.9px"/>
+<use href="#c" x="672" y="204" style="--d:-1.2s;--y:-21.5px"/>
+<use href="#c" x="728" y="204" style="--d:-1.2s;--y:-22px"/>
+<use href="#c" x="784" y="204" style="--d:-1.2s;--y:-22.6px"/>
+<use href="#c" x="840" y="204" style="--d:-1.2s;--y:-23.2px"/>
+<use href="#c" x="896" y="204" style="--d:-1.3s;--y:-23.7px"/>
+<use href="#c" x="952" y="204" style="--d:-1.3s;--y:-24.2px"/>
+<use href="#c" x="1008" y="204" style="--d:-1.3s;--y:-24.7px"/>
+<use href="#c" x="1064" y="204" style="--d:-1.3s;--y:-25.2px"/>
+<use href="#c" x="1120" y="204" style="--d:-1.4s;--y:-25.7px"/>
+<use href="#c" x="1176" y="204" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="1232" y="204" style="--d:-1.4s;--y:-26.6px"/>
+<use href="#c" x="1288" y="204" style="--d:-1.4s;--y:-27px"/>
+<use href="#c" x="-28" y="218" style="--d:-0.9s;--y:-14.6px"/>
+<use href="#c" x="28" y="218" style="--d:-0.9s;--y:-15.3px"/>
+<use href="#c" x="84" y="218" style="--d:-0.9s;--y:-15.9px"/>
+<use href="#c" x="140" y="218" style="--d:-1s;--y:-16.6px"/>
+<use href="#c" x="196" y="218" style="--d:-1s;--y:-17.2px"/>
+<use href="#c" x="252" y="218" style="--d:-1s;--y:-17.9px"/>
+<use href="#c" x="308" y="218" style="--d:-1s;--y:-18.5px"/>
+<use href="#c" x="364" y="218" style="--d:-1.1s;--y:-19.1px"/>
+<use href="#c" x="420" y="218" style="--d:-1.1s;--y:-19.8px"/>
+<use href="#c" x="476" y="218" style="--d:-1.1s;--y:-20.4px"/>
+<use href="#c" x="532" y="218" style="--d:-1.1s;--y:-21px"/>
+<use href="#c" x="588" y="218" style="--d:-1.2s;--y:-21.6px"/>
+<use href="#c" x="644" y="218" style="--d:-1.2s;--y:-22.2px"/>
+<use href="#c" x="700" y="218" style="--d:-1.2s;--y:-22.7px"/>
+<use href="#c" x="756" y="218" style="--d:-1.2s;--y:-23.3px"/>
+<use href="#c" x="812" y="218" style="--d:-1.3s;--y:-23.8px"/>
+<use href="#c" x="868" y="218" style="--d:-1.3s;--y:-24.3px"/>
+<use href="#c" x="924" y="218" style="--d:-1.3s;--y:-24.8px"/>
+<use href="#c" x="980" y="218" style="--d:-1.3s;--y:-25.3px"/>
+<use href="#c" x="1036" y="218" style="--d:-1.4s;--y:-25.8px"/>
+<use href="#c" x="1092" y="218" style="--d:-1.4s;--y:-26.2px"/>
+<use href="#c" x="1148" y="218" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="1204" y="218" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="1260" y="218" style="--d:-1.5s;--y:-27.4px"/>
+<use href="#c" x="-56" y="232" style="--d:-0.9s;--y:-15.4px"/>
+<use href="#c" x="0" y="232" style="--d:-0.9s;--y:-16px"/>
+<use href="#c" x="56" y="232" style="--d:-1s;--y:-16.7px"/>
+<use href="#c" x="112" y="232" style="--d:-1s;--y:-17.3px"/>
+<use href="#c" x="168" y="232" style="--d:-1s;--y:-18px"/>
+<use href="#c" x="224" y="232" style="--d:-1s;--y:-18.6px"/>
+<use href="#c" x="280" y="232" style="--d:-1.1s;--y:-19.3px"/>
+<use href="#c" x="336" y="232" style="--d:-1.1s;--y:-19.9px"/>
+<use href="#c" x="392" y="232" style="--d:-1.1s;--y:-20.5px"/>
+<use href="#c" x="448" y="232" style="--d:-1.1s;--y:-21.1px"/>
+<use href="#c" x="504" y="232" style="--d:-1.2s;--y:-21.7px"/>
+<use href="#c" x="560" y="232" style="--d:-1.2s;--y:-22.3px"/>
+<use href="#c" x="616" y="232" style="--d:-1.2s;--y:-22.8px"/>
+<use href="#c" x="672" y="232" style="--d:-1.2s;--y:-23.4px"/>
+<use href="#c" x="728" y="232" style="--d:-1.3s;--y:-23.9px"/>
+<use href="#c" x="784" y="232" style="--d:-1.3s;--y:-24.4px"/>
+<use href="#c" x="840" y="232" style="--d:-1.3s;--y:-24.9px"/>
+<use href="#c" x="896" y="232" style="--d:-1.3s;--y:-25.4px"/>
+<use href="#c" x="952" y="232" style="--d:-1.4s;--y:-25.9px"/>
+<use href="#c" x="1008" y="232" style="--d:-1.4s;--y:-26.3px"/>
+<use href="#c" x="1064" y="232" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="1120" y="232" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="1176" y="232" style="--d:-1.5s;--y:-27.5px"/>
+<use href="#c" x="1232" y="232" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="1288" y="232" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="-28" y="246" style="--d:-1s;--y:-16.8px"/>
+<use href="#c" x="28" y="246" style="--d:-1s;--y:-17.5px"/>
+<use href="#c" x="84" y="246" style="--d:-1s;--y:-18.1px"/>
+<use href="#c" x="140" y="246" style="--d:-1s;--y:-18.8px"/>
+<use href="#c" x="196" y="246" style="--d:-1.1s;--y:-19.4px"/>
+<use href="#c" x="252" y="246" style="--d:-1.1s;--y:-20px"/>
+<use href="#c" x="308" y="246" style="--d:-1.1s;--y:-20.6px"/>
+<use href="#c" x="364" y="246" style="--d:-1.1s;--y:-21.2px"/>
+<use href="#c" x="420" y="246" style="--d:-1.2s;--y:-21.8px"/>
+<use href="#c" x="476" y="246" style="--d:-1.2s;--y:-22.4px"/>
+<use href="#c" x="532" y="246" style="--d:-1.2s;--y:-22.9px"/>
+<use href="#c" x="588" y="246" style="--d:-1.2s;--y:-23.5px"/>
+<use href="#c" x="644" y="246" style="--d:-1.3s;--y:-24px"/>
+<use href="#c" x="700" y="246" style="--d:-1.3s;--y:-24.5px"/>
+<use href="#c" x="756" y="246" style="--d:-1.3s;--y:-25px"/>
+<use href="#c" x="812" y="246" style="--d:-1.3s;--y:-25.5px"/>
+<use href="#c" x="868" y="246" style="--d:-1.4s;--y:-26px"/>
+<use href="#c" x="924" y="246" style="--d:-1.4s;--y:-26.4px"/>
+<use href="#c" x="980" y="246" style="--d:-1.4s;--y:-26.8px"/>
+<use href="#c" x="1036" y="246" style="--d:-1.4s;--y:-27.2px"/>
+<use href="#c" x="1092" y="246" style="--d:-1.5s;--y:-27.6px"/>
+<use href="#c" x="1148" y="246" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="1204" y="246" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="1260" y="246" style="--d:-1.5s;--y:-28.5px"/>
+<use href="#c" x="-56" y="260" style="--d:-1s;--y:-17.6px"/>
+<use href="#c" x="0" y="260" style="--d:-1s;--y:-18.2px"/>
+<use href="#c" x="56" y="260" style="--d:-1s;--y:-18.9px"/>
+<use href="#c" x="112" y="260" style="--d:-1.1s;--y:-19.5px"/>
+<use href="#c" x="168" y="260" style="--d:-1.1s;--y:-20.1px"/>
+<use href="#c" x="224" y="260" style="--d:-1.1s;--y:-20.7px"/>
+<use href="#c" x="280" y="260" style="--d:-1.1s;--y:-21.3px"/>
+<use href="#c" x="336" y="260" style="--d:-1.2s;--y:-21.9px"/>
+<use href="#c" x="392" y="260" style="--d:-1.2s;--y:-22.5px"/>
+<use href="#c" x="448" y="260" style="--d:-1.2s;--y:-23.1px"/>
+<use href="#c" x="504" y="260" style="--d:-1.2s;--y:-23.6px"/>
+<use href="#c" x="560" y="260" style="--d:-1.3s;--y:-24.1px"/>
+<use href="#c" x="616" y="260" style="--d:-1.3s;--y:-24.6px"/>
+<use href="#c" x="672" y="260" style="--d:-1.3s;--y:-25.1px"/>
+<use href="#c" x="728" y="260" style="--d:-1.3s;--y:-25.6px"/>
+<use href="#c" x="784" y="260" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="840" y="260" style="--d:-1.4s;--y:-26.5px"/>
+<use href="#c" x="896" y="260" style="--d:-1.4s;--y:-26.9px"/>
+<use href="#c" x="952" y="260" style="--d:-1.4s;--y:-27.3px"/>
+<use href="#c" x="1008" y="260" style="--d:-1.5s;--y:-27.7px"/>
+<use href="#c" x="1064" y="260" style="--d:-1.5s;--y:-28px"/>
+<use href="#c" x="1120" y="260" style="--d:-1.5s;--y:-28.3px"/>
+<use href="#c" x="1176" y="260" style="--d:-1.5s;--y:-28.6px"/>
+<use href="#c" x="1232" y="260" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="1288" y="260" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="-28" y="274" style="--d:-1.1s;--y:-19px"/>
+<use href="#c" x="28" y="274" style="--d:-1.1s;--y:-19.6px"/>
+<use href="#c" x="84" y="274" style="--d:-1.1s;--y:-20.3px"/>
+<use href="#c" x="140" y="274" style="--d:-1.1s;--y:-20.9px"/>
+<use href="#c" x="196" y="274" style="--d:-1.2s;--y:-21.5px"/>
+<use href="#c" x="252" y="274" style="--d:-1.2s;--y:-22px"/>
+<use href="#c" x="308" y="274" style="--d:-1.2s;--y:-22.6px"/>
+<use href="#c" x="364" y="274" style="--d:-1.2s;--y:-23.2px"/>
+<use href="#c" x="420" y="274" style="--d:-1.3s;--y:-23.7px"/>
+<use href="#c" x="476" y="274" style="--d:-1.3s;--y:-24.2px"/>
+<use href="#c" x="532" y="274" style="--d:-1.3s;--y:-24.7px"/>
+<use href="#c" x="588" y="274" style="--d:-1.3s;--y:-25.2px"/>
+<use href="#c" x="644" y="274" style="--d:-1.4s;--y:-25.7px"/>
+<use href="#c" x="700" y="274" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="756" y="274" style="--d:-1.4s;--y:-26.6px"/>
+<use href="#c" x="812" y="274" style="--d:-1.4s;--y:-27px"/>
+<use href="#c" x="868" y="274" style="--d:-1.5s;--y:-27.4px"/>
+<use href="#c" x="924" y="274" style="--d:-1.5s;--y:-27.7px"/>
+<use href="#c" x="980" y="274" style="--d:-1.5s;--y:-28.1px"/>
+<use href="#c" x="1036" y="274" style="--d:-1.5s;--y:-28.4px"/>
+<use href="#c" x="1092" y="274" style="--d:-1.6s;--y:-28.6px"/>
+<use href="#c" x="1148" y="274" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="1204" y="274" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="1260" y="274" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="-56" y="288" style="--d:-1.1s;--y:-19.8px"/>
+<use href="#c" x="0" y="288" style="--d:-1.1s;--y:-20.4px"/>
+<use href="#c" x="56" y="288" style="--d:-1.1s;--y:-21px"/>
+<use href="#c" x="112" y="288" style="--d:-1.2s;--y:-21.6px"/>
+<use href="#c" x="168" y="288" style="--d:-1.2s;--y:-22.2px"/>
+<use href="#c" x="224" y="288" style="--d:-1.2s;--y:-22.7px"/>
+<use href="#c" x="280" y="288" style="--d:-1.2s;--y:-23.3px"/>
+<use href="#c" x="336" y="288" style="--d:-1.3s;--y:-23.8px"/>
+<use href="#c" x="392" y="288" style="--d:-1.3s;--y:-24.3px"/>
+<use href="#c" x="448" y="288" style="--d:-1.3s;--y:-24.8px"/>
+<use href="#c" x="504" y="288" style="--d:-1.3s;--y:-25.3px"/>
+<use href="#c" x="560" y="288" style="--d:-1.4s;--y:-25.8px"/>
+<use href="#c" x="616" y="288" style="--d:-1.4s;--y:-26.2px"/>
+<use href="#c" x="672" y="288" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="728" y="288" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="784" y="288" style="--d:-1.5s;--y:-27.4px"/>
+<use href="#c" x="840" y="288" style="--d:-1.5s;--y:-27.8px"/>
+<use href="#c" x="896" y="288" style="--d:-1.5s;--y:-28.1px"/>
+<use href="#c" x="952" y="288" style="--d:-1.5s;--y:-28.4px"/>
+<use href="#c" x="1008" y="288" style="--d:-1.6s;--y:-28.7px"/>
+<use href="#c" x="1064" y="288" style="--d:-1.6s;--y:-29px"/>
+<use href="#c" x="1120" y="288" style="--d:-1.6s;--y:-29.2px"/>
+<use href="#c" x="1176" y="288" style="--d:-1.6s;--y:-29.4px"/>
+<use href="#c" x="1232" y="288" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="1288" y="288" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="-28" y="302" style="--d:-1.1s;--y:-21.1px"/>
+<use href="#c" x="28" y="302" style="--d:-1.2s;--y:-21.7px"/>
+<use href="#c" x="84" y="302" style="--d:-1.2s;--y:-22.3px"/>
+<use href="#c" x="140" y="302" style="--d:-1.2s;--y:-22.8px"/>
+<use href="#c" x="196" y="302" style="--d:-1.2s;--y:-23.4px"/>
+<use href="#c" x="252" y="302" style="--d:-1.3s;--y:-23.9px"/>
+<use href="#c" x="308" y="302" style="--d:-1.3s;--y:-24.4px"/>
+<use href="#c" x="364" y="302" style="--d:-1.3s;--y:-24.9px"/>
+<use href="#c" x="420" y="302" style="--d:-1.3s;--y:-25.4px"/>
+<use href="#c" x="476" y="302" style="--d:-1.4s;--y:-25.9px"/>
+<use href="#c" x="532" y="302" style="--d:-1.4s;--y:-26.3px"/>
+<use href="#c" x="588" y="302" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="644" y="302" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="700" y="302" style="--d:-1.5s;--y:-27.5px"/>
+<use href="#c" x="756" y="302" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="812" y="302" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="868" y="302" style="--d:-1.5s;--y:-28.5px"/>
+<use href="#c" x="924" y="302" style="--d:-1.6s;--y:-28.8px"/>
+<use href="#c" x="980" y="302" style="--d:-1.6s;--y:-29px"/>
+<use href="#c" x="1036" y="302" style="--d:-1.6s;--y:-29.2px"/>
+<use href="#c" x="1092" y="302" style="--d:-1.6s;--y:-29.4px"/>
+<use href="#c" x="1148" y="302" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="1204" y="302" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="1260" y="302" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="0" y="316" style="--d:-1.2s;--y:-22.4px"/>
+<use href="#c" x="56" y="316" style="--d:-1.2s;--y:-22.9px"/>
+<use href="#c" x="112" y="316" style="--d:-1.2s;--y:-23.5px"/>
+<use href="#c" x="168" y="316" style="--d:-1.3s;--y:-24px"/>
+<use href="#c" x="224" y="316" style="--d:-1.3s;--y:-24.5px"/>
+<use href="#c" x="280" y="316" style="--d:-1.3s;--y:-25px"/>
+<use href="#c" x="336" y="316" style="--d:-1.3s;--y:-25.5px"/>
+<use href="#c" x="392" y="316" style="--d:-1.4s;--y:-26px"/>
+<use href="#c" x="448" y="316" style="--d:-1.4s;--y:-26.4px"/>
+<use href="#c" x="504" y="316" style="--d:-1.4s;--y:-26.8px"/>
+<use href="#c" x="560" y="316" style="--d:-1.4s;--y:-27.2px"/>
+<use href="#c" x="616" y="316" style="--d:-1.5s;--y:-27.6px"/>
+<use href="#c" x="672" y="316" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="728" y="316" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="784" y="316" style="--d:-1.5s;--y:-28.5px"/>
+<use href="#c" x="840" y="316" style="--d:-1.6s;--y:-28.8px"/>
+<use href="#c" x="896" y="316" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="952" y="316" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="1008" y="316" style="--d:-1.6s;--y:-29.5px"/>
+<use href="#c" x="1064" y="316" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="1120" y="316" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="1176" y="316" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="1232" y="316" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="1288" y="316" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="28" y="330" style="--d:-1.2s;--y:-23.6px"/>
+<use href="#c" x="84" y="330" style="--d:-1.3s;--y:-24.1px"/>
+<use href="#c" x="140" y="330" style="--d:-1.3s;--y:-24.6px"/>
+<use href="#c" x="196" y="330" style="--d:-1.3s;--y:-25.1px"/>
+<use href="#c" x="252" y="330" style="--d:-1.3s;--y:-25.6px"/>
+<use href="#c" x="308" y="330" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="364" y="330" style="--d:-1.4s;--y:-26.5px"/>
+<use href="#c" x="420" y="330" style="--d:-1.4s;--y:-26.9px"/>
+<use href="#c" x="476" y="330" style="--d:-1.4s;--y:-27.3px"/>
+<use href="#c" x="532" y="330" style="--d:-1.5s;--y:-27.7px"/>
+<use href="#c" x="588" y="330" style="--d:-1.5s;--y:-28px"/>
+<use href="#c" x="644" y="330" style="--d:-1.5s;--y:-28.3px"/>
+<use href="#c" x="700" y="330" style="--d:-1.5s;--y:-28.6px"/>
+<use href="#c" x="756" y="330" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="812" y="330" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="868" y="330" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="924" y="330" style="--d:-1.6s;--y:-29.5px"/>
+<use href="#c" x="980" y="330" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="1036" y="330" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="1092" y="330" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="1148" y="330" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="1204" y="330" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1260" y="330" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="56" y="344" style="--d:-1.3s;--y:-24.7px"/>
+<use href="#c" x="112" y="344" style="--d:-1.3s;--y:-25.2px"/>
+<use href="#c" x="168" y="344" style="--d:-1.4s;--y:-25.7px"/>
+<use href="#c" x="224" y="344" style="--d:-1.4s;--y:-26.1px"/>
+<use href="#c" x="280" y="344" style="--d:-1.4s;--y:-26.6px"/>
+<use href="#c" x="336" y="344" style="--d:-1.4s;--y:-27px"/>
+<use href="#c" x="392" y="344" style="--d:-1.5s;--y:-27.4px"/>
+<use href="#c" x="448" y="344" style="--d:-1.5s;--y:-27.7px"/>
+<use href="#c" x="504" y="344" style="--d:-1.5s;--y:-28.1px"/>
+<use href="#c" x="560" y="344" style="--d:-1.5s;--y:-28.4px"/>
+<use href="#c" x="616" y="344" style="--d:-1.6s;--y:-28.6px"/>
+<use href="#c" x="672" y="344" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="728" y="344" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="784" y="344" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="840" y="344" style="--d:-1.7s;--y:-29.5px"/>
+<use href="#c" x="896" y="344" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="952" y="344" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="1008" y="344" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="1064" y="344" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1120" y="344" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1176" y="344" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1232" y="344" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1288" y="344" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="84" y="358" style="--d:-1.4s;--y:-25.8px"/>
+<use href="#c" x="140" y="358" style="--d:-1.4s;--y:-26.2px"/>
+<use href="#c" x="196" y="358" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="252" y="358" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="308" y="358" style="--d:-1.5s;--y:-27.4px"/>
+<use href="#c" x="364" y="358" style="--d:-1.5s;--y:-27.8px"/>
+<use href="#c" x="420" y="358" style="--d:-1.5s;--y:-28.1px"/>
+<use href="#c" x="476" y="358" style="--d:-1.5s;--y:-28.4px"/>
+<use href="#c" x="532" y="358" style="--d:-1.6s;--y:-28.7px"/>
+<use href="#c" x="588" y="358" style="--d:-1.6s;--y:-29px"/>
+<use href="#c" x="644" y="358" style="--d:-1.6s;--y:-29.2px"/>
+<use href="#c" x="700" y="358" style="--d:-1.6s;--y:-29.4px"/>
+<use href="#c" x="756" y="358" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="812" y="358" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="868" y="358" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="924" y="358" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="980" y="358" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1036" y="358" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1092" y="358" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1148" y="358" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1204" y="358" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="1260" y="358" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="112" y="372" style="--d:-1.4s;--y:-26.7px"/>
+<use href="#c" x="168" y="372" style="--d:-1.4s;--y:-27.1px"/>
+<use href="#c" x="224" y="372" style="--d:-1.5s;--y:-27.5px"/>
+<use href="#c" x="280" y="372" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="336" y="372" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="392" y="372" style="--d:-1.5s;--y:-28.5px"/>
+<use href="#c" x="448" y="372" style="--d:-1.6s;--y:-28.8px"/>
+<use href="#c" x="504" y="372" style="--d:-1.6s;--y:-29px"/>
+<use href="#c" x="560" y="372" style="--d:-1.6s;--y:-29.2px"/>
+<use href="#c" x="616" y="372" style="--d:-1.6s;--y:-29.4px"/>
+<use href="#c" x="672" y="372" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="728" y="372" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="784" y="372" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="840" y="372" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="896" y="372" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="952" y="372" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1008" y="372" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1064" y="372" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1120" y="372" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="1176" y="372" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="1232" y="372" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="1288" y="372" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="140" y="386" style="--d:-1.5s;--y:-27.6px"/>
+<use href="#c" x="196" y="386" style="--d:-1.5s;--y:-27.9px"/>
+<use href="#c" x="252" y="386" style="--d:-1.5s;--y:-28.2px"/>
+<use href="#c" x="308" y="386" style="--d:-1.5s;--y:-28.5px"/>
+<use href="#c" x="364" y="386" style="--d:-1.6s;--y:-28.8px"/>
+<use href="#c" x="420" y="386" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="476" y="386" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="532" y="386" style="--d:-1.6s;--y:-29.5px"/>
+<use href="#c" x="588" y="386" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="644" y="386" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="700" y="386" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="756" y="386" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="812" y="386" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="868" y="386" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="924" y="386" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="980" y="386" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="1036" y="386" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="1092" y="386" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="1148" y="386" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="1204" y="386" style="--d:-1.9s;--y:-29.5px"/>
+<use href="#c" x="1260" y="386" style="--d:-2s;--y:-29.3px"/>
+<use href="#c" x="168" y="400" style="--d:-1.5s;--y:-28.3px"/>
+<use href="#c" x="224" y="400" style="--d:-1.5s;--y:-28.6px"/>
+<use href="#c" x="280" y="400" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="336" y="400" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="392" y="400" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="448" y="400" style="--d:-1.6s;--y:-29.5px"/>
+<use href="#c" x="504" y="400" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="560" y="400" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="616" y="400" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="672" y="400" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="728" y="400" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="784" y="400" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="840" y="400" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="896" y="400" style="--d:-1.8s;--y:-29.9px"/>
+<use href="#c" x="952" y="400" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="1008" y="400" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="1064" y="400" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="1120" y="400" style="--d:-1.9s;--y:-29.5px"/>
+<use href="#c" x="1176" y="400" style="--d:-2s;--y:-29.3px"/>
+<use href="#c" x="1232" y="400" style="--d:-2s;--y:-29.1px"/>
+<use href="#c" x="1288" y="400" style="--d:-2s;--y:-28.9px"/>
+<use href="#c" x="196" y="414" style="--d:-1.6s;--y:-28.9px"/>
+<use href="#c" x="252" y="414" style="--d:-1.6s;--y:-29.1px"/>
+<use href="#c" x="308" y="414" style="--d:-1.6s;--y:-29.3px"/>
+<use href="#c" x="364" y="414" style="--d:-1.7s;--y:-29.5px"/>
+<use href="#c" x="420" y="414" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="476" y="414" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="532" y="414" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="588" y="414" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="644" y="414" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="700" y="414" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="756" y="414" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="812" y="414" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="868" y="414" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="924" y="414" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="980" y="414" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="1036" y="414" style="--d:-2s;--y:-29.5px"/>
+<use href="#c" x="1092" y="414" style="--d:-2s;--y:-29.3px"/>
+<use href="#c" x="1148" y="414" style="--d:-2s;--y:-29.1px"/>
+<use href="#c" x="1204" y="414" style="--d:-2s;--y:-28.8px"/>
+<use href="#c" x="1260" y="414" style="--d:-2.1s;--y:-28.5px"/>
+<use href="#c" x="224" y="428" style="--d:-1.6s;--y:-29.4px"/>
+<use href="#c" x="280" y="428" style="--d:-1.7s;--y:-29.6px"/>
+<use href="#c" x="336" y="428" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="392" y="428" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="448" y="428" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="504" y="428" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="560" y="428" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="616" y="428" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="672" y="428" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="728" y="428" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="784" y="428" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="840" y="428" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="896" y="428" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="952" y="428" style="--d:-2s;--y:-29.4px"/>
+<use href="#c" x="1008" y="428" style="--d:-2s;--y:-29.2px"/>
+<use href="#c" x="1064" y="428" style="--d:-2s;--y:-29px"/>
+<use href="#c" x="1120" y="428" style="--d:-2s;--y:-28.8px"/>
+<use href="#c" x="1176" y="428" style="--d:-2.1s;--y:-28.5px"/>
+<use href="#c" x="1232" y="428" style="--d:-2.1s;--y:-28.2px"/>
+<use href="#c" x="252" y="442" style="--d:-1.7s;--y:-29.7px"/>
+<use href="#c" x="308" y="442" style="--d:-1.7s;--y:-29.8px"/>
+<use href="#c" x="364" y="442" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="420" y="442" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="476" y="442" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="532" y="442" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="588" y="442" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="644" y="442" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="700" y="442" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="756" y="442" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="812" y="442" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="868" y="442" style="--d:-2s;--y:-29.4px"/>
+<use href="#c" x="924" y="442" style="--d:-2s;--y:-29.2px"/>
+<use href="#c" x="980" y="442" style="--d:-2s;--y:-29px"/>
+<use href="#c" x="1036" y="442" style="--d:-2s;--y:-28.7px"/>
+<use href="#c" x="1092" y="442" style="--d:-2.1s;--y:-28.4px"/>
+<use href="#c" x="1148" y="442" style="--d:-2.1s;--y:-28.1px"/>
+<use href="#c" x="1204" y="442" style="--d:-2.1s;--y:-27.8px"/>
+<use href="#c" x="280" y="456" style="--d:-1.7s;--y:-29.9px"/>
+<use href="#c" x="336" y="456" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="392" y="456" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="448" y="456" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="504" y="456" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="560" y="456" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="616" y="456" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="672" y="456" style="--d:-1.9s;--y:-29.7px"/>
+<use href="#c" x="728" y="456" style="--d:-1.9s;--y:-29.5px"/>
+<use href="#c" x="784" y="456" style="--d:-2s;--y:-29.3px"/>
+<use href="#c" x="840" y="456" style="--d:-2s;--y:-29.1px"/>
+<use href="#c" x="896" y="456" style="--d:-2s;--y:-28.9px"/>
+<use href="#c" x="952" y="456" style="--d:-2s;--y:-28.6px"/>
+<use href="#c" x="1008" y="456" style="--d:-2.1s;--y:-28.4px"/>
+<use href="#c" x="1064" y="456" style="--d:-2.1s;--y:-28.1px"/>
+<use href="#c" x="1120" y="456" style="--d:-2.1s;--y:-27.7px"/>
+<use href="#c" x="1176" y="456" style="--d:-2.1s;--y:-27.4px"/>
+<use href="#c" x="308" y="470" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="364" y="470" style="--d:-1.8s;--y:-30px"/>
+<use href="#c" x="420" y="470" style="--d:-1.8s;--y:-29.9px"/>
+<use href="#c" x="476" y="470" style="--d:-1.9s;--y:-29.9px"/>
+<use href="#c" x="532" y="470" style="--d:-1.9s;--y:-29.8px"/>
+<use href="#c" x="588" y="470" style="--d:-1.9s;--y:-29.6px"/>
+<use href="#c" x="644" y="470" style="--d:-1.9s;--y:-29.5px"/>
+<use href="#c" x="700" y="470" style="--d:-2s;--y:-29.3px"/>
+<use href="#c" x="756" y="470" style="--d:-2s;--y:-29.1px"/>
+<use href="#c" x="812" y="470" style="--d:-2s;--y:-28.9px"/>
+<use href="#c" x="868" y="470" style="--d:-2s;--y:-28.6px"/>
+<use href="#c" x="924" y="470" style="--d:-2.1s;--y:-28.3px"/>
+<use href="#c" x="980" y="470" style="--d:-2.1s;--y:-28px"/>
+<use href="#c" x="1036" y="470" style="--d:-2.1s;--y:-27.7px"/>
+<use href="#c" x="1092" y="470" style="--d:-2.1s;--y:-27.3px"/>
+<use href="#c" x="1148" y="470" style="--d:-2.2s;--y:-26.9px"/>
+</g>
+
+<rect width="1200" height="420" fill="url(#scrim)"/>
+
+<!-- Type is styled with presentation attributes for the same reason the field
+     is: no webfont can be fetched here, so these are system stacks, and nothing
+     about how the words look depends on the stylesheet surviving. -->
+<g>
+  <rect x="72" y="118" width="86" height="2" fill="url(#rule)"/>
+  <text x="72" y="160" fill="#4C8DFF" letter-spacing="3.4"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">SKILL PACK FOR AI CODING AGENTS</text>
+  <text x="70" y="232" fill="#E9EEF8" letter-spacing="-1.2"
+        font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif" font-size="58">frontend-design-pro</text>
+  <text x="72" y="276" fill="#8494B0"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20">Machine-enforced frontend design.</text>
+  <text x="72" y="318" fill="#5A6883" letter-spacing="0.6"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">verified, not asserted — every figure recomputed by a gate</text>
+</g>
+</svg>

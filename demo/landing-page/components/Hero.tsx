@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import CtaButton from "./CtaButton";
 import RehearsalReport from "./RehearsalReport";
+import SectionEyebrow from "./SectionEyebrow";
 import {
   HEADLINE_LEAD,
   HEADLINE_REST,
@@ -49,12 +50,7 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
         className={`${sectionShell} grid items-start gap-x-12 gap-y-14 pb-20 pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-20`}
       >
         <div className="lg:col-span-7">
-          <p className="flex items-center gap-3">
-            <span aria-hidden="true" className="h-px w-8 shrink-0 bg-accent" />
-            <span data-label className="text-xs text-ink-muted">
-              {TAGLINE}
-            </span>
-          </p>
+          <SectionEyebrow>{TAGLINE}</SectionEyebrow>
 
           {/* Two sentences, two treatments. The second is the claim the product
               actually makes, so it gets the italic — a real one, from the
@@ -62,7 +58,7 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
           <h1
             id="hero-heading"
             data-display
-            className="mt-7 text-[clamp(2.75rem,6.2vw,5rem)] font-medium leading-[0.98] text-ink"
+            className="mt-6 text-[clamp(2.75rem,6.2vw,5rem)] font-medium leading-[0.98] text-ink"
           >
             {HEADLINE_LEAD}{" "}
             <span className="font-normal italic text-ink-secondary">
@@ -70,7 +66,7 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
             </span>
           </h1>
 
-          <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink-secondary text-pretty">
+          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-ink-secondary text-pretty">
             {SUBHEAD}
           </p>
 
@@ -89,13 +85,19 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
             role="list"
             className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-muted"
           >
-            {PROOF_POINTS.map((point) => (
-              <li key={point} className="flex items-center gap-2">
-                <span
-                  aria-hidden="true"
-                  className="size-1 shrink-0 rounded-full bg-surface-border-strong"
-                />
+            {/* The separator trails each item rather than leading it, so the
+                first proof point's first glyph lands on the same rail as the
+                headline above it. Leading dots put every item — including the
+                first — 12px to the right of everything else in the column. */}
+            {PROOF_POINTS.map((point, index) => (
+              <li key={point} className="flex items-center gap-x-5">
                 {point}
+                {index < PROOF_POINTS.length - 1 ? (
+                  <span
+                    aria-hidden="true"
+                    className="size-1 shrink-0 rounded-full bg-surface-border-strong"
+                  />
+                ) : null}
               </li>
             ))}
           </ul>

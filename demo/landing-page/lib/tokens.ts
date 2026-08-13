@@ -68,7 +68,16 @@ body {
 }
 
 /* Eyebrows and small caps. +0.08em because uppercase set at text sizes closes
-   up without it — the counters stop reading and the word turns into a block. */
+   up without it — the counters stop reading and the word turns into a block.
+
+   This rule OWNS the size. It is an attribute selector, so it ties with a
+   Tailwind class on specificity and wins on source order — this sheet is
+   injected into the body, after the stylesheet in <head>. Every \`data-label\`
+   element carried a \`text-xs\` that did nothing: they all rendered at 14px, and
+   the class said 12px. Measured, then deleted. Do not add a text-size utility
+   to a \`data-label\` element; change this value instead. 14px is also the floor
+   \`core/design-tokens.md\` sets for labels, so the accident happened to be
+   compliant and the class would have been the violation. */
 [data-label] {
   font-family: var(--font-sans);
   font-size: 0.875rem;
@@ -124,6 +133,22 @@ export const focusRing =
  */
 export const cardShell =
   "rounded-2xl border border-surface-border bg-surface-raised shadow-card";
+
+/**
+ * One interior inset for every card on the page — 24px, 32px from `lg`.
+ *
+ * These were three different values before they were measured: the bento cards
+ * sat at 28px, the testimonials at 32px and the report's rows at 24px. Nothing
+ * reads as *wrong* on its own, but content in adjacent cards started at three
+ * different distances from its own edge, which is what makes a page feel
+ * slightly out of true without any single element looking broken.
+ *
+ * `cardInsetX` is the horizontal half, for cards whose internal dividers run
+ * edge to edge and therefore need their padding on the rows rather than the
+ * shell.
+ */
+export const cardInset = "p-6 lg:p-8";
+export const cardInsetX = "px-6 lg:px-8";
 
 /** Skeleton block. The pulse is dropped when the reader asks for less motion. */
 export const skeletonBlock =

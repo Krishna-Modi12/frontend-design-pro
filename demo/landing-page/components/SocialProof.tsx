@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import type { Testimonial } from "../lib/content";
-import { cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
+import { cardInset, cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
 
 export interface SocialProofProps {
   testimonials: Testimonial[];
@@ -40,7 +40,7 @@ export default function SocialProof({ testimonials }: SocialProofProps): ReactEl
           {testimonials.map((testimonial) => (
             <figure
               key={testimonial.name}
-              className={`${cardShell} ${testimonial.span} m-0 flex flex-col p-6 lg:p-8`}
+              className={`${cardShell} ${cardInset} ${testimonial.span} m-0 flex flex-col`}
             >
               <blockquote
                 data-display
