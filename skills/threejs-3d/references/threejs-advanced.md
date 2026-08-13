@@ -2,6 +2,7 @@
 
 Route: `BUILD_3D`, `ADD_3D_EFFECTS` → +threejs-advanced. Shortcodes `[shader]` `[postprocess]` `[webgl]`.
 Load after: `threejs-fundamentals.md`. Interaction and camera control live in `threejs-interaction.md`.
+Source: topic scope from `CloudAI-X/threejs-skills` (MIT); the R3F-first treatment is this pack's and is **not a verbatim extraction** — see `threejs-fundamentals.md` for what diverges and why.
 
 ## Animation
 
