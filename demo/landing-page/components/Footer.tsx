@@ -14,9 +14,9 @@ export interface FooterProps {
  * reasoning that produces every other generic decision on a generated page.
  *
  * The disclosure is the one thing here that is not optional. This page invents
- * a company, four operating figures, a rehearsal report and three customers,
- * and a reader who cannot tell that at a glance has been misled by a demo. It
- * is rendered, not left in a source comment where only a contributor would find
+ * a company, four operating figures, a rehearsal report and two customers, and
+ * a reader who cannot tell that at a glance has been misled by a demo. It is
+ * rendered, not left in a source comment where only a contributor would find
  * it.
  *
  * No version string anywhere in this file. `demo/landing-page/` is not on the
@@ -26,7 +26,7 @@ export interface FooterProps {
  */
 export default function Footer({ repoUrl, buildSha }: FooterProps): ReactElement {
   return (
-    <footer className="border-t border-surface-border bg-surface-sunken">
+    <footer className="border-t border-surface-border bg-surface-raised">
       <div className={`${sectionShell} flex flex-col gap-8 py-12 lg:flex-row lg:items-start lg:justify-between`}>
         <div className="max-w-2xl">
           <p data-display className="text-lg font-medium text-ink">
@@ -41,7 +41,10 @@ export default function Footer({ repoUrl, buildSha }: FooterProps): ReactElement
           <a
             href={repoUrl}
             rel="noreferrer"
-            className={`${focusRing} rounded text-sm font-medium text-accent underline-offset-4 hover:underline`}
+            // `accent-text`, not `accent`. The fill value measures 4.14:1 as
+            // text on this ground and fails AA; the two exist precisely so a
+            // link never accidentally picks the button colour.
+            className={`${focusRing} rounded text-sm font-medium text-accent-text underline-offset-4 hover:underline`}
           >
             See the pack that generated this
           </a>

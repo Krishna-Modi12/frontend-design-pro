@@ -2,14 +2,7 @@ import type { ReactElement } from "react";
 import CtaButton from "./CtaButton";
 import RehearsalReport from "./RehearsalReport";
 import SectionEyebrow from "./SectionEyebrow";
-import {
-  HEADLINE_LEAD,
-  HEADLINE_REST,
-  PROOF_POINTS,
-  REPORT,
-  SUBHEAD,
-  TAGLINE,
-} from "../lib/content";
+import { HEADLINE, PROOF_POINTS, REPORT, SUBHEAD, TAGLINE } from "../lib/content";
 import { sectionShell } from "../lib/tokens";
 
 export interface HeroProps {
@@ -20,57 +13,77 @@ export interface HeroProps {
 }
 
 /**
- * Editorial 7:5. The headline column takes the wider track because the type is
- * the visual here — at 80px in a high-contrast serif the words are the image,
- * and a 6:6 split would give the report room it does not need at the cost of
- * breaking the headline onto more lines than it should take.
+ * Editorial 5:7 — the report takes the wider track.
  *
- * ── The dead band is gone, deliberately ──────────────────────────────────────
+ * This is the reverse of the usual split and of the version before it, which
+ * gave the headline seven columns because the type was the visual: a
+ * high-contrast serif at 80px genuinely was the image on that page. In a single
+ * grotesque the headline is no longer the picture, so the artifact gets the
+ * room and the words get a tighter measure — which is also better for reading.
  *
- * The previous hero was `min-h-[100dvh]` and centred its content, which pushed
- * the headline roughly 40% down a 1080px viewport and left an empty near-black
- * field above it. Every gate passed. It looked like nothing had loaded.
+ * ── On filling the viewport ──────────────────────────────────────────────────
  *
- * `min-h-[100dvh]` lives on the page shell instead, which is what the anti-slop
- * wall actually asks for — it bans the static-viewport height utility in favour
- * of the dynamic one, not that every hero fill a viewport. Vertical space here
- * is `pt-16 pb-24`: composed, and roughly a third of what the old hero spent on
- * nothing.
+ * `min-h-[100dvh]` is back on this section, and it is the one thing here worth
+ * watching. It has now failed in both directions, which is what settled it:
  *
- * The banned utility is not named in prose anywhere in this app, deliberately.
- * RES-03 is a regex over source, so a comment explaining the rule reads as a
- * violation of it — and Tailwind scans comments too, so writing the class name
- * here also emitted a real `min-height: 100vh` utility into the stylesheet that
- * nothing used. Both were live in the first draft of this file.
+ *   Centred, with short content. An earlier hero pushed the headline roughly
+ *   40% down a 1080px viewport and left an empty field above it. Every gate
+ *   passed. It looked like nothing had loaded.
+ *
+ *   Top-aligned, with short content. The first draft of THIS hero moved the
+ *   slack to the bottom instead, which was not better — 350px of empty page
+ *   under the proof bar, measured in the capture.
+ *
+ * Neither is fixed by choosing a side, because both are the same defect: the
+ * content was too short for the box. So the content grew — the report went back
+ * to full-width rows, which is worth ~150px — and the remaining slack is split
+ * evenly by centring. At 1080 that leaves a little over 100px top and bottom,
+ * which reads as margin rather than as a void.
+ *
+ * `items-center` on the section, not on the grid: the grid's own `items-start`
+ * still governs how the two columns sit relative to each other.
+ *
+ * The banned static-viewport utility is not named in prose anywhere in this app,
+ * deliberately. RES-03 is a regex over source, so a comment explaining the rule
+ * reads as a violation of it — and Tailwind scans comments too, so writing the
+ * class name here also emitted a real unused utility into the stylesheet. Both
+ * were live in the first draft of this file.
  */
 export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactElement {
   return (
-    <section aria-labelledby="hero-heading" className="border-b border-surface-border">
+    <section
+      aria-labelledby="hero-heading"
+      // The header is sticky and 4rem tall, and this section starts underneath
+      // it — so a full `100dvh` here is a viewport's worth of hero pushed 64px
+      // down, and the last 64px of it sits below the fold. Subtracting the
+      // header is what "the hero fills the screen" actually means; without it
+      // the centring is computed against a box the reader cannot fully see, and
+      // the slack lands unevenly (measured: 243px above, 120px below).
+      className="flex min-h-[calc(100dvh-4rem)] items-center border-b border-surface-border"
+    >
       <div
-        className={`${sectionShell} grid items-start gap-x-12 gap-y-14 pb-20 pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-20`}
+        className={`${sectionShell} grid w-full items-start gap-x-12 gap-y-14 py-16 lg:grid-cols-12`}
       >
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-5">
           <SectionEyebrow>{TAGLINE}</SectionEyebrow>
 
-          {/* Two sentences, two treatments. The second is the claim the product
-              actually makes, so it gets the italic — a real one, from the
-              italic face imported in the layout, not a sheared roman. */}
           <h1
             id="hero-heading"
             data-display
-            className="mt-6 text-[clamp(2.75rem,6.2vw,5rem)] font-medium leading-[0.98] text-ink"
+            // Sized to the FIVE-column track it actually sits in, not to the
+            // page. At 4.25rem it broke as "Every / migration / runs twice." —
+            // three lines with one word stranded on the first, which is what a
+            // display size chosen against the full width does in a narrow one.
+            className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-[3.5rem]"
           >
-            {HEADLINE_LEAD}{" "}
-            <span className="font-normal italic text-ink-secondary">
-              {HEADLINE_REST}
-            </span>
+            {HEADLINE}
           </h1>
 
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-ink-secondary text-pretty">
+          <p className="mt-7 max-w-md text-lg leading-relaxed text-ink-secondary text-pretty">
             {SUBHEAD}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-9 flex flex-wrap items-center gap-3">
             <CtaButton href={primaryHref}>Start a rehearsal</CtaButton>
             <CtaButton href={secondaryHref} variant="outline">
               How the replay works
@@ -83,27 +96,30 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
               screenshot with extra steps. */}
           <ul
             role="list"
-            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-muted"
+            className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-muted"
           >
-            {/* The separator trails each item rather than leading it, so the
-                first proof point's first glyph lands on the same rail as the
-                headline above it. Leading dots put every item — including the
-                first — 12px to the right of everything else in the column. */}
+            {/* The separator LEADS each item except the first, and lives inside
+                the <li> rather than beside it. Both details are load-bearing.
+                Inside, because a dot as its own flex child gets spaced by the
+                list's gap and pushes the first item off the rail the headline
+                sits on. Leading, because a trailing dot strands itself at the
+                end of a wrapped line — visible in the capture, where the list
+                broke after "Runs in your VPC" and left a dot hanging. */}
             {PROOF_POINTS.map((point, index) => (
-              <li key={point} className="flex items-center gap-x-5">
-                {point}
-                {index < PROOF_POINTS.length - 1 ? (
+              <li key={point} className="flex items-center gap-x-4">
+                {index > 0 ? (
                   <span
                     aria-hidden="true"
                     className="size-1 shrink-0 rounded-full bg-surface-border-strong"
                   />
                 ) : null}
+                {point}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-7">
           <RehearsalReport
             id={REPORT.id}
             verdict={REPORT.verdict}

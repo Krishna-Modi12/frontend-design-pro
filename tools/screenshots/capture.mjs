@@ -50,7 +50,7 @@ const SITES = [
     // Not opt-in, unlike showcase: this page renders deterministically from a
     // committed fixture, so a recapture only moves pixels when the UI actually
     // changed.
-    shots: [{ name: "landing-page", route: "/", scheme: "light", out: "demo/landing-page" }],
+    shots: [{ name: "landing-page", route: "/", scheme: "dark", out: "demo/landing-page" }],
   },
   {
     id: "showcase",
@@ -121,7 +121,48 @@ async function captureSite(site, browser, scratch) {
       const raw = join(scratch, `${shot.name}.png`);
       const rawFull = join(scratch, `${shot.name}-full.png`);
       await page.screenshot({ path: raw });
-      if (!shot.noFull) await page.screenshot({ path: rawFull, fullPage: true });
+
+      if (!shot.noFull) {
+        // Walk the page before the full-page shot.
+        //
+        // `fullPage: true` expands the capture past the viewport WITHOUT
+        // scrolling, so an IntersectionObserver never fires for anything below
+        // the fold. On a page with scroll-driven reveals that produces a
+        // screenshot where every section under the hero is an empty band — which
+        // is exactly what `demo/landing-page` shipped the first time it was
+        // captured with a fade-up on it.
+        //
+        // This is not staging the photo. A full-page screenshot is supposed to
+        // show what a reader sees on the way down, and a reader scrolls; not
+        // scrolling is the bug. Stepping by a viewport at a time rather than
+        // jumping to the bottom matters too, since a single jump can skip an
+        // observer whose margins never overlap the final position.
+        await page.evaluate(async () => {
+          // `scroll-behavior: smooth` turns every scrollTo into an animation,
+          // so stepped calls queue up and the final scrollTo(0, 0) interrupts
+          // the descent before it ever reaches the bottom. Measured: the last
+          // section on `landing-page` stayed at opacity 0 while every section
+          // above it revealed. Forced to auto for the duration of the walk.
+          const root = document.documentElement;
+          const previous = root.style.scrollBehavior;
+          root.style.scrollBehavior = "auto";
+
+          const step = window.innerHeight;
+          const end = root.scrollHeight;
+          for (let y = 0; y < end; y += step) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 120));
+          }
+          window.scrollTo(0, end);
+          await new Promise((r) => setTimeout(r, 250));
+          window.scrollTo(0, 0);
+
+          root.style.scrollBehavior = previous;
+        });
+        // Long enough for the slowest reveal transition on any demo to finish.
+        await page.waitForTimeout(1200);
+        await page.screenshot({ path: rawFull, fullPage: true });
+      }
 
       const targets = [{ src: raw, dest: `${shot.out}/screenshot.png`, width: VIEWPORT.width }];
       if (!shot.noFull) {
