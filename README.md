@@ -1,18 +1,19 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/hero.svg" alt="frontend-design-pro — a skill pack for AI coding agents. Machine-enforced frontend design, verified rather than asserted." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/hero.svg" alt="frontend-design-pro — a skill pack for AI coding agents. A component sits on an audit bench while a scan beam sweeps it, and its constraints resolve one by one to green checks: type scale, contrast, focus ring, colour space — ending on a pass." width="100%">
 
-**Your AI agent already writes React.**
-**This makes it write React that doesn't look AI-generated.**
+**Taste you can put in CI.**
+**59 machine-checked constraints, 11 release gates, and an agent that stops reaching for Inter.**
 
 [![Release](https://img.shields.io/github/v/release/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=1f6feb&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/releases)
 [![Gates](https://img.shields.io/github/actions/workflow/status/Krishna-Modi12/frontend-design-pro/ci.yml?branch=main&style=for-the-badge&label=gates&color=2ea043&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=8957e5&labelColor=161b22)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=d29922&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/stargazers)
 
-[![Live demo](https://img.shields.io/badge/live%20demo-showcase-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
+[![Showcase](https://img.shields.io/badge/live%20demo-showcase-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
+[![Landing page](https://img.shields.io/badge/live%20demo-landing%20page-1f6feb?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)
 
-**[Live demo](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
+**[Showcase](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Landing page](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
 
 </div>
 

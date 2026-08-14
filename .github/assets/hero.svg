@@ -1,857 +1,285 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="frontend-design-pro — a skill pack for AI coding agents. Machine-enforced frontend design, verified rather than asserted.">
-<title>frontend-design-pro</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="frontend-design-pro — a skill pack for AI coding agents. A component on an audit bench: a scan beam sweeps it while constraints for type scale, contrast, focus ring and colour space resolve to green checks, ending on a pass.">
+<title>frontend-design-pro — machine-enforced frontend design</title>
 <defs>
-  <!-- Fills are presentation ATTRIBUTES, not CSS, and that is the whole
-       defensive design of this file: the stylesheet carries nothing but
-       animation. If any proxy or renderer along the way drops it, the banner
-       degrades to a correctly-coloured static isometric field. Had the fills
-       lived in CSS, the same event would have rendered a rectangle of black
-       polygons on the project's most prominent surface.
-
-       No literal style tag appears in this comment, on purpose. One did, and a
-       regex that strips the stylesheet matched the mention inside the comment
-       instead of the real element — swallowing this entire defs block and
-       leaving a truncated, invalid comment behind. The file was fine; the tool
-       reading it was not. Naming a tag inside a comment in a file that other
-       tools regex is a trap worth not setting. -->
-  <g id="c">
-    <polygon class="t" fill="#1C2739" points="0,0 28,14 0,28 -28,14"/>
-    <polygon fill="#0E1626" points="-28,14 0,28 0,548 -28,534"/>
-    <polygon fill="#141D30" points="28,14 0,28 0,548 28,534"/>
-  </g>
-  <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0.06" stop-color="#000"/>
-    <stop offset="0.44" stop-color="#8A8A8A"/>
-    <stop offset="0.74" stop-color="#fff"/>
-  </linearGradient>
-  <mask id="fieldMask"><rect width="1200" height="420" fill="url(#fade)"/></mask>
-  <radialGradient id="glow" cx="0.74" cy="0.30" r="0.66">
-    <stop offset="0" stop-color="#12213D"/>
-    <stop offset="1" stop-color="#0A0E17"/>
+  <radialGradient id="bloom" cx="0.62" cy="0.42" r="0.72">
+    <stop offset="0" stop-color="#16294D"/>
+    <stop offset="1" stop-color="#070A12"/>
   </radialGradient>
-  <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#4C8DFF"/>
-    <stop offset="1" stop-color="#4C8DFF" stop-opacity="0"/>
+  <linearGradient id="faceFill" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="#17223A"/>
+    <stop offset="1" stop-color="#111A2B"/>
   </linearGradient>
-  <!-- The type scrim. This was an opaque rect and it left a hard vertical seam
-       straight down the banner at the edge of the text column — the one thing
-       on the image that looked like a mistake rather than a decision. A
-       gradient does the same protective job with no visible boundary. -->
-  <linearGradient id="scrim" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#0A0E17" stop-opacity="0.97"/>
-    <stop offset="0.40" stop-color="#0A0E17" stop-opacity="0.90"/>
-    <stop offset="1" stop-color="#0A0E17" stop-opacity="0"/>
+  <linearGradient id="rimLight" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#3D5580" stop-opacity="0"/>
+    <stop offset="0.45" stop-color="#3D5580" stop-opacity="0.9"/>
+    <stop offset="1" stop-color="#3D5580" stop-opacity="0"/>
   </linearGradient>
+  <linearGradient id="accentRule" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#5AA9FF"/>
+    <stop offset="1" stop-color="#5AA9FF" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="beamFill" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#5AA9FF" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="#5AA9FF" stop-opacity="0.95"/>
+    <stop offset="1" stop-color="#5AA9FF" stop-opacity="0"/>
+  </linearGradient>
+  <!-- The trail sits ABOVE the core because the beam travels downward, so the
+       haze is what it has already passed. Kept faint: at 0.30 the three stacked
+       beam layers merged into a solid bar and the whole thing read as a progress
+       indicator rather than a light moving over a surface. -->
+  <linearGradient id="beamHaze" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5AA9FF" stop-opacity="0"/>
+    <stop offset="0.8" stop-color="#5AA9FF" stop-opacity="0.14"/>
+    <stop offset="1" stop-color="#5AA9FF" stop-opacity="0"/>
+  </linearGradient>
+
+  <radialGradient id="floorFade" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.85"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="0.35"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="floorMask">
+    <ellipse cx="910" cy="354" rx="620" ry="150" fill="url(#floorFade)"/>
+  </mask>
+
+  <!-- Generous explicit filter regions. The default region is the bounding box
+       plus 10%, which clips a blur this wide and leaves a visible square edge
+       around the shadow. -->
+  <filter id="drop" x="-40%" y="-40%" width="180%" height="200%">
+    <feGaussianBlur stdDeviation="20"/>
+  </filter>
+  <filter id="glow" x="-120%" y="-900%" width="340%" height="1900%">
+    <feGaussianBlur stdDeviation="4"/>
+  </filter>
 </defs>
 
 <style>
-  /* One animation, staggered per column by a custom property. Custom properties
-     are the only per-instance channel available here, since every column shares
-     one stylesheet and inline style attributes are all a generator can vary. */
-  use { animation: bob 3.6s var(--d) infinite ease-in-out; }
-  .t { animation: lit 3.6s var(--d) infinite ease-in-out; }
+  /* Every animated element RESTS in its finished state and the stylesheet moves
+     it away and back, so losing this block leaves a completed audit rather than
+     a dim panel. See the header note. */
+  .r    { animation: 0s linear infinite; animation-duration: 4.6s; }
+  .r0 { animation-name: row0; }
+  .r1 { animation-name: row1; }
+  .r2 { animation-name: row2; }
+  .r3 { animation-name: row3; }
+  @keyframes row0 {
+    0%, 15.2%      { opacity: 0.22; }
+    17.7%, 93% { opacity: 1; }
+    100%                 { opacity: 0.22; }
+  }
+  @keyframes row1 {
+    0%, 32.2%      { opacity: 0.22; }
+    34.7%, 93% { opacity: 1; }
+    100%                 { opacity: 0.22; }
+  }
+  @keyframes row2 {
+    0%, 49.8%      { opacity: 0.22; }
+    52.3%, 93% { opacity: 1; }
+    100%                 { opacity: 0.22; }
+  }
+  @keyframes row3 {
+    0%, 66.8%      { opacity: 0.22; }
+    69.3%, 93% { opacity: 1; }
+    100%                 { opacity: 0.22; }
+  }
 
-  @keyframes bob {
+  .pass { animation: pass 4.6s infinite; }
+  @keyframes pass {
+    0%, 78%      { opacity: 0; transform: translateY(3px); }
+    81%, 93% { opacity: 1; transform: translateY(0); }
+    100%                 { opacity: 0; transform: translateY(3px); }
+  }
+
+  /* The beam. Travels only between 6% and 76%, then fades —
+     the remainder of the cycle is the hold that makes the result legible. */
+  .beam { animation: sweep 4.6s infinite; }
+  @keyframes sweep {
+    0%              { transform: translateY(0); opacity: 0; }
+    6%  { transform: translateY(0); opacity: 1; }
+    76%    { transform: translateY(182px); opacity: 1; }
+    82% { transform: translateY(182px); opacity: 0; }
+    100%            { transform: translateY(182px); opacity: 0; }
+  }
+
+  /* A slow lift on the whole bench. Three pixels — enough to stop the panel
+     reading as pasted onto the background, small enough not to compete with the
+     beam for attention. */
+  .bench { animation: lift 7s infinite ease-in-out; }
+  @keyframes lift {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-30px); }
-  }
-  /* The crest carries the accent. Colour is doing the same job as height, half a
-     beat apart, which is what stops the field reading as a flat grid sliding. */
-  @keyframes lit {
-    0%, 100% { fill: #1C2739; }
-    50%      { fill: #3C6FC9; }
+    50%      { transform: translateY(-3px); }
   }
 
-  /* Motion is decoration here, and the banner has to survive without it. Rather
-     than flattening the field — which would leave a plain grid and lose the
-     shape entirely — each column freezes at the height it would have held at
-     t=0, so the wave is still there, just still. */
+  .mote { animation: drift 9s var(--m) infinite ease-in-out; }
+  @keyframes drift {
+    0%, 100% { transform: translateY(6px); opacity: 0.15; }
+    50%      { transform: translateY(-14px); opacity: 0.55; }
+  }
+
+  /* Resolves to the same finished state the stylesheet-dropped case does: rows
+     lit, checks green, PASS shown, beam gone. The beam is the decoration, and
+     it is the only thing this costs. */
   @media (prefers-reduced-motion: reduce) {
-    use { animation: none; transform: translateY(var(--y)); }
-    .t { animation: none; }
+    .r, .pass, .beam, .bench, .mote { animation: none; }
+    .beam { opacity: 0; }
   }
 
 </style>
 
-<rect width="1200" height="420" fill="url(#glow)"/>
-<g mask="url(#fieldMask)">
-<use href="#c" x="364" y="-62" style="--d:-0.2s;--y:-1px"/>
-<use href="#c" x="420" y="-62" style="--d:-0.2s;--y:-1.2px"/>
-<use href="#c" x="476" y="-62" style="--d:-0.3s;--y:-1.5px"/>
-<use href="#c" x="532" y="-62" style="--d:-0.3s;--y:-1.8px"/>
-<use href="#c" x="588" y="-62" style="--d:-0.3s;--y:-2.1px"/>
-<use href="#c" x="644" y="-62" style="--d:-0.3s;--y:-2.5px"/>
-<use href="#c" x="700" y="-62" style="--d:-0.4s;--y:-2.9px"/>
-<use href="#c" x="756" y="-62" style="--d:-0.4s;--y:-3.3px"/>
-<use href="#c" x="336" y="-48" style="--d:-0.2s;--y:-1.3px"/>
-<use href="#c" x="392" y="-48" style="--d:-0.3s;--y:-1.6px"/>
-<use href="#c" x="448" y="-48" style="--d:-0.3s;--y:-1.9px"/>
-<use href="#c" x="504" y="-48" style="--d:-0.3s;--y:-2.2px"/>
-<use href="#c" x="560" y="-48" style="--d:-0.3s;--y:-2.6px"/>
-<use href="#c" x="616" y="-48" style="--d:-0.4s;--y:-2.9px"/>
-<use href="#c" x="672" y="-48" style="--d:-0.4s;--y:-3.3px"/>
-<use href="#c" x="728" y="-48" style="--d:-0.4s;--y:-3.8px"/>
-<use href="#c" x="784" y="-48" style="--d:-0.4s;--y:-4.2px"/>
-<use href="#c" x="308" y="-34" style="--d:-0.3s;--y:-1.6px"/>
-<use href="#c" x="364" y="-34" style="--d:-0.3s;--y:-1.9px"/>
-<use href="#c" x="420" y="-34" style="--d:-0.3s;--y:-2.3px"/>
-<use href="#c" x="476" y="-34" style="--d:-0.3s;--y:-2.6px"/>
-<use href="#c" x="532" y="-34" style="--d:-0.4s;--y:-3px"/>
-<use href="#c" x="588" y="-34" style="--d:-0.4s;--y:-3.4px"/>
-<use href="#c" x="644" y="-34" style="--d:-0.4s;--y:-3.9px"/>
-<use href="#c" x="700" y="-34" style="--d:-0.4s;--y:-4.3px"/>
-<use href="#c" x="756" y="-34" style="--d:-0.5s;--y:-4.8px"/>
-<use href="#c" x="812" y="-34" style="--d:-0.5s;--y:-5.3px"/>
-<use href="#c" x="280" y="-20" style="--d:-0.3s;--y:-2px"/>
-<use href="#c" x="336" y="-20" style="--d:-0.3s;--y:-2.3px"/>
-<use href="#c" x="392" y="-20" style="--d:-0.3s;--y:-2.7px"/>
-<use href="#c" x="448" y="-20" style="--d:-0.4s;--y:-3.1px"/>
-<use href="#c" x="504" y="-20" style="--d:-0.4s;--y:-3.5px"/>
-<use href="#c" x="560" y="-20" style="--d:-0.4s;--y:-3.9px"/>
-<use href="#c" x="616" y="-20" style="--d:-0.4s;--y:-4.4px"/>
-<use href="#c" x="672" y="-20" style="--d:-0.5s;--y:-4.9px"/>
-<use href="#c" x="728" y="-20" style="--d:-0.5s;--y:-5.4px"/>
-<use href="#c" x="784" y="-20" style="--d:-0.5s;--y:-5.9px"/>
-<use href="#c" x="840" y="-20" style="--d:-0.5s;--y:-6.4px"/>
-<use href="#c" x="252" y="-6" style="--d:-0.3s;--y:-2.4px"/>
-<use href="#c" x="308" y="-6" style="--d:-0.4s;--y:-2.8px"/>
-<use href="#c" x="364" y="-6" style="--d:-0.4s;--y:-3.2px"/>
-<use href="#c" x="420" y="-6" style="--d:-0.4s;--y:-3.6px"/>
-<use href="#c" x="476" y="-6" style="--d:-0.4s;--y:-4px"/>
-<use href="#c" x="532" y="-6" style="--d:-0.5s;--y:-4.5px"/>
-<use href="#c" x="588" y="-6" style="--d:-0.5s;--y:-5px"/>
-<use href="#c" x="644" y="-6" style="--d:-0.5s;--y:-5.5px"/>
-<use href="#c" x="700" y="-6" style="--d:-0.5s;--y:-6px"/>
-<use href="#c" x="756" y="-6" style="--d:-0.6s;--y:-6.5px"/>
-<use href="#c" x="812" y="-6" style="--d:-0.6s;--y:-7.1px"/>
-<use href="#c" x="868" y="-6" style="--d:-0.6s;--y:-7.6px"/>
-<use href="#c" x="224" y="8" style="--d:-0.4s;--y:-2.9px"/>
-<use href="#c" x="280" y="8" style="--d:-0.4s;--y:-3.3px"/>
-<use href="#c" x="336" y="8" style="--d:-0.4s;--y:-3.7px"/>
-<use href="#c" x="392" y="8" style="--d:-0.4s;--y:-4.1px"/>
-<use href="#c" x="448" y="8" style="--d:-0.5s;--y:-4.6px"/>
-<use href="#c" x="504" y="8" style="--d:-0.5s;--y:-5.1px"/>
-<use href="#c" x="560" y="8" style="--d:-0.5s;--y:-5.6px"/>
-<use href="#c" x="616" y="8" style="--d:-0.5s;--y:-6.1px"/>
-<use href="#c" x="672" y="8" style="--d:-0.6s;--y:-6.6px"/>
-<use href="#c" x="728" y="8" style="--d:-0.6s;--y:-7.2px"/>
-<use href="#c" x="784" y="8" style="--d:-0.6s;--y:-7.7px"/>
-<use href="#c" x="840" y="8" style="--d:-0.6s;--y:-8.3px"/>
-<use href="#c" x="896" y="8" style="--d:-0.7s;--y:-8.9px"/>
-<use href="#c" x="196" y="22" style="--d:-0.4s;--y:-3.3px"/>
-<use href="#c" x="252" y="22" style="--d:-0.4s;--y:-3.8px"/>
-<use href="#c" x="308" y="22" style="--d:-0.4s;--y:-4.2px"/>
-<use href="#c" x="364" y="22" style="--d:-0.5s;--y:-4.7px"/>
-<use href="#c" x="420" y="22" style="--d:-0.5s;--y:-5.2px"/>
-<use href="#c" x="476" y="22" style="--d:-0.5s;--y:-5.7px"/>
-<use href="#c" x="532" y="22" style="--d:-0.5s;--y:-6.2px"/>
-<use href="#c" x="588" y="22" style="--d:-0.6s;--y:-6.7px"/>
-<use href="#c" x="644" y="22" style="--d:-0.6s;--y:-7.3px"/>
-<use href="#c" x="700" y="22" style="--d:-0.6s;--y:-7.8px"/>
-<use href="#c" x="756" y="22" style="--d:-0.6s;--y:-8.4px"/>
-<use href="#c" x="812" y="22" style="--d:-0.7s;--y:-9px"/>
-<use href="#c" x="868" y="22" style="--d:-0.7s;--y:-9.6px"/>
-<use href="#c" x="924" y="22" style="--d:-0.7s;--y:-10.2px"/>
-<use href="#c" x="168" y="36" style="--d:-0.4s;--y:-3.9px"/>
-<use href="#c" x="224" y="36" style="--d:-0.4s;--y:-4.3px"/>
-<use href="#c" x="280" y="36" style="--d:-0.5s;--y:-4.8px"/>
-<use href="#c" x="336" y="36" style="--d:-0.5s;--y:-5.3px"/>
-<use href="#c" x="392" y="36" style="--d:-0.5s;--y:-5.8px"/>
-<use href="#c" x="448" y="36" style="--d:-0.5s;--y:-6.3px"/>
-<use href="#c" x="504" y="36" style="--d:-0.6s;--y:-6.8px"/>
-<use href="#c" x="560" y="36" style="--d:-0.6s;--y:-7.4px"/>
-<use href="#c" x="616" y="36" style="--d:-0.6s;--y:-8px"/>
-<use href="#c" x="672" y="36" style="--d:-0.6s;--y:-8.5px"/>
-<use href="#c" x="728" y="36" style="--d:-0.7s;--y:-9.1px"/>
-<use href="#c" x="784" y="36" style="--d:-0.7s;--y:-9.7px"/>
-<use href="#c" x="840" y="36" style="--d:-0.7s;--y:-10.4px"/>
-<use href="#c" x="896" y="36" style="--d:-0.7s;--y:-11px"/>
-<use href="#c" x="952" y="36" style="--d:-0.8s;--y:-11.6px"/>
-<use href="#c" x="140" y="50" style="--d:-0.4s;--y:-4.4px"/>
-<use href="#c" x="196" y="50" style="--d:-0.5s;--y:-4.9px"/>
-<use href="#c" x="252" y="50" style="--d:-0.5s;--y:-5.4px"/>
-<use href="#c" x="308" y="50" style="--d:-0.5s;--y:-5.9px"/>
-<use href="#c" x="364" y="50" style="--d:-0.5s;--y:-6.4px"/>
-<use href="#c" x="420" y="50" style="--d:-0.6s;--y:-6.9px"/>
-<use href="#c" x="476" y="50" style="--d:-0.6s;--y:-7.5px"/>
-<use href="#c" x="532" y="50" style="--d:-0.6s;--y:-8.1px"/>
-<use href="#c" x="588" y="50" style="--d:-0.6s;--y:-8.7px"/>
-<use href="#c" x="644" y="50" style="--d:-0.7s;--y:-9.3px"/>
-<use href="#c" x="700" y="50" style="--d:-0.7s;--y:-9.9px"/>
-<use href="#c" x="756" y="50" style="--d:-0.7s;--y:-10.5px"/>
-<use href="#c" x="812" y="50" style="--d:-0.7s;--y:-11.1px"/>
-<use href="#c" x="868" y="50" style="--d:-0.8s;--y:-11.8px"/>
-<use href="#c" x="924" y="50" style="--d:-0.8s;--y:-12.4px"/>
-<use href="#c" x="980" y="50" style="--d:-0.8s;--y:-13px"/>
-<use href="#c" x="112" y="64" style="--d:-0.5s;--y:-5px"/>
-<use href="#c" x="168" y="64" style="--d:-0.5s;--y:-5.5px"/>
-<use href="#c" x="224" y="64" style="--d:-0.5s;--y:-6px"/>
-<use href="#c" x="280" y="64" style="--d:-0.6s;--y:-6.5px"/>
-<use href="#c" x="336" y="64" style="--d:-0.6s;--y:-7.1px"/>
-<use href="#c" x="392" y="64" style="--d:-0.6s;--y:-7.6px"/>
-<use href="#c" x="448" y="64" style="--d:-0.6s;--y:-8.2px"/>
-<use href="#c" x="504" y="64" style="--d:-0.7s;--y:-8.8px"/>
-<use href="#c" x="560" y="64" style="--d:-0.7s;--y:-9.4px"/>
-<use href="#c" x="616" y="64" style="--d:-0.7s;--y:-10px"/>
-<use href="#c" x="672" y="64" style="--d:-0.7s;--y:-10.6px"/>
-<use href="#c" x="728" y="64" style="--d:-0.8s;--y:-11.2px"/>
-<use href="#c" x="784" y="64" style="--d:-0.8s;--y:-11.9px"/>
-<use href="#c" x="840" y="64" style="--d:-0.8s;--y:-12.5px"/>
-<use href="#c" x="896" y="64" style="--d:-0.8s;--y:-13.2px"/>
-<use href="#c" x="952" y="64" style="--d:-0.9s;--y:-13.8px"/>
-<use href="#c" x="1008" y="64" style="--d:-0.9s;--y:-14.5px"/>
-<use href="#c" x="84" y="78" style="--d:-0.5s;--y:-5.6px"/>
-<use href="#c" x="140" y="78" style="--d:-0.5s;--y:-6.1px"/>
-<use href="#c" x="196" y="78" style="--d:-0.6s;--y:-6.6px"/>
-<use href="#c" x="252" y="78" style="--d:-0.6s;--y:-7.2px"/>
-<use href="#c" x="308" y="78" style="--d:-0.6s;--y:-7.7px"/>
-<use href="#c" x="364" y="78" style="--d:-0.6s;--y:-8.3px"/>
-<use href="#c" x="420" y="78" style="--d:-0.7s;--y:-8.9px"/>
-<use href="#c" x="476" y="78" style="--d:-0.7s;--y:-9.5px"/>
-<use href="#c" x="532" y="78" style="--d:-0.7s;--y:-10.1px"/>
-<use href="#c" x="588" y="78" style="--d:-0.7s;--y:-10.7px"/>
-<use href="#c" x="644" y="78" style="--d:-0.8s;--y:-11.4px"/>
-<use href="#c" x="700" y="78" style="--d:-0.8s;--y:-12px"/>
-<use href="#c" x="756" y="78" style="--d:-0.8s;--y:-12.7px"/>
-<use href="#c" x="812" y="78" style="--d:-0.8s;--y:-13.3px"/>
-<use href="#c" x="868" y="78" style="--d:-0.9s;--y:-14px"/>
-<use href="#c" x="924" y="78" style="--d:-0.9s;--y:-14.6px"/>
-<use href="#c" x="980" y="78" style="--d:-0.9s;--y:-15.3px"/>
-<use href="#c" x="1036" y="78" style="--d:-0.9s;--y:-15.9px"/>
-<use href="#c" x="56" y="92" style="--d:-0.5s;--y:-6.2px"/>
-<use href="#c" x="112" y="92" style="--d:-0.6s;--y:-6.7px"/>
-<use href="#c" x="168" y="92" style="--d:-0.6s;--y:-7.3px"/>
-<use href="#c" x="224" y="92" style="--d:-0.6s;--y:-7.8px"/>
-<use href="#c" x="280" y="92" style="--d:-0.6s;--y:-8.4px"/>
-<use href="#c" x="336" y="92" style="--d:-0.7s;--y:-9px"/>
-<use href="#c" x="392" y="92" style="--d:-0.7s;--y:-9.6px"/>
-<use href="#c" x="448" y="92" style="--d:-0.7s;--y:-10.2px"/>
-<use href="#c" x="504" y="92" style="--d:-0.7s;--y:-10.9px"/>
-<use href="#c" x="560" y="92" style="--d:-0.8s;--y:-11.5px"/>
-<use href="#c" x="616" y="92" style="--d:-0.8s;--y:-12.1px"/>
-<use href="#c" x="672" y="92" style="--d:-0.8s;--y:-12.8px"/>
-<use href="#c" x="728" y="92" style="--d:-0.8s;--y:-13.4px"/>
-<use href="#c" x="784" y="92" style="--d:-0.9s;--y:-14.1px"/>
-<use href="#c" x="840" y="92" style="--d:-0.9s;--y:-14.7px"/>
-<use href="#c" x="896" y="92" style="--d:-0.9s;--y:-15.4px"/>
-<use href="#c" x="952" y="92" style="--d:-0.9s;--y:-16px"/>
-<use href="#c" x="1008" y="92" style="--d:-1s;--y:-16.7px"/>
-<use href="#c" x="1064" y="92" style="--d:-1s;--y:-17.3px"/>
-<use href="#c" x="28" y="106" style="--d:-0.6s;--y:-6.8px"/>
-<use href="#c" x="84" y="106" style="--d:-0.6s;--y:-7.4px"/>
-<use href="#c" x="140" y="106" style="--d:-0.6s;--y:-8px"/>
-<use href="#c" x="196" y="106" style="--d:-0.6s;--y:-8.5px"/>
-<use href="#c" x="252" y="106" style="--d:-0.7s;--y:-9.1px"/>
-<use href="#c" x="308" y="106" style="--d:-0.7s;--y:-9.7px"/>
-<use href="#c" x="364" y="106" style="--d:-0.7s;--y:-10.4px"/>
-<use href="#c" x="420" y="106" style="--d:-0.7s;--y:-11px"/>
-<use href="#c" x="476" y="106" style="--d:-0.8s;--y:-11.6px"/>
-<use href="#c" x="532" y="106" style="--d:-0.8s;--y:-12.3px"/>
-<use href="#c" x="588" y="106" style="--d:-0.8s;--y:-12.9px"/>
-<use href="#c" x="644" y="106" style="--d:-0.8s;--y:-13.6px"/>
-<use href="#c" x="700" y="106" style="--d:-0.9s;--y:-14.2px"/>
-<use href="#c" x="756" y="106" style="--d:-0.9s;--y:-14.9px"/>
-<use href="#c" x="812" y="106" style="--d:-0.9s;--y:-15.5px"/>
-<use href="#c" x="868" y="106" style="--d:-0.9s;--y:-16.2px"/>
-<use href="#c" x="924" y="106" style="--d:-1s;--y:-16.8px"/>
-<use href="#c" x="980" y="106" style="--d:-1s;--y:-17.5px"/>
-<use href="#c" x="1036" y="106" style="--d:-1s;--y:-18.1px"/>
-<use href="#c" x="1092" y="106" style="--d:-1s;--y:-18.8px"/>
-<use href="#c" x="0" y="120" style="--d:-0.6s;--y:-7.5px"/>
-<use href="#c" x="56" y="120" style="--d:-0.6s;--y:-8.1px"/>
-<use href="#c" x="112" y="120" style="--d:-0.6s;--y:-8.7px"/>
-<use href="#c" x="168" y="120" style="--d:-0.7s;--y:-9.3px"/>
-<use href="#c" x="224" y="120" style="--d:-0.7s;--y:-9.9px"/>
-<use href="#c" x="280" y="120" style="--d:-0.7s;--y:-10.5px"/>
-<use href="#c" x="336" y="120" style="--d:-0.7s;--y:-11.1px"/>
-<use href="#c" x="392" y="120" style="--d:-0.8s;--y:-11.8px"/>
-<use href="#c" x="448" y="120" style="--d:-0.8s;--y:-12.4px"/>
-<use href="#c" x="504" y="120" style="--d:-0.8s;--y:-13px"/>
-<use href="#c" x="560" y="120" style="--d:-0.8s;--y:-13.7px"/>
-<use href="#c" x="616" y="120" style="--d:-0.9s;--y:-14.3px"/>
-<use href="#c" x="672" y="120" style="--d:-0.9s;--y:-15px"/>
-<use href="#c" x="728" y="120" style="--d:-0.9s;--y:-15.7px"/>
-<use href="#c" x="784" y="120" style="--d:-0.9s;--y:-16.3px"/>
-<use href="#c" x="840" y="120" style="--d:-1s;--y:-17px"/>
-<use href="#c" x="896" y="120" style="--d:-1s;--y:-17.6px"/>
-<use href="#c" x="952" y="120" style="--d:-1s;--y:-18.2px"/>
-<use href="#c" x="1008" y="120" style="--d:-1s;--y:-18.9px"/>
-<use href="#c" x="1064" y="120" style="--d:-1.1s;--y:-19.5px"/>
-<use href="#c" x="1120" y="120" style="--d:-1.1s;--y:-20.1px"/>
-<use href="#c" x="-28" y="134" style="--d:-0.6s;--y:-8.2px"/>
-<use href="#c" x="28" y="134" style="--d:-0.7s;--y:-8.8px"/>
-<use href="#c" x="84" y="134" style="--d:-0.7s;--y:-9.4px"/>
-<use href="#c" x="140" y="134" style="--d:-0.7s;--y:-10px"/>
-<use href="#c" x="196" y="134" style="--d:-0.7s;--y:-10.6px"/>
-<use href="#c" x="252" y="134" style="--d:-0.8s;--y:-11.2px"/>
-<use href="#c" x="308" y="134" style="--d:-0.8s;--y:-11.9px"/>
-<use href="#c" x="364" y="134" style="--d:-0.8s;--y:-12.5px"/>
-<use href="#c" x="420" y="134" style="--d:-0.8s;--y:-13.2px"/>
-<use href="#c" x="476" y="134" style="--d:-0.9s;--y:-13.8px"/>
-<use href="#c" x="532" y="134" style="--d:-0.9s;--y:-14.5px"/>
-<use href="#c" x="588" y="134" style="--d:-0.9s;--y:-15.1px"/>
-<use href="#c" x="644" y="134" style="--d:-0.9s;--y:-15.8px"/>
-<use href="#c" x="700" y="134" style="--d:-1s;--y:-16.4px"/>
-<use href="#c" x="756" y="134" style="--d:-1s;--y:-17.1px"/>
-<use href="#c" x="812" y="134" style="--d:-1s;--y:-17.7px"/>
-<use href="#c" x="868" y="134" style="--d:-1s;--y:-18.4px"/>
-<use href="#c" x="924" y="134" style="--d:-1.1s;--y:-19px"/>
-<use href="#c" x="980" y="134" style="--d:-1.1s;--y:-19.6px"/>
-<use href="#c" x="1036" y="134" style="--d:-1.1s;--y:-20.3px"/>
-<use href="#c" x="1092" y="134" style="--d:-1.1s;--y:-20.9px"/>
-<use href="#c" x="1148" y="134" style="--d:-1.2s;--y:-21.5px"/>
-<use href="#c" x="-56" y="148" style="--d:-0.7s;--y:-8.9px"/>
-<use href="#c" x="0" y="148" style="--d:-0.7s;--y:-9.5px"/>
-<use href="#c" x="56" y="148" style="--d:-0.7s;--y:-10.1px"/>
-<use href="#c" x="112" y="148" style="--d:-0.7s;--y:-10.7px"/>
-<use href="#c" x="168" y="148" style="--d:-0.8s;--y:-11.4px"/>
-<use href="#c" x="224" y="148" style="--d:-0.8s;--y:-12px"/>
-<use href="#c" x="280" y="148" style="--d:-0.8s;--y:-12.7px"/>
-<use href="#c" x="336" y="148" style="--d:-0.8s;--y:-13.3px"/>
-<use href="#c" x="392" y="148" style="--d:-0.9s;--y:-14px"/>
-<use href="#c" x="448" y="148" style="--d:-0.9s;--y:-14.6px"/>
-<use href="#c" x="504" y="148" style="--d:-0.9s;--y:-15.3px"/>
-<use href="#c" x="560" y="148" style="--d:-0.9s;--y:-15.9px"/>
-<use href="#c" x="616" y="148" style="--d:-1s;--y:-16.6px"/>
-<use href="#c" x="672" y="148" style="--d:-1s;--y:-17.2px"/>
-<use href="#c" x="728" y="148" style="--d:-1s;--y:-17.9px"/>
-<use href="#c" x="784" y="148" style="--d:-1s;--y:-18.5px"/>
-<use href="#c" x="840" y="148" style="--d:-1.1s;--y:-19.1px"/>
-<use href="#c" x="896" y="148" style="--d:-1.1s;--y:-19.8px"/>
-<use href="#c" x="952" y="148" style="--d:-1.1s;--y:-20.4px"/>
-<use href="#c" x="1008" y="148" style="--d:-1.1s;--y:-21px"/>
-<use href="#c" x="1064" y="148" style="--d:-1.2s;--y:-21.6px"/>
-<use href="#c" x="1120" y="148" style="--d:-1.2s;--y:-22.2px"/>
-<use href="#c" x="1176" y="148" style="--d:-1.2s;--y:-22.7px"/>
-<use href="#c" x="-28" y="162" style="--d:-0.7s;--y:-10.2px"/>
-<use href="#c" x="28" y="162" style="--d:-0.7s;--y:-10.9px"/>
-<use href="#c" x="84" y="162" style="--d:-0.8s;--y:-11.5px"/>
-<use href="#c" x="140" y="162" style="--d:-0.8s;--y:-12.1px"/>
-<use href="#c" x="196" y="162" style="--d:-0.8s;--y:-12.8px"/>
-<use href="#c" x="252" y="162" style="--d:-0.8s;--y:-13.4px"/>
-<use href="#c" x="308" y="162" style="--d:-0.9s;--y:-14.1px"/>
-<use href="#c" x="364" y="162" style="--d:-0.9s;--y:-14.7px"/>
-<use href="#c" x="420" y="162" style="--d:-0.9s;--y:-15.4px"/>
-<use href="#c" x="476" y="162" style="--d:-0.9s;--y:-16px"/>
-<use href="#c" x="532" y="162" style="--d:-1s;--y:-16.7px"/>
-<use href="#c" x="588" y="162" style="--d:-1s;--y:-17.3px"/>
-<use href="#c" x="644" y="162" style="--d:-1s;--y:-18px"/>
-<use href="#c" x="700" y="162" style="--d:-1s;--y:-18.6px"/>
-<use href="#c" x="756" y="162" style="--d:-1.1s;--y:-19.3px"/>
-<use href="#c" x="812" y="162" style="--d:-1.1s;--y:-19.9px"/>
-<use href="#c" x="868" y="162" style="--d:-1.1s;--y:-20.5px"/>
-<use href="#c" x="924" y="162" style="--d:-1.1s;--y:-21.1px"/>
-<use href="#c" x="980" y="162" style="--d:-1.2s;--y:-21.7px"/>
-<use href="#c" x="1036" y="162" style="--d:-1.2s;--y:-22.3px"/>
-<use href="#c" x="1092" y="162" style="--d:-1.2s;--y:-22.8px"/>
-<use href="#c" x="1148" y="162" style="--d:-1.2s;--y:-23.4px"/>
-<use href="#c" x="1204" y="162" style="--d:-1.3s;--y:-23.9px"/>
-<use href="#c" x="-56" y="176" style="--d:-0.7s;--y:-11px"/>
-<use href="#c" x="0" y="176" style="--d:-0.8s;--y:-11.6px"/>
-<use href="#c" x="56" y="176" style="--d:-0.8s;--y:-12.3px"/>
-<use href="#c" x="112" y="176" style="--d:-0.8s;--y:-12.9px"/>
-<use href="#c" x="168" y="176" style="--d:-0.8s;--y:-13.6px"/>
-<use href="#c" x="224" y="176" style="--d:-0.9s;--y:-14.2px"/>
-<use href="#c" x="280" y="176" style="--d:-0.9s;--y:-14.9px"/>
-<use href="#c" x="336" y="176" style="--d:-0.9s;--y:-15.5px"/>
-<use href="#c" x="392" y="176" style="--d:-0.9s;--y:-16.2px"/>
-<use href="#c" x="448" y="176" style="--d:-1s;--y:-16.8px"/>
-<use href="#c" x="504" y="176" style="--d:-1s;--y:-17.5px"/>
-<use href="#c" x="560" y="176" style="--d:-1s;--y:-18.1px"/>
-<use href="#c" x="616" y="176" style="--d:-1s;--y:-18.8px"/>
-<use href="#c" x="672" y="176" style="--d:-1.1s;--y:-19.4px"/>
-<use href="#c" x="728" y="176" style="--d:-1.1s;--y:-20px"/>
-<use href="#c" x="784" y="176" style="--d:-1.1s;--y:-20.6px"/>
-<use href="#c" x="840" y="176" style="--d:-1.1s;--y:-21.2px"/>
-<use href="#c" x="896" y="176" style="--d:-1.2s;--y:-21.8px"/>
-<use href="#c" x="952" y="176" style="--d:-1.2s;--y:-22.4px"/>
-<use href="#c" x="1008" y="176" style="--d:-1.2s;--y:-22.9px"/>
-<use href="#c" x="1064" y="176" style="--d:-1.2s;--y:-23.5px"/>
-<use href="#c" x="1120" y="176" style="--d:-1.3s;--y:-24px"/>
-<use href="#c" x="1176" y="176" style="--d:-1.3s;--y:-24.5px"/>
-<use href="#c" x="1232" y="176" style="--d:-1.3s;--y:-25px"/>
-<use href="#c" x="-28" y="190" style="--d:-0.8s;--y:-12.4px"/>
-<use href="#c" x="28" y="190" style="--d:-0.8s;--y:-13px"/>
-<use href="#c" x="84" y="190" style="--d:-0.8s;--y:-13.7px"/>
-<use href="#c" x="140" y="190" style="--d:-0.9s;--y:-14.3px"/>
-<use href="#c" x="196" y="190" style="--d:-0.9s;--y:-15px"/>
-<use href="#c" x="252" y="190" style="--d:-0.9s;--y:-15.7px"/>
-<use href="#c" x="308" y="190" style="--d:-0.9s;--y:-16.3px"/>
-<use href="#c" x="364" y="190" style="--d:-1s;--y:-17px"/>
-<use href="#c" x="420" y="190" style="--d:-1s;--y:-17.6px"/>
-<use href="#c" x="476" y="190" style="--d:-1s;--y:-18.2px"/>
-<use href="#c" x="532" y="190" style="--d:-1s;--y:-18.9px"/>
-<use href="#c" x="588" y="190" style="--d:-1.1s;--y:-19.5px"/>
-<use href="#c" x="644" y="190" style="--d:-1.1s;--y:-20.1px"/>
-<use href="#c" x="700" y="190" style="--d:-1.1s;--y:-20.7px"/>
-<use href="#c" x="756" y="190" style="--d:-1.1s;--y:-21.3px"/>
-<use href="#c" x="812" y="190" style="--d:-1.2s;--y:-21.9px"/>
-<use href="#c" x="868" y="190" style="--d:-1.2s;--y:-22.5px"/>
-<use href="#c" x="924" y="190" style="--d:-1.2s;--y:-23.1px"/>
-<use href="#c" x="980" y="190" style="--d:-1.2s;--y:-23.6px"/>
-<use href="#c" x="1036" y="190" style="--d:-1.3s;--y:-24.1px"/>
-<use href="#c" x="1092" y="190" style="--d:-1.3s;--y:-24.6px"/>
-<use href="#c" x="1148" y="190" style="--d:-1.3s;--y:-25.1px"/>
-<use href="#c" x="1204" y="190" style="--d:-1.3s;--y:-25.6px"/>
-<use href="#c" x="1260" y="190" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="-56" y="204" style="--d:-0.8s;--y:-13.2px"/>
-<use href="#c" x="0" y="204" style="--d:-0.9s;--y:-13.8px"/>
-<use href="#c" x="56" y="204" style="--d:-0.9s;--y:-14.5px"/>
-<use href="#c" x="112" y="204" style="--d:-0.9s;--y:-15.1px"/>
-<use href="#c" x="168" y="204" style="--d:-0.9s;--y:-15.8px"/>
-<use href="#c" x="224" y="204" style="--d:-1s;--y:-16.4px"/>
-<use href="#c" x="280" y="204" style="--d:-1s;--y:-17.1px"/>
-<use href="#c" x="336" y="204" style="--d:-1s;--y:-17.7px"/>
-<use href="#c" x="392" y="204" style="--d:-1s;--y:-18.4px"/>
-<use href="#c" x="448" y="204" style="--d:-1.1s;--y:-19px"/>
-<use href="#c" x="504" y="204" style="--d:-1.1s;--y:-19.6px"/>
-<use href="#c" x="560" y="204" style="--d:-1.1s;--y:-20.3px"/>
-<use href="#c" x="616" y="204" style="--d:-1.1s;--y:-20.9px"/>
-<use href="#c" x="672" y="204" style="--d:-1.2s;--y:-21.5px"/>
-<use href="#c" x="728" y="204" style="--d:-1.2s;--y:-22px"/>
-<use href="#c" x="784" y="204" style="--d:-1.2s;--y:-22.6px"/>
-<use href="#c" x="840" y="204" style="--d:-1.2s;--y:-23.2px"/>
-<use href="#c" x="896" y="204" style="--d:-1.3s;--y:-23.7px"/>
-<use href="#c" x="952" y="204" style="--d:-1.3s;--y:-24.2px"/>
-<use href="#c" x="1008" y="204" style="--d:-1.3s;--y:-24.7px"/>
-<use href="#c" x="1064" y="204" style="--d:-1.3s;--y:-25.2px"/>
-<use href="#c" x="1120" y="204" style="--d:-1.4s;--y:-25.7px"/>
-<use href="#c" x="1176" y="204" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="1232" y="204" style="--d:-1.4s;--y:-26.6px"/>
-<use href="#c" x="1288" y="204" style="--d:-1.4s;--y:-27px"/>
-<use href="#c" x="-28" y="218" style="--d:-0.9s;--y:-14.6px"/>
-<use href="#c" x="28" y="218" style="--d:-0.9s;--y:-15.3px"/>
-<use href="#c" x="84" y="218" style="--d:-0.9s;--y:-15.9px"/>
-<use href="#c" x="140" y="218" style="--d:-1s;--y:-16.6px"/>
-<use href="#c" x="196" y="218" style="--d:-1s;--y:-17.2px"/>
-<use href="#c" x="252" y="218" style="--d:-1s;--y:-17.9px"/>
-<use href="#c" x="308" y="218" style="--d:-1s;--y:-18.5px"/>
-<use href="#c" x="364" y="218" style="--d:-1.1s;--y:-19.1px"/>
-<use href="#c" x="420" y="218" style="--d:-1.1s;--y:-19.8px"/>
-<use href="#c" x="476" y="218" style="--d:-1.1s;--y:-20.4px"/>
-<use href="#c" x="532" y="218" style="--d:-1.1s;--y:-21px"/>
-<use href="#c" x="588" y="218" style="--d:-1.2s;--y:-21.6px"/>
-<use href="#c" x="644" y="218" style="--d:-1.2s;--y:-22.2px"/>
-<use href="#c" x="700" y="218" style="--d:-1.2s;--y:-22.7px"/>
-<use href="#c" x="756" y="218" style="--d:-1.2s;--y:-23.3px"/>
-<use href="#c" x="812" y="218" style="--d:-1.3s;--y:-23.8px"/>
-<use href="#c" x="868" y="218" style="--d:-1.3s;--y:-24.3px"/>
-<use href="#c" x="924" y="218" style="--d:-1.3s;--y:-24.8px"/>
-<use href="#c" x="980" y="218" style="--d:-1.3s;--y:-25.3px"/>
-<use href="#c" x="1036" y="218" style="--d:-1.4s;--y:-25.8px"/>
-<use href="#c" x="1092" y="218" style="--d:-1.4s;--y:-26.2px"/>
-<use href="#c" x="1148" y="218" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="1204" y="218" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="1260" y="218" style="--d:-1.5s;--y:-27.4px"/>
-<use href="#c" x="-56" y="232" style="--d:-0.9s;--y:-15.4px"/>
-<use href="#c" x="0" y="232" style="--d:-0.9s;--y:-16px"/>
-<use href="#c" x="56" y="232" style="--d:-1s;--y:-16.7px"/>
-<use href="#c" x="112" y="232" style="--d:-1s;--y:-17.3px"/>
-<use href="#c" x="168" y="232" style="--d:-1s;--y:-18px"/>
-<use href="#c" x="224" y="232" style="--d:-1s;--y:-18.6px"/>
-<use href="#c" x="280" y="232" style="--d:-1.1s;--y:-19.3px"/>
-<use href="#c" x="336" y="232" style="--d:-1.1s;--y:-19.9px"/>
-<use href="#c" x="392" y="232" style="--d:-1.1s;--y:-20.5px"/>
-<use href="#c" x="448" y="232" style="--d:-1.1s;--y:-21.1px"/>
-<use href="#c" x="504" y="232" style="--d:-1.2s;--y:-21.7px"/>
-<use href="#c" x="560" y="232" style="--d:-1.2s;--y:-22.3px"/>
-<use href="#c" x="616" y="232" style="--d:-1.2s;--y:-22.8px"/>
-<use href="#c" x="672" y="232" style="--d:-1.2s;--y:-23.4px"/>
-<use href="#c" x="728" y="232" style="--d:-1.3s;--y:-23.9px"/>
-<use href="#c" x="784" y="232" style="--d:-1.3s;--y:-24.4px"/>
-<use href="#c" x="840" y="232" style="--d:-1.3s;--y:-24.9px"/>
-<use href="#c" x="896" y="232" style="--d:-1.3s;--y:-25.4px"/>
-<use href="#c" x="952" y="232" style="--d:-1.4s;--y:-25.9px"/>
-<use href="#c" x="1008" y="232" style="--d:-1.4s;--y:-26.3px"/>
-<use href="#c" x="1064" y="232" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="1120" y="232" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="1176" y="232" style="--d:-1.5s;--y:-27.5px"/>
-<use href="#c" x="1232" y="232" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="1288" y="232" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="-28" y="246" style="--d:-1s;--y:-16.8px"/>
-<use href="#c" x="28" y="246" style="--d:-1s;--y:-17.5px"/>
-<use href="#c" x="84" y="246" style="--d:-1s;--y:-18.1px"/>
-<use href="#c" x="140" y="246" style="--d:-1s;--y:-18.8px"/>
-<use href="#c" x="196" y="246" style="--d:-1.1s;--y:-19.4px"/>
-<use href="#c" x="252" y="246" style="--d:-1.1s;--y:-20px"/>
-<use href="#c" x="308" y="246" style="--d:-1.1s;--y:-20.6px"/>
-<use href="#c" x="364" y="246" style="--d:-1.1s;--y:-21.2px"/>
-<use href="#c" x="420" y="246" style="--d:-1.2s;--y:-21.8px"/>
-<use href="#c" x="476" y="246" style="--d:-1.2s;--y:-22.4px"/>
-<use href="#c" x="532" y="246" style="--d:-1.2s;--y:-22.9px"/>
-<use href="#c" x="588" y="246" style="--d:-1.2s;--y:-23.5px"/>
-<use href="#c" x="644" y="246" style="--d:-1.3s;--y:-24px"/>
-<use href="#c" x="700" y="246" style="--d:-1.3s;--y:-24.5px"/>
-<use href="#c" x="756" y="246" style="--d:-1.3s;--y:-25px"/>
-<use href="#c" x="812" y="246" style="--d:-1.3s;--y:-25.5px"/>
-<use href="#c" x="868" y="246" style="--d:-1.4s;--y:-26px"/>
-<use href="#c" x="924" y="246" style="--d:-1.4s;--y:-26.4px"/>
-<use href="#c" x="980" y="246" style="--d:-1.4s;--y:-26.8px"/>
-<use href="#c" x="1036" y="246" style="--d:-1.4s;--y:-27.2px"/>
-<use href="#c" x="1092" y="246" style="--d:-1.5s;--y:-27.6px"/>
-<use href="#c" x="1148" y="246" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="1204" y="246" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="1260" y="246" style="--d:-1.5s;--y:-28.5px"/>
-<use href="#c" x="-56" y="260" style="--d:-1s;--y:-17.6px"/>
-<use href="#c" x="0" y="260" style="--d:-1s;--y:-18.2px"/>
-<use href="#c" x="56" y="260" style="--d:-1s;--y:-18.9px"/>
-<use href="#c" x="112" y="260" style="--d:-1.1s;--y:-19.5px"/>
-<use href="#c" x="168" y="260" style="--d:-1.1s;--y:-20.1px"/>
-<use href="#c" x="224" y="260" style="--d:-1.1s;--y:-20.7px"/>
-<use href="#c" x="280" y="260" style="--d:-1.1s;--y:-21.3px"/>
-<use href="#c" x="336" y="260" style="--d:-1.2s;--y:-21.9px"/>
-<use href="#c" x="392" y="260" style="--d:-1.2s;--y:-22.5px"/>
-<use href="#c" x="448" y="260" style="--d:-1.2s;--y:-23.1px"/>
-<use href="#c" x="504" y="260" style="--d:-1.2s;--y:-23.6px"/>
-<use href="#c" x="560" y="260" style="--d:-1.3s;--y:-24.1px"/>
-<use href="#c" x="616" y="260" style="--d:-1.3s;--y:-24.6px"/>
-<use href="#c" x="672" y="260" style="--d:-1.3s;--y:-25.1px"/>
-<use href="#c" x="728" y="260" style="--d:-1.3s;--y:-25.6px"/>
-<use href="#c" x="784" y="260" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="840" y="260" style="--d:-1.4s;--y:-26.5px"/>
-<use href="#c" x="896" y="260" style="--d:-1.4s;--y:-26.9px"/>
-<use href="#c" x="952" y="260" style="--d:-1.4s;--y:-27.3px"/>
-<use href="#c" x="1008" y="260" style="--d:-1.5s;--y:-27.7px"/>
-<use href="#c" x="1064" y="260" style="--d:-1.5s;--y:-28px"/>
-<use href="#c" x="1120" y="260" style="--d:-1.5s;--y:-28.3px"/>
-<use href="#c" x="1176" y="260" style="--d:-1.5s;--y:-28.6px"/>
-<use href="#c" x="1232" y="260" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="1288" y="260" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="-28" y="274" style="--d:-1.1s;--y:-19px"/>
-<use href="#c" x="28" y="274" style="--d:-1.1s;--y:-19.6px"/>
-<use href="#c" x="84" y="274" style="--d:-1.1s;--y:-20.3px"/>
-<use href="#c" x="140" y="274" style="--d:-1.1s;--y:-20.9px"/>
-<use href="#c" x="196" y="274" style="--d:-1.2s;--y:-21.5px"/>
-<use href="#c" x="252" y="274" style="--d:-1.2s;--y:-22px"/>
-<use href="#c" x="308" y="274" style="--d:-1.2s;--y:-22.6px"/>
-<use href="#c" x="364" y="274" style="--d:-1.2s;--y:-23.2px"/>
-<use href="#c" x="420" y="274" style="--d:-1.3s;--y:-23.7px"/>
-<use href="#c" x="476" y="274" style="--d:-1.3s;--y:-24.2px"/>
-<use href="#c" x="532" y="274" style="--d:-1.3s;--y:-24.7px"/>
-<use href="#c" x="588" y="274" style="--d:-1.3s;--y:-25.2px"/>
-<use href="#c" x="644" y="274" style="--d:-1.4s;--y:-25.7px"/>
-<use href="#c" x="700" y="274" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="756" y="274" style="--d:-1.4s;--y:-26.6px"/>
-<use href="#c" x="812" y="274" style="--d:-1.4s;--y:-27px"/>
-<use href="#c" x="868" y="274" style="--d:-1.5s;--y:-27.4px"/>
-<use href="#c" x="924" y="274" style="--d:-1.5s;--y:-27.7px"/>
-<use href="#c" x="980" y="274" style="--d:-1.5s;--y:-28.1px"/>
-<use href="#c" x="1036" y="274" style="--d:-1.5s;--y:-28.4px"/>
-<use href="#c" x="1092" y="274" style="--d:-1.6s;--y:-28.6px"/>
-<use href="#c" x="1148" y="274" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="1204" y="274" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="1260" y="274" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="-56" y="288" style="--d:-1.1s;--y:-19.8px"/>
-<use href="#c" x="0" y="288" style="--d:-1.1s;--y:-20.4px"/>
-<use href="#c" x="56" y="288" style="--d:-1.1s;--y:-21px"/>
-<use href="#c" x="112" y="288" style="--d:-1.2s;--y:-21.6px"/>
-<use href="#c" x="168" y="288" style="--d:-1.2s;--y:-22.2px"/>
-<use href="#c" x="224" y="288" style="--d:-1.2s;--y:-22.7px"/>
-<use href="#c" x="280" y="288" style="--d:-1.2s;--y:-23.3px"/>
-<use href="#c" x="336" y="288" style="--d:-1.3s;--y:-23.8px"/>
-<use href="#c" x="392" y="288" style="--d:-1.3s;--y:-24.3px"/>
-<use href="#c" x="448" y="288" style="--d:-1.3s;--y:-24.8px"/>
-<use href="#c" x="504" y="288" style="--d:-1.3s;--y:-25.3px"/>
-<use href="#c" x="560" y="288" style="--d:-1.4s;--y:-25.8px"/>
-<use href="#c" x="616" y="288" style="--d:-1.4s;--y:-26.2px"/>
-<use href="#c" x="672" y="288" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="728" y="288" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="784" y="288" style="--d:-1.5s;--y:-27.4px"/>
-<use href="#c" x="840" y="288" style="--d:-1.5s;--y:-27.8px"/>
-<use href="#c" x="896" y="288" style="--d:-1.5s;--y:-28.1px"/>
-<use href="#c" x="952" y="288" style="--d:-1.5s;--y:-28.4px"/>
-<use href="#c" x="1008" y="288" style="--d:-1.6s;--y:-28.7px"/>
-<use href="#c" x="1064" y="288" style="--d:-1.6s;--y:-29px"/>
-<use href="#c" x="1120" y="288" style="--d:-1.6s;--y:-29.2px"/>
-<use href="#c" x="1176" y="288" style="--d:-1.6s;--y:-29.4px"/>
-<use href="#c" x="1232" y="288" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="1288" y="288" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="-28" y="302" style="--d:-1.1s;--y:-21.1px"/>
-<use href="#c" x="28" y="302" style="--d:-1.2s;--y:-21.7px"/>
-<use href="#c" x="84" y="302" style="--d:-1.2s;--y:-22.3px"/>
-<use href="#c" x="140" y="302" style="--d:-1.2s;--y:-22.8px"/>
-<use href="#c" x="196" y="302" style="--d:-1.2s;--y:-23.4px"/>
-<use href="#c" x="252" y="302" style="--d:-1.3s;--y:-23.9px"/>
-<use href="#c" x="308" y="302" style="--d:-1.3s;--y:-24.4px"/>
-<use href="#c" x="364" y="302" style="--d:-1.3s;--y:-24.9px"/>
-<use href="#c" x="420" y="302" style="--d:-1.3s;--y:-25.4px"/>
-<use href="#c" x="476" y="302" style="--d:-1.4s;--y:-25.9px"/>
-<use href="#c" x="532" y="302" style="--d:-1.4s;--y:-26.3px"/>
-<use href="#c" x="588" y="302" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="644" y="302" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="700" y="302" style="--d:-1.5s;--y:-27.5px"/>
-<use href="#c" x="756" y="302" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="812" y="302" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="868" y="302" style="--d:-1.5s;--y:-28.5px"/>
-<use href="#c" x="924" y="302" style="--d:-1.6s;--y:-28.8px"/>
-<use href="#c" x="980" y="302" style="--d:-1.6s;--y:-29px"/>
-<use href="#c" x="1036" y="302" style="--d:-1.6s;--y:-29.2px"/>
-<use href="#c" x="1092" y="302" style="--d:-1.6s;--y:-29.4px"/>
-<use href="#c" x="1148" y="302" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="1204" y="302" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="1260" y="302" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="0" y="316" style="--d:-1.2s;--y:-22.4px"/>
-<use href="#c" x="56" y="316" style="--d:-1.2s;--y:-22.9px"/>
-<use href="#c" x="112" y="316" style="--d:-1.2s;--y:-23.5px"/>
-<use href="#c" x="168" y="316" style="--d:-1.3s;--y:-24px"/>
-<use href="#c" x="224" y="316" style="--d:-1.3s;--y:-24.5px"/>
-<use href="#c" x="280" y="316" style="--d:-1.3s;--y:-25px"/>
-<use href="#c" x="336" y="316" style="--d:-1.3s;--y:-25.5px"/>
-<use href="#c" x="392" y="316" style="--d:-1.4s;--y:-26px"/>
-<use href="#c" x="448" y="316" style="--d:-1.4s;--y:-26.4px"/>
-<use href="#c" x="504" y="316" style="--d:-1.4s;--y:-26.8px"/>
-<use href="#c" x="560" y="316" style="--d:-1.4s;--y:-27.2px"/>
-<use href="#c" x="616" y="316" style="--d:-1.5s;--y:-27.6px"/>
-<use href="#c" x="672" y="316" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="728" y="316" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="784" y="316" style="--d:-1.5s;--y:-28.5px"/>
-<use href="#c" x="840" y="316" style="--d:-1.6s;--y:-28.8px"/>
-<use href="#c" x="896" y="316" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="952" y="316" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="1008" y="316" style="--d:-1.6s;--y:-29.5px"/>
-<use href="#c" x="1064" y="316" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="1120" y="316" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="1176" y="316" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="1232" y="316" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="1288" y="316" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="28" y="330" style="--d:-1.2s;--y:-23.6px"/>
-<use href="#c" x="84" y="330" style="--d:-1.3s;--y:-24.1px"/>
-<use href="#c" x="140" y="330" style="--d:-1.3s;--y:-24.6px"/>
-<use href="#c" x="196" y="330" style="--d:-1.3s;--y:-25.1px"/>
-<use href="#c" x="252" y="330" style="--d:-1.3s;--y:-25.6px"/>
-<use href="#c" x="308" y="330" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="364" y="330" style="--d:-1.4s;--y:-26.5px"/>
-<use href="#c" x="420" y="330" style="--d:-1.4s;--y:-26.9px"/>
-<use href="#c" x="476" y="330" style="--d:-1.4s;--y:-27.3px"/>
-<use href="#c" x="532" y="330" style="--d:-1.5s;--y:-27.7px"/>
-<use href="#c" x="588" y="330" style="--d:-1.5s;--y:-28px"/>
-<use href="#c" x="644" y="330" style="--d:-1.5s;--y:-28.3px"/>
-<use href="#c" x="700" y="330" style="--d:-1.5s;--y:-28.6px"/>
-<use href="#c" x="756" y="330" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="812" y="330" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="868" y="330" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="924" y="330" style="--d:-1.6s;--y:-29.5px"/>
-<use href="#c" x="980" y="330" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="1036" y="330" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="1092" y="330" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="1148" y="330" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="1204" y="330" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1260" y="330" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="56" y="344" style="--d:-1.3s;--y:-24.7px"/>
-<use href="#c" x="112" y="344" style="--d:-1.3s;--y:-25.2px"/>
-<use href="#c" x="168" y="344" style="--d:-1.4s;--y:-25.7px"/>
-<use href="#c" x="224" y="344" style="--d:-1.4s;--y:-26.1px"/>
-<use href="#c" x="280" y="344" style="--d:-1.4s;--y:-26.6px"/>
-<use href="#c" x="336" y="344" style="--d:-1.4s;--y:-27px"/>
-<use href="#c" x="392" y="344" style="--d:-1.5s;--y:-27.4px"/>
-<use href="#c" x="448" y="344" style="--d:-1.5s;--y:-27.7px"/>
-<use href="#c" x="504" y="344" style="--d:-1.5s;--y:-28.1px"/>
-<use href="#c" x="560" y="344" style="--d:-1.5s;--y:-28.4px"/>
-<use href="#c" x="616" y="344" style="--d:-1.6s;--y:-28.6px"/>
-<use href="#c" x="672" y="344" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="728" y="344" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="784" y="344" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="840" y="344" style="--d:-1.7s;--y:-29.5px"/>
-<use href="#c" x="896" y="344" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="952" y="344" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="1008" y="344" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="1064" y="344" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1120" y="344" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1176" y="344" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1232" y="344" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1288" y="344" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="84" y="358" style="--d:-1.4s;--y:-25.8px"/>
-<use href="#c" x="140" y="358" style="--d:-1.4s;--y:-26.2px"/>
-<use href="#c" x="196" y="358" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="252" y="358" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="308" y="358" style="--d:-1.5s;--y:-27.4px"/>
-<use href="#c" x="364" y="358" style="--d:-1.5s;--y:-27.8px"/>
-<use href="#c" x="420" y="358" style="--d:-1.5s;--y:-28.1px"/>
-<use href="#c" x="476" y="358" style="--d:-1.5s;--y:-28.4px"/>
-<use href="#c" x="532" y="358" style="--d:-1.6s;--y:-28.7px"/>
-<use href="#c" x="588" y="358" style="--d:-1.6s;--y:-29px"/>
-<use href="#c" x="644" y="358" style="--d:-1.6s;--y:-29.2px"/>
-<use href="#c" x="700" y="358" style="--d:-1.6s;--y:-29.4px"/>
-<use href="#c" x="756" y="358" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="812" y="358" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="868" y="358" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="924" y="358" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="980" y="358" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1036" y="358" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1092" y="358" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1148" y="358" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1204" y="358" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="1260" y="358" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="112" y="372" style="--d:-1.4s;--y:-26.7px"/>
-<use href="#c" x="168" y="372" style="--d:-1.4s;--y:-27.1px"/>
-<use href="#c" x="224" y="372" style="--d:-1.5s;--y:-27.5px"/>
-<use href="#c" x="280" y="372" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="336" y="372" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="392" y="372" style="--d:-1.5s;--y:-28.5px"/>
-<use href="#c" x="448" y="372" style="--d:-1.6s;--y:-28.8px"/>
-<use href="#c" x="504" y="372" style="--d:-1.6s;--y:-29px"/>
-<use href="#c" x="560" y="372" style="--d:-1.6s;--y:-29.2px"/>
-<use href="#c" x="616" y="372" style="--d:-1.6s;--y:-29.4px"/>
-<use href="#c" x="672" y="372" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="728" y="372" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="784" y="372" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="840" y="372" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="896" y="372" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="952" y="372" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1008" y="372" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1064" y="372" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1120" y="372" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="1176" y="372" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="1232" y="372" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="1288" y="372" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="140" y="386" style="--d:-1.5s;--y:-27.6px"/>
-<use href="#c" x="196" y="386" style="--d:-1.5s;--y:-27.9px"/>
-<use href="#c" x="252" y="386" style="--d:-1.5s;--y:-28.2px"/>
-<use href="#c" x="308" y="386" style="--d:-1.5s;--y:-28.5px"/>
-<use href="#c" x="364" y="386" style="--d:-1.6s;--y:-28.8px"/>
-<use href="#c" x="420" y="386" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="476" y="386" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="532" y="386" style="--d:-1.6s;--y:-29.5px"/>
-<use href="#c" x="588" y="386" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="644" y="386" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="700" y="386" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="756" y="386" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="812" y="386" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="868" y="386" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="924" y="386" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="980" y="386" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="1036" y="386" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="1092" y="386" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="1148" y="386" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="1204" y="386" style="--d:-1.9s;--y:-29.5px"/>
-<use href="#c" x="1260" y="386" style="--d:-2s;--y:-29.3px"/>
-<use href="#c" x="168" y="400" style="--d:-1.5s;--y:-28.3px"/>
-<use href="#c" x="224" y="400" style="--d:-1.5s;--y:-28.6px"/>
-<use href="#c" x="280" y="400" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="336" y="400" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="392" y="400" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="448" y="400" style="--d:-1.6s;--y:-29.5px"/>
-<use href="#c" x="504" y="400" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="560" y="400" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="616" y="400" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="672" y="400" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="728" y="400" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="784" y="400" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="840" y="400" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="896" y="400" style="--d:-1.8s;--y:-29.9px"/>
-<use href="#c" x="952" y="400" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="1008" y="400" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="1064" y="400" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="1120" y="400" style="--d:-1.9s;--y:-29.5px"/>
-<use href="#c" x="1176" y="400" style="--d:-2s;--y:-29.3px"/>
-<use href="#c" x="1232" y="400" style="--d:-2s;--y:-29.1px"/>
-<use href="#c" x="1288" y="400" style="--d:-2s;--y:-28.9px"/>
-<use href="#c" x="196" y="414" style="--d:-1.6s;--y:-28.9px"/>
-<use href="#c" x="252" y="414" style="--d:-1.6s;--y:-29.1px"/>
-<use href="#c" x="308" y="414" style="--d:-1.6s;--y:-29.3px"/>
-<use href="#c" x="364" y="414" style="--d:-1.7s;--y:-29.5px"/>
-<use href="#c" x="420" y="414" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="476" y="414" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="532" y="414" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="588" y="414" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="644" y="414" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="700" y="414" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="756" y="414" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="812" y="414" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="868" y="414" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="924" y="414" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="980" y="414" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="1036" y="414" style="--d:-2s;--y:-29.5px"/>
-<use href="#c" x="1092" y="414" style="--d:-2s;--y:-29.3px"/>
-<use href="#c" x="1148" y="414" style="--d:-2s;--y:-29.1px"/>
-<use href="#c" x="1204" y="414" style="--d:-2s;--y:-28.8px"/>
-<use href="#c" x="1260" y="414" style="--d:-2.1s;--y:-28.5px"/>
-<use href="#c" x="224" y="428" style="--d:-1.6s;--y:-29.4px"/>
-<use href="#c" x="280" y="428" style="--d:-1.7s;--y:-29.6px"/>
-<use href="#c" x="336" y="428" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="392" y="428" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="448" y="428" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="504" y="428" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="560" y="428" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="616" y="428" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="672" y="428" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="728" y="428" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="784" y="428" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="840" y="428" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="896" y="428" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="952" y="428" style="--d:-2s;--y:-29.4px"/>
-<use href="#c" x="1008" y="428" style="--d:-2s;--y:-29.2px"/>
-<use href="#c" x="1064" y="428" style="--d:-2s;--y:-29px"/>
-<use href="#c" x="1120" y="428" style="--d:-2s;--y:-28.8px"/>
-<use href="#c" x="1176" y="428" style="--d:-2.1s;--y:-28.5px"/>
-<use href="#c" x="1232" y="428" style="--d:-2.1s;--y:-28.2px"/>
-<use href="#c" x="252" y="442" style="--d:-1.7s;--y:-29.7px"/>
-<use href="#c" x="308" y="442" style="--d:-1.7s;--y:-29.8px"/>
-<use href="#c" x="364" y="442" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="420" y="442" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="476" y="442" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="532" y="442" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="588" y="442" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="644" y="442" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="700" y="442" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="756" y="442" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="812" y="442" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="868" y="442" style="--d:-2s;--y:-29.4px"/>
-<use href="#c" x="924" y="442" style="--d:-2s;--y:-29.2px"/>
-<use href="#c" x="980" y="442" style="--d:-2s;--y:-29px"/>
-<use href="#c" x="1036" y="442" style="--d:-2s;--y:-28.7px"/>
-<use href="#c" x="1092" y="442" style="--d:-2.1s;--y:-28.4px"/>
-<use href="#c" x="1148" y="442" style="--d:-2.1s;--y:-28.1px"/>
-<use href="#c" x="1204" y="442" style="--d:-2.1s;--y:-27.8px"/>
-<use href="#c" x="280" y="456" style="--d:-1.7s;--y:-29.9px"/>
-<use href="#c" x="336" y="456" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="392" y="456" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="448" y="456" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="504" y="456" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="560" y="456" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="616" y="456" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="672" y="456" style="--d:-1.9s;--y:-29.7px"/>
-<use href="#c" x="728" y="456" style="--d:-1.9s;--y:-29.5px"/>
-<use href="#c" x="784" y="456" style="--d:-2s;--y:-29.3px"/>
-<use href="#c" x="840" y="456" style="--d:-2s;--y:-29.1px"/>
-<use href="#c" x="896" y="456" style="--d:-2s;--y:-28.9px"/>
-<use href="#c" x="952" y="456" style="--d:-2s;--y:-28.6px"/>
-<use href="#c" x="1008" y="456" style="--d:-2.1s;--y:-28.4px"/>
-<use href="#c" x="1064" y="456" style="--d:-2.1s;--y:-28.1px"/>
-<use href="#c" x="1120" y="456" style="--d:-2.1s;--y:-27.7px"/>
-<use href="#c" x="1176" y="456" style="--d:-2.1s;--y:-27.4px"/>
-<use href="#c" x="308" y="470" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="364" y="470" style="--d:-1.8s;--y:-30px"/>
-<use href="#c" x="420" y="470" style="--d:-1.8s;--y:-29.9px"/>
-<use href="#c" x="476" y="470" style="--d:-1.9s;--y:-29.9px"/>
-<use href="#c" x="532" y="470" style="--d:-1.9s;--y:-29.8px"/>
-<use href="#c" x="588" y="470" style="--d:-1.9s;--y:-29.6px"/>
-<use href="#c" x="644" y="470" style="--d:-1.9s;--y:-29.5px"/>
-<use href="#c" x="700" y="470" style="--d:-2s;--y:-29.3px"/>
-<use href="#c" x="756" y="470" style="--d:-2s;--y:-29.1px"/>
-<use href="#c" x="812" y="470" style="--d:-2s;--y:-28.9px"/>
-<use href="#c" x="868" y="470" style="--d:-2s;--y:-28.6px"/>
-<use href="#c" x="924" y="470" style="--d:-2.1s;--y:-28.3px"/>
-<use href="#c" x="980" y="470" style="--d:-2.1s;--y:-28px"/>
-<use href="#c" x="1036" y="470" style="--d:-2.1s;--y:-27.7px"/>
-<use href="#c" x="1092" y="470" style="--d:-2.1s;--y:-27.3px"/>
-<use href="#c" x="1148" y="470" style="--d:-2.2s;--y:-26.9px"/>
+<rect width="1200" height="420" fill="url(#bloom)"/>
+
+<g mask="url(#floorMask)" stroke="#1B2740" stroke-width="1" fill="none">
+<line x1="910" y1="334" x2="-900" y2="420"/>
+<line x1="910" y1="334" x2="-782" y2="420"/>
+<line x1="910" y1="334" x2="-664" y2="420"/>
+<line x1="910" y1="334" x2="-546" y2="420"/>
+<line x1="910" y1="334" x2="-428" y2="420"/>
+<line x1="910" y1="334" x2="-310" y2="420"/>
+<line x1="910" y1="334" x2="-192" y2="420"/>
+<line x1="910" y1="334" x2="-74" y2="420"/>
+<line x1="910" y1="334" x2="44" y2="420"/>
+<line x1="910" y1="334" x2="162" y2="420"/>
+<line x1="910" y1="334" x2="280" y2="420"/>
+<line x1="910" y1="334" x2="398" y2="420"/>
+<line x1="910" y1="334" x2="516" y2="420"/>
+<line x1="910" y1="334" x2="634" y2="420"/>
+<line x1="910" y1="334" x2="752" y2="420"/>
+<line x1="910" y1="334" x2="870" y2="420"/>
+<line x1="910" y1="334" x2="988" y2="420"/>
+<line x1="910" y1="334" x2="1106" y2="420"/>
+<line x1="910" y1="334" x2="1224" y2="420"/>
+<line x1="910" y1="334" x2="1342" y2="420"/>
+<line x1="910" y1="334" x2="1460" y2="420"/>
+<line x1="910" y1="334" x2="1578" y2="420"/>
+<line x1="910" y1="334" x2="1696" y2="420"/>
+<line x1="910" y1="334" x2="1814" y2="420"/>
+<line x1="910" y1="334" x2="1932" y2="420"/>
+<line x1="910" y1="334" x2="2050" y2="420"/>
+<line x1="910" y1="334" x2="2168" y2="420"/>
+<line x1="0" y1="334.9" x2="1200" y2="334.9"/>
+<line x1="0" y1="337.7" x2="1200" y2="337.7"/>
+<line x1="0" y1="342.6" x2="1200" y2="342.6"/>
+<line x1="0" y1="349.7" x2="1200" y2="349.7"/>
+<line x1="0" y1="359" x2="1200" y2="359"/>
+<line x1="0" y1="370.7" x2="1200" y2="370.7"/>
+<line x1="0" y1="384.7" x2="1200" y2="384.7"/>
+<line x1="0" y1="401.2" x2="1200" y2="401.2"/>
+<line x1="0" y1="420" x2="1200" y2="420"/>
 </g>
 
-<rect width="1200" height="420" fill="url(#scrim)"/>
+<g class="mote-field">
+<circle cx="620" cy="70" r="0.9" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:0s"/>
+<circle cx="757" cy="281" r="1.4" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-1.4s"/>
+<circle cx="894" cy="212" r="1.8" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-2.7s"/>
+<circle cx="1031" cy="143" r="0.9" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-4.1s"/>
+<circle cx="1168" cy="74" r="1.4" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-5.5s"/>
+<circle cx="745" cy="285" r="1.8" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-6.8s"/>
+<circle cx="882" cy="216" r="0.9" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-8.2s"/>
+<circle cx="1019" cy="147" r="1.4" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-0.6s"/>
+<circle cx="1156" cy="78" r="1.8" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-2s"/>
+<circle cx="733" cy="289" r="0.9" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-3.3s"/>
+<circle cx="870" cy="220" r="1.4" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-4.7s"/>
+<circle cx="1007" cy="151" r="1.8" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-6.1s"/>
+<circle cx="1144" cy="82" r="0.9" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-7.4s"/>
+<circle cx="721" cy="293" r="1.4" fill="#5AA9FF" opacity="0.5" class="mote" style="--m:-8.8s"/>
+</g>
 
-<!-- Type is styled with presentation attributes for the same reason the field
+<g class="bench">
+  <!-- Cast shadow, then the slab edge, then the face. The edge is a second
+       rounded rect offset down and right: enough to read as thickness without
+       the false perspective a skewed face would introduce at this size. -->
+  <rect x="690" y="92" width="452" height="252" rx="14"
+        fill="#000" opacity="0.55" filter="url(#drop)"/>
+  <rect x="693" y="75" width="452" height="252" rx="14" fill="#080C16"/>
+  <rect x="684" y="66" width="452" height="252" rx="14"
+        fill="url(#faceFill)" stroke="#26334D" stroke-width="1"/>
+  <rect x="724" y="66" width="372" height="1" fill="url(#rimLight)"/>
+
+  <text x="710" y="102" fill="#61728F" font-size="11" letter-spacing="2.2"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">COMPONENT AUDIT</text>
+
+  <g class="pass">
+    <rect x="1048" y="88" width="62" height="20" rx="10"
+          fill="#3DDC97" opacity="0.14"/>
+    <text x="1079" y="102" text-anchor="middle" fill="#3DDC97"
+          font-size="11" letter-spacing="1.6"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">PASS</text>
+  </g>
+
+  <rect x="710" y="116" width="400" height="1" fill="#26334D"/>
+
+  <g class="r r0">
+    <rect x="710" y="133" width="188" height="17" rx="4" fill="#7A93C4"/>
+    <rect x="710" y="156" width="112" height="7" rx="3.5" fill="#2E3B54"/>
+    <text x="1088" y="152" text-anchor="end" fill="#93A4C4" font-size="12.5"
+          letter-spacing="0.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">type scale</text>
+    <circle cx="1105" cy="148" r="8" fill="#3DDC97" opacity="0.16"/>
+    <path d="M1101.4 148 l2.6 2.7 l4.6 -5.4" fill="none" stroke="#3DDC97"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="r r1">
+    <rect x="710" y="179" width="242" height="8" rx="4" fill="#7A93C4"/>
+    <rect x="710" y="194" width="186" height="8" rx="4" fill="#7A93C4" opacity="0.7"/>
+    <text x="1088" y="196" text-anchor="end" fill="#93A4C4" font-size="12.5"
+          letter-spacing="0.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">contrast</text>
+    <circle cx="1105" cy="192" r="8" fill="#3DDC97" opacity="0.16"/>
+    <path d="M1101.4 192 l2.6 2.7 l4.6 -5.4" fill="none" stroke="#3DDC97"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="r r2">
+    <rect x="705" y="217" width="118" height="42" rx="12" fill="none"
+          stroke="#5AA9FF" stroke-width="2" opacity="0.85"/>
+    <rect x="710" y="222" width="108" height="32" rx="9" fill="#2B6FD4"/>
+    <rect x="728" y="234" width="72" height="8" rx="4" fill="#F2F6FF" opacity="0.85"/>
+    <text x="1088" y="242" text-anchor="end" fill="#93A4C4" font-size="12.5"
+          letter-spacing="0.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">focus ring</text>
+    <circle cx="1105" cy="238" r="8" fill="#3DDC97" opacity="0.16"/>
+    <path d="M1101.4 238 l2.6 2.7 l4.6 -5.4" fill="none" stroke="#3DDC97"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="r r3">
+    <rect x="710" y="271" width="23" height="23" rx="6" fill="#7A93C4" opacity="1"/>
+    <rect x="740" y="271" width="23" height="23" rx="6" fill="#7A93C4" opacity="0.8"/>
+    <rect x="770" y="271" width="23" height="23" rx="6" fill="#7A93C4" opacity="0.7"/>
+    <rect x="800" y="271" width="23" height="23" rx="6" fill="#7A93C4" opacity="0.5"/>
+    <rect x="830" y="271" width="23" height="23" rx="6" fill="#7A93C4" opacity="0.4"/>
+    <text x="1088" y="286" text-anchor="end" fill="#93A4C4" font-size="12.5"
+          letter-spacing="0.4" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">oklch()</text>
+    <circle cx="1105" cy="282" r="8" fill="#3DDC97" opacity="0.16"/>
+    <path d="M1101.4 282 l2.6 2.7 l4.6 -5.4" fill="none" stroke="#3DDC97"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Three layers, and the order matters: a wide faint trail, a blurred core
+       for the bloom, then a hairline core on top so the beam still has a crisp
+       edge. Without the hairline the blur alone reads as a smudge.
+
+       The group RESTS at opacity 0 and the keyframes bring it in, so a dropped
+       stylesheet leaves no beam rather than a bright line parked across the
+       panel header. That was the one way the degraded frame differed from the
+       reduced-motion frame, and it is the kind of thing only a render catches. -->
+  <g class="beam" opacity="0">
+    <rect x="694" y="94" width="432" height="30" fill="url(#beamHaze)"/>
+    <rect x="694" y="123.5" width="432" height="1.6" fill="url(#beamFill)"
+          filter="url(#glow)"/>
+    <rect x="694" y="124" width="432" height="1" fill="url(#beamFill)"/>
+  </g>
+</g>
+
+<!-- Type is styled with presentation attributes for the same reason the panel
      is: no webfont can be fetched here, so these are system stacks, and nothing
-     about how the words look depends on the stylesheet surviving. -->
+     about how the words look depends on the stylesheet surviving. Two stacks
+     only — a serif for the wordmark, mono for everything technical. The previous
+     banner used four, which is how a 1200px image ends up with no voice. -->
 <g>
-  <rect x="72" y="118" width="86" height="2" fill="url(#rule)"/>
-  <text x="72" y="160" fill="#4C8DFF" letter-spacing="3.4"
-        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">SKILL PACK FOR AI CODING AGENTS</text>
-  <text x="70" y="232" fill="#E9EEF8" letter-spacing="-1.2"
-        font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif" font-size="58">frontend-design-pro</text>
-  <text x="72" y="276" fill="#8494B0"
-        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20">Machine-enforced frontend design.</text>
-  <text x="72" y="318" fill="#5A6883" letter-spacing="0.6"
-        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">verified, not asserted — every figure recomputed by a gate</text>
+  <rect x="72" y="112" width="64" height="2" fill="url(#accentRule)"/>
+  <text x="72" y="148" fill="#5AA9FF" letter-spacing="3.2"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">SKILL PACK FOR AI CODING AGENTS</text>
+  <text x="70" y="212" fill="#F2F6FF" letter-spacing="-1.4"
+        font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif" font-size="52">frontend-design-pro</text>
+  <text x="72" y="250" fill="#93A4C4" letter-spacing="0.2"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14.5">Taste you can put in CI.</text>
+  <text x="72" y="286" fill="#61728F" letter-spacing="0.5"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">every rule machine-checked · every figure recomputed by a gate</text>
 </g>
 </svg>
