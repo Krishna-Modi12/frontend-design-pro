@@ -11,7 +11,6 @@
 [![Stars](https://img.shields.io/github/stars/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=d29922&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/stargazers)
 
 [![Showcase](https://img.shields.io/badge/live%20demo-showcase-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
-[![Landing page](https://img.shields.io/badge/live%20demo-landing%20page-1f6feb?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)
 
 **[Showcase](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Landing page](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
 
