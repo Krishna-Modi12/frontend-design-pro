@@ -67,7 +67,7 @@ README on exactly the same footing.
 
 ### The patterns get fixtures of their own
 
-`scripts/figure_pattern_test.py` — **17 prose fixtures over 4 figures**,
+`scripts/figure_pattern_test.py` — **20 prose fixtures over 5 figures**,
 asserting in both directions, run by the chain and blocking. Not a twelfth gate:
 the roster in `check_figures.py` is what "11 gates" counts, and this is a proof
 step like the parser regression proof beside it.
@@ -78,6 +78,12 @@ registry, which would have failed two tables that were correct — a matcher fix
 that breaks correct files is not a fix. A root-only guard settles it, and a
 fixture now holds that behaviour in place. Reverting any of the three widenings
 fails the suite; that was checked rather than assumed.
+
+**And the fixture count is itself gated**, because writing it down went wrong
+immediately: three documents published "17 prose fixtures over 4 figures" while
+the suite grew to 20 over 5 before the release shipped — an ungated figure, in
+the release note about ungated figures. `compute_truth()` now counts the
+fixtures rather than trusting prose, and removing one fails two documents.
 
 ### Still open, and deliberately
 

@@ -197,6 +197,27 @@ def compute_truth() -> Dict[str, object]:
         "parser_constraints": parser,
         "regex_constraints": regex,
         "ci_constraints": parser + regex,
+        # Imported inside the function, not at module scope: figure_pattern_test
+        # imports this module, and by the time anything calls compute_truth()
+        # this module is fully loaded, so the cycle never closes. Counted rather
+        # than written down because the release that added those fixtures
+        # published "17 prose fixtures over 4 figures" in three documents and
+        # then grew to 20 over 5 before it shipped — an ungated figure, in the
+        # release note about ungated figures.
+        **_fixture_counts(),
+    }
+
+
+def _fixture_counts() -> Dict[str, object]:
+    if str(SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS))
+    try:
+        import figure_pattern_test as fpt
+    except ImportError:                      # the proof script is not installed
+        return {}                            # in the archive; skip rather than fail
+    return {
+        "figure_fixtures": len(fpt.CASES),
+        "figure_fixture_figures": len({c[0] for c in fpt.CASES}),
     }
 
 
@@ -349,6 +370,18 @@ FIGURES: Sequence[Figure] = (
         # here would miss every real instance of this form.
         r"(?i:lightest)[^.\n≤≥<>]{0,40}?\*{0,2}(?<![\d,])(\d,\d{3})\*{0,2}(?=[ -]tokens?\b|[.,;:)]|\*{2})",
         lambda t: (_n(t["band_low"]),),
+    ),
+    # One pattern capturing both numbers, because "N figures" alone is far too
+    # common a phrase in this repo to anchor on — it means the Figure table, a
+    # published count, or the word in ordinary use, and a pattern that cannot
+    # tell them apart would be muted within a release. Tied to the full phrase,
+    # it is unambiguous.
+    Figure(
+        "FIXTURES",
+        "prose fixtures in the figure-pattern proof, and the figures they cover",
+        r"(?<![\d,])(\d{1,3})\s+prose fixtures over (\d{1,2}) figures\b",
+        lambda t: (str(t.get("figure_fixtures", "")),
+                   str(t.get("figure_fixture_figures", ""))),
     ),
     Figure(
         "SKILLS",
