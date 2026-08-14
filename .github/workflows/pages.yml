@@ -5,7 +5,7 @@ name: Deploy showcase to Pages
 # nobody until this workflow existed.
 #
 # Both are now samples of what the pack produces, for fictional products —
-# demo/showcase is "Nexus" and demo/landing-page is "Switchyard". Neither is the
+# demo/showcase is "Nexus" and demo/landing-page is "Bellwether". Neither is the
 # pack's own homepage, so neither has a claim on the root beyond being the one a
 # visitor should meet first. That is the showcase: it is the fuller artifact,
 # with a WebGL hero, a validated form and five sections against the landing
