@@ -6,11 +6,14 @@ Flat derivative of [LAUNCH_KIT.md](LAUNCH_KIT.md), which stays **canonical** —
 
 **What changed from LAUNCH_READY.md**
 
+<!-- figures:historical — quotes the superseded 1,857/1,837 and 5,512/5,482 readings in order to record that they were wrong and were corrected; updating them would erase the correction this passage exists to document -->
+
 - **Token figures are the LF/git-index measurement**, which is what CI measures and what a reader who downloads the archive can reproduce. The earlier copy quoted a Windows working-tree measurement that reads marginally higher — registry 1,857 vs 1,837, ceiling 5,512 vs 5,482. The published release notes already print the LF numbers, so the old copy contradicted them in public. See the measurement note in [ARCHITECTURE.md](ARCHITECTURE.md).
+<!-- /figures:historical -->
 - **Every post now names the installer.** One command, ten agents, each in its own native rules format — the most concrete adoption story the pack has, and it appeared in none of the four posts.
 - The "no screenshot of the showcase" limitation was **false** and is replaced with the caveat that is real: the screenshot is captured by hand, not in CI, so it can go stale.
 
-Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 349,445 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 11 gates · registry 2,018 tokens · heaviest request 7,266 tokens.
+Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 349,445 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 11 gates · registry 2,099 tokens · heaviest request 7,476 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
@@ -31,14 +34,14 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 2,018
+frontend-design-pro is a registry instead of a document. SKILL.md is 2,099
 tokens — identity, an anti-slop wall, and a 19-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 349,445 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 7,266 tokens.
-The lightest loads 5,665. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 7,476 tokens.
+The lightest loads 5,912. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -115,12 +118,12 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 2,018 tokens. That's all that's always loaded.
+2/ SKILL.md is 2,099 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 7,266 tokens.
+Heaviest possible request: 7,476 tokens.
 Reference material available: 349,445 tokens.
 
 3/ The economics of this are the whole point.
@@ -221,13 +224,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 2,018 tokens, always loaded. Routing table + anti-slop wall.
+- `SKILL.md` — 2,099 tokens, always loaded. Routing table + anti-slop wall.
 - 19 skills, 843–1,718 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 101 references, 349,445 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **5,665 to 7,266 tokens.** A gate fails the build
+Measured per-request load: **5,912 to 7,476 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**
@@ -319,10 +322,13 @@ Do not cross-post the two within minutes of each other. Space them, and reply to
 - [ ] CI green on `main` — a red badge on an HN front page is unrecoverable
 - [ ] Latest release page loads and the `.skill` archive is attached
 - [ ] Links in the body resolve (the repo URL and the `#see-it-in-action` anchor)
+<!-- figures:historical — recounts the pre-launch mismatch using the figures as they stood that day; the numbers are the evidence, not a current claim -->
+
 - [ ] Figures in the posts match the latest release notes. This is the one that
       bit before launch: the posts said 1,857 / 5,512 while the published notes
       said 1,837 / 5,482, and "Measured, not estimated" is the first line a
       reader checks. `grep 'Registry' docs/RELEASE_NOTES-v*.md | tail -1`
+<!-- /figures:historical -->
 - [ ] `bash setup.sh` works from the *published* archive, not just the repo —
       unzip a release download into a scratch project and run it
 - [ ] Hacker News posted

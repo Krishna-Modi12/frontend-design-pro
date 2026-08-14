@@ -4,6 +4,90 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.10.1] — 2026-08-14
+
+**Gate 11 could not read the sentence "SKILL.md is 2,018 tokens."** The anchor
+required the filename in backticks, or the word "always" or "registry" within
+thirty characters and inside the same sentence. Documentation prose backticks a
+filename. Prose written for strangers does not — and that is the genre that goes
+in front of the largest audience this project will ever have.
+
+So all three tracked launch documents carried the superseded router size in
+live, present-tense prose while the gate reported **0 drift across 85 claim
+surfaces**. `docs/LAUNCH_KIT.md` calls itself canonical. Anyone posting from it
+would have published a figure that the archive on the release page contradicts.
+
+Two more forms of the same defect turned up beside it. `RANGE` only ever matched
+a dashed pair, so `5,665 to 7,266 tokens` — the band written out in words — was
+not a range as far as the gate was concerned. And the same band split across two
+sentences, "the heaviest possible request loads … the lightest loads …", matched
+nothing at all, because no pattern was anchored on the superlatives. **20 stale
+figures in total**, none of them visible in a green run.
+
+### An exemption that was silencing something other than its stated reason
+
+`docs/LAUNCH_FINAL.md` held a file-wide `REGISTRY` exemption, granted so that a
+"corrections paid before launch" passage could quote superseded figures verbatim
+without the gate rewriting the history it exists to record. That reason is
+sound. It was also not what the exemption was doing: the passage never matched
+the pattern in the first place, because it quotes bare numbers with no `tokens`
+after them. What the blanket exemption actually silenced was **four live stale
+claims elsewhere in the same file**.
+
+The exemption is gone. The two genuinely historical passages now carry
+`figures:historical` markers instead, scoped to the lines that need them with
+the reason attached to the passage rather than to the whole file — and verified
+in both directions: a stale figure inside a marker is spared, and the identical
+sentence outside one still fails.
+
+That is the sharper half of the finding. `README.md` **already used those
+markers in three places** for exactly this purpose, so the scoped tool was not
+missing or unknown — it was established practice in the same repo, and the
+blanket got reached for anyway. A per-file exemption is one line and silences
+everything; a marker is two lines and silences a passage. The cheap tool wins
+unless something makes the expensive one the default.
+
+### Two shipped manifests were outside the scan
+
+`metadata.json`'s prose `description` claimed **94 references, ~334k tokens and
+10 release-blocking gates** while the `stats` block two keys below it — audited
+since this gate was written — read 101 and 11. `.claude-plugin/plugin.json`, the
+string a marketplace listing renders, claimed **96 references**. Both ship inside
+the archive.
+
+`metadata.json` is audited field by field rather than added to the scan list,
+because its `changelog` is 45 historical entries — the same content
+`docs/CHANGELOG.md` is exempted for wholesale, and scanning the file would have
+demanded that every past release be rewritten to today's figures.
+
+`tools/screenshots/*.mjs` widened to `tools/*/*.mjs`. That entry exists because
+the screenshot harness drifted to "53 constraints" while outside the list, and
+`tools/readme-hero/` arrived this week generating the image at the top of the
+README on exactly the same footing.
+
+### The patterns get fixtures of their own
+
+`scripts/figure_pattern_test.py` — **17 prose fixtures over 4 figures**,
+asserting in both directions, run by the chain and blocking. Not a twelfth gate:
+the roster in `check_figures.py` is what "11 gates" counts, and this is a proof
+step like the parser regression proof beside it.
+
+The negative cases are the point. Widened naively, the anchor reached out of
+`skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the
+registry, which would have failed two tables that were correct — a matcher fix
+that breaks correct files is not a fix. A root-only guard settles it, and a
+fixture now holds that behaviour in place. Reverting any of the three widenings
+fails the suite; that was checked rather than assumed.
+
+### Still open, and deliberately
+
+The `k`-rounded depth figure still appears on **12 surfaces as 330k, 333k and
+344k**, none of which is the current 349,445. It is not gated here because those
+strings do not all name the same quantity — some are the whole pack, some are
+reference depth alone — and a pattern that cannot tell them apart would fail
+`README.md`, which is the figure authority. Closing it needs the truth table to
+publish both quantities first.
+
 ## [14.10.0] — 2026-08-13
 
 **The pack was written touch-first, and never said what changes when the pointer

@@ -18,6 +18,7 @@
     "constraints": "python scripts/test_constraints.py --dir skills",
     "references": "python scripts/check_references.py",
     "figures": "python scripts/check_figures.py",
+    "figures:test": "python scripts/figure_pattern_test.py",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
     "test": "vitest run",
