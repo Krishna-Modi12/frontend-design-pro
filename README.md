@@ -396,7 +396,33 @@ No horizontal scroll at 390px.
 
 ## Release history
 
-## What's new in v14.10.0
+## What's new in v14.10.1
+
+<!-- figures:historical — quotes the superseded 2,018 router size and 5,665/7,266 band verbatim; they are the evidence for what the patterns could not read, and correcting them would delete the finding -->
+
+**Gate 11 could not read the sentence "SKILL.md is 2,018 tokens."** The registry anchor required the filename in backticks, or the word *always* or *registry* within thirty characters and inside the same sentence. Documentation prose backticks a filename. Prose written for strangers does not — and that is the genre with the largest audience this project will ever have. So all three tracked launch documents carried the superseded router size in live, present-tense prose while the gate reported **0 drift across 85 claim surfaces**. [`docs/LAUNCH_KIT.md`](docs/LAUNCH_KIT.md) calls itself canonical.
+
+Two more forms of the same defect sat beside it. `RANGE` only ever matched a dashed pair, so `5,665 to 7,266 tokens` — the band written out in words — was not a range as far as the gate was concerned. And the same band split across two sentences, *"the heaviest possible request loads … the lightest loads …"*, matched nothing at all, because no pattern was anchored on the superlatives. **20 stale figures in total**, none of them visible in a green run.
+
+<!-- /figures:historical -->
+
+**An exemption was silencing something other than its stated reason.** `docs/LAUNCH_FINAL.md` held a file-wide `REGISTRY` exemption so that a corrections passage could quote superseded figures verbatim without the gate rewriting the history it exists to record. That reasoning is sound. It was also not what the exemption was doing — the passage never matched the pattern in the first place, because it quotes bare numbers with no `tokens` after them. What the blanket actually silenced was **four live stale claims elsewhere in the same file**. It is gone, replaced by scoped `figures:historical` markers — which is the sharper half of the finding, because this README already used those markers in three places for exactly this purpose. The scoped tool was established practice in the same repo, and the blanket got reached for anyway.
+
+<!-- figures:historical — quotes the superseded 94 and 96 reference counts and the 10-gate claim verbatim; they are what the manifests shipped, and correcting them would delete the finding -->
+
+**Two shipped manifests were outside the scan.** `metadata.json`'s prose description claimed 94 references and *10* release-blocking gates while the `stats` block two keys below it — audited since this gate existed — read 101 and 11. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json), the string a marketplace listing renders, claimed 96. Both ship inside the archive. `metadata.json` is now audited field by field rather than added to the scan list, because its changelog is 45 historical entries and scanning the file would demand that every past release be rewritten to today's figures.
+<!-- /figures:historical -->
+
+**The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **17 prose fixtures over 4 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
+
+**Still open, and deliberately.** The `k`-rounded depth figure appears on **12 surfaces as 330k, 333k and 344k**, none of them the current 349,445. It is not gated here because those strings do not all name the same quantity — some mean the whole pack, some mean reference depth alone — and a pattern that cannot tell them apart would fail `README.md`, which is the figure authority. Closing it needs the truth table to publish both quantities first.
+
+<details>
+<summary><b>Earlier releases — v14.10.0 back to v14.5.0</b></summary>
+
+<br>
+
+## Previously — v14.10.0
 
 **The pack was written touch-first, and never said what changes when the pointer is precise.** `platform` carried nine references — mobile, React Native, email, i18n, SEO, Stripe, AI SDK and two agent-ops files — and nothing at all about desktop. [`references/desktop-patterns.md`](skills/platform/references/desktop-patterns.md) closes it.
 
@@ -422,10 +448,6 @@ Five sources had never been touched, seven reference files were promised by gold
 
 **And five figures Gate 11 could not see.** The gate reported 0 drift while `docs/ARCHITECTURE.md` published a 19-row budget table in which every number was stale. A figure written `~333k`, or `N files` instead of `N references`, or followed by a comma, is invisible to it. The figures are fixed; the five blind spots are written into `CLAUDE.md`; **the gate is deliberately untouched**, because tightening it risks false positives across 85 surfaces and deserves its own pass with negative controls.
 
-<details>
-<summary><b>Earlier releases — v14.9.0 back to v14.5.0</b></summary>
-
-<br>
 
 ## Previously — v14.9.0
 
@@ -478,6 +500,7 @@ Two taste defects, both found by diffing our references against external sources
 - **Seven further findings are published unfixed** in [`docs/RELEASE_NOTES-v14.7.4.md`](docs/RELEASE_NOTES-v14.7.4.md) — including one that would invalidate ~40 of our own snippets if true, and which stays marked unverified until it is benchmarked. A pack claiming *verified rather than asserted* does not get to adopt a competitor's performance claim on authority.
 
 <!-- figures:historical — the figures v14.7.4 corrected; depth has moved since and rewriting this would falsify what that release actually did -->
+
 Three published figures were also wrong, two of them before this release: reference depth is **333,969**, a request costs **5,665–7,266** tokens, and the registry is **2,018** — quoted as both 2,002 and 2,018 in the same documents.
 <!-- /figures:historical -->
 
@@ -547,6 +570,7 @@ Security, enforcement and install coverage — the three things an outside reade
 - **A trust boundary on fetched content.** `design-research` instructs agents to fetch and read live pages, with nothing saying what authority that text carries. It now states it: fetched bytes — page text, alt text, comments, `<meta>`, hidden nodes, a README in a linked repo — are untrusted data being quoted, never instruction.
 - **Three rules documented everywhere and enforced nowhere** now have IDs. `min-h-screen`, `React.FC` and `onPress` on web were on the anti-slop wall and in `core/validate-checklist.md` with no check behind any of them — anti-example files were already annotating `❌ [RES] min-h-screen`, citing an ID the suite had never defined. Now **RES-03 / TS-02 / PLAT-01**. Constraints 53 → **56** (17 parser AST + 39 regex).
 <!-- figures:historical — what Gate 10 found on its first run under v14.6.0; the corpus was 94 files then, and rewriting it to today's count would falsify what that gate actually caught -->
+
 - **Gate 10 closes the blind spot.** `test_constraints.py` globs `*.tsx *.jsx *.ts *.js *.html`, so the **94 reference files — ~333k tokens, the part an agent actually loads for depth — were read by no gate at all.** The suite ran over the examples, which are 2% of the corpus. It showed: `glassmorphism.md` prescribed `min-h-screen bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500` under a heading reading **"Must have"** — both banned by name, in the same pack, in the same context window an agent holds. [`scripts/check_references.py`](scripts/check_references.py) imports its constraints from the suite (one definition, no drift), applies only **ban-shaped** ones (a 9-line snippet with no default export is correct, not defective), skips anti-example blocks, and carries a per-file, per-constraint reason on every exemption. First run: 20 violations. All fixed. Second run: 0. Gates 9 → **10**.
 <!-- /figures:historical -->
 - **Universal install.** `AUTO_AGENTS` was a hardcoded list of 5 while adapter discovery was derived from the directory, so any adapter added without editing that constant installed as a silent no-op. Both installers now derive auto-vs-manual from a `.manual` marker. **14 adapters, 10 automatic (was 5), 4 manual** — adding `AGENTS.md` (Codex, Jules, Devin, Factory, Amp, OpenHands, Junie, VS Code), `.clinerules/`, `.roo/rules/`, `.rules` (Zed) and `GEMINI.md`. **`AGENTS.md` is the one to install if you install only one** — an open spec donated to the Linux Foundation's Agentic AI Foundation, 60k+ repos, the only rules format read by more than one vendor. Gemini CLI gets its own file because it reads `GEMINI.md` and *not* `AGENTS.md`. Kilo Code is deliberately **not** shipped: its docs URL 404s and sources disagree on `.kilo/rules` vs `.kilocode/rules`, and a guessed path is worse than no adapter.

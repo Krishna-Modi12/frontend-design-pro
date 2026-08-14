@@ -97,6 +97,14 @@ jobs:
         if: failure() && steps.chain.outcome == 'failure'
         run: node scripts/parser_regression_test.js
 
+      # Broken out for the same reason as Gate 11 above: when the figure
+      # patterns stop reading a prose form, the chain says "Figure patterns
+      # FAILED" and nothing else, and the fixture that broke is the whole
+      # diagnosis.
+      - name: Figure pattern proof
+        if: failure() && steps.chain.outcome == 'failure'
+        run: python3 scripts/figure_pattern_test.py
+
   # demo/showcase/ is the one demo that claims to RUN. It has its own package.json
   # and real dependencies, so the stub-typed gates above cannot verify it and
   # build_release.py skips it on a machine without its node_modules. This job is

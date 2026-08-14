@@ -1,7 +1,7 @@
 ---
 name: testing
 description: Component testing — Vitest, Testing Library, jest-axe, Playwright e2e, Storybook stories, mock policy. Use when writing or augmenting tests — unit and interaction tests, accessibility assertions, end-to-end flows, Storybook stories, test setup and mocking — or when a component has been delivered without coverage.
-version: "14.10.0"
+version: "14.10.1"
 core-deps:
   - core/component-api.md
   - core/validate-checklist.md

@@ -295,8 +295,16 @@ FIGURES: Sequence[Figure] = (
         # to, then required to equal that one exactly. The three are far apart
         # — 789 / 2,843 / 5,665 — so the classification is unambiguous; if two
         # ever converge, split this figure rather than loosening it.
-        rf"(?<![\d,])(\d{{3}}|\d,\d{{3}})\s*{DASH}\s*(\d,\d{{3}})(?![\d,])",
+        #
+        # `to` is accepted alongside the dash because launch prose writes the
+        # band out in words — "Measured per-request load: 5,665 to 7,266
+        # tokens" sat in three tracked documents, stale, while a dash-only
+        # pattern called them clean. The `from` suppressor is what keeps that
+        # from swallowing a transition: "grew the registry from 1,895 to 1,998"
+        # narrates a change and its endpoints are history, not a band.
+        rf"(?<![\d,])(\d{{3}}|\d,\d{{3}})\s*(?:{DASH}|to)\s*(\d,\d{{3}})(?![\d,])",
         lambda t: (),  # resolved per-match by _expect_range
+        r"\bfrom\s+$",
     ),
     Figure(
         "REGISTRY",
@@ -309,9 +317,38 @@ FIGURES: Sequence[Figure] = (
         # `(?<!to )` is the worded form of the arrow suppressor: "grew SKILL.md
         # from 1,895 to 1,998 tokens" narrates a change, and its endpoint is
         # history rather than the file's current size.
-        r"(?:registry|`SKILL\.md`)[^.\n≤≥<>]{0,60}?\*{0,2}(?<![\d,])(?<!to )(\d,\d{3})\*{0,2}[ -]tokens?\b"
+        #
+        # The backticks are optional because docs prose backticks a filename and
+        # launch prose does not — "SKILL.md is 2,018 tokens" is how you write it
+        # for strangers, and it is the form that shipped stale in all three
+        # tracked launch documents while this gate reported them clean. The
+        # anchor must be the *root* file, hence `(?<![/\w-])`: without it,
+        # `skills/{id}/SKILL.md` reaches forward and reads the per-skill router
+        # range as if it were the registry, which flags two correct tables.
+        r"(?:registry|`?(?<![/\w-])SKILL\.md`?)[^.\n≤≥<>]{0,60}?\*{0,2}(?<![\d,])(?<!to )(\d,\d{3})\*{0,2}[ -]tokens?\b"
         r"|(?<![\d,])(\d,\d{3})\*{0,2}[ -]tokens?\b(?=[^.\n]{0,30}(?:always|registry))",
         lambda t: (_n(t["registry_tokens"]),),
+    ),
+    # The band's two edges, each written on its own — "the heaviest possible
+    # request loads 7,266 tokens. The lightest loads 5,665." is the same claim
+    # as the dashed pair RANGE reads, split across two sentences so that no
+    # range pattern can see it. Both edges sat stale in three documents.
+    # Anchored on the superlative rather than on "request", because the noun
+    # varies ("request", "skill", "route") and the superlative does not.
+    Figure(
+        "BAND-HIGH",
+        "the heaviest per-request load",
+        r"(?i:heaviest)[^.\n≤≥<>]{0,40}?\*{0,2}(?<![\d,])(\d,\d{3})\*{0,2}(?=[ -]tokens?\b|[.,;:)]|\*{2})",
+        lambda t: (_n(t["band_high"]),),
+    ),
+    Figure(
+        "BAND-LOW",
+        "the lightest per-request load",
+        # No `tokens` requirement: the unit is carried by the preceding sentence
+        # ("… loads 7,266 tokens. The lightest loads 5,665.") and demanding it
+        # here would miss every real instance of this form.
+        r"(?i:lightest)[^.\n≤≥<>]{0,40}?\*{0,2}(?<![\d,])(\d,\d{3})\*{0,2}(?=[ -]tokens?\b|[.,;:)]|\*{2})",
+        lambda t: (_n(t["band_low"]),),
     ),
     Figure(
         "SKILLS",
@@ -345,7 +382,12 @@ FIGURES: Sequence[Figure] = (
     Figure(
         "GATES",
         "number of release-blocking gates",
-        r"(?<![\d,])(\d{1,2})\s+(?:release-)?(?:blocking\s+|named\s+)?gates\b"
+        # `\*{0,2}` because this repo bolds and italicises figures constantly,
+        # and emphasis *between* the number and its noun breaks the `\s+`:
+        # `*10* release-blocking gates` was invisible here while `10 gates` was
+        # not. No instance existed in the corpus when this was widened — it is
+        # future coverage for a form the house style produces by habit.
+        r"(?<![\d,])\*{0,2}(\d{1,2})\*{0,2}\s+(?:release-)?(?:blocking\s+|named\s+)?gates\b"
         r"|\ball (\d{1,2}) gates\b",
         lambda t: (str(t["release_gates"]),),
     ),
@@ -428,7 +470,20 @@ SCAN: Sequence[str] = (
     # gates do and does it in numbers — and being outside this list is exactly
     # why it drifted to "53 constraints" and stayed there. A file that states a
     # figure is a claim surface whether or not a consumer ever opens it.
-    "tools/screenshots/*.mjs",
+    #
+    # Widened from `tools/screenshots/` to every tool: `tools/readme-hero/`
+    # arrived generating the image at the top of the README and would have
+    # inherited the same blind spot on the same reasoning.
+    "tools/*/*.mjs",
+    # The plugin manifest was outside this list entirely, and its description is
+    # what a marketplace listing renders — it shipped claiming 96 references
+    # against a real 101. It holds no history, so the whole file is fair game.
+    #
+    # `metadata.json` is deliberately NOT here: its `changelog` block is 45
+    # historical entries, the same content `docs/CHANGELOG.md` is exempted for
+    # wholesale. Its prose `description` is a live claim and is audited by
+    # `check_metadata` instead, field by field.
+    ".claude-plugin/*.json",
     # The issue template asks a reporter which gate should have caught their bug
     # and then lists the gates; the workflows describe what they run. Both were
     # two gates behind — the template could not express "Gate 11 missed it"
@@ -453,12 +508,6 @@ EXEMPT_FILES: Sequence[str] = (
 # because an exemption without a reason is indistinguishable from a bug someone
 # silenced.
 EXEMPT: Dict[str, Dict[str, str]] = {
-    "docs/LAUNCH_FINAL.md": {
-        "REGISTRY": "Section 'Corrections paid before launch' quotes the "
-                    "superseded 1,857/1,837 figures verbatim in order to record "
-                    "that they were wrong and were corrected. Updating them "
-                    "would erase the correction the passage exists to document.",
-    },
     "docs/METRICS_BASELINE.md": {
         "RANGE": "A dated baseline snapshot. Its whole function is to preserve "
                  "what the figures were on the day it was taken, so later runs "
@@ -551,6 +600,34 @@ def _expect_range(truth: Dict[str, object], got: tuple) -> tuple:
     return (_n(nearest[0]), _n(nearest[1]))
 
 
+def _drift(fig: Figure, text: str, m, truth: Dict[str, object]):
+    """One match, judged. Returns (found, expected) when it is drift, else None.
+
+    Module-level so the file walk and the manifest-description check below share
+    one definition of drift. A figure that meant one thing in a markdown file
+    and another in a JSON string would be worse than no check at all.
+    """
+    # A figure's pattern may hold alternates; the captures that actually
+    # fired are the ones to judge.
+    got = tuple(g for g in m.groups() if g is not None)
+    if not got or _suppressed(text, m.start(), fig.forbid):
+        return None
+    word_figure = fig.id.endswith("-WORD")
+    if word_figure:
+        # "Eleven gates" opening a sentence is the same claim as
+        # "eleven gates" inside one.
+        got = tuple(g.lower() for g in got)
+    expected = _expect_range(truth, got) if fig.id == "RANGE" else fig.expect(truth)
+    if len(got) != len(expected) or got == expected:
+        return None
+    # Rounding tolerance is arithmetic and cannot apply to a word — and
+    # int("eleven") would raise here.
+    if (not word_figure and len(got) == 1
+            and _is_rounding(got[0], int(expected[0].replace(",", "")))):
+        return None
+    return " / ".join(got), " / ".join(expected)
+
+
 def check_anchored(truth: Dict[str, object]) -> List[Finding]:
     findings: List[Finding] = []
     for path in _scan_files():
@@ -564,26 +641,10 @@ def check_anchored(truth: Dict[str, object]) -> List[Finding]:
                                     msg.split(" ", 1)[1], "a closed marker with a stated reason", ""))
         def judge(fig: Figure, text: str, m, line_no: int, display: str):
             """One match, judged. Returns a Finding when it is drift, else None."""
-            # A figure's pattern may hold alternates; the captures that actually
-            # fired are the ones to judge.
-            got = tuple(g for g in m.groups() if g is not None)
-            if not got or _suppressed(text, m.start(), fig.forbid):
+            drift = _drift(fig, text, m, truth)
+            if drift is None:
                 return None
-            word_figure = fig.id.endswith("-WORD")
-            if word_figure:
-                # "Eleven gates" opening a sentence is the same claim as
-                # "eleven gates" inside one.
-                got = tuple(g.lower() for g in got)
-            expected = _expect_range(truth, got) if fig.id == "RANGE" else fig.expect(truth)
-            if len(got) != len(expected) or got == expected:
-                return None
-            # Rounding tolerance is arithmetic and cannot apply to a word — and
-            # int("eleven") would raise here.
-            if (not word_figure and len(got) == 1
-                    and _is_rounding(got[0], int(expected[0].replace(",", "")))):
-                return None
-            return Finding("figure", rel, line_no, fig.id,
-                           " / ".join(got), " / ".join(expected), display)
+            return Finding("figure", rel, line_no, fig.id, drift[0], drift[1], display)
 
         for fig in FIGURES:
             if fig.id in exemptions:
@@ -767,6 +828,25 @@ def check_metadata(truth: Dict[str, object]) -> List[Finding]:
                 str(stats[key]), str(truth[key]),
                 f'"{key}": {stats[key]}',
             ))
+
+    # The prose `description` — the string a host surfaces above every stat in
+    # the block above, and the one nothing checked. It shipped inside the
+    # archive claiming 94 references and *10* release-blocking gates while the
+    # `stats` two keys below it read 101 and 11. Audited here rather than
+    # through SCAN because the file's `changelog` is history and must not be
+    # rewritten to match today's figures.
+    for field in ("description",):
+        prose = meta.get(field)
+        if not isinstance(prose, str):
+            continue
+        for fig in FIGURES:
+            for m in re.finditer(fig.pattern, prose):
+                drift = _drift(fig, prose, m, truth)
+                if drift:
+                    findings.append(Finding(
+                        "metadata", "metadata.json", 0, fig.id,
+                        drift[0], drift[1], f'"{field}": …{m.group(0)}…',
+                    ))
     return findings
 
 

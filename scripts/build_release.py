@@ -527,6 +527,16 @@ def gate_chain() -> tuple[bool, list]:
     rg = re.search(r"(\d+/\d+) regression", r.stdout)
     all_ok &= record("Regression", r.returncode == 0, (rg.group(1) if rg else "?") + " synthetic cases")
 
+    # Gate 11 recomputes every figure, but only for claims it recognises as
+    # claims. Three stale figures have shipped in prose forms no pattern
+    # matched, each one invisible in a green run — so the patterns get fixtures
+    # of their own. Blocking like Regression, and like Regression it is not a
+    # twelfth gate: the roster in check_figures.py is what `11 gates` counts.
+    r = run([sys.executable, str(SCRIPTS / "figure_pattern_test.py")])
+    fp = re.search(r"(\d+) prose fixtures", r.stdout)
+    all_ok &= record("Figure patterns", r.returncode == 0,
+                     (fp.group(1) if fp else "?") + " prose fixtures, both directions")
+
     return all_ok, results
 
 
@@ -1196,7 +1206,13 @@ def bump_patch():
     a, b, c = meta["version"].split(".")
     new = f"{a}.{b}.{int(c)+1}"
     meta["version"] = new
-    (ROOT / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    # `ensure_ascii=False` and the trailing newline both match how this file is
+    # stored. The defaults do not: escaping every em-dash into a \\u2014 sequence
+    # rewrote 26 changelog strings this bump never touched, and dropping the
+    # final newline showed up as a change to the closing brace. A version bump
+    # that produces a fifty-line diff hides the two lines that actually moved.
+    (ROOT / "metadata.json").write_text(
+        json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     # CHANGELOG insertion, two bugs deep.
     #
     # It used to anchor on the H1 and insert immediately after it, which put the
@@ -1236,7 +1252,13 @@ def bump_patch():
     if PLUGIN_JSON.exists():
         d = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
         d["version"] = new
-        PLUGIN_JSON.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8")
+        # `ensure_ascii=False` for the same reason as metadata.json above, plus
+        # a sharper one: this manifest is in Gate 11's scan list, and an escaped
+        # en-dash is the six characters – rather than a dash — so a band
+        # written "5,912–7,476" stops matching the range pattern and the claim
+        # goes silently ungated. Escaping is not neutral when a gate reads text.
+        PLUGIN_JSON.write_text(
+            json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         plugin = " + plugin.json"
     print(f"bumped to {new} (metadata + changelog + "
           f"{len(list(ROOT.glob('skills/*/SKILL.md')))} skill files{plugin})")
