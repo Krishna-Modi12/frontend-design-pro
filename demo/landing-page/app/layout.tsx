@@ -1,35 +1,29 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import "@fontsource-variable/fraunces/full.css";
-import "@fontsource-variable/fraunces/full-italic.css";
-import "@fontsource-variable/archivo/index.css";
 import "./globals.css";
 
 /**
- * Fonts come from `@fontsource-variable/*` rather than `next/font/google`.
- * Both self-host, but the Google loader reaches out to fonts.googleapis.com at
- * build time — and this app is built three times in CI by the screenshot and
- * verify harnesses, on runners where a cold font fetch is one more thing that
- * can fail for reasons unrelated to the page. The packages ship the files, so
- * the build is offline either way.
+ * Two families, both from the `geist` package, and nothing else.
  *
- * `fraunces/full.css` rather than `fraunces/index.css`: the "full" build is the
- * one carrying every axis. Fraunces is not just a weight axis — it has `opsz`,
- * `SOFT` and `WONK`, and the whole reason to choose it over a static serif is
- * that those are addressable. `index.css` ships weight only, and the
- * `font-variation-settings` in `lib/tokens.ts` would silently do nothing.
+ * The previous version of this page loaded three: a variable editorial serif
+ * for display, a grotesque for UI, and Geist Mono for figures. That was the
+ * right call for a light editorial page and the wrong one for a developer tool
+ * — a high-contrast serif at display size over a schema-migration product read
+ * as a magazine cover about databases rather than as an instrument.
  *
- * The italic file is imported because the headline actually uses it. Without a
- * real italic face the browser synthesises one by shearing the roman, and on a
- * high-contrast serif at display size that is glaringly obvious — the stress
- * goes the wrong way and the thin strokes smear. A synthesised italic is the
- * kind of defect that survives every gate in this repo, because all of them
- * read source.
+ * `geist` self-hosts, which is the property that matters here: `next/font/google`
+ * reaches out to fonts.googleapis.com at build time, and this app is built three
+ * times in CI by the screenshot and verify harnesses, on runners where a cold
+ * font fetch is one more thing that can fail for reasons unrelated to the page.
  *
- * `GeistMono` stays for figures only, which is why it is still worth a
- * dependency: it is a mono with real tabular figures, and every number on this
- * page sits in a column that has to line up.
+ * Geist Mono is not decorative. It ships real tabular figures, and every number
+ * on this page sits in a column that has to line up — see the `[data-metric]`
+ * rule in `lib/tokens.ts`.
+ *
+ * Both `.variable` classes go on <html> so the CSS custom properties they define
+ * are in scope for `app/globals.css`, which reads them through `@theme inline`.
  */
 export const metadata: Metadata = {
   title: "Bellwether — rehearse the migration before it runs",
@@ -43,7 +37,7 @@ export interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={GeistMono.variable}>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="bg-surface-page text-ink antialiased">{children}</body>
     </html>
   );

@@ -9,16 +9,26 @@ export interface CtaButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> 
 
 /**
  * One primary style per page, paired with a ghost secondary — never two solids.
- * On a light ground the outline variant has to sit on the raised surface rather
- * than on nothing: a transparent button on porcelain reads as a caption with a
- * box drawn round it, where the same treatment on a dark ground reads as a
- * control. Its border is `border-strong`, which is the token measured at 3.28:1
- * so the control's edge clears WCAG 1.4.11 without the label having to carry it.
+ *
+ * The outline variant is genuinely transparent here, and that is a change the
+ * palette made rather than a preference. On the light ground this page used to
+ * have, a transparent button read as a caption with a box drawn round it and
+ * had to sit on the raised surface to look like a control at all. On near-black
+ * the outline reads as a control on its own, so the fill comes off.
+ *
+ * Its border is `border-strong`, the token measured at 3.00:1 against the
+ * worst of the three surfaces, so the control's edge clears WCAG 1.4.11
+ * without the label having to carry it.
+ *
+ * `accent-ink` on the solid variant is pure white, not `ink`. `ink` is 95%
+ * lightness and measures 4.30:1 on the accent fill — under AA. That pairing is
+ * the single easiest mistake to make in this palette, which is why the two
+ * tokens exist separately.
  */
 const VARIANT: Record<"solid" | "outline", string> = {
   solid: "bg-accent text-accent-ink shadow-card hover:bg-accent/90",
   outline:
-    "border border-surface-border-strong bg-surface-raised text-ink hover:border-accent hover:text-accent",
+    "border border-surface-border-strong text-ink hover:border-accent-text hover:text-accent-text",
 };
 
 /**

@@ -5,11 +5,12 @@ import type { ReactElement } from "react";
 import Hero from "../components/Hero";
 import MetricsStrip from "../components/MetricsStrip";
 import type { PlatformMetric } from "../components/MetricsStrip";
+import HowItWorks from "../components/HowItWorks";
 import BentoFeatures from "../components/BentoFeatures";
 import SocialProof from "../components/SocialProof";
 import CtaBar from "../components/CtaBar";
 import Footer from "../components/Footer";
-import { FEATURES, PRODUCT, REPO_URL, TESTIMONIALS } from "../lib/content";
+import { FEATURES, PRODUCT, REPO_URL, STEPS, TESTIMONIALS } from "../lib/content";
 import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
 
 /**
@@ -141,6 +142,7 @@ export default function Page(): ReactElement {
           status={state.status}
           errorMessage={state.reason}
         />
+        <HowItWorks steps={STEPS} />
         <BentoFeatures features={FEATURES} />
         <SocialProof testimonials={TESTIMONIALS} />
         <CtaBar href={REPO_URL} />

@@ -17,18 +17,27 @@ export interface RehearsalReportProps {
 /**
  * The hero artifact: one rehearsal, reported.
  *
- * This replaces a terminal panel. A fake terminal is the default visual for a
- * developer-tool landing page, and it shows the wrong thing — a command being
- * typed, which is the part the reader already knows how to do. What they are
- * buying is the answer that comes back, so the answer is what the hero renders.
- * It is also a `<div>`-built screenshot either way, and the anti-slop wall bans
- * those specifically; the difference is that this one is real markup carrying
- * real text, not a picture of an interface drawn in boxes.
+ * This has now survived two rebuilds, and the reason is the same both times. A
+ * developer-tool hero defaults to a terminal window or a syntax-coloured code
+ * panel, and both show the same wrong thing — the command the reader already
+ * knows how to type. What they are buying is the answer that comes back, so the
+ * answer is what the hero renders. It is a `<div>`-built interface either way,
+ * which the anti-slop wall bans as a *fake screenshot*; the difference is that
+ * this one is real markup carrying real text, not a picture of an interface
+ * drawn in boxes.
+ *
+ * The rows are full width, and that was tried both ways. A two-column grid
+ * looked denser in the abstract and rendered worse: at the panel's real width
+ * each cell is ~290px, which is not enough for a label and a figure on one
+ * baseline, so "Rows touched" wrapped onto two lines while the cell beside it
+ * did not. It also made the card too short to carry the fold — see the note on
+ * viewport height in `Hero.tsx`. Height that a full-width row spends is height
+ * the hero needs.
  */
 const VERDICT_STYLE: Record<Verdict, string> = {
-  pass: "border-positive/35 bg-positive/10 text-positive",
-  hold: "border-caution/35 bg-caution/10 text-caution",
-  refuse: "border-critical/35 bg-critical/10 text-critical",
+  pass: "border-positive/40 bg-positive/10 text-positive",
+  hold: "border-caution/40 bg-caution/10 text-caution",
+  refuse: "border-critical/40 bg-critical/10 text-critical",
 };
 
 export default function RehearsalReport({
@@ -44,20 +53,24 @@ export default function RehearsalReport({
 }: RehearsalReportProps): ReactElement {
   return (
     <figure className={`${cardShell} m-0 overflow-hidden`}>
-      <figcaption className={`flex items-center justify-between gap-4 border-b border-surface-border ${cardInsetX} py-5`}>
+      <figcaption
+        className={`flex items-center justify-between gap-4 border-b border-surface-border ${cardInsetX} py-4`}
+      >
         <span data-metric className="text-sm font-medium text-ink-secondary">
           {id}
         </span>
         <span
-          className={`${VERDICT_STYLE[verdict]} inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em]`}
+          className={`${VERDICT_STYLE[verdict]} inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.1em]`}
         >
           {verdictLabel}
         </span>
       </figcaption>
 
-      {/* The statement under rehearsal. Sunken rather than raised: this is the
-          input the reader handed over, not something the product produced. */}
-      <div className={`border-b border-surface-border bg-surface-sunken ${cardInsetX} py-5`}>
+      {/* The statement under rehearsal. A step DOWN in elevation rather than up:
+          this is the input the reader handed over, not something the product
+          produced. On a dark palette that reads as recessed, which is the same
+          signal the light version got from a sunken grey. */}
+      <div className={`border-b border-surface-border bg-surface-raised ${cardInsetX} py-4`}>
         <code
           data-metric
           className="block text-[0.8125rem] leading-relaxed text-ink [overflow-wrap:anywhere]"
@@ -73,7 +86,7 @@ export default function RehearsalReport({
         {rows.map((row) => (
           <div
             key={row.label}
-            className={`grid grid-cols-[1fr_auto] items-baseline gap-x-5 ${cardInsetX} py-5`}
+            className={`grid grid-cols-[1fr_auto] items-baseline gap-x-6 ${cardInsetX} py-4`}
           >
             <dt data-label className="col-start-1 text-ink-muted">
               {row.label}
@@ -94,10 +107,10 @@ export default function RehearsalReport({
       <HourlyLoad trafficByHour={trafficByHour} quietWindow={quietWindow} />
 
       {/* The verdict in prose. A rule in the caution hue rather than a tinted
-          panel — a full colour wash behind a paragraph on a light ground turns
-          the text's effective contrast into a second thing to verify, and this
-          says the same thing with an edge. */}
-      <div className={`border-t border-surface-border ${cardInsetX} py-5`}>
+          panel — a full colour wash behind a paragraph turns the text's
+          effective contrast into a second thing to verify, and this says the
+          same thing with an edge. */}
+      <div className={`border-t border-surface-border ${cardInsetX} py-4`}>
         <p className="border-s-2 border-caution ps-4 text-sm leading-relaxed text-ink-secondary text-pretty">
           {finding}
         </p>
@@ -124,7 +137,7 @@ function HourlyLoad({
   const pad = (h: number): string => String(h).padStart(2, "0");
 
   return (
-    <div className={`border-t border-surface-border ${cardInsetX} py-5`}>
+    <div className={`border-t border-surface-border ${cardInsetX} py-4`}>
       <div className="flex items-baseline justify-between gap-4">
         <span data-label className="text-ink-muted">
           Writes by hour
@@ -137,7 +150,7 @@ function HourlyLoad({
       <div
         role="img"
         aria-label={`Write volume by hour. Busiest at ${pad(peakHour)}:00; quietest between ${pad(quietWindow.from)}:00 and ${pad(quietWindow.to)}:00, which is the window this rehearsal recommends.`}
-        className="mt-3 flex h-12 items-end gap-px"
+        className="mt-3 flex h-14 items-end gap-px"
       >
         {trafficByHour.map((load, hour) => {
           const quiet = hour >= quietWindow.from && hour < quietWindow.to;
@@ -145,11 +158,14 @@ function HourlyLoad({
             <span
               key={hour}
               // Height is the datum, so it is an inline style rather than a
-              // class: twenty-four arbitrary Tailwind heights would be twenty-four
-              // classes generated from data, and Tailwind cannot see values that
-              // only exist at runtime.
+              // class: twenty-four arbitrary Tailwind heights would be
+              // twenty-four classes generated from data, and Tailwind cannot
+              // see values that only exist at runtime.
               style={{ height: `${Math.max(load, 4)}%` }}
-              className={`flex-1 rounded-t-[2px] ${quiet ? "bg-accent" : "bg-surface-border-strong/45"}`}
+              // At /50 these were very nearly invisible against the card, which
+              // left the accent bars floating with nothing to be quiet relative
+              // to — the chart only means something if the busy hours read too.
+              className={`flex-1 rounded-t-[2px] ${quiet ? "bg-accent-text" : "bg-surface-border-strong"}`}
             />
           );
         })}

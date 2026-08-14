@@ -1,65 +1,60 @@
 import type { ReactElement } from "react";
 import type { Feature } from "../lib/content";
 import SectionEyebrow from "./SectionEyebrow";
-import { cardInset, cardShell, sectionShell, sectionSpacing } from "../lib/tokens";
+import { cardInset, cardShell, fadeUp, sectionShell, sectionSpacing } from "../lib/tokens";
+import { useFadeUp } from "../lib/useFadeUp";
 
 export interface BentoFeaturesProps {
   features: Feature[];
 }
 
 /**
- * Six cells on a six-column track, at four different widths, and no two rows
- * the same shape:
+ * Four cards on a two-column grid, and the grid is `items-start`.
  *
- *   row 1   [ 3 spanning two rows ][ 3 ]
- *   row 2   [ the tall cell cont. ][ 3 ]
- *   row 3   [ 2 ][ 4 ]
- *   row 4   [ 6 ]
+ * That one utility is the whole difference between this and the equal-height
+ * card grid the landing-pages skill bans outright. Grid items stretch to the
+ * row height by default, so four cards with different amounts of copy become
+ * four identical rectangles with three of them holding a pool of empty space at
+ * the bottom — the exact shape that reads as generated. `items-start` lets each
+ * card end where its content ends.
  *
- * Rule 3 of the landing-pages skill is "never an equal-height card grid", and
- * the reason is that a uniform grid asserts every feature matters the same
- * amount — which is never true and reads, correctly, as nobody having decided.
- * The tall cell is the argument the product rests on; the full-width cell is
- * the outcome the reader is buying. Spans live in `lib/content.ts` beside the
- * copy they weight, because the two are one decision.
+ * The previous version had six cells with explicit row and column spans. Two of
+ * them restated what the steps above now say, and a bento earns its shape by
+ * having something different in every cell rather than by being large. Four
+ * cells that each say one thing beats six where two are filler.
  *
- * No numbered markers. The wall bans 01/02/03 on content that is not a
- * sequence, and these are six independent claims — a reader can start anywhere.
+ * No icons, deliberately. A generic glyph above every card title is decoration
+ * standing in for hierarchy — the accent rule does the same job of marking a
+ * start without pretending a database lock has a natural pictogram.
  */
 export default function BentoFeatures({ features }: BentoFeaturesProps): ReactElement {
+  const { ref, visible } = useFadeUp();
+
   return (
     <section
-      id="how-it-works"
+      id="features"
       aria-labelledby="features-heading"
-      className={sectionSpacing}
+      className={`${sectionSpacing} border-t border-surface-border`}
     >
-      <div className={sectionShell}>
-        <div className="max-w-2xl">
-          <SectionEyebrow>How the replay works</SectionEyebrow>
-          <h2
-            id="features-heading"
-            data-display
-            className="mt-5 text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[1.05] text-ink"
-          >
-            The rehearsal is the product.
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-ink-secondary text-pretty">
-            Everything else — the forecast, the quiet window, the verdict in the
-            pull request — is something the replay makes possible rather than a
-            separate feature that had to be built.
-          </p>
-        </div>
+      <div ref={ref} data-fade className={`${sectionShell} ${fadeUp(visible)}`}>
+        <SectionEyebrow>What it reports</SectionEyebrow>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:gap-5">
+        <h2
+          id="features-heading"
+          data-display
+          className="mt-6 max-w-2xl text-3xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-4xl"
+        >
+          A planner estimate is a guess. This is a measurement.
+        </h2>
+
+        <div className="mt-12 grid grid-cols-1 items-start gap-4 md:grid-cols-2">
           {features.map((feature) => (
-            <article
-              key={feature.title}
-              className={`${cardShell} ${cardInset} ${feature.span} flex flex-col`}
-            >
-              <h3 data-display className="text-xl font-medium leading-snug text-ink">
+            <article key={feature.id} className={`${cardShell} ${cardInset}`}>
+              <span aria-hidden="true" className="mb-5 block h-1 w-12 rounded-full bg-accent" />
+              <h3 className="text-lg font-semibold tracking-tight text-ink">
                 {feature.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-secondary text-pretty">
+              <p className="mt-2.5 text-sm leading-relaxed text-ink-secondary text-pretty">
                 {feature.body}
               </p>
               <FeatureDetail detail={feature.detail} />
@@ -72,27 +67,24 @@ export default function BentoFeatures({ features }: BentoFeaturesProps): ReactEl
 }
 
 /**
- * The two figures under the tall cell. `mt-auto` is what pins them to the
- * bottom of a cell that is taller than its copy — the parent is a flex column,
- * so the margin absorbs the slack instead of leaving it under the paragraph.
- *
- * Returns null rather than being gated with `&&` at the call site. `&&` renders
- * `0` when the left operand is a number and, more to the point here, it hides
- * the fact that the absent case was considered at all.
+ * The optional figure pair, as its own component so the absent case is an
+ * early return rather than `&&` in the JSX above. `&&` renders `0` when the
+ * left side is a number, and more to the point it lets the empty case go
+ * undesigned — here that case is genuinely nothing, and saying so explicitly is
+ * the difference between a decision and an omission.
  */
 function FeatureDetail({ detail }: Pick<Feature, "detail">): ReactElement | null {
   if (detail === undefined) return null;
 
   return (
-    <dl className="mt-auto pt-8">
-      {detail.map((row) => (
-        <div
-          key={row.label}
-          className="flex items-baseline justify-between gap-4 border-t border-surface-border py-3"
-        >
-          <dt className="text-sm text-ink-muted">{row.label}</dt>
-          <dd data-metric className="text-2xl font-semibold text-ink">
-            {row.value}
+    <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-4 border-t border-surface-border pt-5">
+      {detail.map((item) => (
+        <div key={item.label}>
+          <dt data-label className="text-ink-muted">
+            {item.label}
+          </dt>
+          <dd data-metric className="mt-1.5 text-xl font-semibold text-ink">
+            {item.value}
           </dd>
         </div>
       ))}

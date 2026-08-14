@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
-import { alertShell, sectionShell, skeletonBlock } from "../lib/tokens";
+import { alertShell, fadeUp, sectionShell, skeletonBlock } from "../lib/tokens";
+import { useFadeUp } from "../lib/useFadeUp";
 
 export interface PlatformMetric {
   id: string;
@@ -35,13 +36,17 @@ export default function MetricsStrip({
   status,
   errorMessage,
 }: MetricsStripProps): ReactElement {
+  const { ref, visible } = useFadeUp();
+
   return (
     <section
       id="numbers"
       aria-label="Operating figures"
-      className="border-y border-surface-border bg-surface-sunken"
+      className="border-y border-surface-border bg-surface-raised"
     >
-      <div className={`${sectionShell} py-12 lg:py-16`}>
+      {/* py-12 flat, with no lg step. The light version ran `py-12 lg:py-16`,
+          and at 1920 the extra band read as the section having nothing to say. */}
+      <div ref={ref} data-fade className={`${sectionShell} py-12 ${fadeUp(visible)}`}>
         <MetricsBody metrics={metrics} status={status} errorMessage={errorMessage} />
       </div>
     </section>
@@ -108,7 +113,7 @@ function MetricsBody({
           <dd
             data-metric
             className={`text-4xl font-semibold tracking-tight lg:text-5xl ${
-              index === 0 ? "text-accent" : "text-ink"
+              index === 0 ? "text-accent-text" : "text-ink"
             }`}
           >
             {metric.value}

@@ -40,27 +40,29 @@ export const PRODUCT = "Bellwether";
 export const REPO_URL = "https://github.com/Krishna-Modi12/frontend-design-pro";
 
 /**
- * Short on purpose. The first draft ran "Schema change rehearsal · Postgres and
- * MySQL · Runs in your own VPC", which wrapped onto a second line at 1920 and
- * restated three of the four proof points sitting 200px below it. An eyebrow
- * names the category; the proof bar carries the specifics.
+ * Short on purpose. An eyebrow names the category; the proof bar carries the
+ * specifics.
  */
 export const TAGLINE = "Schema change rehearsal";
 
 /**
- * The headline. Two sentences, because the second one is the product: the
- * rehearsal is the first run, and the whole pitch is that it costs nothing.
+ * One sentence, and it is the whole product.
+ *
+ * The light version of this page split the headline in two and set the second
+ * half in a display italic. That worked at 80px in an editorial serif; in a
+ * single grotesque it just looks like a sentence that lost its nerve halfway.
+ * The second half moved into the subhead, where it reads as the explanation it
+ * always was.
  */
-export const HEADLINE_LEAD = "Every migration runs twice.";
-export const HEADLINE_REST = "The first time, nothing is at stake.";
+export const HEADLINE = "Every migration runs twice.";
 
 /**
  * Two lines at the hero's measure, not three. The landing-pages skill fixes
- * hero subtext at two lines, and the first draft ran to three at every width —
- * the kind of thing that is invisible in source and obvious on the page.
+ * hero subtext at two lines, and a three-line subhead is the kind of thing that
+ * is invisible in source and obvious on the page.
  */
 export const SUBHEAD =
-  "Bellwether replays your schema change against mirrored production traffic, then reports what it locks and for how long — before it reaches the primary.";
+  "The first time against a copy of production, with real traffic replayed over it. The second time for real — and by then you already know what it locks.";
 
 /** Technical proof, not a logo wall. Sits within 40px of the CTA pair. */
 export const PROOF_POINTS = [
@@ -71,10 +73,15 @@ export const PROOF_POINTS = [
 ];
 
 /* ── The hero artifact ──────────────────────────────────────────────────────
-   A rehearsal report for one migration. This replaces the terminal panel the
-   previous version of this page put here, which was the single most generic
+   A rehearsal report for one migration. This replaces the terminal panel an
+   older version of this page put here, which was the single most generic
    component a developer-tool page can ship — and which showed a command being
-   typed rather than the thing the product actually produces. */
+   typed rather than the thing the product actually produces.
+
+   It survived the move to dark deliberately. The obvious dark-mode hero for a
+   developer tool is a syntax-coloured code panel, which is the same mistake as
+   the terminal wearing a different hat: it shows the input the reader already
+   knows how to write, not the answer they are here for. */
 
 export interface ReportRow {
   label: string;
@@ -133,99 +140,127 @@ export const REPORT = {
   quietWindow: { from: 2, to: 5 },
 } as const;
 
-/* ── Feature bento ──────────────────────────────────────────────────────────
-   Six cells at four different widths. Rule 3 of the landing-pages skill: never
-   an equal-height card grid, and at least one element per section breaks the
-   column grid — here the first cell spans two rows and the last runs full
-   width, so no two rows of this bento share a shape. */
+/* ── How it works ───────────────────────────────────────────────────────────
+   Three steps, and the markers are mono numerals rather than filled badges.
+   The anti-slop wall bans numbered markers on content that is not a sequence —
+   this one genuinely is a sequence, which is what makes 01/02/03 legitimate
+   here and would not make it legitimate on the bento below. */
 
-export interface Feature {
+export interface Step {
+  id: string;
+  marker: string;
   title: string;
   body: string;
-  /** Tailwind column/row spans for the lg breakpoint. */
+  /** Column span at `lg`. The middle step is the wide one. */
   span: string;
+}
+
+export const STEPS: Step[] = [
+  {
+    id: "connect",
+    marker: "01",
+    title: "Connect",
+    body: "Point Bellwether at a read replica. Nothing is installed beside the database you are already worried about.",
+    span: "lg:col-span-3",
+  },
+  {
+    id: "rehearse",
+    marker: "02",
+    title: "Rehearse",
+    body: "The pending statement runs against a copy at production scale, with a weighted slice of live traffic replayed over the top of it. Production's index bloat, production's row widths, production's contention.",
+    span: "lg:col-span-5",
+  },
+  {
+    id: "verdict",
+    marker: "03",
+    title: "Verdict",
+    body: "Pass, hold or refuse — with the lock it took, how long it held, and the hour where it would cost least.",
+    span: "lg:col-span-4",
+  },
+];
+
+/* ── Feature bento ──────────────────────────────────────────────────────────
+   Four cells, not six. The six-cell version carried two cards that restated
+   what the steps above already said, and a bento earns its shape by having
+   something different in every cell rather than by being large.
+
+   Heights are not equalised — `items-start` on the grid lets each card end
+   where its content ends. Rule 3 of the landing-pages skill: never an
+   equal-height card grid. */
+
+export interface Feature {
+  id: string;
+  title: string;
+  body: string;
   /**
-   * Optional figures pinned to the bottom of a cell. Only the tall cell uses
-   * this, and it is not decoration: that cell claims a planner estimate is a
-   * guess, and these two numbers are the claim being demonstrated instead of
-   * repeated. A cell that spans two rows has to earn the second one — the first
-   * draft of this bento left it two-thirds empty, which reads as a layout
-   * nobody checked rather than as breathing room.
+   * Optional figures pinned under the body. Only the first cell uses this, and
+   * it is not decoration: that cell claims a planner estimate is a guess, and
+   * these two numbers are the claim being demonstrated instead of repeated.
    */
   detail?: { label: string; value: string }[];
 }
 
 export const FEATURES: Feature[] = [
   {
+    id: "replay",
     title: "Replay, not simulation",
-    body: "The rehearsal runs your statement against a real copy at production scale — production's index bloat, production's row widths, production's dead tuples. A number from the query planner is a guess about all three.",
-    span: "lg:col-span-3 lg:row-span-2",
+    body: "The rehearsal runs your statement against a real copy at production scale. A number from the query planner is a guess about all of it.",
     detail: [
       { label: "Planner estimate", value: "40ms" },
       { label: "Observed in rehearsal", value: "1.94s" },
     ],
   },
   {
+    id: "forecast",
     title: "Lock forecast",
     body: "Which lock, on which relation, for how long, at which hour. The answer is a distribution across the day, not one number pretending the load is flat.",
-    span: "lg:col-span-3",
   },
   {
+    id: "quiet",
     title: "Quiet-window finder",
     body: "Bellwether reads a fortnight of traffic and names the windows where this particular lock would cost the least.",
-    span: "lg:col-span-3",
   },
   {
-    title: "No agent on the primary",
-    body: "Reads a replica and the write-ahead log. Nothing installs beside the database you are already worried about.",
-    span: "lg:col-span-2",
-  },
-  {
+    id: "reversal",
     title: "The reversal is rehearsed too",
     body: "The down path replays on the same copy. A migration you cannot reverse is not ready, whatever the up path did — and two-thirds of down paths have never been run once.",
-    span: "lg:col-span-4",
-  },
-  {
-    title: "A verdict, in the pull request",
-    body: "Pass, hold or refuse — with the statement that caused it and the rewrite that clears it. The reviewer reads one paragraph instead of reconstructing a plan from a diff.",
-    span: "lg:col-span-6",
   },
 ];
 
 /* ── Social proof ───────────────────────────────────────────────────────────
-   Invented quotes for an invented product, attributed to invented people at
-   invented companies. Two wide, one narrow — masonry rather than three uniform
-   cards. The names are not the ones in the skill file's own example, which
+   Two invented quotes for an invented product, at two widths — never a row of
+   uniform cards, which is the shape that makes invented praise look even more
+   invented. The names are not the ones in the skill file's own example, which
    would have been copying the illustration rather than following the rule. */
 
 export interface Testimonial {
+  id: string;
   quote: string;
   name: string;
   role: string;
+  /** Initials for the avatar. Decorative — the name is right beside it. */
+  initials: string;
   span: string;
 }
 
 export const TESTIMONIALS: Testimonial[] = [
   {
+    id: "achebe",
     quote:
-      "We had a rule that migrations only shipped on Tuesday mornings, and the rule existed because nobody could answer how long a statement would lock. It is answerable now, so the rule is gone.",
+      "We retired the Tuesday-morning rule because we finally knew how long the lock would last. The rule only ever existed because nobody could answer that.",
     name: "Ifeoma Achebe",
     role: "Staff Engineer · Kestrel Freight",
-    span: "lg:col-span-7",
+    initials: "IA",
+    span: "md:col-span-2",
   },
   {
+    id: "beltran",
     quote:
-      "The reversal rehearsal is the part I did not expect to care about. Two of our down paths did not work. We learned that on a copy, at four in the afternoon, instead of at two in the morning.",
+      "Two of our down paths did not work. We learned that on a copy, at four in the afternoon, instead of at two in the morning.",
     name: "Tomás Beltrán",
     role: "Database Reliability · Orrery Health",
-    span: "lg:col-span-5",
-  },
-  {
-    quote:
-      "A reviewer reads one paragraph now. Before, they were guessing at a plan from a diff and hoping.",
-    name: "Sunita Kaur Grewal",
-    role: "Platform Lead · Thornbury",
-    span: "lg:col-span-12",
+    initials: "TB",
+    span: "md:col-span-1",
   },
 ];
 
@@ -235,12 +270,12 @@ export const TESTIMONIALS: Testimonial[] = [
 
 export const CTA_HEADLINE = "Rehearse the next one.";
 export const CTA_SUPPORT =
-  "Point Bellwether at a replica and open a pull request. First verdict in about ten minutes.";
+  "Point Bellwether at a replica. First verdict in about ten minutes.";
 export const CTA_REASSURANCE = "Reads a replica · installs nothing on the primary · no card";
 
 /**
  * The disclosure, rendered on the page rather than buried here. A page that
- * invents a company, four operating figures and three customers owes the reader
+ * invents a company, four operating figures and two customers owes the reader
  * a plain sentence saying so.
  */
 export const DISCLOSURE =

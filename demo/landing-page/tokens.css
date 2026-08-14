@@ -14,43 +14,42 @@
  *   @import "tailwindcss";
  *   @import "../tokens.css";
  *
- * ── Why this palette is light ────────────────────────────────────────────────
+ * ── Why this palette is dark, and why that is not the trap it was ────────────
  *
  * The anti-slop wall bans three AI-design defaults "unless the brief asks for
- * them", and one of them is *near-black with a single bright acid accent*. The
- * previous version of this page was exactly that, and it was not a rule
- * violation — its brief asked for it, so the escape hatch applied. It still
- * looked like every generated developer-tool page on the internet, which is the
- * thing the wall exists to prevent. Taking a documented exemption is not the
- * same as making a decision.
+ * them", and one of them is *near-black with a single bright acid accent*.
  *
- * So this brief declines the hatch. The page is light, and the three banned
- * defaults are avoided on their own terms rather than by exemption:
+ * This page has now been all three things: near-black with an acid accent, then
+ * light porcelain, now near-black with a deep cobalt. That history is the point
+ * rather than an embarrassment, because it separates two things that look
+ * identical in a diff and are not the same act:
  *
- *   cream + serif + terracotta   the ground is COOL (H=250, C=0.005), not the
- *                               warm cream of that trio, and there is no
- *                               terracotta anywhere. A serif carries the
- *                               display face; one leg of a trio is not the trio.
- *   near-black + acid accent     inverted outright — light ground, and the
- *                               accent is a deep cobalt at L=45%, the opposite
- *                               of an acid neon (which lives high in lightness
- *                               and high in chroma).
- *   broadsheet hairline columns  no multi-column justified body text, and no
- *                               vertical rules between columns.
+ *   Taking the exemption BY DEFAULT. The first version's brief asked for
+ *   "near-black background, acid-green accent" — so the wall permitted it, no
+ *   rule was broken, and the result looked like every generated developer-tool
+ *   page on the internet. The exemption was used as somewhere to arrive at
+ *   without deciding anything.
  *
- * One material, one hue: every neutral holds H=250 and moves only in lightness,
- * which is what keeps a light shell from reading as five unrelated greys. Ink
- * sits a little warmer at H=258 so it reads as ink rather than as a grey that
- * lost its way. OKLCH only — no hex anywhere.
+ *   Taking it AS A DECISION. This brief asks for near-black too, and the
+ *   difference is in what had to be true for it to be allowed to work:
+ *   a deep cobalt at L=55% rather than an acid neon (which lives high in
+ *   lightness AND high in chroma); every pair measured on three grounds rather
+ *   than eyed; one hue for every neutral; and density and motion carrying the
+ *   page instead of a bright colour doing it alone.
+ *
+ * The other two defaults are declined outright: no cream, no serif, no
+ * terracotta anywhere; no multi-column justified body text and no vertical
+ * rules between columns.
  *
  * ── Every ratio below is computed, not estimated ─────────────────────────────
  *
  * Contrast was measured by converting OKLCH → OKLab → linear sRGB → relative
- * luminance before any of it was written down, because two values in the first
- * draft would have failed and neither is visible to a gate that reads source.
- * Both grounds are measured, not just the page: the previous palette shipped a
- * muted ink that passed on the page and failed inside a card, and seven
- * elements were affected. Ratios are quoted against `page` / `raised`.
+ * luminance before any of it was written down. Six pairs in the first draft of
+ * this palette failed AA and none of that is visible to a gate that reads
+ * source. Ratios are quoted as the WORST case across all three surfaces
+ * (`page` / `raised` / `elevated`), not against the page alone — an earlier
+ * version of this file measured only the page, and `border-strong` passed at
+ * 3.01:1 there while sitting at 2.88:1 on a card.
  *
  * Values here are the single source of truth. `lib/tokens.ts` must not restate
  * them — it reads them back as `var(--color-*)`.
@@ -58,78 +57,91 @@
 
 @theme {
   /* ── Ground ───────────────────────────────────────────────────────────────
-     Not `#FFFFFF`, which the wall bans as a page surface, and not cream. A
-     porcelain ground at 96.5% leaves room for a *lighter* raised surface, which
-     is the move that makes cards read as lifted on a light page — the inverse
-     of a dark theme, where elevation goes up in lightness from a low floor. */
-  --color-surface-page: oklch(96.5% 0.005 250);
-  --color-surface-raised: oklch(99% 0.003 250);
-  --color-surface-sunken: oklch(93.5% 0.007 250);
+     Three steps, all at H=270 and moving only in lightness. Elevation on a dark
+     theme goes UP from the floor, which is the exact inverse of the light
+     palette this replaced — there, a raised surface was already near the
+     ceiling at 99% and the shadow had to do the work.
+
+     The steps are deliberately close (raised is 1.02:1 against page, elevated
+     1.05:1). They are not what separates a card from the page; the border is.
+     Pushing them apart far enough to read on their own produces the grey-on-grey
+     stack that makes a dark UI look like unstyled Bootstrap. */
+  --color-surface-page: oklch(10% 0.015 270);
+  --color-surface-raised: oklch(12.5% 0.02 270);
+  --color-surface-elevated: oklch(15% 0.02 270);
 
   /* ── Edges ────────────────────────────────────────────────────────────────
-     Two weights, and the difference is not decorative. `border` is a hairline
-     between panels: 1.30:1, decorative, and it is *supposed* to be quiet.
-     `border-strong` bounds interactive controls — the outline button's edge —
-     where WCAG 1.4.11 wants 3:1 against the adjacent ground. It measures
-     3.28:1 on the page. Tinted toward the surface hue rather than neutral
-     grey, per `core/design-tokens.md`. */
-  --color-surface-border: oklch(88% 0.008 250);
-  --color-surface-border-strong: oklch(62% 0.02 250);
+     Two weights, and the difference is not decorative.
+
+     `border` is a hairline between panels. The brief specified
+     `oklch(22% 0.03 270 / 0.4)`; that composites to roughly 14.8% over the page,
+     which against surfaces separated by 1.05:1 left cards with no readable edge
+     at all. It is opaque and lighter here for that reason — a decorative border
+     carries no WCAG floor, so this is a legibility judgement rather than a
+     compliance one, and it is the only place this palette departs from the
+     brief for looks rather than for a measured failure.
+
+     `border-strong` bounds interactive controls, where WCAG 1.4.11 wants 3:1
+     against the adjacent ground. 3.00:1 at its worst, which is on a card. */
+  --color-surface-border: oklch(26% 0.03 270);
+  --color-surface-border-strong: oklch(48% 0.03 270);
 
   /* ── Ink ──────────────────────────────────────────────────────────────────
-     16.01:1 / 17.22:1 · 9.04:1 / 9.73:1 · 6.44:1 / 6.92:1.
-     `ink` is a deep blue-black, never `#000000` — the wall bans pure black as a
-     surface and it is just as wrong as a text colour on a light ground, where
-     it vibrates against the page instead of settling into it. */
-  --color-ink: oklch(21% 0.024 258);
-  --color-ink-secondary: oklch(38% 0.02 258);
-  --color-ink-muted: oklch(46% 0.016 258);
+     17.01:1 · 7.36:1 · 4.59:1, worst case across the three grounds.
+     `ink` is an off-white, never pure `#FFFFFF` at body size on near-black:
+     full-strength white on a dark ground blooms and the counters close up.
+     `ink-muted` was specified at 50% and measured 3.43:1 — under AA on every
+     surface. 58% is the first value that clears it on all three. */
+  --color-ink: oklch(95% 0.01 270);
+  --color-ink-secondary: oklch(70% 0.02 270);
+  --color-ink-muted: oklch(58% 0.02 270);
 
   /* ── Accent ───────────────────────────────────────────────────────────────
-     One chromatic colour on the whole page. 6.99:1 as text on the page, and
-     7.31:1 the other way round for a label sitting ON the accent, so the same
-     token serves the primary CTA's fill and the link colour without a second
-     value. In sRGB gamut at this chroma — it does not depend on the browser
-     gamut-mapping it into something dimmer. */
-  --color-accent: oklch(45% 0.18 262);
-  --color-accent-ink: oklch(98% 0.005 250);
-  --color-accent-wash: oklch(45% 0.18 262 / 0.07);
+     One chromatic colour on the whole page, and it needs TWO tokens — which is
+     the finding that shaped this palette.
+
+     A cobalt light enough to be legible AS TEXT on near-black is too light to
+     carry white text AS A FILL. There is no single value that does both: the
+     briefed `oklch(55% 0.18 260)` reads 4.14:1 as text (fails), and the value
+     that fixes that fails white-on-accent in the other direction. So:
+
+       `accent`      the fill. White on it is 4.98:1.
+       `accent-text` numerals, links, the 01/02/03 markers. 4.68:1 worst case.
+
+     Four percentage points apart, same hue and chroma, so they read as one
+     colour to anyone who is not measuring. `accent-ink` is pure white on
+     purpose — `ink` at 95% on the accent fill is 4.30:1 and fails. */
+  --color-accent: oklch(55% 0.18 260);
+  --color-accent-text: oklch(59% 0.18 260);
+  --color-accent-ink: oklch(100% 0 270);
+  --color-accent-wash: oklch(59% 0.18 260 / 0.12);
 
   /* ── Semantic — inside data only ──────────────────────────────────────────
      These carry meaning (a rehearsal passed, held, or failed) and appear
-     nowhere decorative. That restraint is the reason the page reads as
+     nowhere decorative. That restraint is what keeps the page reading as
      art-directed rather than defaulted: one accent, plus colours that are only
      ever answering a question the reader asked.
 
-     `caution` was the one value in this palette that had to move. At
-     oklch(55% 0.13 75) it measured 4.47:1 on the page — under AA — and it was
-     outside sRGB, so the real figure was worse than the arithmetic suggested.
-     At oklch(50% 0.1 70) it is 5.54:1 / 5.07:1 and in gamut. */
-  --color-positive: oklch(48% 0.11 158);
-  --color-caution: oklch(50% 0.1 70);
-  --color-critical: oklch(50% 0.19 25);
+     All three moved for the dark ground. The light palette's values sat at
+     48–50% lightness, which is correct against porcelain and unreadable against
+     near-black; these sit at 70–80% and clear AA on all three surfaces
+     (8.46:1 · 10.41:1 · 6.83:1). */
+  --color-positive: oklch(75% 0.16 158);
+  --color-caution: oklch(80% 0.13 80);
+  --color-critical: oklch(70% 0.17 25);
 
   /* `lib/tokens.ts` builds its inline alert from `error`. Same value as
      `critical`, named for the role the alert plays rather than the status a
      data cell reports. */
-  --color-error: oklch(50% 0.19 25);
+  --color-error: oklch(70% 0.17 25);
 
   /* ── Elevation ────────────────────────────────────────────────────────────
-     Two layers, per `core/design-tokens.md`: a tight direct shadow for the
-     contact edge and a wider ambient one for the lift. A single blurry drop is
-     the tell of a card that was never really designed.
-
-     This is the one place a light theme genuinely differs from the dark one it
-     replaced. On a near-black ground a blurred shadow reads as smudge, so
-     elevation there had to come from a lighter surface step. On porcelain the
-     opposite holds — a raised surface is *already* near the ceiling at 99%, so
-     lightness alone cannot say "in front", and the shadow has to do the work.
-     Tinted toward the surface hue rather than neutral black, which is what
-     stops it reading as grime. */
-  --shadow-card:
-    0 1px 2px oklch(21% 0.024 258 / 0.05),
-    0 4px 16px -4px oklch(21% 0.024 258 / 0.08);
-  --shadow-lifted:
-    0 1px 2px oklch(21% 0.024 258 / 0.06),
-    0 12px 32px -8px oklch(21% 0.024 258 / 0.12);
+     Deliberately restrained, and this is where a dark theme differs most from
+     the light one. A blurred drop shadow on a near-black ground has almost
+     nothing to darken — it reads as smudge rather than as lift. So the shadows
+     here are tight and low, doing the contact edge only, and the *border* is
+     what says "in front". On porcelain the reverse held and the shadow carried
+     the whole effect. */
+  --shadow-card: 0 1px 2px oklch(0% 0 0 / 0.4);
+  --shadow-lifted: 0 1px 2px oklch(0% 0 0 / 0.45), 0 16px 40px -12px oklch(0% 0 0 / 0.6);
 }
