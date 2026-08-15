@@ -15,6 +15,7 @@ Exit codes: 0 = clean · 1 = tsc errors · 2 = tsc unavailable (skipped)
 """
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -51,10 +52,22 @@ def find_tsc(root: Path):
             cand = base / "node_modules" / ".bin" / name
             if cand.exists():
                 return [str(cand)]
-    if shutil.which("tsc"):
-        return ["tsc"]
-    if shutil.which("npx"):
-        return ["npx", "--yes", "tsc"]
+    # Return what `which` resolved, not the bare name. `subprocess.run` without
+    # a shell hands the string straight to CreateProcess, which does not apply
+    # PATHEXT — so a bare "npx" that `which` happily finds as `npx.cmd` still
+    # raises WinError 2. That turned the no-node_modules path, which is exactly
+    # what a fresh install looks like, into an unhandled traceback.
+    resolved = shutil.which("tsc")
+    if resolved:
+        return [resolved]
+    resolved = shutil.which("npx")
+    if resolved:
+        # `npx --yes tsc` does NOT fetch the TypeScript compiler. It fetches the
+        # npm package literally named `tsc` — an unrelated wrapper, deprecated
+        # since 2016 — and runs it, which then prints "This is not the tsc
+        # command you are looking for" and exits non-zero. The gate read that as
+        # a compilation failure. Name the package that owns the binary.
+        return [resolved, "--yes", "--package=typescript", "tsc"]
     return None
 
 
@@ -82,6 +95,13 @@ def main() -> int:
             [*tsc, "--noEmit", "--project", str(cfg_path)],
             capture_output=True, text=True, cwd=root,
         )
+    except OSError as exc:
+        # Degrade rather than lie: a compiler we cannot launch is the same
+        # situation as one we could not find, and the caller already knows how
+        # to continue without it. A traceback here reads as a broken pack.
+        print(f"SKIP: could not launch {tsc[0]} ({exc}). "
+              "Run: npm install typescript @types/react @types/react-dom")
+        return 2
     finally:
         cfg_path.unlink(missing_ok=True)
 
@@ -89,8 +109,19 @@ def main() -> int:
     if proc.returncode == 0:
         print(f"All {n} gold examples compile under tsc --noEmit (strict)")
         return 0
-    print(out)
     errs = [l for l in out.splitlines() if "error TS" in l]
+    # TS2688 is "cannot find type definition file for X", raised against the
+    # `types` array in compilerOptions. It means @types/* was never installed —
+    # an empty toolchain, not a defect in anybody's code. Reporting it as
+    # "compilation errors are blockers" sent a new user hunting a bug that was
+    # not there. If that is the *only* thing tsc found, say what is missing.
+    if errs and all("error TS2688" in l for l in errs):
+        missing = sorted({m for l in errs
+                          for m in re.findall(r"type definition file for '([^']+)'", l)})
+        print(f"SKIP: type definitions missing ({', '.join(missing) or 'unknown'}) — "
+              "nothing was type-checked. Run: npm install typescript @types/react @types/react-dom")
+        return 2
+    print(out)
     print(f"\n{len(errs)} error(s) across examples/ — compilation errors are blockers.")
     return 1
 

@@ -448,16 +448,28 @@ FIGURES: Sequence[Figure] = (
     # wrong by seven. Split counts get their own figures rather than a looser
     # CONSTRAINTS pattern, because 17, 42 and 59 are three different truths and
     # one pattern that matched all three could not say which was meant.
+    # A third prose form, found by reading `core/validate-checklist.md` cold:
+    # a *section heading* puts the noun first and the count in parentheses —
+    # "## Regex-enforced (36)" — so neither pattern above could reach it. It
+    # sat six wrong, in the pack's canonical constraint list, two lines above a
+    # total that spelled the right number, while the gate reported 0 drift.
+    # Same class as the registry-anchor gap the previous patch closed: not a
+    # wrong figure, an unreadable one — and found the same way, by reading a
+    # file cold rather than by trusting a green run.
+    # The parenthetical may carry a qualifier ("AST — 17"), so the gap
+    # before the digits is permissive but cannot cross the closing bracket.
     Figure(
         "CONSTRAINTS-REGEX",
         "regex/syntactic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b",
+        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b"
+        r"|(?i:regex|syntactic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["regex_constraints"]),),
     ),
     Figure(
         "CONSTRAINTS-AST",
         "AST/semantic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b",
+        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b"
+        r"|(?i:parser|AST|semantic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["parser_constraints"]),),
     ),
     # Figures spelled as words were a stated blind spot of this gate, and the

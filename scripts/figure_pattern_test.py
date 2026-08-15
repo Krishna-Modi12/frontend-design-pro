@@ -102,6 +102,24 @@ CASES = [
      True, "emphasis between the number and its noun — the house style writes this"),
     ("GATES", "Verified by **11** release-blocking gates.",
      False, "correct count, emphasised"),
+
+    # ── CONSTRAINT HALVES ───────────────────────────────────────────────────
+    # A section heading inverts the order the sentence forms assume: the noun
+    # comes first and the count sits in brackets after it. `core/validate-
+    # checklist.md` carried "## Regex-enforced (36)" against a real 42, two
+    # lines above a total that spelled 42 correctly, and the gate read 0 drift.
+    ("CONSTRAINTS-REGEX", "## Regex-enforced (36)",
+     True, "heading form: noun first, count bracketed — the shape that shipped stale"),
+    ("CONSTRAINTS-REGEX", "## Regex-enforced (42)",
+     False, "correct count in the heading form"),
+    ("CONSTRAINTS-REGEX", "the 36 regex constraints run over every reference",
+     True, "sentence form, still read"),
+    ("CONSTRAINTS-AST", "## Parser-enforced (AST — 12)",
+     True, "heading form carrying a qualifier between the bracket and the count"),
+    ("CONSTRAINTS-AST", "## Parser-enforced (AST — 17)",
+     False, "correct count behind a qualifier"),
+    ("CONSTRAINTS-AST", "Gate 5 runs 42 regex constraints, not AST ones.",
+     False, "the regex count is not the AST count — each half owns its own noun"),
 ]
 
 
