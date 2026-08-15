@@ -69,6 +69,18 @@ These are not style preferences. Each row is a check that fails a build, with th
 
 The full list of 59 lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
+### Run them against your own code
+
+The same checkers the gate chain uses take a path. From the directory the pack installed into:
+
+```bash
+npm install typescript @types/react @types/react-dom   # once — the checkers need a compiler
+python scripts/test_constraints.py --dir ../../../components --component
+python scripts/test_constraints.py --dir ../../../app                    # pages: no flag
+```
+
+**`--component` is the flag that matters.** Eight of the 42 regex constraints describe a *page* — a declared font, a default export, landmark elements, all four states, breakpoints, a skip link. They are right about a screen and wrong about a status pill, so pointing the suite at a well-factored `components/` directory without the flag produces a wall of failures that are all artefacts of scope. The flag drops those eight and names them in the output; the remaining 34 plus all 17 AST checks still apply. Without a compiler installed the AST half skips and says so rather than failing.
+
 ---
 
 ## Install in 30 seconds
@@ -417,9 +429,9 @@ Two more forms of the same defect sat beside it. `RANGE` only ever matched a das
 **Two shipped manifests were outside the scan.** `metadata.json`'s prose description claimed 94 references and *10* release-blocking gates while the `stats` block two keys below it — audited since this gate existed — read 101 and 11. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json), the string a marketplace listing renders, claimed 96. Both ship inside the archive. `metadata.json` is now audited field by field rather than added to the scan list, because its changelog is 45 historical entries and scanning the file would demand that every past release be rewritten to today's figures.
 <!-- /figures:historical -->
 
-**The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **20 prose fixtures over 5 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
+**The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **32 prose fixtures over 8 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
 
-**Still open, and deliberately.** The `k`-rounded depth figure appears on **12 surfaces as 330k, 333k and 344k**, none of them the current 349,445. It is not gated here because those strings do not all name the same quantity — some mean the whole pack, some mean reference depth alone — and a pattern that cannot tell them apart would fail `README.md`, which is the figure authority. Closing it needs the truth table to publish both quantities first.
+**Mostly closed, and the reasoning that kept it open was half wrong.** The `k`-rounded depth figure was recorded here as ungateable: the strings name two different quantities — some mean reference depth, some mean the whole pack — and one expected value cannot serve both. That is true of the *family* and false of most of its members, because **the noun says which**. `DEPTH-K` now claims every surface whose own words say "references" or "depth" and refuses the ones that say "pack"; `344k` against 349,445 is 1.56% out, past the 1% rounding tolerance, so the stale readings fail and a correct `349k` passes. It found six documents, including [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) — the drop-in system prompt — and two negative fixtures hold the line at "pack", which stays unclaimed until something computes a whole-pack total.
 
 <details>
 <summary><b>Earlier releases — v14.10.0 back to v14.5.0</b></summary>

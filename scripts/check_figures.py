@@ -66,7 +66,8 @@ Scope, and why it is a list rather than everything
 are excluded by default: `chart-types.md` saying an axis runs `1,000 – 10,000` is
 content, not a claim, and a gate that flagged it would be noise. The one
 exception is `skills/agent-ops/references/token-optimization.md`, which quotes
-the pack's own budget and is named in `CLAUDE.md`'s sweep list for that reason.
+the pack's own budget and is named in `CLAUDE.md`'s sweep list for that reason,
+along with `context-engineering.md`, which opens on the same claim.
 
 Historical records are exempt wholesale. `docs/CHANGELOG.md` and
 `docs/RELEASE_NOTES-*` were accurate when cut, and `CLAUDE.md` forbids rewriting
@@ -412,6 +413,22 @@ FIGURES: Sequence[Figure] = (
         r"(?<![\d,])(\d{3},\d{3})(?![\d,])",
         lambda t: (_n(t["reference_depth_tokens"]),),
     ),
+    # The `k`-rounded form was recorded as ungateable because the strings name
+    # two different quantities: some mean reference depth, some mean the whole
+    # pack, and one expected value cannot serve both. That was true of the
+    # *family* and false of most of its members — the noun says which. This
+    # figure claims only the ones whose own words say "references" or "depth";
+    # "a monolithic pack of ~344k tokens" is deliberately left alone, because
+    # nothing computes a whole-pack total yet. 344k against 349,445 is 1.56%
+    # out, past _is_rounding's 1% tolerance, so the stale readings fail and a
+    # correct 349k passes.
+    Figure(
+        "DEPTH-K",
+        "reference depth rounded to thousands",
+        r"(?:references?|depth)\s+(?:are|is)\s+~?(\d{3})k\b"
+        r"|~?(\d{3})k[- ](?:tokens?\s+)?of\s+(?:\w+\s+){0,2}(?:references?|depth)\b",
+        lambda t: (str(round(int(str(t["reference_depth_tokens"])) / 1000)),),
+    ),
     Figure(
         "GATES",
         "number of release-blocking gates",
@@ -448,16 +465,28 @@ FIGURES: Sequence[Figure] = (
     # wrong by seven. Split counts get their own figures rather than a looser
     # CONSTRAINTS pattern, because 17, 42 and 59 are three different truths and
     # one pattern that matched all three could not say which was meant.
+    # A third prose form, found by reading `core/validate-checklist.md` cold:
+    # a *section heading* puts the noun first and the count in parentheses —
+    # "## Regex-enforced (36)" — so neither pattern above could reach it. It
+    # sat six wrong, in the pack's canonical constraint list, two lines above a
+    # total that spelled the right number, while the gate reported 0 drift.
+    # Same class as the registry-anchor gap the previous patch closed: not a
+    # wrong figure, an unreadable one — and found the same way, by reading a
+    # file cold rather than by trusting a green run.
+    # The parenthetical may carry a qualifier ("AST — 17"), so the gap
+    # before the digits is permissive but cannot cross the closing bracket.
     Figure(
         "CONSTRAINTS-REGEX",
         "regex/syntactic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b",
+        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b"
+        r"|(?i:regex|syntactic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["regex_constraints"]),),
     ),
     Figure(
         "CONSTRAINTS-AST",
         "AST/semantic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b",
+        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b"
+        r"|(?i:parser|AST|semantic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["parser_constraints"]),),
     ),
     # Figures spelled as words were a stated blind spot of this gate, and the
@@ -499,6 +528,10 @@ SCAN: Sequence[str] = (
     "demo/landing-page/lib/*.ts",
     "demo/landing-page/*.json",
     "skills/agent-ops/references/token-optimization.md",
+    # Its sibling qualifies under the same exception and was missed: the file
+    # opens "This pack routes one skill per request out of ~Nk tokens of
+    # depth", which is a claim about the pack, not content. It sat stale.
+    "skills/agent-ops/references/context-engineering.md",
     # The screenshot harness is not shipped, but its header explains what the
     # gates do and does it in numbers — and being outside this list is exactly
     # why it drifted to "53 constraints" and stayed there. A file that states a

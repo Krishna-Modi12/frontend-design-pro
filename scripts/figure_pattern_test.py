@@ -102,6 +102,43 @@ CASES = [
      True, "emphasis between the number and its noun — the house style writes this"),
     ("GATES", "Verified by **11** release-blocking gates.",
      False, "correct count, emphasised"),
+
+    # ── CONSTRAINT HALVES ───────────────────────────────────────────────────
+    # A section heading inverts the order the sentence forms assume: the noun
+    # comes first and the count sits in brackets after it. `core/validate-
+    # checklist.md` carried "## Regex-enforced (36)" against a real 42, two
+    # lines above a total that spelled 42 correctly, and the gate read 0 drift.
+    ("CONSTRAINTS-REGEX", "## Regex-enforced (36)",
+     True, "heading form: noun first, count bracketed — the shape that shipped stale"),
+    ("CONSTRAINTS-REGEX", "## Regex-enforced (42)",
+     False, "correct count in the heading form"),
+    ("CONSTRAINTS-REGEX", "the 36 regex constraints run over every reference",
+     True, "sentence form, still read"),
+    ("CONSTRAINTS-AST", "## Parser-enforced (AST — 12)",
+     True, "heading form carrying a qualifier between the bracket and the count"),
+    ("CONSTRAINTS-AST", "## Parser-enforced (AST — 17)",
+     False, "correct count behind a qualifier"),
+    ("CONSTRAINTS-AST", "Gate 5 runs 42 regex constraints, not AST ones.",
+     False, "the regex count is not the AST count — each half owns its own noun"),
+
+    # ── DEPTH-K ─────────────────────────────────────────────────────────────
+    # The whole point of this figure is the line it refuses to cross. The
+    # `k`-rounded family names two quantities; only the ones whose own noun
+    # says "references" or "depth" are claimed here. The negative cases are
+    # load-bearing — widening this to match "pack" would demand a whole-pack
+    # total that nothing computes, and fail README for telling the truth.
+    ("DEPTH-K", "references are ~344k tokens and are the part an agent opens for depth",
+     True, "noun first, then the rounded figure"),
+    ("DEPTH-K", "references are ~349k tokens",
+     False, "correct to the nearest thousand"),
+    ("DEPTH-K", "It does not scale to 344k tokens of references.",
+     True, "figure first, noun after"),
+    ("DEPTH-K", "a request loads 7,476 against ~344k of available depth",
+     True, "a qualifier sits between the figure and its noun"),
+    ("DEPTH-K", "A monolithic pack of ~344k tokens cannot be loaded at all.",
+     False, "names the whole pack — a different quantity, and nothing computes it"),
+    ("DEPTH-K", "a monolithic 330k-token pack could not be loaded",
+     False, "same claim, hyphenated: 'pack' is not 'depth'"),
 ]
 
 

@@ -11,7 +11,24 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const ts = require("typescript");
+
+// `npx skills add` copies this pack into a project without running an install,
+// so the peer `typescript` is routinely absent — that is the normal shape of a
+// fresh install, not a broken one. Exit 3 says "could not run" as distinct from
+// exit 1's "ran, and found violations", so the caller can skip rather than
+// report a stack trace as if it were a constraint failure.
+let ts;
+try {
+  ts = require("typescript");
+} catch {
+  console.error(
+    // ASCII only: this goes to a Windows console whose code page mangles an
+    // em-dash into three bytes of noise, in the one message a stuck user reads.
+    "SKIP: the `typescript` package is not installed beside this pack, " +
+    "so the 17 AST constraints cannot run. Fix: npm install typescript",
+  );
+  process.exit(3);
+}
 
 const file = process.argv[2];
 if (!file) { console.error("usage: parser_constraints.js <file.tsx>"); process.exit(2); }

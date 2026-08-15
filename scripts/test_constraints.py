@@ -6,6 +6,14 @@ Runs programmatic assertions against generated components.
 Usage:
   python test_constraints.py <component_file>     # test one file
   python test_constraints.py --dir <directory>    # test all .jsx/.tsx/.html in dir
+  python test_constraints.py --dir <dir> --component
+                                                  # ...as components, not pages:
+                                                  # drops the page-scoped rules
+                                                  # (a font import, a default
+                                                  # export, landmarks, four
+                                                  # states, breakpoints, a skip
+                                                  # link) that a leaf component
+                                                  # correctly does not have
   python test_constraints.py --self-test          # validate this script with built-in fixtures
 """
 
@@ -532,9 +540,37 @@ class TestResult:
     evidence: str
 
 
-def run_constraints(code: str) -> List[TestResult]:
+# Constraints that describe a *page*, not a unit of code. Each one is correct
+# against `skills/*/examples/`, where every gold is a whole self-contained
+# screen — and wrong against a real codebase, where a status pill is a status
+# pill. Pointed at four correctly-factored components, the suite reported 0/4
+# and every failure in that report was an artefact of this: a badge asked for a
+# loading skeleton, a font import and a landmark element.
+#
+# `check_references.py` already learned this lesson for markdown fragments and
+# carries FRAGMENT_SAFE. This is the same insight applied to the entry point a
+# user actually points at their own code.
+PAGE_SCOPED = {
+    "TYP-01": "a font is declared once per app, not once per component",
+    "QUA-01": "a default export — named exports are the convention this pack's "
+              "own core/component-api.md demonstrates, and PERF-01 bans the "
+              "barrel files that make default exports ergonomic",
+    "QUA-02": "landmark elements (nav/main/header/footer) belong to the page "
+              "that composes the component, not to the component",
+    "STA-01": "a loading state — a presentational component has no async of its own",
+    "STA-02": "an error state, for the same reason",
+    "RES-01": "responsive breakpoints — a leaf component may legitimately have none",
+    "RES-02": "44px touch targets, which this rule also asks of files that "
+              "contain nothing interactive",
+    "A11Y-04": "a skip link, which belongs to the page shell",
+}
+
+
+def run_constraints(code: str, component_mode: bool = False) -> List[TestResult]:
     results = []
     for c in CONSTRAINTS:
+        if component_mode and c.id in PAGE_SCOPED:
+            continue
         passed, evidence = c.check(code)
         results.append(TestResult(constraint=c, passed=passed, evidence=evidence))
     return results
@@ -594,7 +630,8 @@ def report(filename: str, results: List[TestResult], json_out: bool = False) -> 
             print("  ❌ Critical failures must be fixed before shipping.")
 
     print(f"{'='*64}\n")
-    return {"status": status, "rate": rate, "passed": len(passed), "failed": len(failed), "total": total}
+    return {"status": status, "rate": rate, "passed": len(passed), "failed": len(failed),
+            "total": total, "failed_ids": [r.constraint.id for r in failed]}
 
 
 # ─────────────────────────────────────────────
@@ -723,6 +760,12 @@ def parser_check(files) -> bool:
     passed, failed = 0, []
     for f in tsx:
         proc = subprocess.run(["node", str(script), str(f)], capture_output=True, text=True)
+        if proc.returncode == 3:
+            # The parser told us it could not run at all. Every file would say
+            # the same, so stop asking and say so once.
+            print(f"[parser gate] {proc.stderr.strip()}")
+            print("[PARSER] skipped — regex checks only.")
+            return True
         try:
             data = _json.loads(proc.stdout)
         except Exception:
@@ -762,7 +805,11 @@ def main():
     recursive = "--recursive" in args
     # --project judges each immediate subdirectory as one unit (see below).
     project_mode = "--project" in args
-    args = [a for a in args if a not in ("--json", "--recursive", "--project")]
+    # --component drops the page-scoped constraints (see PAGE_SCOPED). Point it
+    # at a components/ directory; leave it off for pages and whole screens.
+    component_mode = "--component" in args
+    args = [a for a in args
+            if a not in ("--json", "--recursive", "--project", "--component")]
 
     files_to_check: List[Path] = []
 
@@ -824,13 +871,13 @@ def main():
         for name in sorted(groups):
             code = "\n".join(p.read_text(encoding="utf-8") for p in sorted(groups[name]))
             label = f"{base}/{name} ({len(groups[name])} files)"
-            results = run_constraints(code)
+            results = run_constraints(code, component_mode)
             r = report(label, results, json_out=json_output)
             all_results.append({"file": label, **r})
     else:
         for filepath in sorted(files_to_check):
             code = filepath.read_text(encoding="utf-8")
-            results = run_constraints(code)
+            results = run_constraints(code, component_mode)
             r = report(str(filepath), results, json_out=json_output)
             all_results.append({"file": str(filepath), **r})
 
@@ -839,9 +886,22 @@ def main():
 
     gold = [r for r in all_results if "bad-" not in r["file"]]
     gold_clean = sum(1 for r in gold if r["rate"] == 100)
-    n_regex = len(CONSTRAINTS)
-    unit = "demo projects" if project_mode else "gold examples"
+    n_regex = len(CONSTRAINTS) - (len(PAGE_SCOPED) if component_mode else 0)
+    unit = ("demo projects" if project_mode
+            else "components" if component_mode else "files")
     print(f"\n[REGEX]  {gold_clean}/{len(gold)} {unit} passed {n_regex}/{n_regex} syntactic checks")
+    if component_mode:
+        print(f"         {len(PAGE_SCOPED)} page-scoped constraints skipped: "
+              f"{', '.join(sorted(PAGE_SCOPED))}")
+    else:
+        # Tell a user the flag exists at the moment it would have helped, rather
+        # than in a usage string nobody reads. Three page-scoped failures on one
+        # file is the signature of a component being judged as a screen.
+        confused = [r for r in gold
+                    if len(set(r.get("failed_ids", [])) & set(PAGE_SCOPED)) >= 3]
+        if confused:
+            print(f"         {len(confused)} file(s) failed 3+ page-scoped constraints. "
+                  "If these are components rather than whole pages, re-run with --component.")
     print(f"TOTAL: {n_regex + len(PARSER_CHECK_IDS)} constraints ({len(PARSER_CHECK_IDS)} parser + {n_regex} regex, incl. DELAY-01 string fallback)")
 
     # Exit code: 0 if all pass at 90%+, else 1
