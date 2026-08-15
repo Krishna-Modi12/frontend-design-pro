@@ -120,6 +120,25 @@ CASES = [
      False, "correct count behind a qualifier"),
     ("CONSTRAINTS-AST", "Gate 5 runs 42 regex constraints, not AST ones.",
      False, "the regex count is not the AST count — each half owns its own noun"),
+
+    # ── DEPTH-K ─────────────────────────────────────────────────────────────
+    # The whole point of this figure is the line it refuses to cross. The
+    # `k`-rounded family names two quantities; only the ones whose own noun
+    # says "references" or "depth" are claimed here. The negative cases are
+    # load-bearing — widening this to match "pack" would demand a whole-pack
+    # total that nothing computes, and fail README for telling the truth.
+    ("DEPTH-K", "references are ~344k tokens and are the part an agent opens for depth",
+     True, "noun first, then the rounded figure"),
+    ("DEPTH-K", "references are ~349k tokens",
+     False, "correct to the nearest thousand"),
+    ("DEPTH-K", "It does not scale to 344k tokens of references.",
+     True, "figure first, noun after"),
+    ("DEPTH-K", "a request loads 7,476 against ~344k of available depth",
+     True, "a qualifier sits between the figure and its noun"),
+    ("DEPTH-K", "A monolithic pack of ~344k tokens cannot be loaded at all.",
+     False, "names the whole pack — a different quantity, and nothing computes it"),
+    ("DEPTH-K", "a monolithic 330k-token pack could not be loaded",
+     False, "same claim, hyphenated: 'pack' is not 'depth'"),
 ]
 
 

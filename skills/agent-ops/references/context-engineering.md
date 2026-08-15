@@ -1,6 +1,6 @@
 # Context Engineering — Why Loading Less Produces Better Output, Not Just Cheaper Output
 
-This pack routes one skill per request out of ~344k tokens of depth, and the
+This pack routes one skill per request out of ~349k tokens of depth, and the
 argument for that has always been budget: a monolithic pack cannot be loaded at
 all. Budget is the weaker half of the argument. The stronger half is accuracy —
 a model that receives irrelevant context does not ignore it, and the cost of
@@ -25,7 +25,7 @@ budget, which leaves the middle progressively under-attended as the context grow
 
 ### What that means here, measured
 
-Our always-loaded root `SKILL.md` is **~2,000 tokens** — below the threshold. The
+Our always-loaded root `SKILL.md` is **2,099 tokens** — below the threshold. The
 anti-slop wall sits at 18% of the file and the loading protocol at 80%, so the
 two directive sections already occupy the attention-favoured ends, with the
 registry table (a lookup, scanned rather than recalled) in between. **No change
@@ -68,7 +68,7 @@ it would fire on every long file and get muted.
 
 **Poisoning.** A wrong fact enters context and then compounds by self-reference —
 every later decision reinforces it. Our exposure is a stale figure in a reference:
-once an agent has read `53 constraints`, everything it generates is consistent
+once an agent has read `59 constraints`, everything it generates is consistent
 with a number that is wrong. This is the failure Gate 11 exists to prevent, and
 it is worth knowing that the cost is not merely an embarrassing document — it is
 every downstream decision made against it.

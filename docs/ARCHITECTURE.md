@@ -111,7 +111,7 @@ A parser-regression proof runs alongside gate 4: 13 synthetic cases, each provin
 ### Why gate 10 exists
 
 Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 101
-references are ~344k tokens and are the part an agent actually opens for depth,
+references are ~349k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
 the chain that the product's central claim rests on.
