@@ -584,6 +584,13 @@ SCAN: Sequence[str] = (
     # because it stopped at 9.
     ".github/ISSUE_TEMPLATE/*.md",
     ".github/workflows/*.yml",
+    # The gallery index served at the root of the Pages site. It carries no
+    # figure today and is written to keep it that way, so this entry buys
+    # nothing right now — which is the moment to add it rather than after
+    # someone puts a count on the most public page this project has. The three
+    # launch documents were outside SCAN on the same reasoning and held a
+    # superseded router size in live prose while the gate reported no drift.
+    ".github/pages/*.html",
     # Added with the community health files, which quote the figures at a
     # contributor as instructions. A wrong count here sends someone to argue
     # with a gate that is right.

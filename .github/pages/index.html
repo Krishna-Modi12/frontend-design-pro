@@ -1,0 +1,686 @@
+<!doctype html>
+<!--
+  The gallery index — what a visitor meets at the root of the Pages site.
+
+  ── Why this file exists ─────────────────────────────────────────────────────
+
+  For most of this site's life the root served demo/showcase directly, so the
+  first thing a stranger saw was a convincing landing page for a fictional
+  analytics company, with no frame around it. pages.yml already argued that
+  "README.md is the front door; this is the gallery" — but a gallery with no
+  index is just its loudest exhibit standing where the door should be. This is
+  the door.
+
+  ── Why it has no colour of its own ──────────────────────────────────────────
+
+  Both exhibits are near-black pages carrying one saturated accent, and their
+  whole comparison is what those accents do. A brand colour here would sit
+  between the reader and that comparison. So the page is built from warm
+  neutrals only, links are weight-and-underline rather than hue, and the two
+  screenshots supply every saturated pixel on the page. That is a decision, not
+  an omission — an index that out-designs the work it indexes is a bad index.
+
+  ── What holds this file to the wall ─────────────────────────────────────────
+
+  Nothing automatic, and that is worth stating plainly on a page for a product
+  whose claim is that it verifies rather than asserts. The constraint suites
+  read .tsx under demo/ and skills/; no static HTML in this repo is scanned,
+  docs/audit-report.html included. So the wall was applied by hand here: OKLCH
+  throughout with no raw hex, no near-black-plus-acid, no cream-and-serif, no
+  broadsheet columns, no gradient on a heading, a system font stack rather than
+  Inter, `text-wrap: balance` on headings, 44px targets, reduced motion
+  respected, and no horizontal scroll at 390px.
+
+  What IS gated: `.github/pages/*.html` is in Gate 11's SCAN list, so any count
+  or token figure written here is checked against the filesystem like every
+  other claim surface. There are deliberately none — this page describes two
+  pages, and the pack's figures belong on the README where they are already
+  measured. Do not add one here casually; add it knowing the gate will hold you
+  to it.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>frontend-design-pro — two pages, one skill pack</title>
+    <meta
+      name="description"
+      content="Two landing pages built by an AI agent running the frontend-design-pro skill pack, under two briefs that asked for the same thing. The gallery for the pack's runnable demos."
+    />
+    <link rel="canonical" href="https://krishna-modi12.github.io/frontend-design-pro/" />
+    <meta property="og:title" content="frontend-design-pro — two pages, one skill pack" />
+    <meta
+      property="og:description"
+      content="Two landing pages built by an AI agent under briefs that asked for the same thing. One broke no rule and looks generated. The other spent the same exemption deliberately."
+    />
+    <meta property="og:type" content="website" />
+    <style>
+      /* ── Tokens ──────────────────────────────────────────────────────────
+         One hue (85 — warm, paper-side) across every neutral, moving only in
+         lightness. Ratios below are computed from OKLCH lightness, worst case
+         against whichever of the two grounds the text actually sits on.
+
+         Dark is not a second design. It is the same page with the ramp
+         inverted, kept warm so it reads as paper at night rather than as
+         another developer-tool dark theme — which is the thing both exhibits
+         already are. */
+      :root {
+        color-scheme: light dark;
+
+        --paper: oklch(96.5% 0.004 85);
+        --card: oklch(99.5% 0.001 85);
+        --rule: oklch(87% 0.005 85);
+        --rule-strong: oklch(72% 0.008 85);
+        --ink: oklch(24% 0.01 85); /* 10.57:1 on paper, 11.40:1 on card */
+        --ink-secondary: oklch(45% 0.008 85); /* 4.92:1 on paper, 5.31:1 on card */
+
+        --shadow: 0 1px 2px oklch(24% 0.01 85 / 0.06), 0 12px 28px -14px oklch(24% 0.01 85 / 0.18);
+
+        --measure: 64ch;
+        --gutter: clamp(1.25rem, 5vw, 4rem);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: oklch(19% 0.005 85);
+          --card: oklch(23% 0.006 85);
+          --rule: oklch(34% 0.008 85);
+          --rule-strong: oklch(52% 0.01 85);
+          --ink: oklch(94% 0.004 85); /* 11.65:1 on paper, 10.26:1 on card */
+          --ink-secondary: oklch(72% 0.006 85); /* 6.28:1 on paper, 5.53:1 on card */
+
+          --shadow: 0 1px 2px oklch(0% 0 0 / 0.4), 0 12px 28px -14px oklch(0% 0 0 / 0.55);
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Mono is reserved for things that are literally code or literally a
+         label — token values, eyebrows, the wordmark. It is never body copy. */
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+          monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      h1,
+      h2,
+      h3 {
+        text-wrap: balance;
+        margin: 0;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      p {
+        text-wrap: pretty;
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      /* One visible focus treatment for every interactive element on the page.
+         Not `outline: none` anywhere — the links here carry no colour of their
+         own, so focus is the only thing that distinguishes them at a glance
+         for a keyboard reader. */
+      a:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        padding: 0.75rem 1rem;
+        background: var(--card);
+        border: 1px solid var(--ink);
+        z-index: 10;
+      }
+
+      .skip:focus {
+        left: var(--gutter);
+        top: 0.75rem;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: 72rem;
+        margin-inline: auto;
+        padding-inline: var(--gutter);
+      }
+
+      /* ── Header ──────────────────────────────────────────────────────── */
+
+      header {
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .header-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 1.25rem;
+      }
+
+      .wordmark {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+      }
+
+      nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* 44px minimum target, met with padding rather than a fixed height so a
+         wrapped label still grows the box instead of overflowing it. */
+      nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 0.9375rem;
+        color: var(--ink-secondary);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: color 150ms ease-out, border-color 150ms ease-out;
+      }
+
+      nav a:hover {
+        color: var(--ink);
+        border-bottom-color: var(--rule-strong);
+      }
+
+      /* ── Lede ────────────────────────────────────────────────────────── */
+
+      .lede {
+        padding-block: clamp(3rem, 9vw, 6rem) clamp(2rem, 6vw, 3.5rem);
+      }
+
+      .eyebrow {
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-secondary);
+      }
+
+      h1 {
+        margin-top: 1.25rem;
+        max-width: 20ch;
+        font-size: clamp(2.25rem, 6vw, 3.75rem);
+        font-weight: 600;
+      }
+
+      .lede p {
+        margin-top: 1.5rem;
+        max-width: var(--measure);
+        font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+        color: var(--ink-secondary);
+      }
+
+      /* ── Specimens ───────────────────────────────────────────────────── */
+
+      .specimens {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(3rem, 8vw, 5rem);
+        padding-bottom: clamp(3rem, 9vw, 6rem);
+      }
+
+      /* Asymmetric on purpose, and alternating, so the two never read as a
+         two-up card grid. Heights follow their own content — nothing here is
+         stretched to match its neighbour. */
+      .specimen {
+        display: grid;
+        gap: clamp(1.5rem, 4vw, 3rem);
+        align-items: start;
+      }
+
+      @media (min-width: 60rem) {
+        .specimen {
+          grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        }
+
+        /* The flipped row swaps the TRACKS as well as the order. Moving the
+           figure to `order: 2` alone leaves it in the 5fr column, so the second
+           exhibit renders visibly smaller than the first — which reads as a
+           layout bug rather than as emphasis, because nothing on the page
+           explains why one page deserves more pixels than the other. Both
+           exhibits get the wide track; only the side alternates. */
+        .specimen--flip {
+          grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        }
+
+        .specimen--flip .specimen-figure {
+          order: 2;
+        }
+      }
+
+      .specimen-figure {
+        margin: 0;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .specimen-figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .specimen-body {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 1rem;
+      }
+
+      .verdict {
+        display: inline-block;
+        padding: 0.3rem 0.6rem;
+        border: 1px solid var(--rule-strong);
+        border-radius: 3px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .specimen h2 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 600;
+      }
+
+      .specimen h2 .sector {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.9375rem;
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: 1.5;
+        color: var(--ink-secondary);
+      }
+
+      .specimen p {
+        max-width: var(--measure);
+        color: var(--ink-secondary);
+      }
+
+      /* The two token values that define each page, quoted from its own token
+         file rather than eyeballed off the screenshot. Chroma is the whole
+         argument: 0.25 at 70% lightness is a neon; 0.18 at 55% is a colour
+         somebody chose.
+
+         One composite chip rather than a swatch per value. Both grounds are
+         near-black, so a 14px square of `oklch(10% 0.015 270)` sitting on this
+         page in dark mode is a dark hole inside a lighter border — it reads as
+         an empty box, and the reader learns nothing from the one swatch that is
+         supposed to establish how dark these pages are. Nesting the accent
+         inside the ground fixes that and says more: what the chip shows is the
+         actual relationship, accent on ground, which is the only thing that
+         differs between the two exhibits. */
+      .palette {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .palette-chip {
+        display: grid;
+        place-items: center;
+        width: 3.25rem;
+        height: 2.25rem;
+        flex: none;
+        border: 1px solid var(--rule-strong);
+        border-radius: 4px;
+        background: var(--ground);
+      }
+
+      .palette-chip::after {
+        content: "";
+        width: 0.875rem;
+        height: 0.875rem;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .tokens {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        margin: 0;
+        font-size: 0.8125rem;
+        color: var(--ink-secondary);
+      }
+
+      .tokens div {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+
+      .tokens dt {
+        min-width: 4rem;
+        font-weight: 500;
+      }
+
+      .tokens dd {
+        margin: 0;
+      }
+
+      .open {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        margin-top: 0.5rem;
+        padding-inline: 1.25rem;
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 4px;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: opacity 150ms ease-out;
+      }
+
+      .open:hover {
+        opacity: 0.86;
+      }
+
+      .open:focus-visible {
+        outline-color: var(--ink);
+      }
+
+      /* ── Argument ────────────────────────────────────────────────────── */
+
+      .argument {
+        border-top: 1px solid var(--rule);
+        padding-block: clamp(3rem, 8vw, 5rem);
+      }
+
+      .argument h2 {
+        max-width: 24ch;
+        font-size: clamp(1.5rem, 3.2vw, 2.125rem);
+        font-weight: 600;
+      }
+
+      .argument p {
+        margin-top: 1.25rem;
+        max-width: var(--measure);
+        color: var(--ink-secondary);
+      }
+
+      .argument p + p {
+        margin-top: 1rem;
+      }
+
+      .argument strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      /* ── Footer ──────────────────────────────────────────────────────── */
+
+      footer {
+        border-top: 1px solid var(--rule);
+        padding-block: 2.5rem 4rem;
+      }
+
+      .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1.5rem 2rem;
+      }
+
+      footer p {
+        max-width: 52ch;
+        font-size: 0.875rem;
+        color: var(--ink-secondary);
+      }
+
+      footer a {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: var(--rule-strong);
+      }
+
+      footer a:hover {
+        text-decoration-color: currentColor;
+      }
+
+      /* The page has almost no motion — two colour fades and an opacity shift.
+         Removed rather than shortened when the preference is set, because none
+         of them communicates anything a static state does not. */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header>
+      <div class="shell header-row">
+        <a
+          class="wordmark mono"
+          href="https://github.com/Krishna-Modi12/frontend-design-pro"
+          >frontend-design-pro</a
+        >
+        <nav aria-label="Primary">
+          <ul>
+            <li>
+              <a href="https://github.com/Krishna-Modi12/frontend-design-pro">Repository</a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/Krishna-Modi12/frontend-design-pro#install-in-30-seconds"
+                >Install</a
+              >
+            </li>
+            <li>
+              <a href="https://github.com/Krishna-Modi12/frontend-design-pro/releases"
+                >Releases</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="shell lede">
+        <p class="eyebrow mono">The gallery</p>
+        <h1>Two pages, one skill pack, one rule bent twice.</h1>
+        <p>
+          <strong>frontend-design-pro</strong> is a skill pack an AI coding agent loads while it
+          writes frontend code. These are two pages it produced, under briefs that asked for the
+          same look. Both products are fictional. The repository README is the front door — this is
+          where the output lives.
+        </p>
+      </div>
+
+      <div class="shell specimens">
+        <section class="specimen" aria-labelledby="bellwether">
+          <figure class="specimen-figure">
+            <img
+              src="thumb-landing-page.png"
+              width="1920"
+              height="1080"
+              alt="The Bellwether landing page: a near-black hero at a single hue, a deep cobalt accent, and a rehearsal report panel listing a migration's statement, rows touched and lock duration."
+            />
+          </figure>
+          <div class="specimen-body">
+            <p class="verdict mono">Earned</p>
+            <h2 id="bellwether">
+              Bellwether
+              <span class="sector">A rehearsal tool for pending database migrations.</span>
+            </h2>
+            <p>
+              Its brief asked for near-black with one bright accent — the exact look the pack's own
+              wall refuses to produce unless a brief asks for it. So this page was permitted before
+              it was designed, and the question became what it had to do to be worth the exemption.
+            </p>
+            <p>
+              A cobalt at 55% lightness rather than an acid neon. One hue across every neutral.
+              Every colour pair measured on all three of its surfaces rather than eyed — six pairs
+              failed on the first pass and were fixed before it shipped. Density and one scroll
+              reveal carrying the page, instead of a bright colour doing it alone.
+            </p>
+            <div class="palette">
+              <span
+                class="palette-chip"
+                style="--ground: oklch(10% 0.015 270); --accent: oklch(55% 0.18 260)"
+                aria-hidden="true"
+              ></span>
+              <dl class="tokens mono">
+                <div>
+                  <dt>Ground</dt>
+                  <dd>oklch(10% 0.015 270)</dd>
+                </div>
+                <div>
+                  <dt>Accent</dt>
+                  <dd>oklch(55% 0.18 260)</dd>
+                </div>
+              </dl>
+            </div>
+            <a class="open" href="landing-page/">Open Bellwether</a>
+          </div>
+        </section>
+
+        <section class="specimen specimen--flip" aria-labelledby="nexus">
+          <figure class="specimen-figure">
+            <img
+              src="thumb-showcase.png"
+              width="1920"
+              height="1080"
+              alt="The Nexus showcase page: a near-black WebGL particle hero with an acid-green accent and a large display headline."
+            />
+          </figure>
+          <div class="specimen-body">
+            <p class="verdict mono">Permitted</p>
+            <h2 id="nexus">
+              Nexus
+              <span class="sector">A fictional AI analytics platform.</span>
+            </h2>
+            <p>
+              The same exemption, taken and left there. Its brief asked for near-black and acid
+              green and got exactly that: a WebGL hero, an asymmetric bento grid, a validated form,
+              every constraint green, no rule broken — and a page that looks like every other
+              generated developer-tool site on the internet.
+            </p>
+            <p>
+              It is kept here unchanged because it is the control. A gate can tell you a page broke
+              no rule. It cannot tell you the page was designed.
+            </p>
+            <div class="palette">
+              <span
+                class="palette-chip"
+                style="--ground: oklch(12% 0.01 260); --accent: oklch(70% 0.25 145)"
+                aria-hidden="true"
+              ></span>
+              <dl class="tokens mono">
+                <div>
+                  <dt>Ground</dt>
+                  <dd>oklch(12% 0.01 260)</dd>
+                </div>
+                <div>
+                  <dt>Accent</dt>
+                  <dd>oklch(70% 0.25 145)</dd>
+                </div>
+              </dl>
+            </div>
+            <a class="open" href="showcase/">Open Nexus</a>
+          </div>
+        </section>
+      </div>
+
+      <div class="shell argument">
+        <h2>Why a rule this pack wrote has an exemption in it</h2>
+        <p>
+          The pack ships a wall of AI-design defaults its skills will not produce. Three of them —
+          cream and serif and terracotta, near-black with a single acid accent, broadsheet hairline
+          columns — are banned <strong>unless the brief asks for them</strong>. Without that clause
+          the rules would overrule the person using them, which is a worse failure than a generic
+          page.
+        </p>
+        <p>
+          With it, a brief can walk an agent straight back into the default the wall was written to
+          prevent. That is what the second page is: not a rule broken, a rule spent. The first page
+          spends the same clause on purpose and has to earn it back in the parts no rule covers —
+          chroma, measured contrast, density, restraint.
+        </p>
+        <p>
+          <strong
+            >The difference between these two pages is not in any rule, and no gate in this
+            repository can see it.</strong
+          >
+          Every constraint the pack enforces is green on both. That gap is the honest edge of what
+          machine-checked design can claim, and it is why both pages are still here.
+        </p>
+        <p>
+          A concrete example, since the claim is cheap otherwise. The same wall lists
+          <em>Nexus</em> by name as a brand not to invent, beside Acme and SmartFlow. Nothing in the
+          constraint suite reads brand names, so the page carrying that name has passed every green
+          run this project has ever cut. The other page's source names the same list in a comment
+          and picks around it — the pack's guidance working at the moment of authoring, which is
+          where it does its actual work, and nowhere a check could confirm afterwards.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <div class="shell footer-row">
+        <p>
+          Bellwether and Nexus are fictional products invented for these pages. Neither is a real
+          service, neither collects anything, and no figure on either page describes a real system.
+        </p>
+        <p>
+          The pack is real:
+          <a href="https://github.com/Krishna-Modi12/frontend-design-pro"
+            >github.com/Krishna-Modi12/frontend-design-pro</a
+          >
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
