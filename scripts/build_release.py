@@ -1146,6 +1146,12 @@ def release_notes(version: str, archive: Path, gate_results, elapsed):
 **Archive:** `frontend-design-pro-v{version}.skill` — {archive.stat().st_size//1024} KB, {len(infos)} files, ~{tok:,} tokens of markdown, root `frontend-design-pro/`
 **Pipeline wall-clock:** {elapsed:.1f}s
 
+> Those archive figures describe the file **this run produced**, on the machine it ran on.
+> A local build can differ from the published one — line endings and any untracked working-tree
+> file move the byte count and the file count. The asset attached to the GitHub release is the
+> authoritative artifact; where the two disagree, believe the asset. Everything below this line
+> is recomputed from the repository and is identical either way.
+
 ## Contents
 
 {len(skills)} skills · {len(list(ROOT.glob("core/*.md")))} core files · {len(refs)} references ({ref_tok:,} tokens of on-demand depth) · {len(golds) + len(antis)} examples ({len(golds)} gold + {len(antis)} anti-examples) · {len(tests)} tests · {n_sem + n_syn} constraints ({n_sem} semantic + {n_syn} syntactic)

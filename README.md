@@ -93,6 +93,11 @@ One command, no clone, no setup script. It detects every agent you have installe
 
 It installs as **one** skill, which is the shape this pack needs: the root `SKILL.md` router arrives with `core/` and all 19 `skills/` beside it, so lazy loading still works. Verified against a clean directory — 19 of 19 registry rows and 6 of 6 declared core deps resolve inside the install.
 
+> [!IMPORTANT]
+> **This route tracks `main`, not a release.** The installer clones the default branch, so you get whatever is on `main` at that moment — which may be ahead of the version in the badge above, and is not the artifact the 11 gates signed off. It also clones the *whole* repository: the pack, plus this project's own demos, tests, build scripts and CI, around 6 MB under `.agents/skills/`. `metadata.json` is the one file it drops, so the installed copy has no version stamp at the root; every `skills/*/SKILL.md` carries a `version:` field if you need to know what you have.
+>
+> For a pinned, gated artifact, take **[the release archive](https://github.com/Krishna-Modi12/frontend-design-pro/releases/latest)** instead — it is built only when all 11 gates pass, carries `metadata.json`, and every path inside it is checked to resolve. Both routes give the same skills; only one of them is a version.
+
 > [!WARNING]
 > **Do not pass `--full-depth`.** That flag tells the installer to keep walking subdirectories even when a root `SKILL.md` exists, which installs all twenty skills as peers instead of one router over nineteen. Measured, not assumed:
 >
@@ -355,6 +360,8 @@ npm run dev   # http://localhost:3000
 > [!TIP]
 > **[Open the live gallery →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
 > Both runnable demos are there — **[/showcase/](https://krishna-modi12.github.io/frontend-design-pro/showcase/)** and **[/landing-page/](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** — with the index stating what separates them, since their briefs asked for the same look and only one of them earned it. Redeployed from `main` whenever either demo changes. What you see is the output of the routing described below, not a mock-up of it.
+>
+> Because it redeploys from `main`, the live pages can be **ahead of the release archive you downloaded** — a demo redesigned after a tag ships on the site before it ships in a `.skill`. If a page and your copy's README describe different designs, the site is the newer of the two. The skills themselves are the same either way; only the demos move between releases.
 
 [`demo/showcase/`](demo/showcase/) is one of two projects in `demo/` that break the stub-typed convention above on purpose — the other is [`landing-page/`](demo/landing-page/). It is a real, standalone Next.js 15 + React 19 + Tailwind v4 app — its own `package.json`, real installed dependencies (React Three Fiber + drei, React Hook Form + Zod), a dev server that actually boots. It's a cinematic dark-mode landing page for a fictional AI analytics product, "Nexus" — near-black OKLCH surface, single acid-green accent, an asymmetric bento grid, a WebGL particle hero, and a validated contact form.
 
