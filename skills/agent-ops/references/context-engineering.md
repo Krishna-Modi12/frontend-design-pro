@@ -68,7 +68,7 @@ it would fire on every long file and get muted.
 
 **Poisoning.** A wrong fact enters context and then compounds by self-reference —
 every later decision reinforces it. Our exposure is a stale figure in a reference:
-once an agent has read `59 constraints`, everything it generates is consistent
+once an agent has read `60 constraints`, everything it generates is consistent
 with a number that is wrong. This is the failure Gate 11 exists to prevent, and
 it is worth knowing that the cost is not merely an embarrassing document — it is
 every downstream decision made against it.

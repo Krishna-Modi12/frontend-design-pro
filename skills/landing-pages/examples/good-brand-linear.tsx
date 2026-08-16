@@ -172,9 +172,9 @@ function Sidebar({ onCommandPalette }: { onCommandPalette: () => void }) {
         className="flex items-center gap-2 px-3 py-3 border-b">
         <div style={{ backgroundColor: tokens.accent }}
           className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold">
-          A
+          H
         </div>
-        <span style={{ color: tokens.ink }} className="text-sm font-medium">Acme Inc.</span>
+        <span style={{ color: tokens.ink }} className="text-sm font-medium">Halyard</span>
         <span style={{ color: tokens.inkMuted }} className="ml-auto text-xs">⌄</span>
       </div>
 

@@ -100,7 +100,7 @@ Log the tool calls (Option B) or check the system prompt size (Option A), and se
 
 ## Honest limitations
 
-- **No built-in awareness of the gate scripts.** The API has no concept of `scripts/build_release.py` or the AST/regex constraint suites unless you wire them in as tools yourself (e.g., a tool that shells out to run the parser constraints against generated code and returns pass/fail). Without that, "59 machine-enforced constraints" only holds if you run them outside the model.
+- **No built-in awareness of the gate scripts.** The API has no concept of `scripts/build_release.py` or the AST/regex constraint suites unless you wire them in as tools yourself (e.g., a tool that shells out to run the parser constraints against generated code and returns pass/fail). Without that, "60 machine-enforced constraints" only holds if you run them outside the model.
 - **No code execution by default.** Unless you've separately built or attached a code-execution tool, the model cannot compile or type-check its own output.
 - **Model and API shapes change.** Use whatever model identifier and SDK version your account is actually configured for; the snippet above uses `client.chat.completions.create` because it is a stable, widely-supported shape, but check current OpenAI SDK docs if you're on a newer response API — the exact method name and tool-calling schema have shifted across SDK versions before.
 

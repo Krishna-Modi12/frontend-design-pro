@@ -444,13 +444,33 @@ FIGURES: Sequence[Figure] = (
     Figure(
         "CONSTRAINTS",
         "total constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-enforced\s+)?constraints\b",
+        # The same total is also written as a count of *checks* or of *IDs* —
+        # "all 59 checks", "= 59 checks across 59 distinct IDs" — in three
+        # documents that describe the suites rather than quote a headline. Bare
+        # "N checks" is deliberately not matched: gate chains, evals and CI jobs
+        # all count checks too, and a pattern that claimed those would report
+        # drift on numbers that have nothing to do with constraints.
+        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-enforced\s+)?constraints\b"
+        r"|\ball\s+\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
+        r"|=\s*\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
+        r"|(?<![\d,])(\d{1,3})\s+distinct\s+IDs\b",
         lambda t: (str(t["ci_constraints"]),),
     ),
+    # The split had one shape: "(17 AST + 42 regex)". The corpus writes it four
+    # ways, and the other three were unreadable — "(17 parser + 42 regex)" with
+    # no AST, "17 semantic + 42 syntactic = 60" with no brackets, and "(17 AST
+    # via the TypeScript compiler API + 42 regex)" with a clause in the middle.
+    # Twelve surfaces carried a stale half through the sweep that corrected
+    # every surface the gate could read, in the same session that widened this
+    # gate twice for the same reason. The half a document happens to spell out
+    # is not a signal about which half matters.
     Figure(
         "CONSTRAINT-SPLIT",
-        "constraint split, AST + regex",
-        r"\((\d{1,3})\s+(?:parser\s+)?AST\s*\+\s*(\d{1,3})\s+regex\)",
+        "constraint split, AST/parser/semantic + regex/syntactic",
+        r"\(\s*(\d{1,3})\s+(?:parser\s+)?(?:AST|parser|semantic)\b[^)+]{0,60}?"
+        r"\+\s*(\d{1,3})\s+(?:regex|syntactic)\b"
+        r"|(?<![\d,])(\d{1,3})\s+(?:semantic|parser|AST)\s*\+\s*"
+        r"(\d{1,3})\s+(?:syntactic|regex)\b",
         lambda t: (str(t["parser_constraints"]), str(t["regex_constraints"])),
     ),
     Figure(
@@ -478,14 +498,22 @@ FIGURES: Sequence[Figure] = (
     Figure(
         "CONSTRAINTS-REGEX",
         "regex/syntactic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic)\s+constraints\b"
+        # `checks` and the slashed `regex/syntactic` are the other two nouns the
+        # corpus uses for the same quantity — "the 42 regex checks on the
+        # project", "42 regex/syntactic constraints". Both sat stale through a
+        # sweep because only "constraints" was spelled out here.
+        r"(?<![\d,])(\d{1,3})\s+(?:regex|syntactic|regex/syntactic)"
+        r"\s+(?:constraints|checks)\b"
+        # The checklist-heading form without the "-enforced" suffix:
+        # "**Syntactic (42 regex)**" in the always-loaded agent prompt.
+        r"|(?i:regex|syntactic)\s*\((\d{1,3})\s+regex\)"
         r"|(?i:regex|syntactic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["regex_constraints"]),),
     ),
     Figure(
         "CONSTRAINTS-AST",
         "AST/semantic half of the constraint count",
-        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+constraints\b"
+        r"(?<![\d,])(\d{1,3})\s+(?:semantic|AST|parser)\s+(?:constraints|checks)\b"
         r"|(?i:parser|AST|semantic)-enforced\s*\([^)\d]{0,16}(\d{1,3})\)",
         lambda t: (str(t["parser_constraints"]),),
     ),

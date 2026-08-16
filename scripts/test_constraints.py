@@ -51,6 +51,21 @@ def _has(pattern: str, code: str, flags=0) -> bool:
 def _lacks(pattern: str, code: str, flags=0) -> bool:
     return not bool(re.search(pattern, code, flags))
 
+# Comments are developer notes, not user-visible content. A rule about what a
+# page *says* must not fire on a note explaining what the page deliberately
+# avoids saying — `demo/landing-page/lib/content.ts` carries the JSDoc line
+# "Invented for the sector. Not Acme, Cloudly, SmartFlow or Nexus.", which is
+# the rule being obeyed out loud and would otherwise read as four violations.
+#
+# Deliberately conservative: block comments, and line comments only where `//`
+# opens the line. A trailing `//` is left alone because `"https://…"` is far more
+# common in this corpus than a trailing comment naming a banned string, and a
+# stripper that eats string literals turns a gate into a source of false
+# negatives — the one failure mode a gate may not have.
+def _uncommented(code: str) -> str:
+    code = re.sub(r"/\*.*?\*/", " ", code, flags=re.DOTALL)
+    return re.sub(r"(?m)^[ \t]*//[^\n]*$", "", code)
+
 
 CONSTRAINTS: List[Constraint] = [
 
@@ -195,11 +210,17 @@ CONSTRAINTS: List[Constraint] = [
     Constraint(
         id="SLOP-01",
         category="Anti-AI-Slop",
-        description="No placeholder names (John Doe, Jane Doe)",
+        description="No placeholder names or stock values (John Doe, user123, $99.99)",
         severity="high",
         check=lambda c: (
-            _lacks(r'John Doe|Jane Doe', c),
-            "Placeholder names found — use realistic diverse names"
+            # The wall names these in one breath — "lorem ipsum", "John Doe",
+            # "user123", "$99.99" — and only the first two were enforced. The
+            # other two are the tells that a demo was filled in rather than
+            # written: nobody's handle is `user123` and nothing costs $99.99
+            # except a price invented to look like a price.
+            _lacks(r'John Doe|Jane Doe|\buser123\b|\$99\.99\b', _uncommented(c)),
+            "Placeholder names or stock values found — use realistic diverse "
+            "names and organic prices"
         )
     ),
     Constraint(
@@ -232,6 +253,16 @@ CONSTRAINTS: List[Constraint] = [
             _has(r'\d+\.\d+%|\$\d+,\d{3}(?!\d)|\b\d{1,2},\d{3}\b', c)
             or _lacks(r'\b(50%|100%|\$10,000|\$100,000)\b', c),
             "Only round-number data values found — use organic values (47.2%, $12,847)"
+        )
+    ),
+    Constraint(
+        id="SLOP-05",
+        category="Anti-AI-Slop",
+        description="No placeholder brand names (Acme, Cloudly, SmartFlow, Nexus)",
+        severity="high",
+        check=lambda c: (
+            _lacks(r'\b(Acme|Cloudly|SmartFlow|Nexus)\b', _uncommented(c)),
+            "Placeholder brand name found — invent one that fits the sector"
         )
     ),
 
@@ -574,10 +605,43 @@ PAGE_SCOPED = {
 }
 
 
-def run_constraints(code: str, component_mode: bool = False) -> List[TestResult]:
+# Known, declared violations — carried openly rather than quietly excluded.
+#
+# `demo/showcase` is named "Nexus", which SLOP-05 bans, and it has been for its
+# whole life. The violation is already written down in `demo/showcase/README.md`
+# with the reason the rename is deferred (sixteen files including
+# `package-lock.json`, plus a committed screenshot that only the out-of-CI
+# browser harness can regenerate). This entry is that same disclosure in a form
+# the suite can read, so the rule can ship *now* and catch the next instance
+# instead of waiting on a rename to catch none.
+#
+# The cost is stated on every run — an exemption nobody is reminded of is an
+# exemption that becomes permanent. Delete this entry with the rename; the
+# constraint is what makes deleting it possible to verify.
+GRANDFATHERED = {
+    "demo/showcase": {
+        "SLOP-05": "named Nexus since before the rule existed — see "
+                   "demo/showcase/README.md 'Known violation — the name'",
+    },
+}
+
+
+def _grandfathered_for(path: str) -> dict:
+    norm = str(path).replace("\\", "/")
+    for prefix, waivers in GRANDFATHERED.items():
+        if prefix in norm:
+            return waivers
+    return {}
+
+
+def run_constraints(code: str, component_mode: bool = False,
+                    path: str = "") -> List[TestResult]:
     results = []
+    waived = _grandfathered_for(path)
     for c in CONSTRAINTS:
         if component_mode and c.id in PAGE_SCOPED:
+            continue
+        if c.id in waived:
             continue
         passed, evidence = c.check(code)
         results.append(TestResult(constraint=c, passed=passed, evidence=evidence))
@@ -653,6 +717,9 @@ import { useState, useEffect } from 'react';
 interface DashboardProps { isLoading?: boolean }
 type Metric = { label: string; value: string }
 
+/** Brand invented for the sector. Not Acme, Cloudly, SmartFlow or Nexus. */
+const BRAND = 'Halloway';
+
 export default function Dashboard({ isLoading = false }: DashboardProps = {}) {
   const [error, setError] = useState(null);
 
@@ -691,14 +758,83 @@ function Widget() {
     <div style={{ fontFamily: 'Inter', background: '#FFFFFF' }}>
       <button>✕</button>
       <input type="text" />
-      <p>Hello John Doe, welcome to our platform. Elevate your experience!</p>
-      <p>Growth: 50% Revenue: $10,000</p>
+      <p>Hello John Doe (@user123), welcome to Acme. Elevate your experience!</p>
+      <p>Growth: 50% Revenue: $10,000 — Pro plan $99.99/mo</p>
       <img src="/img.png" />
       <div className="animate-spin duration-1000" />
     </div>
   );
 }
 """
+
+
+# `core/validate-checklist.md` is the list an agent is told to self-check
+# against, and it is maintained by hand. It has drifted twice: it read
+# "## Regex-enforced (36)" against a real 42, and — one release later, in the
+# commit that fixed that — the heading was corrected to 43 while the roster
+# underneath still ended at SLOP-04.
+#
+# The figure gate reads the *number in the heading*. Nothing read the IDs. So
+# the count and the list could disagree indefinitely, and the file an agent is
+# pointed at could quietly stop naming a rule the suite enforces. That is worse
+# than a wrong number: the agent obeys the list, and the gate fails it on a rule
+# the list never mentioned.
+#
+# This runs on every invocation rather than only under --self-test, because
+# --self-test is not in the release chain and this needs to be.
+_ID_IN_PROSE = re.compile(
+    r"`([A-Z0-9]{2,7}-[0-9]{2}(?:-AST)?[A-Z]?(?:/[0-9]{2}[A-Z]?)*)`")
+
+
+def _expand_ids(token: str) -> List[str]:
+    """`SLOP-01/02/03/04/05` is five IDs written once. `MOTION-02R` is one."""
+    head, _, rest = token.partition("-")
+    return [f"{head}-{part}" for part in rest.split("/")]
+
+
+def roster_check() -> bool:
+    checklist = Path(__file__).resolve().parent.parent / "core" / "validate-checklist.md"
+    if not checklist.exists():
+        return True  # not shipped beside the suite; nothing to compare against
+    text = checklist.read_text(encoding="utf-8")
+    # BEHAV-01..04 live under "## Self-checks (not machine-enforceable)" and are
+    # correctly absent from both suites. Only the sections above that heading
+    # claim enforcement, so only those are compared.
+    enforced_part, _, selfcheck_part = text.partition("## Self-checks")
+    listed = set()
+    for tok in _ID_IN_PROSE.findall(enforced_part):
+        listed.update(_expand_ids(tok))
+    defined = {c.id for c in CONSTRAINTS} | set(PARSER_CHECK_IDS)
+    missing, extra = sorted(defined - listed), sorted(listed - defined)
+
+    # The closing "**Total: N machine-enforced (P parser + R regex) + S
+    # self-checks**" line restates all four numbers in a prose shape no figure
+    # pattern matches — it says "machine-enforced", not "constraints" — so it
+    # sat at 59/42 through the release that corrected every other surface.
+    # Everything in it is derivable, so derive it.
+    n_par, n_reg = len(PARSER_CHECK_IDS), len(CONSTRAINTS)
+    # Table rows only — the prose that follows the Total line names half a dozen
+    # enforced IDs while explaining the renumbering, and none of those is a
+    # self-check.
+    n_self = len(set(re.findall(r"(?m)^\|\s*`([A-Z0-9-]+)`\s*\|", selfcheck_part)))
+    want = [n_par + n_reg, n_par, n_reg, n_self]
+    total_line = next((l for l in text.splitlines() if l.startswith("**Total:")), "")
+    got = [int(n) for n in re.findall(r"\d+", total_line)]
+    total_bad = bool(total_line) and got[:4] != want
+
+    if not missing and not extra and not total_bad:
+        return True
+    print(f"\n[ROSTER] {checklist.name} disagrees with the suites it documents.")
+    if missing:
+        print(f"  enforced but not listed: {', '.join(missing)}")
+        print("  → an agent self-checking against that file is not told about these")
+    if extra:
+        print(f"  listed but not enforced: {', '.join(extra)}")
+        print("  → the file promises a check that no longer exists")
+    if total_bad:
+        print(f"  the Total line reads {got[:4]}, the suites say {want}")
+        print(f"  → {total_line.strip()}")
+    return False
 
 
 def self_test():
@@ -797,6 +933,8 @@ def parser_check(files) -> bool:
 def main():
     if "--self-test" not in sys.argv and not compile_check():
         sys.exit(1)
+    if not roster_check():
+        sys.exit(1)
     args = sys.argv[1:]
 
     if not args or args[0] in ("-h", "--help"):
@@ -879,13 +1017,13 @@ def main():
         for name in sorted(groups):
             code = "\n".join(p.read_text(encoding="utf-8") for p in sorted(groups[name]))
             label = f"{base}/{name} ({len(groups[name])} files)"
-            results = run_constraints(code, component_mode)
+            results = run_constraints(code, component_mode, f"{base}/{name}")
             r = report(label, results, json_out=json_output)
             all_results.append({"file": label, **r})
     else:
         for filepath in sorted(files_to_check):
             code = filepath.read_text(encoding="utf-8")
-            results = run_constraints(code, component_mode)
+            results = run_constraints(code, component_mode, str(filepath))
             r = report(str(filepath), results, json_out=json_output)
             all_results.append({"file": str(filepath), **r})
 
@@ -898,6 +1036,12 @@ def main():
     unit = ("demo projects" if project_mode
             else "components" if component_mode else "files")
     print(f"\n[REGEX]  {gold_clean}/{len(gold)} {unit} passed {n_regex}/{n_regex} syntactic checks")
+    # A waiver that only shows up in a source file is a waiver nobody revisits.
+    # Anything checked this run under a grandfathered exemption says so here,
+    # every run, with the reason attached.
+    for r in all_results:
+        for cid, why in sorted(_grandfathered_for(r["file"]).items()):
+            print(f"         {r['file']}: {cid} waived — {why}")
     if component_mode:
         print(f"         {len(PAGE_SCOPED)} page-scoped constraints skipped: "
               f"{', '.join(sorted(PAGE_SCOPED))}")

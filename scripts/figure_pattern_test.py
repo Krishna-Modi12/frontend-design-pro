@@ -121,6 +121,55 @@ CASES = [
     ("CONSTRAINTS-AST", "Gate 5 runs 42 regex constraints, not AST ones.",
      False, "the regex count is not the AST count — each half owns its own noun"),
 
+    # ── CONSTRAINT SPLIT, and the three shapes it could not read ────────────
+    # The split had exactly one readable form, "(17 AST + 42 regex)". Twelve
+    # surfaces wrote it one of the other three ways and carried a stale half
+    # through a sweep that corrected everything the gate could see.
+    ("CONSTRAINT-SPLIT", "All 59 constraints (17 parser + 39 regex, unique IDs)",
+     True, "no 'AST' between the count and the plus — the commonest written form"),
+    ("CONSTRAINT-SPLIT", "All 59 constraints (17 parser + 42 regex, unique IDs)",
+     False, "same shape, correct halves"),
+    ("CONSTRAINT-SPLIT", "pass all 59 checks (17 AST via the TypeScript compiler API + 39 regex)",
+     True, "a whole clause sits between the first half and the plus"),
+    ("CONSTRAINT-SPLIT", "pass all 59 checks (17 AST via the TypeScript compiler API + 42 regex)",
+     False, "same interposed clause, correct halves"),
+    ("CONSTRAINT-SPLIT", "17 semantic + 39 syntactic = 59 checks across 59 distinct IDs",
+     True, "no brackets at all, and both nouns are the other synonym"),
+    ("CONSTRAINT-SPLIT", "17 semantic + 42 syntactic = 59 checks across 59 distinct IDs",
+     False, "same bracketless form, correct halves"),
+    ("CONSTRAINT-SPLIT", "Constraints 53 → 56 (17 AST + 39 regex).",
+     False, "an arrow makes both endpoints history — correcting it would delete "
+            "what that release actually did"),
+
+    # ── CONSTRAINTS, counted as checks or as IDs ────────────────────────────
+    ("CONSTRAINTS", "they must pass all 56 checks",
+     True, "the total written as a count of checks, not of constraints"),
+    ("CONSTRAINTS", "they must pass all 59 checks",
+     False, "same noun, correct total"),
+    ("CONSTRAINTS", "= **56 checks across 56 distinct IDs**",
+     True, "both halves of the identity restate the same total"),
+    ("CONSTRAINTS", "= **59 checks across 59 distinct IDs**",
+     False, "same identity, correct total"),
+    ("CONSTRAINTS", "Gate 7 runs 22 checks against the eval set.",
+     False, "a bare check count belongs to some other suite — claiming it would "
+            "flag every gate, eval and CI job that counts anything"),
+
+    # ── The halves, counted as checks ───────────────────────────────────────
+    ("CONSTRAINTS-REGEX", "the 39 regex checks run on the project",
+     True, "'checks' is the other noun the corpus uses for the same quantity"),
+    ("CONSTRAINTS-REGEX", "the 42 regex checks run on the project",
+     False, "same noun, correct count"),
+    ("CONSTRAINTS-REGEX", "- 39 regex/syntactic constraints",
+     True, "the slashed pair names one quantity, not two"),
+    ("CONSTRAINTS-REGEX", "- [ ] **Syntactic (39 regex)** — the checklist is authoritative",
+     True, "checklist-heading form with no '-enforced' suffix, in the always-loaded prompt"),
+    ("CONSTRAINTS-REGEX", "- [ ] **Syntactic (42 regex)** — the checklist is authoritative",
+     False, "same heading form, correct count"),
+    ("CONSTRAINTS-AST", "the 12 AST checks on every authored file",
+     True, "the AST half, counted as checks"),
+    ("CONSTRAINTS-AST", "the 17 AST checks on every authored file",
+     False, "same noun, correct count"),
+
     # ── DEPTH-K ─────────────────────────────────────────────────────────────
     # The whole point of this figure is the line it refuses to cross. The
     # `k`-rounded family names two quantities; only the ones whose own noun

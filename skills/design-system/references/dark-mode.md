@@ -285,7 +285,7 @@ export function SimpleThemeToggle() {
 // Option 1: CSS filter inversion (logos/icons that are black on transparent)
 <img
   src="/logo.svg"
-  alt="Acme Inc."
+  alt="Ridgeline"
   className="h-8 dark:invert"
 />
 
