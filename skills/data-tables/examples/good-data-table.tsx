@@ -12,7 +12,7 @@
 //   • All interactive elements have focus-visible:ring-2 + ≥44px touch targets
 //   • prefers-reduced-motion in <style> block — ANI-01 compliant
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 const USERS = [
   { id: 1,  name: "Ana Ngugi",       email: "ana.ngugi@volta.io",       plan: "Enterprise", status: "Active",  mrr: 1247.83, joined: "2023-09-14" },
@@ -52,7 +52,64 @@ const PLAN_STYLES = {
 };
 
 export type User = (typeof USERS)[number]
-type SortKey = 'name' | 'email' | 'plan' | 'status' | 'mrr' | 'joined'
+const SORT_KEYS = ['name', 'email', 'plan', 'status', 'mrr', 'joined'] as const
+type SortKey = (typeof SORT_KEYS)[number]
+
+/** Rule 5 — filters, sort and page live in the URL, so a view is shareable and
+ *  survives a reload. Written against the platform rather than a router so the
+ *  pattern ports anywhere; under Next, `useSearchParams` replaces the read and
+ *  `router.replace` the write, with the same shape. Selection is deliberately
+ *  NOT here: it is a transient act, not a view worth sending to someone. */
+const VIEW_DEFAULTS: Record<string, string> = { q: "", sort: "name", dir: "asc", page: "1" };
+
+function readView(defaults: Record<string, string>): Record<string, string> {
+  if (typeof window === "undefined") return { ...defaults };
+  const params = new URLSearchParams(window.location.search);
+  const view = { ...defaults };
+  for (const key of Object.keys(defaults)) {
+    const value = params.get(key);
+    if (value !== null) view[key] = value;
+  }
+  return view;
+}
+
+function useUrlState(defaults: Record<string, string>) {
+  const [view, setView] = useState<Record<string, string>>(() => readView(defaults));
+
+  // Back and forward are navigation here, not history trivia: a shared view is
+  // only restorable if returning to it actually restores it.
+  useEffect(() => {
+    function onPopState() {
+      setView(readView(defaults));
+    }
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [defaults]);
+
+  const patchView = useCallback(
+    (patch: Record<string, string>) => {
+      setView((previous) => {
+        const next = { ...previous, ...patch };
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(next)) {
+          // A default never reaches the query string, so the clean view has a
+          // clean URL and every parameter present means something was chosen.
+          if (value !== defaults[key]) params.set(key, value);
+        }
+        const query = params.toString();
+        window.history.replaceState(
+          null,
+          "",
+          query ? `?${query}` : window.location.pathname,
+        );
+        return next;
+      });
+    },
+    [defaults],
+  );
+
+  return [view, patchView] as const;
+}
 
 function formatMRR(value: number) {
   if (value === 0) return "—";
@@ -105,32 +162,48 @@ function SkeletonRow() {
 export interface DataTableProps {
   /** Skeleton state — drive from real data fetching; never an artificial delay. */
   isLoading?: boolean
+  /** Refetch. Resolves when the data is back; rejects and the error state shows. */
+  onRetry?: () => Promise<void>
 }
 
-export default function DataTable({ isLoading: initialLoading = false }: DataTableProps = {}) {
+export default function DataTable({
+  isLoading: initialLoading = false,
+  onRetry = () => Promise.resolve(),
+}: DataTableProps = {}) {
   const [isLoading, setIsLoading] = useState(initialLoading);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("name");
-  const [sortDir, setSortDir] = useState("asc");
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
-  const [page, setPage] = useState(1);
+  const [view, patchView] = useUrlState(VIEW_DEFAULTS);
 
+  // A query string is user input. Every value is re-checked against what the
+  // component can actually do, so `?sort=drop%20table` sorts by name rather
+  // than indexing USERS with a string nobody wrote.
+  const search = view.q;
+  const sortKey: SortKey =
+    SORT_KEYS.find((key) => key === view.sort) ?? "name";
+  const sortDir = view.dir === "desc" ? "desc" : "asc";
+  const page = Math.max(1, Number.parseInt(view.page, 10) || 1);
 
-  function handleRetry() {
+  const setSearch = (value: string) => patchView({ q: value, page: "1" });
+  const setPage = (value: number) => patchView({ page: String(value) });
+
+  async function handleRetry() {
     setError(null);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 700);
+    try {
+      // Real await, not a timer pretending to be one. A fake delay makes the
+      // skeleton a decoration and hides the failure mode it exists to cover.
+      await onRetry();
+    } catch {
+      setError("Could not reload accounts. Your data is unchanged.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleSort(key: SortKey) {
-    if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-    setPage(1);
+    const nextDir = sortKey === key && sortDir === "asc" ? "desc" : "asc";
+    patchView({ sort: key, dir: nextDir, page: "1" });
   }
 
   const filtered = useMemo(() => {
@@ -464,7 +537,7 @@ export default function DataTable({ isLoading: initialLoading = false }: DataTab
           </p>
           <nav aria-label="Pagination" className="flex items-center gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => setPage(Math.max(1, safePage - 1))}
               disabled={safePage <= 1}
               aria-label="Previous page"
               className="min-h-[44px] h-11 px-4 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 bg-[oklch(99.5%_0.004_255)] hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
@@ -475,7 +548,7 @@ export default function DataTable({ isLoading: initialLoading = false }: DataTab
               Page {safePage} of {totalPages}
             </span>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setPage(Math.min(totalPages, safePage + 1))}
               disabled={safePage >= totalPages}
               aria-label="Next page"
               className="min-h-[44px] h-11 px-4 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 bg-[oklch(99.5%_0.004_255)] hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"

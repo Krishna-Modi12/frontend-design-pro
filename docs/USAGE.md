@@ -107,8 +107,8 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 |---|---|
 | Registry (always) | ~1,800 |
 | One skill | 843–1,718 |
-| Core deps | 2,914–3,818 |
-| **Typical request** | **~5,912–7,476** |
+| Core deps | 2,962–3,866 |
+| **Typical request** | **~5,960–7,524** |
 | Available depth (loaded only on demand) | **349,445** |
 
 If you're on a small context window, say "keep it brief" — the agent will skip deep references and note the omission.
