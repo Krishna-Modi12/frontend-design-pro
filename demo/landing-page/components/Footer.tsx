@@ -4,6 +4,8 @@ import { focusRing, sectionShell } from "../lib/tokens";
 
 export interface FooterProps {
   repoUrl: string;
+  /** The gallery index this page is an exhibit in. */
+  galleryUrl: string;
   /** The commit this page was built from. "local" when nothing injected one. */
   buildSha: string;
 }
@@ -23,8 +25,13 @@ export interface FooterProps {
  * release leak-scan allowlist, so the current version appearing here would fail
  * pre-flight — and a version baked into a demo is one more figure that goes
  * stale the moment the next release cuts.
+ *
+ * The gallery link is here because a reader can arrive at this page directly —
+ * README links straight to it — and the disclosure above tells them the product
+ * is invented without telling them what the page IS. The index answers that, and
+ * a demo nobody can trace back to the thing it demonstrates is a dead end.
  */
-export default function Footer({ repoUrl, buildSha }: FooterProps): ReactElement {
+export default function Footer({ repoUrl, galleryUrl, buildSha }: FooterProps): ReactElement {
   return (
     <footer className="border-t border-surface-border bg-surface-raised">
       <div className={`${sectionShell} flex flex-col gap-8 py-12 lg:flex-row lg:items-start lg:justify-between`}>
@@ -47,6 +54,13 @@ export default function Footer({ repoUrl, buildSha }: FooterProps): ReactElement
             className={`${focusRing} rounded text-sm font-medium text-accent-text underline-offset-4 hover:underline`}
           >
             See the pack that generated this
+          </a>
+          <a
+            href={galleryUrl}
+            rel="noreferrer"
+            className={`${focusRing} rounded text-sm text-ink-secondary underline-offset-4 hover:underline`}
+          >
+            See the other page it built
           </a>
           <p data-metric className="text-xs text-ink-muted">
             build {buildSha}

@@ -10,9 +10,9 @@
 [![License](https://img.shields.io/github/license/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=8957e5&labelColor=161b22)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=d29922&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/stargazers)
 
-[![Showcase](https://img.shields.io/badge/live%20demo-showcase-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
+[![Live demos](https://img.shields.io/badge/live%20demos-gallery-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
 
-**[Showcase](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Landing page](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
+**[Gallery](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
 
 </div>
 
@@ -353,8 +353,8 @@ npm run dev   # http://localhost:3000
 ### See it in action
 
 > [!TIP]
-> **[Open the live showcase →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
-> Redeployed from `main` whenever either runnable demo changes; the other one is at **[/landing-page/](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)**. What you see is the output of the routing described below, not a mock-up of it.
+> **[Open the live gallery →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
+> Both runnable demos are there — **[/showcase/](https://krishna-modi12.github.io/frontend-design-pro/showcase/)** and **[/landing-page/](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** — with the index stating what separates them, since their briefs asked for the same look and only one of them earned it. Redeployed from `main` whenever either demo changes. What you see is the output of the routing described below, not a mock-up of it.
 
 [`demo/showcase/`](demo/showcase/) is one of two projects in `demo/` that break the stub-typed convention above on purpose — the other is [`landing-page/`](demo/landing-page/). It is a real, standalone Next.js 15 + React 19 + Tailwind v4 app — its own `package.json`, real installed dependencies (React Three Fiber + drei, React Hook Form + Zod), a dev server that actually boots. It's a cinematic dark-mode landing page for a fictional AI analytics product, "Nexus" — near-black OKLCH surface, single acid-green accent, an asymmetric bento grid, a WebGL particle hero, and a validated contact form.
 

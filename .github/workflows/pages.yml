@@ -4,18 +4,22 @@ name: Deploy showcase to Pages
 # stranger can evaluate without installing anything. Both were reachable by
 # nobody until this workflow existed.
 #
-# Both are now samples of what the pack produces, for fictional products —
+# Both are samples of what the pack produces, for fictional products —
 # demo/showcase is "Nexus" and demo/landing-page is "Bellwether". Neither is the
-# pack's own homepage, so neither has a claim on the root beyond being the one a
-# visitor should meet first. That is the showcase: it is the fuller artifact,
-# with a WebGL hero, a validated form and five sections against the landing
-# page's four.
+# pack's own homepage, so neither has a claim on the root.
 #
-# The landing page briefly sat at the root while it was still written as this
-# pack's homepage. It is not that any more, and a fictional deploy-pipeline
-# product at the front door drops people onto a convincing fake startup with no
-# idea why — the exact failure the previous arrangement was written to avoid,
-# pointed the other way. README.md is the front door; this is the gallery.
+# Which is what this arrangement finally acts on. This file already said
+# "README.md is the front door; this is the gallery" while serving one exhibit
+# where the door should be: a visitor landing on the root met a convincing fake
+# analytics startup with nothing to tell them what they were looking at or that
+# a second page existed. Both demos disclose themselves, but only in their
+# footers, and nobody scrolls to the footer of a page they do not understand.
+#
+# So the root now serves .github/pages/index.html — an index that names both
+# specimens, states what separates them, and links out. The exhibits move down
+# one level to /showcase/ and /landing-page/. The reasoning that used to justify
+# the showcase holding the root (it is the fuller artifact, so meet it first) is
+# now what orders the index, where it costs nobody their bearings.
 
 on:
   push:
@@ -23,7 +27,9 @@ on:
     paths:
       - 'demo/showcase/**'
       - 'demo/landing-page/**'
+      - '.github/pages/**'
       - '.github/workflows/pages.yml'
+      - '.github/workflows/verify_pages_site.py'
   workflow_dispatch:
 
 permissions:
@@ -65,11 +71,11 @@ jobs:
         working-directory: demo/showcase
         run: npm ci
 
-      - name: Export the showcase (site root)
+      - name: Export the showcase (/showcase/)
         working-directory: demo/showcase
         env:
           NEXT_OUTPUT_EXPORT: '1'
-          NEXT_BASE_PATH: ${{ env.BASE_PATH }}
+          NEXT_BASE_PATH: ${{ env.BASE_PATH }}/showcase
         run: npx next build
 
       # NEXT_PUBLIC_BASE_PATH is separate from NEXT_BASE_PATH on purpose. Next
@@ -89,9 +95,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site
-          cp -r demo/showcase/out/. site/
+          cp .github/pages/index.html site/index.html
+          mkdir -p site/showcase
+          cp -r demo/showcase/out/. site/showcase/
           mkdir -p site/landing-page
           cp -r demo/landing-page/out/. site/landing-page/
+          # The index shows each exhibit rather than describing it, and these are
+          # the images README already links — captured from a production build by
+          # tools/screenshots, held under a size cap, and regenerated whenever
+          # either UI changes. Copying them beats a second capture step here that
+          # could disagree with the committed ones.
+          cp demo/showcase/screenshot.png site/thumb-showcase.png
+          cp demo/landing-page/screenshot.png site/thumb-landing-page.png
           # Pages serves the uploaded artifact directly rather than running
           # Jekyll, so this is belt-and-braces — but Jekyll strips directories
           # beginning with an underscore, and everything Next emits is in _next/.
@@ -107,8 +122,15 @@ jobs:
       # to look for the file. A missing or wrong base path renders as unstyled
       # HTML that still returns 200, which reads like a CSS bug and is a routing
       # one. Composing two apps at different prefixes makes it likelier, not
-      # less: the showcase's assets have to carry /showcase and the landing
-      # page's must not.
+      # less: the showcase's assets have to carry /showcase, the landing page's
+      # have to carry /landing-page, and one shared config drives both.
+      #
+      # That sentence described the opposite arrangement until the index landed —
+      # it claimed the showcase carried /showcase while the showcase was in fact
+      # serving from the root with no sub-prefix at all. It was inert because
+      # nothing executes a comment, which is exactly why it stayed wrong: the
+      # check below reads the files, so it was right the whole time the prose
+      # above it was not.
       - name: Verify the composed site would actually serve
         run: python3 .github/workflows/verify_pages_site.py site "$BASE_PATH"
 

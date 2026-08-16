@@ -40,6 +40,17 @@ export const PRODUCT = "Bellwether";
 export const REPO_URL = "https://github.com/Krishna-Modi12/frontend-design-pro";
 
 /**
+ * The gallery index this page is an exhibit in.
+ *
+ * Absolute rather than relative, which looks heavy-handed and is the only form
+ * that survives every context this page is served from: `next dev` at the root,
+ * `next start` at the root, and a static export under
+ * `/frontend-design-pro/landing-page/`. A `../` would mean three different
+ * things across those three, and two of them are wrong.
+ */
+export const GALLERY_URL = "https://krishna-modi12.github.io/frontend-design-pro/";
+
+/**
  * Short on purpose. An eyebrow names the category; the proof bar carries the
  * specifics.
  */
