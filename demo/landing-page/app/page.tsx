@@ -10,7 +10,7 @@ import BentoFeatures from "../components/BentoFeatures";
 import SocialProof from "../components/SocialProof";
 import CtaBar from "../components/CtaBar";
 import Footer from "../components/Footer";
-import { FEATURES, PRODUCT, REPO_URL, STEPS, TESTIMONIALS } from "../lib/content";
+import { FEATURES, GALLERY_URL, PRODUCT, REPO_URL, STEPS, TESTIMONIALS } from "../lib/content";
 import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
 
 /**
@@ -148,7 +148,7 @@ export default function Page(): ReactElement {
         <CtaBar href={REPO_URL} />
       </main>
 
-      <Footer repoUrl={REPO_URL} buildSha={BUILD_SHA} />
+      <Footer repoUrl={REPO_URL} galleryUrl={GALLERY_URL} buildSha={BUILD_SHA} />
     </div>
   );
 }
