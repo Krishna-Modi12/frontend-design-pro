@@ -3,9 +3,9 @@
 
 Usage: verify_pages_site.py <site-dir> <base-path>
 
-Gate 9 builds a server bundle; the Pages workflow ships static exports, and of
-two apps at two different prefixes. Nothing upstream of the deploy can see that
-path, so this is what covers it.
+Gate 9 builds a server bundle; the Pages workflow ships static exports, of two
+apps at two different prefixes, under a hand-written index at the root. Nothing
+upstream of the deploy can see that path, so this is what covers it.
 
 The question being asked is "would this 404 when served", so it is asked
 directly: resolve every asset each page references against the files actually
@@ -15,8 +15,15 @@ that has the right strings and none of the files.
 The failure this exists to catch is quiet. A missing or wrong base path leaves
 a page that still returns 200 and renders as unstyled HTML — it reads like a
 CSS bug and is a routing one. Composing two apps makes it likelier rather than
-less: the landing page's assets have to carry /landing-page and the showcase's
-must not, and one shared config drives both.
+less: the landing page's assets have to carry /landing-page, the showcase's
+have to carry /showcase, and one shared config drives both.
+
+The index at the root is checked differently on purpose. It references its
+exhibits with relative URLs — `showcase/`, `thumb-showcase.png` — which resolve
+correctly under any prefix and so cannot suffer the base-path failure above at
+all. What they CAN do is point at a file the compose step forgot to copy, which
+renders as a front door with two broken images on it, so those are resolved
+against the upload by name.
 """
 
 from __future__ import annotations
@@ -54,11 +61,20 @@ def main(argv: list[str]) -> int:
 
     # The entry points a visitor actually lands on. Checking assets alone would
     # pass an upload that lost a page entirely.
+    #
+    # The two thumbnails are entry points in the same sense: they are the only
+    # thing on the index that shows what either exhibit looks like, they are
+    # copied by a different step from the one that builds the exports, and a
+    # front door with two broken images is the most visible way this deploy can
+    # fail while every other check stays green.
     required = {
-        "the showcase (site root)": site / "index.html",
+        "the gallery index (site root)": site / "index.html",
+        "the showcase (/showcase/)": site / "showcase" / "index.html",
         "the landing page (/landing-page/)": site / "landing-page" / "index.html",
         "the overview endpoint the landing page reads on mount":
             site / "landing-page" / "api" / "site" / "overview",
+        "the showcase thumbnail the index renders": site / "thumb-showcase.png",
+        "the landing-page thumbnail the index renders": site / "thumb-landing-page.png",
     }
     missing_pages = [label for label, path in required.items() if not path.is_file()]
     for label in missing_pages:
