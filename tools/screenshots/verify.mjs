@@ -4,7 +4,7 @@
  *   npm run demos:verify              # dev + production
  *   npm run demos:verify -- --prod    # production only (faster)
  *
- * The repo's gates check that the demos compile and that their source obeys 59
+ * The repo's gates check that the demos compile and that their source obeys 60
  * constraints. None of them renders a demo, which is how a stylesheet that
  * silently did nothing and a resolver typed as `any` both shipped. This closes
  * that gap: real browser, real libraries, both server modes.

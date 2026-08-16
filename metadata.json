@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro",
   "version": "14.10.1",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 101 references (349,445 tokens of on-demand depth), 55 examples, 59 machine-enforced constraints, 11 release-blocking gates. A typical request loads 5,960–7,524 tokens, not 349,445. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 101 references (349,467 tokens of on-demand depth), 55 examples, 60 machine-enforced constraints, 11 release-blocking gates. A typical request loads 5,961–7,525 tokens, not 349,467. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
   "author": "krishnamodi241@gmail.com",
   "license": "MIT",
   "tags": [
@@ -107,7 +107,7 @@
     "landing_patterns": 34,
     "style_presets": 5,
     "validation_checks": 25,
-    "ci_constraints": 59,
+    "ci_constraints": 60,
     "reference_files": 101,
     "gsap_plugins": 12,
     "shortcodes": 57,
@@ -136,15 +136,15 @@
     "pipeline_stages": 6,
     "stripe_patterns": 8,
     "parser_constraints": 17,
-    "regex_constraints": 42,
+    "regex_constraints": 43,
     "test_files": 45,
     "release_gates": 11,
     "behavioral_principles": 4,
     "skills": 19,
     "core_files": 8,
-    "reference_depth_tokens": 349445,
+    "reference_depth_tokens": 349467,
     "registry_tokens": 2099,
-    "ci_constraints_detail": "59 checks across 59 distinct IDs (17 parser AST + 42 regex)"
+    "ci_constraints_detail": "60 checks across 60 distinct IDs (17 parser AST + 43 regex)"
   },
   "changelog": {
     "14.10.1": "Gate 11 could not read the sentence \"SKILL.md is 2,018 tokens\". The registry anchor required the filename in backticks, or \"always\"/\"registry\" within thirty characters of the same sentence — docs prose backticks a filename, prose written for strangers does not. All three tracked launch documents carried the superseded router size in live present-tense prose while the gate reported 0 drift over 85 surfaces. Two more forms of the same defect sat beside it: RANGE only matched a dashed pair, so \"5,665 to 7,266 tokens\" was not a range; and the band split across two sentences as \"the heaviest … the lightest …\" matched nothing at all. 20 stale figures, none visible in a green run. LAUNCH_FINAL.md's file-wide REGISTRY exemption turned out to be silencing four live claims rather than the historical passage its stated reason named — that passage never matched the pattern. The exemption is gone, replaced by scoped figures:historical markers — and README.md already used those markers in three places for exactly this purpose, so the scoped tool was established practice in the same repo and the blanket got reached for anyway. Two shipped manifests were outside the scan entirely: metadata.json's prose description claimed 94 references and 10 gates against the 101 and 11 its own stats block already recorded, and plugin.json — what a marketplace listing renders — claimed 96. New figure_pattern_test.py holds 20 prose fixtures over 5 figures, asserting in both directions, blocking in the chain and not a twelfth gate. Its negative cases caught the widened anchor reading the per-skill router range out of skills/{id}/SKILL.md as if it were the registry, which would have failed two correct tables.",

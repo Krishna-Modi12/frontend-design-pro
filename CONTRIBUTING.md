@@ -13,7 +13,7 @@ agent unzips and reads. Nothing here "runs" in the usual sense except
 
 The project's whole claim is that it is **verified rather than asserted**: every
 number in the docs is derived from a green gate chain, and every example is
-machine-checked against 59 constraints.
+machine-checked against 60 constraints.
 
 That produces the one rule everything else follows from:
 
@@ -48,7 +48,7 @@ It takes about two minutes. Narrower checks while you iterate:
 ```bash
 npm test             # 229 tests across 45 files, ~23s
 npm run typecheck    # tsc --noEmit strict over every example
-npm run constraints  # the 42 regex constraints over skills/
+npm run constraints  # the 43 regex constraints over skills/
 npm run figures      # every documented count and token figure vs. the filesystem
 npm run evals        # 22 eval cases
 npm run regression   # 13 parser-vs-regex divergence cases
@@ -58,7 +58,7 @@ Single file, fastest loop of all:
 
 ```bash
 node scripts/parser_constraints.js skills/<id>/examples/good-x.tsx   # 17 AST constraints
-python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 42 regex constraints
+python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 43 regex constraints
 ```
 
 ## Things that will surprise you
@@ -66,7 +66,7 @@ python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 42 regex 
 ### Examples are fixtures, not illustrations
 
 `skills/*/examples/good-*.tsx` are the files the constraint suites run against.
-They must pass all 59 checks (17 AST via the TypeScript compiler API + 42 regex).
+They must pass all 60 checks (17 AST via the TypeScript compiler API + 43 regex).
 `bad-*.tsx` are deliberate anti-examples that **must fail** — the suite asserts
 both directions, so "fixing" a `bad-*.tsx` breaks the build.
 

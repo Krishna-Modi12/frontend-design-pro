@@ -91,7 +91,7 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
           fontStyle="normal"
         />
       </Head>
-      <Preview>Welcome to Acme, {username}! Get started in 2 minutes.</Preview>
+      <Preview>Welcome to Larkfield, {username}! Get started in 2 minutes.</Preview>
       <Body style={body}>
         <Container style={container}>
 
@@ -101,7 +101,7 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
               src="https://yourapp.com/logo.png"
               width={120}
               height={32}
-              alt="Acme"
+              alt="Larkfield"
               style={{ display: 'block' }}
             />
           </Section>
@@ -110,7 +110,7 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
           <Section>
             <Text style={h1}>Welcome, {username} 👋</Text>
             <Text style={paragraph}>
-              You're in. Your account is ready and you can start using Acme right now.
+              You're in. Your account is ready and you can start using Larkfield right now.
               Here's everything you need to get going in the next 2 minutes.
             </Text>
           </Section>
@@ -143,13 +143,13 @@ export function WelcomeEmail({ username, ctaUrl }: WelcomeEmailProps) {
           {/* Footer */}
           <Section>
             <Text style={footer}>
-              You received this because you signed up at acme.com.{' '}
-              <Link href="https://acme.com/unsubscribe" style={link}>Unsubscribe</Link>
+              You received this because you signed up at larkfield.com.{' '}
+              <Link href="https://larkfield.com/unsubscribe" style={link}>Unsubscribe</Link>
               {' · '}
-              <Link href="https://acme.com/privacy" style={link}>Privacy policy</Link>
+              <Link href="https://larkfield.com/privacy" style={link}>Privacy policy</Link>
             </Text>
             <Text style={{ ...footer, marginTop: '4px' }}>
-              Acme Inc., 123 Market St, San Francisco, CA 94105
+              Larkfield Inc., 123 Market St, San Francisco, CA 94105
             </Text>
           </Section>
 
@@ -337,7 +337,7 @@ export function PasswordResetEmail({ resetUrl, expiresInHours = 1 }: PasswordRes
 
           <Text style={{ fontSize: '13px', color: '#9ca3af', lineHeight: '1.5', margin: '0' }}>
             If you didn't request a password reset, ignore this email — your password won't change.
-            For security questions, contact support@acme.com.
+            For security questions, contact support@larkfield.com.
           </Text>
 
         </Container>
@@ -362,10 +362,10 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function sendWelcomeEmail(to: string, username: string) {
   const { data, error } = await resend.emails.send({
-    from: 'Acme <noreply@acme.com>',
+    from: 'Larkfield <noreply@larkfield.com>',
     to,
-    subject: `Welcome to Acme, ${username}!`,
-    react: WelcomeEmail({ username, ctaUrl: 'https://app.acme.com/dashboard' }),
+    subject: `Welcome to Larkfield, ${username}!`,
+    react: WelcomeEmail({ username, ctaUrl: 'https://app.larkfield.com/dashboard' }),
   })
 
   if (error) {
@@ -378,7 +378,7 @@ export async function sendWelcomeEmail(to: string, username: string) {
 
 export async function sendOTPEmail(to: string, otp: string) {
   return resend.emails.send({
-    from: 'Acme <noreply@acme.com>',
+    from: 'Larkfield <noreply@larkfield.com>',
     to,
     subject: `Your verification code: ${otp}`,
     react: OTPEmail({ otp, expiresInMinutes: 10 }),
@@ -387,9 +387,9 @@ export async function sendOTPEmail(to: string, otp: string) {
 
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
   return resend.emails.send({
-    from: 'Acme <noreply@acme.com>',
+    from: 'Larkfield <noreply@larkfield.com>',
     to,
-    subject: 'Reset your Acme password',
+    subject: 'Reset your Larkfield password',
     react: PasswordResetEmail({ resetUrl, expiresInHours: 1 }),
   })
 }

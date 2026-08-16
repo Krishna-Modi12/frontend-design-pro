@@ -259,7 +259,7 @@ export default function DarkModeDemo() {
             {/* Logo SVG — dark:invert flips black logo to white in dark mode */}
             <img
               src="/logo.svg"
-              alt="Acme Inc."
+              alt="Ridgeline"
               className="h-6 w-auto dark:invert" width={40} height={40} />
             <span className="text-sm font-semibold text-[var(--color-ink)]">Dashboard</span>
           </div>
