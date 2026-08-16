@@ -251,8 +251,16 @@ CONSTRAINTS: List[Constraint] = [
         category="Responsive",
         description="Touch targets ≥ 44px on interactive elements",
         severity="high",
+        # "on interactive elements" was in the description and in nobody's code:
+        # the check asked every file for a 44px class, including files with
+        # nothing to touch. A presentational badge failed a rule about thumbs.
+        # Absent anything interactive the rule has no subject, so it passes —
+        # this can only turn a false failure into a pass, never the reverse.
         check=lambda c: (
-            _has(r'min-h-\[44|h-11|size-11|min-h-11|min-w-\[44|p-3|py-3', c),
+            (not _has(r'<button|<a\s|<input|<select|<textarea|<summary'
+                      r'|onClick=|onPointerDown=|role="button"|role="link"'
+                      r'|role="tab"|role="menuitem"|role="switch"|role="checkbox"', c))
+            or _has(r'min-h-\[44|h-11|size-11|min-h-11|min-w-\[44|p-3|py-3', c),
             "No 44px minimum touch target found — mobile interactive elements need min 44×44px"
         )
     ),

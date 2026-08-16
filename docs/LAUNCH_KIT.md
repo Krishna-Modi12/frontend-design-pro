@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 349,445 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 22 evals · 13 regression cases · registry 2,099 tokens · heaviest request 7,476 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 349,445 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 42 syntactic = 59 constraints · 22 evals · 13 regression cases · registry 2,099 tokens · heaviest request 7,524 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
@@ -35,8 +35,8 @@ your request against trigger keywords, loads exactly one skill plus the core
 primitives that skill declares, and leaves the other 349,445 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 7,476 tokens.
-The lightest loads 5,912. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 7,524 tokens.
+The lightest loads 5,960. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -118,7 +118,7 @@ I built frontend-design-pro as a registry instead. 🧵
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 7,476 tokens.
+Heaviest possible request: 7,524 tokens.
 Reference material available: 349,445 tokens.
 
 3/ The economics of this are the whole point.
@@ -222,7 +222,7 @@ A registry rather than a document:
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 101 references, 349,445 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **5,912 to 7,476 tokens.** A gate fails the build
+Measured per-request load: **5,960 to 7,524 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**

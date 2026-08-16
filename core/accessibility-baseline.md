@@ -22,6 +22,8 @@ Icon-only controls require `aria-label` — no exceptions. Inputs are wired to l
 
 Normal text ≥4.5:1, large text ≥3:1, non-text UI ≥3:1. Never convey meaning by colour alone — pair with icon, text or shape. Interaction states must *increase* contrast over rest. Where tooling supports it, APCA (Lc ≥75 body) is the better perceptual check; WCAG 2 remains the shipping gate.
 
+**Inventing colour?** If your skill did not declare `core/design-tokens.md`, load it — ten of the nineteen route without it, and the wall bans raw hex without saying what a scale looks like.
+
 ## Touch and motion
 
 Targets ≥44×44px — that is §2.5.5, which is **AAA**, and this pack's house rule. The **AA** floor is §2.5.8: 24×24 CSS px, or smaller with ≥24px of clear spacing. Hold 44 wherever a surface can be touched; `platform/references/desktop-patterns.md` is the one place the 24px floor applies, and it says which to pick and why. `touch-action: manipulation`. Any drag interaction needs a single-pointer alternative (§2.5.7). Help stays in a consistent position (§3.2.6). Never re-ask for data already given in the session (§3.3.7). No cognitive-test CAPTCHA without an alternative (§3.3.8). `prefers-reduced-motion` disables animation, autoplay, parallax and auto-rotation.

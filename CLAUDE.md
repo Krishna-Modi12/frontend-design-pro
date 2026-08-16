@@ -21,7 +21,7 @@ npm run figures      # Gate 11 only — every documented count/token figure vs t
 npm run figures:test # proof that Gate 11's patterns read the prose forms people write
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
-npm test             # Gate 7's runtime half — 45 files, 229 tests, ~35s
+npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
 ```
 
 Renderer-level checks, for when you touch anything under `demo/`. These need a
@@ -84,7 +84,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,912–7,476 tokens against ~349k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,960–7,524 tokens against ~349k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -103,6 +103,21 @@ Five requirements, each enforced by a different gate. Missing any one fails the 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
 `python scripts/scaffold.py <intent>` generates differentiated component boilerplate by intent type.
+
+## The rules no gate reads
+
+The 59 constraints check code. **Each skill's own "Core Rules" section is checked
+by nothing**, and one of them was contradicted by the very example the skill
+names first: `data-tables` rule 5 says filters, sort and page live in the URL,
+and `good-data-table.tsx` held all three in `useState` for its whole life while
+passing 42/42 and 17/17. That matters more than a stale figure, because
+`CLAUDE.md` tells you to write new golds by modelling closely on an existing
+one — so the gold is the thing that actually propagates. It is fixed and has
+three tests asserting the rule, but nothing stops the next one drifting.
+
+**When you add or edit a Core Rule, read the skill's golds against it.** A rule
+demonstrated wrong is worse than a rule not written down: the prose gets skimmed,
+the example gets copied.
 
 ## Examples are gate-bearing artifacts
 

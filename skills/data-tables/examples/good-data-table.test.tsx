@@ -34,4 +34,30 @@ describe('good-data-table', () => {
     expect(screen.getByRole('region', { name: 'User management table' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search by name or email…')).toBeInTheDocument();
   });
+
+  // Rule 5 of the data-tables skill — "state lives in the URL" — was stated in
+  // the skill file and contradicted by this example for its whole life. These
+  // three assert the rule rather than the prose, so it cannot drift back.
+  it('writes the sort into the query string', async () => {
+    window.history.replaceState(null, '', '/');
+    render(<Component />);
+    await userEvent.click(screen.getByRole('button', { name: /^MRR$/i }));
+    expect(window.location.search).toContain('sort=mrr');
+  });
+
+  it('restores a view from the query string on first render', () => {
+    window.history.replaceState(null, '', '/?sort=mrr&dir=desc');
+    render(<Component />);
+    const header = screen.getByRole('columnheader', { name: /MRR/i });
+    expect(header).toHaveAttribute('aria-sort', 'descending');
+  });
+
+  it('falls back to a real column when the URL names one that does not exist', () => {
+    window.history.replaceState(null, '', '/?sort=' + encodeURIComponent('__proto__'));
+    render(<Component />);
+    // A query string is user input: an unknown key sorts by name, not by
+    // indexing the row objects with whatever the URL happened to carry.
+    expect(screen.getByRole('columnheader', { name: /Name/i }))
+      .toHaveAttribute('aria-sort', 'ascending');
+  });
 });
