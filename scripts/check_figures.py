@@ -591,6 +591,24 @@ SCAN: Sequence[str] = (
     # launch documents were outside SCAN on the same reasoning and held a
     # superseded router size in live prose while the gate reported no drift.
     ".github/pages/*.html",
+    # NOT `.github/assets/*.svg`, and the attempt is recorded because it looked
+    # obviously right and is not.
+    #
+    # The README banners carry figures, so adding them here seemed free — and the
+    # first test agreed: the patterns match the skill count and the depth figure
+    # inside the SVG exactly as they do in prose. The gate still passed a banner
+    # whose skill count had been decremented by hand — the whole point of the
+    # control. Every match is dropped by `_suppressed`, because each figure's
+    # forbid window reads the preceding ~50 characters and in SVG those are always
+    # attribute soup — `font-family="ui-monospace, SFMono-Regular, …"` sits before
+    # every piece of text in the document.
+    #
+    # Widening the windows to accommodate markup would weaken them everywhere they
+    # currently work, to protect two generated files. The banners are protected at
+    # the source instead: `tools/readme-*/generate.mjs` read every figure from
+    # `--truth`, and `--check` re-renders and diffs so a stale banner fails
+    # loudly. That is byte-exact rather than pattern-based, which is strictly
+    # stronger than what this list could have given them.
     # Added with the community health files, which quote the figures at a
     # contributor as instructions. A wrong count here sends someone to argue
     # with a gate that is right.

@@ -21,6 +21,8 @@
     "figures:test": "python scripts/figure_pattern_test.py",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
+    "banner": "node tools/readme-router/generate.mjs",
+    "banner:check": "node tools/readme-router/generate.mjs --check",
     "test": "vitest run",
     "screenshots": "npm --prefix tools/screenshots run capture --",
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
