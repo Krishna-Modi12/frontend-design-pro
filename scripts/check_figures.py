@@ -468,8 +468,16 @@ FIGURES: Sequence[Figure] = (
         # Reading the total here is stronger than an arithmetic cross-check,
         # because it catches the case where the halves *and* the total are
         # internally consistent and all three are stale.
+        #
+        # The lookahead demands the WHOLE split, not just its first half. An
+        # earlier draft stopped after `(P AST` and would have claimed any
+        # parenthesised AST breakdown — `56 (17 AST nodes)` — as a stale
+        # constraint total, failing Gate 11 on a sentence about something else
+        # entirely. A matcher that breaks correct files is not a fix; the
+        # negative fixture for it is in `figure_pattern_test.py`.
         r"|(?<![\d,])\*{0,2}(\d{1,3})\*{0,2}\s*\("
-        r"(?=\d{1,3}\s+(?:parser\s+)?(?:AST|parser|semantic)\b)",
+        r"(?=\d{1,3}\s+(?:parser\s+)?(?:AST|parser|semantic)\b[^)+]{0,60}?"
+        r"\+\s*\d{1,3}\s+(?:regex|syntactic)\b)",
         lambda t: (str(t["ci_constraints"]),),
     ),
     # The split had one shape: "(17 AST + 42 regex)". The corpus writes it four

@@ -85,7 +85,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -169,6 +169,84 @@ const SKILLS = [
   "web-interface",
 ];
 
+/** The one that wins. Its declared core-deps are in skills/landing-pages/SKILL.md. */
+const CHOSEN = "landing-pages";
+
+/**
+ * What actually loads: the two every skill inherits when it produces code, plus
+ * the one `landing-pages` declares. Named, never counted — the count that
+ * matters is the token figure, and that comes from the truth table.
+ */
+const DEPS = ["core/design-tokens.md", "core/accessibility-baseline.md", "core/validate-checklist.md"];
+
+// ── Route metadata, checked against its sources ──────────────────────────────
+//
+// Counting was not enough. `--truth` reports how MANY skills exist and never
+// which, so renaming one while the total held would leave this diagram drawing
+// a row for a skill that no longer exists — and `--check` would still pass,
+// because it compares the committed SVG against what this file produces, and
+// this file would be confidently stale. The banner and its guard would agree
+// with each other and both be wrong, which is the failure mode the whole
+// generated-artifact approach exists to rule out.
+//
+// So the names, the chosen skill and its effective deps are derived from the
+// same files the loader reads, and a disagreement throws before anything is
+// drawn. The lists above stay hand-written because they set the drawing ORDER;
+// what is checked is membership, not sequence.
+
+/** Charged to every skill regardless of declaration — mirrors BASE_DEPS in check_figures.py. */
+const BASE_DEPS = ["core/accessibility-baseline.md", "core/validate-checklist.md"];
+
+const skillDir = (id) => join(REPO, "skills", id);
+
+/** Every skill the loader can route to: a directory under skills/ with a SKILL.md in it. */
+function skillIdsOnDisk() {
+  return readdirSync(join(REPO, "skills"), { withFileTypes: true })
+    .filter((e) => e.isDirectory() && existsSync(join(skillDir(e.name), "SKILL.md")))
+    .map((e) => e.name)
+    .sort();
+}
+
+/**
+ * A skill's declared `core-deps` plus the two charged to everything.
+ *
+ * The dash must be followed by whitespace. Without that the item pattern eats
+ * the `---` that closes the frontmatter — `-` then `--` reads as a list entry —
+ * and the deps come back with a phantom member. It is silent in
+ * `check_figures.py`, which parses the same block the same way and is saved
+ * only by filtering on whether the path exists; here there is no such filter,
+ * so the shape has to be right.
+ */
+function effectiveDeps(id) {
+  const src = readFileSync(join(skillDir(id), "SKILL.md"), "utf8");
+  const block = src.match(/core-deps:[ \t]*\r?\n((?:[ \t]*-[ \t]+\S+[ \t]*\r?\n)+)/);
+  const declared = block ? [...block[1].matchAll(/-[ \t]+(\S+)/g)].map((m) => m[1]) : [];
+  if (!declared.length || declared.some((d) => !d.startsWith("core/"))) {
+    throw new Error(
+      `could not read core-deps: from skills/${id}/SKILL.md — got [${declared.join(", ")}]. ` +
+        "A silent parse failure here would fall back to the base deps and quietly " +
+        "agree with whatever the banner already drew.",
+    );
+  }
+  return [...new Set([...BASE_DEPS, ...declared])].sort();
+}
+
+function assertSameSet(what, drawn, actual, hint) {
+  const a = [...drawn].sort();
+  const b = [...actual].sort();
+  if (a.length === b.length && a.every((v, i) => v === b[i])) return;
+  const missing = b.filter((v) => !a.includes(v));
+  const extra = a.filter((v) => !b.includes(v));
+  throw new Error(
+    `${what} on the banner disagrees with the filesystem.` +
+      (missing.length ? `\n  not drawn: ${missing.join(", ")}` : "") +
+      (extra.length ? `\n  drawn but gone: ${extra.join(", ")}` : "") +
+      `\n  ${hint}`,
+  );
+}
+
+const ON_DISK = skillIdsOnDisk();
+
 if (SKILLS.length !== T.skills) {
   throw new Error(
     `this file lists ${SKILLS.length} skills and the filesystem has ${T.skills}. ` +
@@ -177,16 +255,23 @@ if (SKILLS.length !== T.skills) {
   );
 }
 
-/** The one that wins. Its declared core-deps are in skills/landing-pages/SKILL.md. */
-const CHOSEN = "landing-pages";
-const CHOSEN_INDEX = SKILLS.indexOf(CHOSEN);
+assertSameSet("The skill roster", SKILLS, ON_DISK, "Update the SKILLS list above.");
 
-/**
- * What actually loads: the two every skill inherits when it produces code, plus
- * the one `landing-pages` declares. Named, never counted — the count that
- * matters is the token figure, and that comes from the truth table.
- */
-const DEPS = ["core/design-tokens.md", "core/accessibility-baseline.md", "core/validate-checklist.md"];
+if (!ON_DISK.includes(CHOSEN)) {
+  throw new Error(
+    `the banner routes to "${CHOSEN}", which is not a skill on disk. ` +
+      "Pick a skill that exists — the whole diagram is a claim about what routing does.",
+  );
+}
+
+assertSameSet(
+  `The core files drawn for "${CHOSEN}"`,
+  DEPS,
+  effectiveDeps(CHOSEN),
+  `Update DEPS, or check core-deps: in skills/${CHOSEN}/SKILL.md.`,
+);
+
+const CHOSEN_INDEX = SKILLS.indexOf(CHOSEN);
 
 const REQUEST = "build a pricing page with a comparison table";
 /** The substrings the registry matches on. Indexes into REQUEST, found not guessed. */

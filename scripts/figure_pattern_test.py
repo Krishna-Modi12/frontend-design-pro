@@ -180,6 +180,12 @@ CASES = [
     ("CONSTRAINTS", "the per-request budget is 3,333 (1,111 registry + 200 router + deps)",
      False, "a total before a *token* split — this branch is anchored to the "
             "constraint split's own nouns, not to any 'total (a + b)' arithmetic"),
+    ("CONSTRAINTS", "the parser walks 56 (17 AST nodes) per file",
+     False, "a parenthesised AST breakdown that is not a constraint split — the "
+            "lookahead requires the regex half too, or this branch would fail "
+            "Gate 11 on a sentence about something else entirely"),
+    ("CONSTRAINTS", "56 (17 semantic layers deep)",
+     False, "same shape with the other synonym and no split at all"),
 
     # ── The halves, counted as checks ───────────────────────────────────────
     ("CONSTRAINTS-REGEX", "the 39 regex checks run on the project",
