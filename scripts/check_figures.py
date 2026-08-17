@@ -450,10 +450,34 @@ FIGURES: Sequence[Figure] = (
         # "N checks" is deliberately not matched: gate chains, evals and CI jobs
         # all count checks too, and a pattern that claimed those would report
         # drift on numbers that have nothing to do with constraints.
-        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-enforced\s+)?constraints\b"
+        #
+        # `machine-checked` joins `machine-enforced` and `CI` as a qualifier the
+        # corpus uses for the same quantity. It was not a hypothetical: README's
+        # opening line — the first sentence anyone reads — said "59
+        # machine-checked constraints" for a full release after the count moved
+        # to 60, because the qualifier sat between the digits and the noun and
+        # this pattern required them adjacent.
+        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-(?:enforced|checked)\s+)?constraints\b"
         r"|\ball\s+\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
         r"|=\s*\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
-        r"|(?<![\d,])(\d{1,3})\s+distinct\s+IDs\b",
+        r"|(?<![\d,])(\d{1,3})\s+distinct\s+IDs\b"
+        # A total stated immediately before its own split — "59 (17 AST + 43
+        # regex)". CONSTRAINT-SPLIT below validates the two halves and was
+        # perfectly happy, so the comparison table in README shipped a row whose
+        # own parenthesis contradicted it: 17 + 43 is 60, printed beside a 59.
+        # Reading the total here is stronger than an arithmetic cross-check,
+        # because it catches the case where the halves *and* the total are
+        # internally consistent and all three are stale.
+        #
+        # The lookahead demands the WHOLE split, not just its first half. An
+        # earlier draft stopped after `(P AST` and would have claimed any
+        # parenthesised AST breakdown — `56 (17 AST nodes)` — as a stale
+        # constraint total, failing Gate 11 on a sentence about something else
+        # entirely. A matcher that breaks correct files is not a fix; the
+        # negative fixture for it is in `figure_pattern_test.py`.
+        r"|(?<![\d,])\*{0,2}(\d{1,3})\*{0,2}\s*\("
+        r"(?=\d{1,3}\s+(?:parser\s+)?(?:AST|parser|semantic)\b[^)+]{0,60}?"
+        r"\+\s*\d{1,3}\s+(?:regex|syntactic)\b)",
         lambda t: (str(t["ci_constraints"]),),
     ),
     # The split had one shape: "(17 AST + 42 regex)". The corpus writes it four
@@ -591,6 +615,24 @@ SCAN: Sequence[str] = (
     # launch documents were outside SCAN on the same reasoning and held a
     # superseded router size in live prose while the gate reported no drift.
     ".github/pages/*.html",
+    # NOT `.github/assets/*.svg`, and the attempt is recorded because it looked
+    # obviously right and is not.
+    #
+    # The README banners carry figures, so adding them here seemed free — and the
+    # first test agreed: the patterns match the skill count and the depth figure
+    # inside the SVG exactly as they do in prose. The gate still passed a banner
+    # whose skill count had been decremented by hand — the whole point of the
+    # control. Every match is dropped by `_suppressed`, because each figure's
+    # forbid window reads the preceding ~50 characters and in SVG those are always
+    # attribute soup — `font-family="ui-monospace, SFMono-Regular, …"` sits before
+    # every piece of text in the document.
+    #
+    # Widening the windows to accommodate markup would weaken them everywhere they
+    # currently work, to protect two generated files. The banners are protected at
+    # the source instead: `tools/readme-*/generate.mjs` read every figure from
+    # `--truth`, and `--check` re-renders and diffs so a stale banner fails
+    # loudly. That is byte-exact rather than pattern-based, which is strictly
+    # stronger than what this list could have given them.
     # Added with the community health files, which quote the figures at a
     # contributor as instructions. A wrong count here sends someone to argue
     # with a gate that is right.

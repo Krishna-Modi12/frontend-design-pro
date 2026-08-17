@@ -154,6 +154,39 @@ CASES = [
      False, "a bare check count belongs to some other suite — claiming it would "
             "flag every gate, eval and CI job that counts anything"),
 
+    # ── The qualifier that sat between the digits and the noun ──────────────
+    # README's opening sentence — the first line anyone reads — carried
+    # "machine-checked" between the count and "constraints", and the pattern
+    # required them adjacent. The figure stayed stale through the sweep that
+    # corrected the checklist it was quoting.
+    ("CONSTRAINTS", "**56 machine-checked constraints, 11 release gates.**",
+     True, "qualifier between the digits and the noun — the front-door shape that shipped stale"),
+    ("CONSTRAINTS", "**59 machine-checked constraints, 11 release gates.**",
+     False, "same qualifier, correct total"),
+
+    # ── A total stated immediately before its own split ─────────────────────
+    # CONSTRAINT-SPLIT validates the halves and is satisfied by a correct pair,
+    # so a row reading "59 (17 AST + 43 regex)" passed while contradicting
+    # itself on one line — 17 + 43 is 60. The total needs reading in its own
+    # right; arithmetic alone would miss the case where all three are stale
+    # together and still consistent.
+    ("CONSTRAINTS", "| **frontend-design-pro** | 56 (17 AST + 42 regex) | Yes |",
+     True, "the halves are right and the total is not, on the same line"),
+    ("CONSTRAINTS", "| **frontend-design-pro** | 59 (17 AST + 42 regex) | Yes |",
+     False, "same row, total agrees with its halves"),
+    ("CONSTRAINTS", "Constraints 53 → 56 (17 AST + 42 regex).",
+     False, "an arrow makes the total history as well as the halves — the split "
+            "fixture above says the same thing for the other half of the sentence"),
+    ("CONSTRAINTS", "the per-request budget is 3,333 (1,111 registry + 200 router + deps)",
+     False, "a total before a *token* split — this branch is anchored to the "
+            "constraint split's own nouns, not to any 'total (a + b)' arithmetic"),
+    ("CONSTRAINTS", "the parser walks 56 (17 AST nodes) per file",
+     False, "a parenthesised AST breakdown that is not a constraint split — the "
+            "lookahead requires the regex half too, or this branch would fail "
+            "Gate 11 on a sentence about something else entirely"),
+    ("CONSTRAINTS", "56 (17 semantic layers deep)",
+     False, "same shape with the other synonym and no split at all"),
+
     # ── The halves, counted as checks ───────────────────────────────────────
     ("CONSTRAINTS-REGEX", "the 39 regex checks run on the project",
      True, "'checks' is the other noun the corpus uses for the same quantity"),

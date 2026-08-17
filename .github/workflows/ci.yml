@@ -105,6 +105,28 @@ jobs:
         if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/figure_pattern_test.py
 
+      # The README banner draws the pack's headline figures, and Gate 11 cannot
+      # police it: the patterns match inside SVG, but every match is dropped by
+      # the forbid look-back window, which in markup is attribute soup rather
+      # than sentence. Proved with a negative control before this step existed —
+      # see the note in scripts/check_figures.py where the SCAN entry would have
+      # gone.
+      #
+      # So the banner is checked the way generated artifacts should be: re-render
+      # from the current truth table and byte-compare.
+      #
+      # `!cancelled()` rather than no condition at all. Every diagnostic step
+      # above is guarded on `failure()`, and this one is not a diagnostic — but
+      # an unguarded step is not an unconditional one: GitHub skips every later
+      # step once a step fails, so on a red chain this would never have run. A
+      # stale banner is a wrong number on the most-read page in the project and
+      # nothing else in this workflow can see it, so it has to be checked on
+      # red runs too. Not `always()`, which would also fire on cancellation and
+      # report a failure nobody caused.
+      - name: README banner is current
+        if: ${{ !cancelled() }}
+        run: node tools/readme-router/generate.mjs --check
+
   # demo/showcase/ is the one demo that claims to RUN. It has its own package.json
   # and real dependencies, so the stub-typed gates above cannot verify it and
   # build_release.py skips it on a machine without its node_modules. This job is

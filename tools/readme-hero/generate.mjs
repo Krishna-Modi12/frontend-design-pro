@@ -67,10 +67,22 @@
  *
  * ── No figures about this pack appear on the banner ──────────────────────────
  *
- * Deliberate, and the same reasoning as `demo/landing-page`: Gate 11 does not
- * read SVG, so any count drawn here would be a number no gate can see, on the
- * most prominent surface the project has. The constraint labels are named, never
+ * Deliberate, and the reasoning held up under test. Gate 11 does not read SVG,
+ * so any count drawn here would be a number no gate can see, on the most
+ * prominent surface the project has. The constraint labels are named, never
  * counted.
+ *
+ * Adding `.github/assets/*.svg` to Gate 11's SCAN was tried and reverted, and
+ * the reason is worth knowing before trying it again: the patterns DO match
+ * inside SVG, and the gate still passes a banner corrupted to a wrong number,
+ * because each figure's forbid window reads the preceding ~50 characters and in
+ * SVG those are always attribute soup. `scripts/check_figures.py` carries the
+ * detail at the point where the entry would have gone.
+ *
+ * `tools/readme-router/generate.mjs` is the banner that does make a
+ * quantitative claim. It reads every figure from `check_figures.py --truth` and
+ * supports `--check` to re-render and diff, which is byte-exact rather than
+ * pattern-based — the guard this file would want if it ever grew a number.
  */
 
 import { mkdirSync, writeFileSync } from "node:fs";
