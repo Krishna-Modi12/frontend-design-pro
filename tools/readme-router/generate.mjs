@@ -102,17 +102,33 @@ const OUT = join(REPO, ".github", "assets", "router.svg");
  * what lets the human-readable half of that flag stay human-readable.
  */
 function truth() {
+  // Both spellings, because the two places this runs disagree about which one
+  // exists. Every other step in ci.yml calls `python3`; on Windows that name
+  // often resolves to a Store stub that exits non-zero instead of running, and
+  // `python` is the one that works. Trying both costs nothing and removes a
+  // failure mode that would only ever appear on the other platform.
+  const candidates = process.platform === "win32"
+    ? ["python", "python3"]
+    : ["python3", "python"];
+
   let raw;
-  try {
-    raw = execFileSync("python", [join("scripts", "check_figures.py"), "--truth"], {
-      cwd: REPO,
-      encoding: "utf8",
-    });
-  } catch (err) {
+  const failures = [];
+  for (const exe of candidates) {
+    try {
+      raw = execFileSync(exe, [join("scripts", "check_figures.py"), "--truth"], {
+        cwd: REPO,
+        encoding: "utf8",
+      });
+      break;
+    } catch (err) {
+      failures.push(`${exe}: ${err.message}`);
+    }
+  }
+  if (raw === undefined) {
     throw new Error(
-      "could not run `python scripts/check_figures.py --truth`, which is where every " +
-        "number on this banner comes from. Install python or run this from the repo root. " +
-        `Underlying error: ${err.message}`,
+      "could not run `scripts/check_figures.py --truth`, which is where every " +
+        "number on this banner comes from. Install python or run this from the repo root.\n  " +
+        failures.join("\n  "),
     );
   }
 

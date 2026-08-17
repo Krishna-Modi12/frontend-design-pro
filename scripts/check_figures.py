@@ -450,10 +450,26 @@ FIGURES: Sequence[Figure] = (
         # "N checks" is deliberately not matched: gate chains, evals and CI jobs
         # all count checks too, and a pattern that claimed those would report
         # drift on numbers that have nothing to do with constraints.
-        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-enforced\s+)?constraints\b"
+        #
+        # `machine-checked` joins `machine-enforced` and `CI` as a qualifier the
+        # corpus uses for the same quantity. It was not a hypothetical: README's
+        # opening line — the first sentence anyone reads — said "59
+        # machine-checked constraints" for a full release after the count moved
+        # to 60, because the qualifier sat between the digits and the noun and
+        # this pattern required them adjacent.
+        r"(?<![\d,])(\d{1,3})\s+(?:CI\s+|machine-(?:enforced|checked)\s+)?constraints\b"
         r"|\ball\s+\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
         r"|=\s*\*{0,2}(\d{1,3})\*{0,2}\s+checks\b"
-        r"|(?<![\d,])(\d{1,3})\s+distinct\s+IDs\b",
+        r"|(?<![\d,])(\d{1,3})\s+distinct\s+IDs\b"
+        # A total stated immediately before its own split — "59 (17 AST + 43
+        # regex)". CONSTRAINT-SPLIT below validates the two halves and was
+        # perfectly happy, so the comparison table in README shipped a row whose
+        # own parenthesis contradicted it: 17 + 43 is 60, printed beside a 59.
+        # Reading the total here is stronger than an arithmetic cross-check,
+        # because it catches the case where the halves *and* the total are
+        # internally consistent and all three are stale.
+        r"|(?<![\d,])\*{0,2}(\d{1,3})\*{0,2}\s*\("
+        r"(?=\d{1,3}\s+(?:parser\s+)?(?:AST|parser|semantic)\b)",
         lambda t: (str(t["ci_constraints"]),),
     ),
     # The split had one shape: "(17 AST + 42 regex)". The corpus writes it four
