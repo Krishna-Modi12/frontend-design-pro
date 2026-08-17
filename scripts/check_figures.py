@@ -403,9 +403,22 @@ FIGURES: Sequence[Figure] = (
         # `(?!\s+to\b)` because "137 references to docs/*.md" counts pointers,
         # not reference files. A count followed by "to" always names what is
         # being pointed at, never the corpus.
-        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b(?!\s+to\b)",
+        # The second alternate reads `N reference files`, which four shipped
+        # install adapters and two setup docs use. This was recorded as
+        # deliberately unmatched because widening to a bare `files` would also
+        # grab "20 knowledge files per GPT" on the same row — but requiring the
+        # word `reference` separates the two cleanly, and while the shape went
+        # unread six live consumer-facing claims sat ten short.
+        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b(?!\s+to\b)"
+        r"|(?<![\d,])(\d{2,3})\s+reference\s+files\b",
         lambda t: (str(t["reference_files"]),),
-        forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.]{0,10}$",
+        # `[^.|]` not `[^.]`: the backtick branch exists to suppress a per-file
+        # claim like "`foo.md` has 12 references", where the path and the count
+        # share a clause. A table PIPE between them means they are separate
+        # cells and the count is the corpus — which is how
+        # `| `skills/{id}/references/*.md` | N deep references |` hid a stale
+        # figure while the row's own token count was being swept correctly.
+        forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.|]{0,10}$",
     ),
     Figure(
         "DEPTH",

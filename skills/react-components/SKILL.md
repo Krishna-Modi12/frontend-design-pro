@@ -42,6 +42,7 @@ Load only for the specific task:
 |---|---|
 | Advanced composition, compound components, API anti-patterns, full forwardRef rules | `core/component-api-deep.md` |
 | Hooks, context, error boundaries, React 19 APIs | `references/react-patterns.md` |
+| The layer under shadcn — which package to install, `data-state` styling contract, `asChild`/Slot rules, exit animations, focus and dismissal, per-primitive labelling | `references/radix-primitives.md` |
 | shadcn component usage, theming, `cn()`, CLI | `references/shadcn.md` |
 | Community components, MagicUI/Aceternity, registries | `references/shadcn-ecosystem.md` |
 | Icons, avatars, icon sizing and a11y | `../iconography/SKILL.md` |

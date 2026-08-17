@@ -44,6 +44,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | **Motion direction — what a motion communicates, personality archetypes, choreography, Disney principles, animation smells** | **`references/motion-direction.md`** |
+| **How much this page should move at all — the L1/L2/L3 tiers, intent→tier table, per-page ceilings, reveal granularity** | **`references/motion-budget.md`** |
 | Timing/easing decisions, which library to reach for | `references/animation-framework.md` |
 | 17 copy-paste recipes (stagger, counter, toast, marquee…) | `references/animation-recipes.md` |
 | motion.*, AnimatePresence, variants, layoutId, springs | `references/framer-motion.md` |

@@ -6,7 +6,7 @@ The skill is a folder of markdown built around a registry (`SKILL.md`) that rout
 
 1. Unzip the archive: `unzip frontend-design-pro-v*.skill -d ./frontend-design-pro/`
 2. **Create a Custom GPT** (or a Project, if you're using ChatGPT Projects instead) and open its Knowledge / file upload section.
-3. Upload `SKILL.md` and the `core/*.md` files individually. **A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT** ([OpenAI Help Center](https://help.openai.com/en/articles/8555545-file-uploads-faq)) — the pack has 8 `core/` files, 19 skill routers and 94 references, so you are picking a subset before the first message. A workable split: `SKILL.md` + the 4 `core/` files a typical request needs + the 2–3 skill routers your work actually hits, leaving a few slots for the specific `references/*.md` you know you want. Uploading more files does not buy more depth — retrieval is chunked semantic search, so extra files mostly add chunks competing for the same slots.
+3. Upload `SKILL.md` and the `core/*.md` files individually. **A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT** ([OpenAI Help Center](https://help.openai.com/en/articles/8555545-file-uploads-faq)) — the pack has 8 `core/` files, 19 skill routers and 104 references, so you are picking a subset before the first message. A workable split: `SKILL.md` + the 4 `core/` files a typical request needs + the 2–3 skill routers your work actually hits, leaving a few slots for the specific `references/*.md` you know you want. Uploading more files does not buy more depth — retrieval is chunked semantic search, so extra files mostly add chunks competing for the same slots.
 4. **Instructions** field — paste something close to this:
 
 ```
@@ -29,7 +29,7 @@ file via search, say so rather than improvising generic advice.
 
 ## Plain ChatGPT (no Custom GPT)
 
-Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 349k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
+Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 358k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
 
 ## Verifying it took
 

@@ -203,6 +203,36 @@ CASES = [
     ("CONSTRAINTS-AST", "the 17 AST checks on every authored file",
      False, "same noun, correct count"),
 
+    # ── REFERENCES, and the two shapes that hid eight stale claims ──────────
+    # This figure read `N references` and nothing else. Two forms escaped it and
+    # both were carrying live, consumer-facing numbers ten short of the corpus:
+    # a table row where the preceding cell's backticked path tripped the
+    # per-file suppressor, and `N reference files`, which the install adapters
+    # prefer. The negatives are the load-bearing half here — the reason `files`
+    # was never widened bare is the platform cap in the fourth case.
+    ("REFERENCES",
+     "| `skills/{id}/references/*.md` | 99 deep references | **349,445 tokens** |",
+     True, "table row: a backticked path in the PRECEDING CELL must not suppress "
+           "a corpus claim — this row's token count was swept while its file "
+           "count sat stale"),
+    ("REFERENCES", "The 99 reference files reach the model only if you paste one in by hand.",
+     True, "`N reference files` — the noun four shipped install adapters use"),
+    ("REFERENCES", "you are choosing a subset of 99 reference files before the conversation starts",
+     True, "same shape mid-sentence, no backticks anywhere near it"),
+    ("REFERENCES", "A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT.",
+     False, "a platform cap, not the corpus — widening to a bare `files` would "
+            "flag this, which is precisely why it stayed unmatched for so long"),
+    ("REFERENCES", "| `skills/{id}/references/*.md` | 101 deep references |",
+     False, "correct value in the table row the fix opened up"),
+    ("REFERENCES", "The 101 reference files reach the model only if you paste one in.",
+     False, "correct value in the newly-read shape"),
+    ("REFERENCES", "`design-system` has 15 references, the newest of them",
+     False, "per-skill count — the skill-name suppressor still has to hold"),
+    ("REFERENCES", "22 shipped files carried 137 references to `docs/*.md`",
+     False, "counts pointers, not reference files"),
+    ("REFERENCES", "the pack has 8 core files, 19 skill routers and 101 references",
+     False, "correct value; `8 core files` on the same line must stay unclaimed"),
+
     # ── DEPTH-K ─────────────────────────────────────────────────────────────
     # The whole point of this figure is the line it refuses to cross. The
     # `k`-rounded family names two quantities; only the ones whose own noun
