@@ -84,7 +84,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,961–7,525 tokens against ~358k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,961–7,525 tokens against ~362k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -103,6 +103,20 @@ Five requirements, each enforced by a different gate. Missing any one fails the 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
 `python scripts/scaffold.py <intent>` generates differentiated component boilerplate by intent type.
+
+**Our frontmatter is a superset of Anthropic's schema, and their own validator
+rejects it.** `skill-creator`'s `quick_validate.py` allows exactly six keys —
+`name`, `description`, `license`, `allowed-tools`, `metadata`, `compatibility` —
+and treats anything else as an error. Every skill here declares `version` and
+`core-deps`, so all 19 fail it; the root `SKILL.md` passes. Before treating that
+as a defect, note the same validator would reject `mattpocock/skills`, which uses
+`disable-model-invocation` and `argument-hint` — so the script is stricter than
+the hosts, and extra keys are tolerated in practice. **It is an interop risk, not
+a live bug**: any host that adopts strict validation would refuse the pack. The
+spec-clean form is to nest both under the permitted `metadata:` key, which
+preserves every value, but it moves what Gate 2 parses, what `--bump-patch`
+writes, and what the registry reads — a cross-cutting change that deserves its
+own commit and its own gate run, not a ride-along on a content change.
 
 ## The rules no gate reads
 
@@ -129,7 +143,7 @@ Still unenforced from that same line, and worth a manual look: equal-height card
 grids, gradient fills on large headings, custom cursors, `<div>`-built fake
 screenshots, and numbered `01/02/03` markers on content that is not a sequence.
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 357,580 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 361,815 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts

@@ -49,7 +49,7 @@ Load only for the specific task:
 | Type that is correct but looks unset — measure in `ch`, `text-box` ink trimming, `balance` vs `pretty`, scale ratios, metric-matched fallbacks, tabular figures, the `prose` plugin | `references/typographic-finishing.md` |
 | Top brand profiles + implementation templates | `references/brand-core.md` |
 | 30+ additional brand profiles | `references/brand-extended.md` |
-| 68 public design systems, 9 categories — replicate a brand's feeling, not its IP | `references/brand-design-systems.md` |
+| 83 public design systems, 9 archetypes — replicate a brand's feeling, not its IP | `references/brand-design-systems.md` |
 | Matching a real brand — official-source extraction protocol, never from memory | `references/brand-extraction.md` |
 | Tone vocabulary, background effects, Design Thinking protocol | `references/aesthetic-direction.md` |
 | Auto Layout → code, variable extraction | `references/figma-to-code.md` |
