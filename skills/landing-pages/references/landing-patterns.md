@@ -5,6 +5,51 @@ Version: 10.7.0
 
 ---
 
+## Contents
+
+- [How to Use](#how-to-use)
+- [Pattern 1 — Hero + Features + CTA](#pattern-1--hero--features--cta)
+- [Pattern 2 — Hero + Testimonials + CTA](#pattern-2--hero--testimonials--cta)
+- [Pattern 3 — Product Demo + Features](#pattern-3--product-demo--features)
+- [Pattern 4 — Minimal Single Column](#pattern-4--minimal-single-column)
+- [Pattern 5 — Funnel (3-Step)](#pattern-5--funnel-3-step)
+- [Pattern 6 — Comparison Table + CTA](#pattern-6--comparison-table--cta)
+- [Pattern 7 — Lead Magnet + Form](#pattern-7--lead-magnet--form)
+- [Pattern 8 — Pricing Page + CTA](#pattern-8--pricing-page--cta)
+- [Pattern 9 — Video-First Hero](#pattern-9--video-first-hero)
+- [Pattern 10 — Scroll-Triggered Storytelling](#pattern-10--scroll-triggered-storytelling)
+- [Pattern 11 — AI Personalization](#pattern-11--ai-personalization)
+- [Pattern 12 — Waitlist / Coming Soon](#pattern-12--waitlist--coming-soon)
+- [Pattern 13 — Comparison Table Focus](#pattern-13--comparison-table-focus)
+- [Pattern 14 — Pricing-Focused Landing](#pattern-14--pricing-focused-landing)
+- [Pattern 15 — App Store Style](#pattern-15--app-store-style)
+- [Pattern 16 — FAQ / Documentation](#pattern-16--faq--documentation)
+- [Pattern 17 — Immersive / Interactive](#pattern-17--immersive--interactive)
+- [Pattern 18 — Event / Conference](#pattern-18--event--conference)
+- [Pattern 19 — Product Review / Ratings](#pattern-19--product-review--ratings)
+- [Pattern 20 — Community / Forum](#pattern-20--community--forum)
+- [Pattern 21 — Before-After Transformation](#pattern-21--before-after-transformation)
+- [Pattern 22 — Marketplace / Directory](#pattern-22--marketplace--directory)
+- [Pattern 23 — Newsletter / Content First](#pattern-23--newsletter--content-first)
+- [Pattern 24 — Webinar Registration](#pattern-24--webinar-registration)
+- [Pattern 25 — Enterprise Gateway](#pattern-25--enterprise-gateway)
+- [Pattern 26 — Portfolio Grid](#pattern-26--portfolio-grid)
+- [Pattern 27 — Horizontal Scroll Journey](#pattern-27--horizontal-scroll-journey)
+- [Pattern 28 — Bento Grid Showcase](#pattern-28--bento-grid-showcase)
+- [Pattern 29 — Interactive 3D Configurator](#pattern-29--interactive-3d-configurator)
+- [Pattern 30 — AI-Driven Dynamic](#pattern-30--ai-driven-dynamic)
+- [Pattern 31 — Feature-Rich Showcase](#pattern-31--feature-rich-showcase)
+- [Pattern 32 — Hero-Centric Design](#pattern-32--hero-centric-design)
+- [Pattern 33 — Trust & Authority](#pattern-33--trust--authority)
+- [Pattern 34 — Real-Time / Operations](#pattern-34--real-time--operations)
+- [CTA Placement Rules (Cross-Pattern)](#cta-placement-rules-cross-pattern)
+- [Social Proof Formulas](#social-proof-formulas)
+- [Form Conversion Rules](#form-conversion-rules)
+- [Mobile Optimization Rules](#mobile-optimization-rules)
+- [Anti-Patterns](#anti-patterns)
+
+---
+
 ## How to Use
 
 Each pattern specifies **section order**, **CTA placement**, **color strategy**, **recommended effects**, and **conversion optimization** notes. Match the pattern to your product type and intent, then apply the CTA placement and color rules directly.

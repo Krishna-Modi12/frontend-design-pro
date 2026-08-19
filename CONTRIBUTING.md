@@ -130,7 +130,7 @@ counts as a leak too.
 
 ## Adding a skill
 
-Five requirements, each enforced by a different gate:
+Six requirements, each enforced by a different gate:
 
 1. **Frontmatter** declaring `name` and `description`, plus `metadata.version` and `metadata.core-deps` nested under `metadata:` — where
    `version` exactly equals `metadata.json`'s current version.
@@ -144,6 +144,9 @@ Five requirements, each enforced by a different gate:
 4. **A 1:1 test for every gold**, both compiling strict.
 5. **Every `references/*.md` cited** in that skill's Reference Index. A reference
    nothing routes to can never be loaded, so it ships as dead weight.
+6. **A `## Contents` index in every `references/*.md` over 300 lines**, with every
+   anchor resolving. Anthropic's skill-creator asks for it, and an unindexed
+   1,400-line file forces an agent to read all of it to find one section.
 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any
 existing skill. `python scripts/scaffold.py <intent>` generates boilerplate.

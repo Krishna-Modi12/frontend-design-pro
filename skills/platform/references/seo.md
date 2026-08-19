@@ -6,6 +6,21 @@
 # canonical/sitemap/robots, OG tags, on-page rules, keyword mapping.
 # ─────────────────────────────────────────────────────────────────────────────
 
+## Contents
+
+- [Core Principles](#core-principles)
+- [1. Next.js Metadata API (App Router)](#1-nextjs-metadata-api-app-router)
+- [2. Structured Data (JSON-LD)](#2-structured-data-json-ld)
+- [3. Sitemap + Robots](#3-sitemap--robots)
+- [4. Core Web Vitals](#4-core-web-vitals)
+- [5. Technical SEO Checklist](#5-technical-seo-checklist)
+- [6. On-Page Rules](#6-on-page-rules)
+- [7. Anti-Patterns](#7-anti-patterns)
+- [8. Internal Linking](#8-internal-linking)
+- [9. Quick Audit Output Format](#9-quick-audit-output-format)
+
+---
+
 ## Core Principles
 
 1. Fix technical blockers before content optimization

@@ -6,6 +6,24 @@
 # streaming UI, RSC streaming, multimodal, structured output.
 # ─────────────────────────────────────────────────────────────────────────────
 
+## Contents
+
+- [Installation](#installation)
+- [1. `useChat` — Chat Interface Hook](#1-usechat--chat-interface-hook)
+- [2. `useCompletion` — Single-turn Text Completion](#2-usecompletion--single-turn-text-completion)
+- [3. `generateText` — Non-streaming, server-side](#3-generatetext--non-streaming-server-side)
+- [4. `streamText` — Streaming, server-side](#4-streamtext--streaming-server-side)
+- [5. Tool Calling](#5-tool-calling)
+- [6. Structured Output (`generateObject`)](#6-structured-output-generateobject)
+- [7. Multimodal (Images + Text)](#7-multimodal-images--text)
+- [8. RSC Streaming with `createStreamableUI`](#8-rsc-streaming-with-createstreamableui)
+- [9. Embedding & RAG Pattern](#9-embedding--rag-pattern)
+- [10. Error Handling & Edge Cases](#10-error-handling--edge-cases)
+- [11. Model Selection Guide](#11-model-selection-guide)
+- [12. UI Patterns for AI Features](#12-ui-patterns-for-ai-features)
+
+---
+
 ## Installation
 
 ```bash

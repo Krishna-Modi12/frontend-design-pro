@@ -652,6 +652,8 @@ def path_integrity() -> bool:
     if not example_doctrine(): ok = False
     # every relative markdown link in the repo resolves
     if not markdown_links(): ok = False
+    # every oversized reference carries a Contents index whose anchors resolve
+    if not reference_contents(): ok = False
     return ok
 
 
@@ -683,6 +685,79 @@ def example_doctrine() -> bool:
                     bad(f"{ex.parent.parent.name}: {ex.name} cites missing doctrine {rel}")
                     missing += 1; ok = False
     if not missing: ok_(f"all {cited} example doctrine references resolve")
+    return ok
+
+
+# Anthropic's skill-creator asks for a table of contents in any reference over
+# ~300 lines, and the reason is progressive disclosure rather than tidiness: an
+# agent that loads a 1,400-line file with no index has to read all of it to find
+# the one section it needs. All 45 oversized references here had none.
+#
+# The anchors need checking as much as their presence does. `markdown_links()`
+# skips any target starting with "#", so a Contents entry pointing at a heading
+# that was since renamed is invisible to every other check in the chain — dead
+# weight of exactly the kind the Reference Index warning exists to catch.
+#
+# Verified to FAIL before it was trusted, on both halves: dropping one file's
+# Contents block names that file, and renaming a single heading names the entry
+# that no longer resolves.
+#
+# Stage 3 and not Gate 12, following `markdown_links()` and `example_doctrine()`
+# above for the same reason they give.
+_TOC_MIN_LINES = 300
+_TOC_ENTRY = re.compile(r"^\s*- \[.*\]\(#(.+)\)$")
+
+
+def _gh_slug(text: str) -> str:
+    """GitHub's heading-anchor rule. Verified against the rendered file, not
+    assumed: each space becomes a hyphen and runs are NOT collapsed, so
+    "xAI / Grok" anchors as #xai--grok. Collapsing them produced dead links."""
+    s = re.sub(r"`([^`]*)`", r"\1", text)
+    s = re.sub(r"\*\*?([^*]*)\*\*?", r"\1", s)
+    s = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", s)
+    s = re.sub(r"[^\w\s-]", "", s.lower().strip())
+    return s.replace(" ", "-")
+
+
+def _heading_anchors(lines) -> set:
+    """Every heading's anchor, fence-aware and deduped as GitHub dedupes."""
+    seen, out, fence = {}, set(), None
+    for l in lines:
+        m = re.match(r"^(```+|~~~+)", l)
+        if m:
+            if fence is None: fence = m.group(1)[0]
+            elif l.startswith(fence * 3): fence = None
+            continue
+        if fence: continue
+        h = re.match(r"^#{2,3} +(.*?)\s*#*$", l)
+        if not h: continue
+        s = _gh_slug(h.group(1).strip())
+        n = seen.get(s, 0); seen[s] = n + 1
+        out.add(s if n == 0 else f"{s}-{n}")
+    return out
+
+
+def reference_contents() -> bool:
+    ok, indexed, checked = True, 0, 0
+    for ref in sorted(ROOT.glob("skills/*/references/**/*.md")):
+        lines = ref.read_text(encoding="utf-8").splitlines()
+        if len(lines) <= _TOC_MIN_LINES: continue
+        rel = ref.relative_to(ROOT).as_posix()
+        if "## Contents" not in lines:
+            bad(f"{rel}: {len(lines)} lines and no `## Contents` index — an agent "
+                f"must read the whole file to find one section"); ok = False; continue
+        indexed += 1
+        valid = _heading_anchors(lines)
+        for l in lines[lines.index("## Contents") + 1:]:
+            if l.strip() == "---": break
+            m = _TOC_ENTRY.match(l)
+            if not m: continue
+            checked += 1
+            if m.group(1) not in valid:
+                bad(f"{rel}: Contents points at #{m.group(1)}, which is not a heading "
+                    f"in this file"); ok = False
+    if ok: ok_(f"all {indexed} references over {_TOC_MIN_LINES} lines carry a Contents "
+               f"index; {checked} anchors resolve")
     return ok
 
 

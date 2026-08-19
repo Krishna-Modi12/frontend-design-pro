@@ -4,6 +4,22 @@ How to build React/Next.js interfaces that coordinate multiple AI agents, backgr
 
 ---
 
+## Contents
+
+- [1. Multi-Step AI Workflow UI](#1-multi-step-ai-workflow-ui)
+- [2. Agent Status Components](#2-agent-status-components)
+- [3. Background Job UI](#3-background-job-ui)
+- [4. Parallel Agent Output](#4-parallel-agent-output)
+- [5. Human-in-the-Loop UI](#5-human-in-the-loop-ui)
+- [6. Tool Call Visualization](#6-tool-call-visualization)
+- [7. Streaming Output Composition](#7-streaming-output-composition)
+- [8. Error Recovery UI](#8-error-recovery-ui)
+- [9. Agent Memory UI](#9-agent-memory-ui)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Composition Reference](#composition-reference)
+
+---
+
 ## 1. Multi-Step AI Workflow UI
 
 Long-running LLM pipelines need visible progress. Users must know which step is running, which have completed, and roughly how much remains. Never use a single spinner for a 5-step pipeline.

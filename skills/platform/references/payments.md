@@ -9,6 +9,28 @@ Source: stripe.com/docs, stripe.com/elements, @stripe/stripe-js, @stripe/react-s
 
 ---
 
+## Contents
+
+- [Package Setup](#package-setup)
+- [Elements Provider Setup](#elements-provider-setup)
+- [Stripe Appearance API](#stripe-appearance-api)
+- [PaymentElement (Recommended)](#paymentelement-recommended)
+- [CardElement (Simple Integration)](#cardelement-simple-integration)
+- [Server-Side: Payment Intent (App Router)](#server-side-payment-intent-app-router)
+- [Server-Side: Webhooks](#server-side-webhooks)
+- [Subscription Checkout Pattern](#subscription-checkout-pattern)
+- [Customer Portal (Manage Subscription)](#customer-portal-manage-subscription)
+- [Checkout UX Patterns](#checkout-ux-patterns)
+- [Error Handling Reference](#error-handling-reference)
+- [Saved Payment Methods (SetupIntent)](#saved-payment-methods-setupintent)
+- [Formatting Utilities](#formatting-utilities)
+- [Environment Variables](#environment-variables)
+- [Security Checklist](#security-checklist)
+- [Testing Reference](#testing-reference)
+- [Quick Shortcode Reference](#quick-shortcode-reference)
+
+---
+
 ## Package Setup
 
 ```bash

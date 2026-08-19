@@ -3,6 +3,29 @@
 
 ---
 
+## Contents
+
+- [ICONS — LUCIDE REACT (DEFAULT)](#icons--lucide-react-default)
+  - [Basic usage](#basic-usage)
+  - [Size scale (use these — never arbitrary px)](#size-scale-use-these--never-arbitrary-px)
+  - [Stroke width](#stroke-width)
+  - [Common icon sets by context](#common-icon-sets-by-context)
+- [ICON BUTTON — ACCESSIBLE PATTERN](#icon-button--accessible-pattern)
+- [ICON + TEXT BUTTON — SPACING](#icon--text-button--spacing)
+- [STATUS ICONS — ALWAYS PAIR WITH TEXT OR COLOR](#status-icons--always-pair-with-text-or-color)
+- [AVATARS — GRADIENT INITIALS (DEFAULT)](#avatars--gradient-initials-default)
+  - [Gradient avatar component](#gradient-avatar-component)
+  - [Avatar group (overlapping stack)](#avatar-group-overlapping-stack)
+- [AVATAR USAGE PATTERNS](#avatar-usage-patterns)
+  - [Feed / activity item](#feed--activity-item)
+  - [Table cell with avatar](#table-cell-with-avatar)
+  - [Comment thread](#comment-thread)
+- [REAL NAMES TO USE (never John Doe / Jane Smith)](#real-names-to-use-never-john-doe--jane-smith)
+- [EMPTY STATE WITH ICON](#empty-state-with-icon)
+- [ROUTING IN SKILL (when to load this file)](#routing-in-skill-when-to-load-this-file)
+
+---
+
 ## ICONS — LUCIDE REACT (DEFAULT)
 
 Lucide React is the default icon library. Consistent stroke width, tree-shakeable, accessible.

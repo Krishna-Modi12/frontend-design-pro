@@ -4,6 +4,29 @@
 
 ---
 
+## Contents
+
+- [INSTALLATION](#installation)
+- [CORE METHODS](#core-methods)
+- [PLUGIN REGISTRATION — REQUIRED BEFORE USE](#plugin-registration--required-before-use)
+- [SCROLLTRIGGER — COMPLETE API](#scrolltrigger--complete-api)
+- [REACT — useGSAP HOOK](#react--usegsap-hook)
+- [FLIP — LAYOUT ANIMATIONS](#flip--layout-animations)
+- [SPLITTEXT — TEXT ANIMATIONS](#splittext--text-animations)
+- [OBSERVER — GESTURE DETECTION](#observer--gesture-detection)
+- [DRAGGABLE + INERTIA](#draggable--inertia)
+- [SCROLLSMOOTHER — SMOOTH SCROLL](#scrollsmoother--smooth-scroll)
+- [MORPHSVG + DRAWSVG](#morphsvg--drawsvg)
+- [SCRAMBLETEXT + MOTIIONPATH](#scrambletext--motiionpath)
+- [CUSTOM EASE](#custom-ease)
+- [STAGGER PATTERNS](#stagger-patterns)
+- [COMMON PRODUCTION PATTERNS](#common-production-patterns)
+- [GSAP-SKILLS MODULES (greensock/gsap-skills)](#gsap-skills-modules-greensockgsap-skills)
+- [PERFORMANCE RULES](#performance-rules)
+- [COMMON ERRORS & FIXES](#common-errors--fixes)
+
+---
+
 ## INSTALLATION
 
 ```bash

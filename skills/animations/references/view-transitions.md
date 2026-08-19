@@ -7,6 +7,25 @@ React's View Transition API creates smooth, hardware-accelerated animations for 
 
 ---
 
+## Contents
+
+- [When to Use](#when-to-use)
+- [The `<ViewTransition>` Component](#the-viewtransition-component)
+- [Critical Placement Rule](#critical-placement-rule)
+- [Type-Keyed Transitions (Direction-Aware)](#type-keyed-transitions-direction-aware)
+- [Shared Element Transitions](#shared-element-transitions)
+- [Common Patterns](#common-patterns)
+- [CSS Recipes (copy into global CSS)](#css-recipes-copy-into-global-css)
+- [Next.js Integration](#nextjs-integration)
+- [Animation Decision Guide](#animation-decision-guide)
+- [CSS Pseudo-Elements Reference](#css-pseudo-elements-reference)
+- [Browser Support](#browser-support)
+- [Key Gotchas](#key-gotchas)
+- [Availability](#availability)
+- [Upstream additions (vercel-labs/agent-skills, current)](#upstream-additions-vercel-labsagent-skills-current)
+
+---
+
 ## When to Use
 
 Every transition should communicate **spatial relationships or continuity**. Implement in this priority order:

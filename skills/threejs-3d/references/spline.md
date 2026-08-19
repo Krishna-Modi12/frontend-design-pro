@@ -5,6 +5,28 @@
 
 ---
 
+## Contents
+
+- [WHAT SPLINE IS GOOD FOR](#what-spline-is-good-for)
+- [INSTALLATION](#installation)
+- [SCENE URL FORMAT](#scene-url-format)
+- [BASIC USAGE](#basic-usage)
+- [NEXT.JS INTEGRATION (SSR-SAFE)](#nextjs-integration-ssr-safe)
+- [COMPONENT PROPS](#component-props)
+- [EVENT LISTENERS](#event-listeners)
+- [APPLICATION API (onLoad callback)](#application-api-onload-callback)
+- [COMMUNITY TEMPLATE CATEGORIES](#community-template-categories)
+- [HERO SECTION PATTERN (React + Spline)](#hero-section-pattern-react--spline)
+- [SPLINE + FRAMER MOTION HYBRID](#spline--framer-motion-hybrid)
+- [HTML / VANILLA EMBED](#html--vanilla-embed)
+- [PERFORMANCE BEST PRACTICES](#performance-best-practices)
+- [SELF-HOSTING .SPLINECODE FILES](#self-hosting-splinecode-files)
+- [ROUTING IN SKILL (when to load this file)](#routing-in-skill-when-to-load-this-file)
+- [SPLINE vs THREE.JS DECISION](#spline-vs-threejs-decision)
+- [ACCESSIBILITY NOTE](#accessibility-note)
+
+---
+
 ## WHAT SPLINE IS GOOD FOR
 
 Use Spline when:
