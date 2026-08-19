@@ -225,16 +225,58 @@ def preflight(version: str) -> bool:
 
 # ── v13 gates: frontmatter · budget · registry resolution ────────────────────
 def _frontmatter(path):
+    """Parse the frontmatter block into a *nested* dict.
+
+    Hand-rolled on purpose: CI has no `pip install` step (`.github/workflows/
+    ci.yml`), so PyYAML is not importable here. This covers the subset the
+    schema permits — `key: value`, a `-` sequence, one level of nesting under a
+    mapping key, and folded scalars.
+
+    The version this replaces partitioned every line on ":" without ever
+    looking at indentation, so `version:` at the top level and `version:`
+    nested under `metadata:` produced byte-identical output. That was not
+    theoretical: moving both keys under `metadata:` to satisfy Anthropic's
+    `quick_validate.py` changed all 19 skill files, and Gate 2 printed the same
+    green line before and after — it had no way to see the schema it polices.
+    Folded scalars are consumed here too, so a colon inside a wrapped
+    `description:` can no longer invent a top-level key.
+    """
     txt = path.read_text(encoding="utf-8")
     if not txt.startswith("---"): return None
-    body = txt.split("---", 2)[1]
-    fm, key = {}, None
-    for line in body.splitlines():
-        if line.strip().startswith("- ") and key: fm.setdefault(key, []).append(line.strip()[2:].strip())
-        elif ":" in line:
-            key, _, v = line.partition(":"); key = key.strip(); v = v.strip()
-            fm[key] = v if v else []
-    return fm
+    root: dict = {}
+    frames = [(0, root)]      # (indent of this mapping's keys, mapping)
+    pending = None            # (indent, holder, key) — a `key:` whose block is unread
+    folded = None             # indent of a `>`/`|` scalar whose lines we skip
+    for raw in txt.split("---", 2)[1].splitlines():
+        if not raw.strip() or raw.lstrip().startswith("#"): continue
+        indent, line = len(raw) - len(raw.lstrip()), raw.strip()
+        if folded is not None:
+            if indent > folded: continue
+            folded = None
+        if line.startswith("- "):
+            if pending and indent > pending[0]:
+                _, holder, key = pending
+                if isinstance(holder.get(key), list): holder[key].append(line[2:].strip())
+            continue
+        if ":" not in line: continue
+        if pending and indent > pending[0]:
+            _, holder, key = pending          # a deeper key line: this block is a mapping
+            child: dict = {}
+            holder[key] = child
+            frames.append((indent, child))
+            pending = None
+        while len(frames) > 1 and indent < frames[-1][0]: frames.pop()
+        holder = frames[-1][1]
+        key, _, v = line.partition(":")
+        key, v = key.strip(), v.strip()
+        if v:
+            holder[key] = v
+            pending = None
+            if v[0] in ">|": folded = indent
+        else:
+            holder[key] = []                  # assume sequence; upgraded above if mapping
+            pending = (indent, holder, key)
+    return root
 
 # A host decides whether to load a skill by reading `description:`, and a list of
 # topics gives it nothing to match on. Ours listed topics: 0 of 19 stated a
@@ -262,19 +304,59 @@ def _description(text):
     return " ".join(m.group(1).split()) if m else ""
 
 
+# Anthropic's own skill validator (`skill-creator/scripts/quick_validate.py`)
+# accepts exactly these frontmatter keys and rejects anything else outright.
+# `metadata:` is the sanctioned escape hatch — it is on the list, and the
+# validator only ever inspects top-level keys, so a pack-specific schema nests
+# there. Ours used to declare `version` and `core-deps` at the top level, which
+# failed all 19 skills against the official script and would have made
+# `package_skill.py` refuse to build any of them.
+SPEC_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
+
+
+def _spec_errors(fm, text):
+    """Anthropic's published frontmatter rules, applied to one parsed block."""
+    errs = []
+    extra = set(fm) - SPEC_KEYS
+    if extra:
+        errs.append(f"key(s) outside Anthropic's schema: {', '.join(sorted(extra))} "
+                    f"— nest pack-specific fields under `metadata:`")
+    name = str(fm.get("name", "")).strip()
+    if not re.match(r"^[a-z0-9-]+$", name) or "--" in name or name.startswith("-") or name.endswith("-"):
+        errs.append(f"name {name!r} is not kebab-case")
+    if len(name) > 64: errs.append(f"name is {len(name)} chars (max 64)")
+    desc = _description(text)
+    if "<" in desc or ">" in desc: errs.append("description contains an angle bracket")
+    if len(desc) > 1024: errs.append(f"description is {len(desc)} chars (max 1024)")
+    return errs
+
+
 def gate_frontmatter():
     hdr("GATE 2 — SKILL FRONTMATTER")
     ok = True
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("skills/*/SKILL.md")) + [SKILL_MD]:
         fm = _frontmatter(sk)
         if not fm: bad(f"{sk.parent.name}: no YAML frontmatter"); ok = False; continue
-        for k in ("name", "description", "version", "core-deps"):
-            if k not in fm: bad(f"{sk.parent.name}: missing '{k}'"); ok = False
-        target = _version()
-        if fm.get("version", "").strip('"') != target:
-            bad(f"{sk.parent.name}: version {fm.get('version')} != {target}"); ok = False
-        for dep in fm.get("core-deps", []):
+        for e in _spec_errors(fm, sk.read_text(encoding="utf-8")):
+            bad(f"{sk.parent.name}: {e}"); ok = False
+    target = _version()
+    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+        fm = _frontmatter(sk)
+        if not fm: continue
+        meta = fm.get("metadata")
+        if not isinstance(meta, dict):
+            bad(f"{sk.parent.name}: no `metadata:` mapping — `version` and "
+                f"`core-deps` live under it"); ok = False; continue
+        for k in ("version", "core-deps"):
+            if k not in meta: bad(f"{sk.parent.name}: missing 'metadata.{k}'"); ok = False
+        if "version" in meta and str(meta.get("version", "")).strip('"') != target:
+            bad(f"{sk.parent.name}: metadata.version {meta.get('version')} != {target}"); ok = False
+        deps = meta.get("core-deps") or []
+        if not isinstance(deps, list) or not deps:
+            bad(f"{sk.parent.name}: metadata.core-deps is empty"); ok = False
+        for dep in deps:
             if not (ROOT / dep).exists(): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
+    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
         desc = _description(sk.read_text(encoding="utf-8"))
         if desc and not _ACTIVATION.search(desc):
             bad(f"{sk.parent.name}: description names topics but no activation "
@@ -291,7 +373,8 @@ def gate_frontmatter():
         if pv != _version():
             bad(f".claude-plugin/plugin.json: version {pv} != {_version()}"); ok = False
     n = len(list(ROOT.glob('skills/*/SKILL.md')))
-    if ok: ok_(f"all {n} skill files declare valid frontmatter, and {n + 1} descriptions state when to load")
+    if ok: ok_(f"all {n + 1} files pass Anthropic's frontmatter schema, {n} declare "
+               f"metadata.version/core-deps, and {n + 1} descriptions state when to load")
     return ok
 
 def gate_budget():
@@ -300,7 +383,7 @@ def gate_budget():
     base_deps = ["core/accessibility-baseline.md", "core/validate-checklist.md"]
     for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
         fm = _frontmatter(sk) or {}
-        deps = set(fm.get("core-deps", [])) | set(base_deps)
+        deps = set((fm.get("metadata") or {}).get("core-deps") or []) | set(base_deps)
         dt = sum(tokens(ROOT / d) for d in deps if (ROOT / d).exists())
         st = tokens(sk); total = reg + st + dt
         if st > 3000: bad(f"{sk.parent.name}: skill file {st} > 3000"); ok = False
@@ -1250,7 +1333,7 @@ def bump_patch():
     # metadata alone would fail the very next gate run.
     for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
         t = sk.read_text(encoding="utf-8")
-        sk.write_text(re.sub(r'^version:\s*"?[\d.]+"?', f'version: "{new}"', t, count=1, flags=re.M),
+        sk.write_text(re.sub(r'^([ 	]*)version:\s*"?[\d.]+"?', rf'\g<1>version: "{new}"', t, count=1, flags=re.M),
                       encoding="utf-8")
     # Fourth version location. Gate 2 asserts this matches, so forgetting it here
     # fails the very next gate run rather than shipping a stale manifest.

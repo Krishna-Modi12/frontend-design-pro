@@ -10,7 +10,7 @@ Two hosts, two different installs. Claude Code has a filesystem; Claude Desktop 
 
 Nothing else to configure — no system prompt, no environment variable. The YAML `description` in `SKILL.md` does the routing; its paths resolve relative to that root. No slash commands — matching is on trigger keywords.
 
-This is the only host with a real filesystem, so lazy loading works as designed: `SKILL.md` (2,099 tokens) always loaded, one matched skill plus its core deps, ~5,961–7,525 tokens per request against 349,467 tokens of on-demand depth.
+This is the only host with a real filesystem, so lazy loading works as designed: `SKILL.md` (2,099 tokens) always loaded, one matched skill plus its core deps, ~5,965–7,530 tokens per request against 349,467 tokens of on-demand depth.
 
 ## Claude Desktop — Projects, retrieval not lazy loading
 

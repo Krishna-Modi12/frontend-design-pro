@@ -14,7 +14,7 @@ So the pack is not a document. It is a **registry that routes**.
 |---|---|---|---|
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,099 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,843, 2,919, 3,011 or 3,747 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **843–1,718 tokens** | exactly one per request |
+| `skills/{id}/SKILL.md` | One skill router | **848–1,722 tokens** | exactly one per request |
 | `skills/{id}/references/*.md` | 99 deep references | **349,467 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
@@ -89,7 +89,7 @@ dist/                    build output, gitignored
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
 | 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 2,018 tokens; version consistent; no leaks |
-| 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 19/19 |
+| 2 | Frontmatter | all 20 files pass Anthropic's `quick_validate.py` schema (no top-level key outside its six); every skill declares `metadata.version`/`metadata.core-deps`; version matches `metadata.json`; every declared dep exists on disk | 20/20 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 17/17 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
 | 5 | Syntactic | 43 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 45/45 · 3/3 demo projects |

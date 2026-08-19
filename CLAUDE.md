@@ -80,11 +80,11 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | Tier | Loaded |
 |---|---|
 | `SKILL.md` (root) | **Always.** Identity, anti-slop wall, the routing table, loading protocol. |
-| `core/*.md` (8 files) | The 3–4 a matched skill declares in its frontmatter `core-deps`. |
+| `core/*.md` (8 files) | The 3–4 a matched skill declares in its frontmatter `metadata.core-deps`. |
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,961–7,525 tokens against ~349k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,965–7,530 tokens against ~349k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -92,10 +92,10 @@ A request loads roughly 5,961–7,525 tokens against ~349k of available depth. *
 
 Five requirements, each enforced by a different gate. Missing any one fails the build:
 
-1. **Frontmatter** must declare `name`, `description`, `version`, `core-deps`, and `version` must **exactly equal `metadata.json`'s version** (Gate 2). A new skill declares the *current* version, not the version you plan to release under.
+1. **Frontmatter** must declare `name` and `description` at the top level, and `version` plus `core-deps` nested under `metadata:` — Anthropic's own validator rejects any other top-level key, so pack-specific fields live under the one key its schema reserves for them. `metadata.version` must **exactly equal `metadata.json`'s version** (Gate 2). A new skill declares the *current* version, not the version you plan to release under.
 2. **A registry row** in the root `SKILL.md`, matching this shape exactly — the parser regex requires the deps cell to hold **exactly one** backticked `core/*.md`. Two deps in that cell means the row is not parsed and the skill silently becomes an orphan:
    `| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |`
-   (The skill's own YAML `core-deps:` may still list several.)
+   (The skill's own YAML `metadata.core-deps:` may still list several.)
 3. **`skills/{id}/examples/` must contain at least one `*.tsx`** (Gate 8b). A markdown-only examples directory fails.
 4. **Every `good-*.tsx` needs a 1:1 `good-*.test.tsx`** (Gate 7), and both must compile strict.
 5. **Every `references/*.md` must be cited** in that skill's Reference Index, or path integrity warns about an orphan — a reference nothing routes to can never be loaded, so it ships as dead weight.
@@ -103,6 +103,27 @@ Five requirements, each enforced by a different gate. Missing any one fails the 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
 `python scripts/scaffold.py <intent>` generates differentiated component boilerplate by intent type.
+
+**The frontmatter matches Anthropic's published schema, and Gate 2 re-applies
+their rules.** `skill-creator`'s `quick_validate.py` allows six top-level keys —
+`name`, `description`, `license`, `allowed-tools`, `metadata`, `compatibility` —
+and errors on anything else. All 19 skills used to declare `version` and
+`core-deps` at the top level and failed it, while the root `SKILL.md` passed;
+`package_skill.py` runs that validator before zipping, so the official packager
+would have refused every sub-skill. Both keys now nest under `metadata:`, the key
+the schema reserves for exactly this, and `SPEC_KEYS` in `build_release.py`
+enforces the same six so a new key cannot drift back out.
+
+Worth knowing before you trust that gate: `_frontmatter()` used to partition each
+line on ":" without ever reading indentation, so top-level `version:` and
+`metadata.version:` parsed identically. **Gate 2 printed the same green line
+before and after the 19-file migration it exists to police** — nesting alone
+would have "passed" without the gate ever seeing the shape. It reads indentation
+now and consumes folded scalars, so a colon inside a wrapped `description:` can
+no longer invent a top-level key either. The cost is measured, not free:
+`metadata:` plus two indent levels adds ~5 tokens to every skill, moving the
+per-request band to 5,965–7,530 and leaving `design-research` 452 tokens of
+Gate 8a headroom.
 
 ## The rules no gate reads
 

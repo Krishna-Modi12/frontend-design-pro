@@ -132,13 +132,13 @@ counts as a leak too.
 
 Five requirements, each enforced by a different gate:
 
-1. **Frontmatter** declaring `name`, `description`, `version`, `core-deps` — where
+1. **Frontmatter** declaring `name` and `description`, plus `metadata.version` and `metadata.core-deps` nested under `metadata:` — where
    `version` exactly equals `metadata.json`'s current version.
 2. **A registry row** in the root `SKILL.md`, in this exact shape. The parser
    requires the deps cell to hold *exactly one* backticked `core/*.md`; two deps
    there means the row is not parsed and the skill silently becomes an orphan:
    ``| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |``
-   (The skill's own YAML `core-deps:` may still list several.)
+   (The skill's own YAML `metadata.core-deps:` may still list several.)
 3. **At least one `*.tsx` in `skills/{id}/examples/`.** A markdown-only examples
    directory fails.
 4. **A 1:1 test for every gold**, both compiling strict.

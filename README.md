@@ -27,7 +27,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **101** | **349,467 tokens** | **2,099 tokens** | **5,961–7,525** | **60** | **11** |
+| **19** | **101** | **349,467 tokens** | **2,099 tokens** | **5,965–7,530** | **60** | **11** |
 
 </div>
 
@@ -495,10 +495,10 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,099 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,867 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 843–1,718 tokens — one per request |
+| `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **349,467 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,961–7,525 tokens, not 349,467.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,965–7,530 tokens, not 349,467.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -860,7 +860,7 @@ Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 | # | Gate | What it proves |
 |---|---|---|
 | 1 | **Pre-flight** | Clean tree, token budget, version consistency, no version-string leaks |
-| 2 | **Frontmatter** | Every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist |
+| 2 | **Frontmatter** | Every file passes Anthropic's own `quick_validate.py` schema; every skill declares `metadata.version`/`metadata.core-deps`, and its deps exist |
 | 3 | **Compile** | `tsc --noEmit` strict + `noImplicitAny` over every example |
 | 4 | **Semantic** | 17 AST constraints via the TypeScript compiler API |
 | 5 | **Syntactic** | 43 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy) |
