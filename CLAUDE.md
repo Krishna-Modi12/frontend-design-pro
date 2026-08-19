@@ -22,7 +22,16 @@ npm run figures:test # proof that Gate 11's patterns read the prose forms people
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 13 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
+npm run banner:check # the README banner still draws the current figures
 ```
+
+**`npm run gates` alone is not enough before you push.** The README banner is a
+generated SVG that draws the headline figures, and Gate 11 cannot police it — the
+patterns match inside markup but every hit dies in the forbid look-back window.
+It is checked only in CI, by re-rendering and byte-comparing. So any change that
+moves a figure leaves a green 11/11 locally and a red `gates` job on the PR, which
+is exactly what happened when the frontmatter migration moved the token band.
+Run `npm run banner` after any figure sweep, and commit the SVG with it.
 
 Renderer-level checks, for when you touch anything under `demo/`. These need a
 browser and real vendor libraries, so they live in `tools/screenshots/` (its own
