@@ -15,11 +15,19 @@ name: Deploy showcase to Pages
 # a second page existed. Both demos disclose themselves, but only in their
 # footers, and nobody scrolls to the footer of a page they do not understand.
 #
-# So the root now serves .github/pages/index.html — an index that names both
-# specimens, states what separates them, and links out. The exhibits move down
-# one level to /showcase/ and /landing-page/. The reasoning that used to justify
-# the showcase holding the root (it is the fuller artifact, so meet it first) is
-# now what orders the index, where it costs nobody their bearings.
+# So the root serves .github/pages/index.html and the exhibits move down one
+# level to /showcase/ and /landing-page/. The reasoning that used to justify the
+# showcase holding the root (it is the fuller artifact, so meet it first) is now
+# what orders the exhibits further down that page, where it costs nobody their
+# bearings.
+#
+# That root began as an index of the two specimens, which was still a gallery
+# with a caption — everything the pack claims was asserted there and none of it
+# could be tried. It is a product page now: the registry the router resolves
+# against and the constraint patterns the checker runs are both generated from
+# the same sources the release gates read, so a visitor can route a request and
+# fail a snippet rather than take our word for either. `site.css`, `app.js` and
+# the generated `data.js` are copied alongside index.html below.
 
 on:
   push:
