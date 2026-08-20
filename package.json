@@ -23,10 +23,13 @@
     "regression": "node scripts/parser_regression_test.js",
     "banner": "node tools/readme-router/generate.mjs",
     "banner:check": "node tools/readme-router/generate.mjs --check",
+    "pages:data": "node tools/pages-data/generate.mjs",
+    "pages:data:check": "node tools/pages-data/generate.mjs --check",
     "test": "vitest run",
     "screenshots": "npm --prefix tools/screenshots run capture --",
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
-    "demos:verify": "npm --prefix tools/screenshots run verify --"
+    "demos:verify": "npm --prefix tools/screenshots run verify --",
+    "pages:verify": "npm --prefix tools/screenshots run verify:pages --"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",

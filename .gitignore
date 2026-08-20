@@ -16,6 +16,12 @@ __pycache__/
 *.py[cod]
 .venv/
 
+# Locally composed Pages upload and the images `pages:verify` writes beside it.
+# The real upload is built by .github/workflows/pages.yml on the runner and is
+# never committed; these are its local stand-ins.
+site-check/
+site-check-*.png
+
 # Generated / transient
 tsconfig.tests.json
 tsconfig.golds.*.json

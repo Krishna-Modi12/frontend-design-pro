@@ -71,6 +71,9 @@ jobs:
         working-directory: demo/showcase
         run: npm ci
 
+      - name: Verify generated Pages data
+        run: node tools/pages-data/generate.mjs --check
+
       - name: Export the showcase (/showcase/)
         working-directory: demo/showcase
         env:
@@ -96,6 +99,9 @@ jobs:
           set -euo pipefail
           mkdir -p site
           cp .github/pages/index.html site/index.html
+          cp .github/pages/site.css site/site.css
+          cp .github/pages/app.js site/app.js
+          cp .github/pages/data.js site/data.js
           mkdir -p site/showcase
           cp -r demo/showcase/out/. site/showcase/
           mkdir -p site/landing-page
@@ -107,6 +113,12 @@ jobs:
           # could disagree with the committed ones.
           cp demo/showcase/screenshot.png site/thumb-showcase.png
           cp demo/landing-page/screenshot.png site/thumb-landing-page.png
+          # The other two demos are stub-typed rather than installed, so there is
+          # no export to serve and they appear on the index as captures only. The
+          # index says so on each of them — a screenshot with no link and no
+          # explanation reads as a broken exhibit.
+          cp demo/dashboard/screenshot.png site/thumb-dashboard.png
+          cp demo/auth-form/screenshot.png site/thumb-auth-form.png
           # Pages serves the uploaded artifact directly rather than running
           # Jekyll, so this is belt-and-braces — but Jekyll strips directories
           # beginning with an underscore, and everything Next emits is in _next/.
