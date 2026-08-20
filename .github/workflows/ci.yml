@@ -127,6 +127,20 @@ jobs:
         if: ${{ !cancelled() }}
         run: node tools/readme-router/generate.mjs --check
 
+      # Same reasoning one surface over. `.github/pages/data.js` drives the two
+      # interactive panels on the Pages site — the registry the router resolves
+      # against and the budgets it reports — and Gate 11 cannot see it, because
+      # its SCAN list covers the site's HTML and not its JavaScript. So a stale
+      # payload there is a wrong number on a public page with nothing behind it.
+      #
+      # pages.yml checks this too, but only when a deploy runs, and a deploy
+      # only runs when something under .github/pages or demo/ changes. Moving a
+      # figure anywhere else in the pack is exactly the change that staleness
+      # comes from and exactly the one that would not trigger it.
+      - name: Pages data is current
+        if: ${{ !cancelled() }}
+        run: node tools/pages-data/generate.mjs --check
+
   # demo/showcase/ is the one demo that claims to RUN. It has its own package.json
   # and real dependencies, so the stub-typed gates above cannot verify it and
   # build_release.py skips it on a machine without its node_modules. This job is

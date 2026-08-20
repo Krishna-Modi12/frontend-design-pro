@@ -33,6 +33,16 @@ import pathlib
 import re
 import sys
 
+# This runs on ubuntu in CI, where the tick below is fine, and by hand on
+# Windows, where the console defaults to cp1252 and cannot encode it. Every
+# other script in this repo carries the same guard; without it the success path
+# raises UnicodeEncodeError and a passing verification exits non-zero.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 # Asset URLs as they appear in markup: href="...", src='...', url(...).
 #
 # Deliberately matches any absolute path containing `_next/`, prefixed or not.
@@ -62,19 +72,30 @@ def main(argv: list[str]) -> int:
     # The entry points a visitor actually lands on. Checking assets alone would
     # pass an upload that lost a page entirely.
     #
-    # The two thumbnails are entry points in the same sense: they are the only
-    # thing on the index that shows what either exhibit looks like, they are
-    # copied by a different step from the one that builds the exports, and a
-    # front door with two broken images is the most visible way this deploy can
-    # fail while every other check stays green.
+    # The thumbnails are entry points in the same sense: they are the only thing
+    # on the index that shows what any exhibit looks like, they are copied by a
+    # different step from the one that builds the exports, and a front door with
+    # broken images is the most visible way this deploy can fail while every
+    # other check stays green.
+    #
+    # The stylesheet, the behaviour script and the generated data belong here for
+    # a sharper reason. The index references them RELATIVELY, so they are outside
+    # the base-path check below by design — and a missing stylesheet renders as
+    # unstyled HTML that still returns 200, which is the exact failure mode this
+    # file was written to catch one level up.
     required = {
-        "the gallery index (site root)": site / "index.html",
+        "the index (site root)": site / "index.html",
         "the showcase (/showcase/)": site / "showcase" / "index.html",
         "the landing page (/landing-page/)": site / "landing-page" / "index.html",
         "the overview endpoint the landing page reads on mount":
             site / "landing-page" / "api" / "site" / "overview",
         "the showcase thumbnail the index renders": site / "thumb-showcase.png",
         "the landing-page thumbnail the index renders": site / "thumb-landing-page.png",
+        "the dashboard thumbnail the index renders": site / "thumb-dashboard.png",
+        "the auth-form thumbnail the index renders": site / "thumb-auth-form.png",
+        "the index stylesheet": site / "site.css",
+        "the generated Pages data": site / "data.js",
+        "the index behaviour script": site / "app.js",
     }
     missing_pages = [label for label, path in required.items() if not path.is_file()]
     for label in missing_pages:
