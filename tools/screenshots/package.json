@@ -8,7 +8,8 @@
     "dev": "next dev -p 3311",
     "build": "next build",
     "start": "next start -p 3311",
-    "verify": "node verify.mjs"
+    "verify": "node verify.mjs",
+    "verify:pages": "node verify-pages.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
