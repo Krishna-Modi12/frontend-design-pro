@@ -25,13 +25,23 @@ npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
 npm run banner:check # the README banner still draws the current figures
 ```
 
-**`npm run gates` alone is not enough before you push.** The README banner is a
-generated SVG that draws the headline figures, and Gate 11 cannot police it — the
-patterns match inside markup but every hit dies in the forbid look-back window.
-It is checked only in CI, by re-rendering and byte-comparing. So any change that
-moves a figure leaves a green 11/11 locally and a red `gates` job on the PR, which
-is exactly what happened when the frontmatter migration moved the token band.
-Run `npm run banner` after any figure sweep, and commit the SVG with it.
+**`npm run gates` alone is not enough before you push.** Two artifacts are
+*generated* from the figures and checked only in CI, by re-rendering and
+byte-comparing: the README banner (`.github/assets/router.svg`) and the Pages
+site's data file (`.github/pages/data.js`, which carries the band, the depth and
+every per-skill budget). Gate 11 cannot police either — its patterns match inside
+markup and JSON, but every hit dies in the forbid look-back window, which in
+markup is attribute soup rather than sentence.
+
+So any change that moves a figure leaves a green 11/11 locally and a red `gates`
+job on the PR. The frontmatter migration in this branch did it twice: once for
+the banner, then again for `data.js` after the merge brought the Pages site in.
+After any figure sweep run both, and commit what they write:
+
+```bash
+npm run banner && npm run pages:data
+npm run banner:check && npm run pages:data:check   # what CI will assert
+```
 
 Renderer-level checks, for when you touch anything under `demo/` or
 `.github/pages/`. These need a browser and real vendor libraries, so they live in
