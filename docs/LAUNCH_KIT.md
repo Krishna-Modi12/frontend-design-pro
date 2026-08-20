@@ -2,10 +2,10 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 359,557 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 43 syntactic = 60 constraints · 22 evals · 13 regression cases · registry 2,099 tokens · heaviest request 7,530 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 101 references · 359,557 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 43 syntactic = 60 constraints · 22 evals · 14 regression cases · registry 2,099 tokens · heaviest request 7,530 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
-> - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 13 regression cases where AST and regex disagree, in both directions.
+> - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 14 regression cases where AST and regex disagree, in both directions.
 > - *"42 gold examples."* There are 45 golds plus 10 deliberate anti-examples = 55 files. Say 45 golds, or 55 examples — not 42 golds.
 >
 > A launch audience fact-checks. Ship the number you can reproduce on demand.
@@ -48,7 +48,7 @@ What's enforced, rather than asserted:
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
 - 43 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
-- 13 regression cases where the AST check and the regex it replaced disagree.
+- 14 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.

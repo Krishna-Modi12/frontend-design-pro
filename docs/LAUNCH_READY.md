@@ -44,7 +44,7 @@ What's enforced, rather than asserted:
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
 - 43 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
-- 13 regression cases where the AST check and the regex it replaced disagree.
+- 14 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.

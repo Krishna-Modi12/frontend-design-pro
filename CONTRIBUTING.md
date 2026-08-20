@@ -51,7 +51,7 @@ npm run typecheck    # tsc --noEmit strict over every example
 npm run constraints  # the 43 regex constraints over skills/
 npm run figures      # every documented count and token figure vs. the filesystem
 npm run evals        # 22 eval cases
-npm run regression   # 13 parser-vs-regex divergence cases
+npm run regression   # 14 parser-vs-regex divergence cases
 ```
 
 Single file, fastest loop of all:

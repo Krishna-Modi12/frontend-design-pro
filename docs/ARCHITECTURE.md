@@ -106,7 +106,7 @@ The source guard fetches `origin` and refuses to build an archive unless `HEAD` 
 
 The smoke test also reads the archive's prose: that the README's "What's new" heading names the version being shipped, that `_meta/CHANGELOG.md` tops out at it, and that every `demo/**/*.png` in the source reached the archive. The version-heading mismatch shipped twice before this check existed, and the screenshot expectation is derived from the source tree rather than hardcoded — a literal would be one more figure to go stale.
 
-A parser-regression proof runs alongside gate 4: 13 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
+A parser-regression proof runs alongside gate 4: 14 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 
 ### Why gate 10 exists
 
@@ -134,7 +134,7 @@ published hex as documentation — are declared per file and per constraint in
 
 Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby` is not accessibility. `bg-white` on a `<button>` is not a design violation. A fake loading delay spelled `setPhase` instead of `setLoading` has no regex vocabulary at all.
 
-`scripts/parser_regression_test.js` holds **13 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
+`scripts/parser_regression_test.js` holds **14 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
 
 | Case | Regex | Parser | Why the parser is right |
 |---|---|---|---|
