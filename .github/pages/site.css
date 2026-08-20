@@ -166,21 +166,39 @@ kbd {
   position: sticky;
   top: 0;
   z-index: 80;
-  backdrop-filter: blur(12px);
-  background: oklch(from var(--bg) l c h / 0.78);
-  border-bottom: 1px solid transparent;
-  transition: border-color 180ms var(--ease);
+  padding-block: 0.55rem;
+  transition: background-color 180ms var(--ease);
 }
 
-.site-header.is-stuck {
-  border-bottom-color: var(--line);
-}
-
+/* The bar itself is the pill, not the header. `is-stuck` is set by the same
+   script as before; it now fills and outlines the pill rather than drawing a
+   rule across the viewport. */
 .header-row {
-  min-height: 4.1rem;
+  min-height: 3.5rem;
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  padding-inline: 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background-color 180ms var(--ease),
+    border-color 180ms var(--ease);
+}
+
+.site-header.is-stuck .header-row {
+  background: oklch(from var(--surface) l c h / 0.82);
+  border-color: var(--line);
+  backdrop-filter: blur(14px);
+}
+
+/* A pill that changes shape under the pointer is a distraction on a nav that
+   is fixed to the top of every scroll; only the fill moves. */
+@media (prefers-reduced-motion: reduce) {
+  .header-row,
+  .site-header {
+    transition: none;
+  }
 }
 
 .wordmark {
@@ -298,14 +316,14 @@ section {
 
 .section-head h2 {
   max-width: 24ch;
-  font-size: clamp(1.72rem, 3.8vw, 2.55rem);
+  font-size: clamp(2rem, 4.7vw, 3.55rem);
 }
 
 .lede {
   margin-top: 1.05rem;
   max-width: 64ch;
   color: var(--text-2);
-  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  font-size: clamp(1.01rem, 1.45vw, 1.2rem);
 }
 
 .hero {
@@ -533,6 +551,9 @@ section {
 
 .figure dd {
   margin: 0.45rem 0 0;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
   font-size: clamp(1.6rem, 3vw, 2rem);
   font-weight: 760;
 }
