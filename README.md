@@ -10,9 +10,9 @@
 [![License](https://img.shields.io/github/license/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=8957e5&labelColor=161b22)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=d29922&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/stargazers)
 
-[![Live demos](https://img.shields.io/badge/live%20demos-gallery-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
+[![Live site](https://img.shields.io/badge/live%20site-route%20a%20request-2ea043?style=for-the-badge&labelColor=161b22)](https://krishna-modi12.github.io/frontend-design-pro/)
 
-**[Gallery](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
+**[Live site](https://krishna-modi12.github.io/frontend-design-pro/)** · **[Install](#install-in-30-seconds)** · **[Skills](#the-19-skills)** · **[Architecture](#architecture--registry--lazy-loading)** · **[Demos](#demos)** · **[Verification](#verification)** · **[Docs](#docs)**
 
 </div>
 
@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **104** | **361,815 tokens** | **2,099 tokens** | **5,961–7,525** | **60** | **11** |
+| **19** | **101** | **359,557 tokens** | **2,099 tokens** | **5,965–7,530** | **60** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 361,815 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 359,557 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -495,10 +495,10 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,099 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,867 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 843–1,718 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **361,815 tokens** — loaded only when a skill points at it |
+| `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
+| `skills/{id}/references/` | Deep material | **359,557 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,961–7,525 tokens, not 361,815.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,965–7,530 tokens, not 359,557.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -590,8 +590,9 @@ npm run dev   # http://localhost:3000
 ### See it in action
 
 > [!TIP]
-> **[Open the live gallery →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
-> Both runnable demos are there — **[/showcase/](https://krishna-modi12.github.io/frontend-design-pro/showcase/)** and **[/landing-page/](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** — with the index stating what separates them, since their briefs asked for the same look and only one of them earned it. Redeployed from `main` whenever either demo changes. What you see is the output of the routing described below, not a mock-up of it.
+> **[Open the live site →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
+> Two panels there run the real thing rather than describing it. Type a request and the router resolves it against this registry, showing which skill opens, which core files come with it and what that costs — including the case where nothing matches and it asks a question instead of guessing. Paste a component and the constraints fire in your browser, on patterns copied verbatim out of the suite that runs in CI.
+> Both runnable demos are there too — **[/showcase/](https://krishna-modi12.github.io/frontend-design-pro/showcase/)** and **[/landing-page/](https://krishna-modi12.github.io/frontend-design-pro/landing-page/)** — with the page stating what separates them, since their briefs asked for the same look and only one of them earned it. Redeployed from `main` whenever either demo changes.
 >
 > Because it redeploys from `main`, the live pages can be **ahead of the release archive you downloaded** — a demo redesigned after a tag ships on the site before it ships in a `.skill`. If a page and your copy's README describe different designs, the site is the newer of the two. The skills themselves are the same either way; only the demos move between releases.
 
@@ -639,7 +640,7 @@ colour for severity must be separate from the brand accent. Tabular figures.
 No horizontal scroll at 390px.
 ```
 
-**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 361,815 available.
+**The route it takes.** *Report*, *severity*, *dark* and *contrast* match the trigger-keyword column, so the registry loads `design-principles` for the information hierarchy, `design-system` for the OKLCH token pair, and `web-interface` for the copy rules — each pulling `core/design-tokens.md`, plus the two universal deps. Roughly 5,900 tokens against 359,557 available.
 
 **What the brief refuses is the interesting part.** "Near-black with one acid accent" is a look this pack has shipped before, and it is on the anti-slop wall as one of the three AI-design defaults. Naming it in the prompt is how you find out whether the pack follows its own rule when the easy answer is right there. The report is ledger rows on cool paper, with a severity stripe carrying state — the accent is structural, and red and amber mean *finding*, not *decoration*.
 
@@ -666,9 +667,9 @@ Two more forms of the same defect sat beside it. `RANGE` only ever matched a das
 **Two shipped manifests were outside the scan.** `metadata.json`'s prose description claimed 94 references and *10* release-blocking gates while the `stats` block two keys below it — audited since this gate existed — read 101 and 11. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json), the string a marketplace listing renders, claimed 96. Both ship inside the archive. `metadata.json` is now audited field by field rather than added to the scan list, because its changelog is 45 historical entries and scanning the file would demand that every past release be rewritten to today's figures.
 <!-- /figures:historical -->
 
-**The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **68 prose fixtures over 11 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
+**The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **67 prose fixtures over 11 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
 
-**Mostly closed, and the reasoning that kept it open was half wrong.** The `k`-rounded depth figure was recorded here as ungateable: the strings name two different quantities — some mean reference depth, some mean the whole pack — and one expected value cannot serve both. That is true of the *family* and false of most of its members, because **the noun says which**. `DEPTH-K` now claims every surface whose own words say "references" or "depth" and refuses the ones that say "pack"; `344k` against 361,815 is 1.56% out, past the 1% rounding tolerance, so the stale readings fail and a correct `349k` passes. It found six documents, including [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) — the drop-in system prompt — and two negative fixtures hold the line at "pack", which stays unclaimed until something computes a whole-pack total.
+**Mostly closed, and the reasoning that kept it open was half wrong.** The `k`-rounded depth figure was recorded here as ungateable: the strings name two different quantities — some mean reference depth, some mean the whole pack — and one expected value cannot serve both. That is true of the *family* and false of most of its members, because **the noun says which**. `DEPTH-K` now claims every surface whose own words say "references" or "depth" and refuses the ones that say "pack"; `344k` against 359,557 is 1.56% out, past the 1% rounding tolerance, so the stale readings fail and a correct `349k` passes. It found six documents, including [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) — the drop-in system prompt — and two negative fixtures hold the line at "pack", which stays unclaimed until something computes a whole-pack total.
 
 <details>
 <summary><b>Earlier releases — v14.10.0 back to v14.5.0</b></summary>
@@ -860,7 +861,7 @@ Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 | # | Gate | What it proves |
 |---|---|---|
 | 1 | **Pre-flight** | Clean tree, token budget, version consistency, no version-string leaks |
-| 2 | **Frontmatter** | Every skill declares `name`/`description`/`version`/`core-deps`, and its deps exist |
+| 2 | **Frontmatter** | Every file passes Anthropic's own `quick_validate.py` schema; every skill declares `metadata.version`/`metadata.core-deps`, and its deps exist |
 | 3 | **Compile** | `tsc --noEmit` strict + `noImplicitAny` over every example |
 | 4 | **Semantic** | 17 AST constraints via the TypeScript compiler API |
 | 5 | **Syntactic** | 43 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy) |

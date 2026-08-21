@@ -5,6 +5,30 @@
 
 ---
 
+## Contents
+
+- [WHAT SHADCN IS (AND ISN'T)](#what-shadcn-is-and-isnt)
+- [INSTALLATION](#installation)
+- [CSS VARIABLE THEMING](#css-variable-theming)
+- [COMPONENT CATALOGUE (most-used)](#component-catalogue-most-used)
+  - [Button](#button)
+  - [Dialog (Modal)](#dialog-modal)
+  - [Form (React Hook Form + Zod)](#form-react-hook-form--zod)
+  - [Command (Combobox / Search)](#command-combobox--search)
+  - [DataTable (TanStack Table)](#datatable-tanstack-table)
+  - [Sheet (Side Panel / Drawer)](#sheet-side-panel--drawer)
+  - [Toast (Sonner — recommended over shadcn Toaster)](#toast-sonner--recommended-over-shadcn-toaster)
+  - [Badge](#badge)
+  - [Select](#select)
+  - [Separator](#separator)
+- [cn() UTILITY](#cn-utility)
+- [COMPONENT CUSTOMIZATION PATTERN](#component-customization-pattern)
+- [SHADCN + TAILWIND v4 (CSS-first config)](#shadcn--tailwind-v4-css-first-config)
+- [WHEN TO USE SHADCN vs CUSTOM](#when-to-use-shadcn-vs-custom)
+- [ROUTING IN SKILL (when to load this file)](#routing-in-skill-when-to-load-this-file)
+
+---
+
 ## WHAT SHADCN IS (AND ISN'T)
 
 **IS:**

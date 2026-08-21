@@ -4,6 +4,28 @@ Auto-loaded when a `DESIGN.md` file is present in the project root. No explicit 
 
 ---
 
+## Contents
+
+- [Purpose](#purpose)
+- [Accepted Heading Variants](#accepted-heading-variants)
+- [Matching logic](#matching-logic)
+  - [Why that fix was not enough, measured the same way](#why-that-fix-was-not-enough-measured-the-same-way)
+- [Extraction Rules](#extraction-rules)
+  - [Color Palette](#color-palette)
+  - [Typography](#typography)
+  - [Spacing](#spacing)
+  - [Motion](#motion)
+  - [Dials / Atmosphere](#dials--atmosphere)
+- [Injection Contract](#injection-contract)
+- [Override Priority](#override-priority)
+- [Example: DESIGN.md Snippet → @theme Injection](#example-designmd-snippet--theme-injection)
+  - [Input DESIGN.md (excerpt)](#input-designmd-excerpt)
+  - [Resulting @theme Injection](#resulting-theme-injection)
+- [The inverse direction — deriving DESIGN.md from existing code](#the-inverse-direction--deriving-designmd-from-existing-code)
+- [Anti-Patterns](#anti-patterns)
+
+---
+
 ## Purpose
 
 This reference tells the skill HOW to parse a user-provided `DESIGN.md` file and inject its design tokens into the generated component. The `DESIGN.md` format follows Google Stitch's semantic design language — a mix of descriptive natural-language intent and precise numeric values. See `references/stitch-design.md` for the full Stitch format specification.

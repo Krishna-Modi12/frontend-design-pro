@@ -8,6 +8,26 @@ than estimated. Profiles describe an observed design language at a point in time
 sites redesign, so treat a palette as a starting point and re-verify contrast
 against your own surfaces.
 
+## Contents
+
+- [How to Use This File](#how-to-use-this-file)
+- [Aesthetic Archetypes (Quick Index)](#aesthetic-archetypes-quick-index)
+- [Dark Precision Archetype](#dark-precision-archetype)
+- [Luminous Minimal Archetype](#luminous-minimal-archetype)
+- [Neon Developer Archetype](#neon-developer-archetype)
+- [Enterprise System Archetype](#enterprise-system-archetype)
+- [Fintech Trust Archetype](#fintech-trust-archetype)
+- [Consumer Delight Archetype](#consumer-delight-archetype)
+- [Luxury Automotive Archetype](#luxury-automotive-archetype)
+- [Creative Tool Archetype](#creative-tool-archetype)
+- [AI / LLM Archetype](#ai--llm-archetype)
+- [Cross-Archetype Patterns](#cross-archetype-patterns)
+- [v2 Additions — New Brand Profiles](#v2-additions--new-brand-profiles)
+- [Deep Profile: Implementation Templates](#deep-profile-implementation-templates)
+- [Brand Mixing Formulas](#brand-mixing-formulas)
+
+---
+
 ## How to Use This File
 
 Pick a brand as aesthetic reference for client work. Use the palette, type, and signals to replicate the *feeling* of the brand without copying it. Each profile captures the design language, not the IP.

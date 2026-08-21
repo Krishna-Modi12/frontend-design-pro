@@ -217,6 +217,10 @@ def _fixture_counts() -> Dict[str, object]:
     except ImportError:                      # the proof script is not installed
         return {}                            # in the archive; skip rather than fail
     return {
+        "regression_cases": len(re.findall(
+            r'^\s{2}\{\s*$',
+            (ROOT / "scripts" / "parser_regression_test.js").read_text(encoding="utf-8"),
+            re.M)),
         "figure_fixtures": len(fpt.CASES),
         "figure_fixture_figures": len({c[0] for c in fpt.CASES}),
     }
@@ -377,6 +381,19 @@ FIGURES: Sequence[Figure] = (
     # published count, or the word in ordinary use, and a pattern that cannot
     # tell them apart would be muted within a release. Tied to the full phrase,
     # it is unambiguous.
+    # The parser-regression count sat hardcoded on eight surfaces, three of them
+    # launch documents, and `docs/LAUNCH_KIT.md` opens by calling every number in
+    # it verified. Adding one case moved the truth and the gate reported 0 drift
+    # — the fourth instance of this exact class, in the same documents as the
+    # third. Counted from the harness rather than from prose.
+    Figure(
+        "REGRESSION",
+        "synthetic parser-vs-regex divergence cases",
+        r"(?<![\d,])(\d{1,3})\s+(?:synthetic\s+)?(?:parser-vs-regex\s+)?"
+        r"(?:divergence\s+|regression\s+)cases\b"
+        r"|(?<![\d,])(\d{1,3})\s+synthetic\s+cases\b",
+        lambda t: (str(t.get("regression_cases", "")),),
+    ),
     Figure(
         "FIXTURES",
         "prose fixtures in the figure-pattern proof, and the figures they cover",

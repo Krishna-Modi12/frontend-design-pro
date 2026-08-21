@@ -16,7 +16,7 @@ to exactly one skills/{id}/SKILL.md, plus a short list of core/ dependencies
 that skill declares. When asked for frontend UI/UX work:
 
 1. Identify which single skill in the routing table matches the request.
-2. Search your knowledge for that skill's SKILL.md and its declared core-deps.
+2. Search your knowledge for that skill's SKILL.md and its declared metadata.core-deps.
 3. State which skill and core files you are using before writing code.
 4. Follow the anti-slop rules and validation checklist in SKILL.md /
    core/validate-checklist.md as far as you can verify by inspection —
@@ -29,7 +29,7 @@ file via search, say so rather than improvising generic advice.
 
 ## Plain ChatGPT (no Custom GPT)
 
-Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 362k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
+Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 360k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
 
 ## Verifying it took
 

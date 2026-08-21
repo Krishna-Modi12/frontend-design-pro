@@ -20,7 +20,7 @@ Path to the skill, reference, or example (e.g. `skills/forms/SKILL.md`, `skills/
 If you ran `python scripts/build_release.py --dry-run`, which of the 11 gates flagged it (or should have, but didn't)? Check all that apply.
 
 - [ ] 1 — Pre-flight (`SKILL.md` token ceiling, version consistency, no version leaks)
-- [ ] 2 — Frontmatter (`name`/`description`/`version`/`core-deps` on every skill)
+- [ ] 2 — Frontmatter (`name`/`description` + `metadata.version`/`metadata.core-deps` on every skill)
 - [ ] 3 — Compile (`tsc --noEmit` strict + `noImplicitAny` over examples and demo files)
 - [ ] 4 — Semantic (AST constraints via the TypeScript compiler API)
 - [ ] 5 — Syntactic (regex constraints; golds clean, anti-examples fail)

@@ -1,0 +1,1258 @@
+:root {
+  color-scheme: dark;
+  --bg: oklch(13% 0.015 262);
+  --surface: oklch(18% 0.017 262);
+  --surface-2: oklch(22% 0.018 262);
+  --line: oklch(35% 0.02 262);
+  --line-strong: oklch(50% 0.02 262);
+  --text: oklch(96% 0.004 262);
+  --text-2: oklch(81% 0.008 262);
+  --text-3: oklch(67% 0.01 262);
+  --brand: oklch(78% 0.14 80);
+  --brand-ink: oklch(15% 0.015 262);
+  --brand-soft: oklch(78% 0.14 80 / 0.14);
+  --ok: oklch(79% 0.13 158);
+  --warn: oklch(74% 0.15 30);
+  --shadow: 0 28px 48px -28px oklch(0% 0 0 / 0.78), 0 6px 14px oklch(0% 0 0 / 0.35);
+  --sans: Manrope, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius: 12px;
+  --shell: 76rem;
+  --gutter: clamp(1.2rem, 5vw, 3.6rem);
+  --section: clamp(3.4rem, 8vw, 7rem);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: oklch(97.5% 0.004 262);
+  --surface: oklch(99.5% 0.002 262);
+  --surface-2: oklch(95.6% 0.008 262);
+  --line: oklch(86% 0.01 262);
+  --line-strong: oklch(62% 0.014 262);
+  --text: oklch(24% 0.02 262);
+  --text-2: oklch(44% 0.017 262);
+  --text-3: oklch(52% 0.016 262);
+  --brand: oklch(51% 0.12 62);
+  --brand-ink: oklch(99% 0.002 262);
+  --brand-soft: oklch(51% 0.12 62 / 0.1);
+  --ok: oklch(50% 0.11 158);
+  --warn: oklch(53% 0.18 28);
+  --shadow: 0 24px 42px -30px oklch(18% 0.015 262 / 0.3), 0 4px 10px oklch(18% 0.015 262 / 0.1);
+}
+
+/* The toggle is not the only way a reader can ask for light. Nothing is
+   stamped on the root until they choose, so with no attribute present the
+   page has to answer the system preference on its own — without this block a
+   machine set to light renders the dark palette and the light tokens above
+   are unreachable except by clicking. Guarded on `:not([data-theme="dark"])`
+   so an explicit dark choice still wins over the system.
+
+   The values are duplicated rather than shared because CSS cannot alias one
+   selector's block to another; they must be changed together. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+  color-scheme: light;
+  --bg: oklch(97.5% 0.004 262);
+  --surface: oklch(99.5% 0.002 262);
+  --surface-2: oklch(95.6% 0.008 262);
+  --line: oklch(86% 0.01 262);
+  --line-strong: oklch(62% 0.014 262);
+  --text: oklch(24% 0.02 262);
+  --text-2: oklch(44% 0.017 262);
+  --text-3: oklch(52% 0.016 262);
+  --brand: oklch(51% 0.12 62);
+  --brand-ink: oklch(99% 0.002 262);
+  --brand-soft: oklch(51% 0.12 62 / 0.1);
+  --ok: oklch(50% 0.11 158);
+  --warn: oklch(53% 0.18 28);
+  --shadow: 0 24px 42px -30px oklch(18% 0.015 262 / 0.3), 0 4px 10px oklch(18% 0.015 262 / 0.1);
+}
+}
+
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--sans);
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 8% -10%, oklch(from var(--brand) l c h / 0.14), transparent 65%),
+    radial-gradient(900px 500px at 110% 2%, oklch(from var(--ok) l c h / 0.1), transparent 58%),
+    var(--bg);
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  height: auto;
+}
+
+code,
+pre,
+samp,
+kbd {
+  font-family: var(--mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 90;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 0 0 10px 0;
+  padding: 0.75rem 1rem;
+}
+
+.skip:focus {
+  left: 0;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  padding-block: 0.55rem;
+  transition: background-color 180ms var(--ease);
+}
+
+/* The bar itself is the pill, not the header. `is-stuck` is set by the same
+   script as before; it now fills and outlines the pill rather than drawing a
+   rule across the viewport. */
+.header-row {
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-inline: 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background-color 180ms var(--ease),
+    border-color 180ms var(--ease);
+}
+
+.site-header.is-stuck .header-row {
+  background: oklch(from var(--surface) l c h / 0.82);
+  border-color: var(--line);
+  backdrop-filter: blur(14px);
+}
+
+/* A pill that changes shape under the pointer is a distraction on a nav that
+   is fixed to the top of every scroll; only the fill moves. */
+@media (prefers-reduced-motion: reduce) {
+  .header-row,
+  .site-header {
+    transition: none;
+  }
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.52rem;
+  white-space: nowrap;
+  color: var(--text-2);
+}
+
+.wordmark-dot {
+  width: 0.52rem;
+  height: 0.52rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.site-nav {
+  margin-inline-start: auto;
+}
+
+.site-nav ul {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.site-nav a,
+.theme-toggle {
+  min-height: 44px;
+  padding-inline: 0.72rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text-2);
+  text-decoration: none;
+  background: none;
+  cursor: pointer;
+  transition: 160ms var(--ease);
+}
+
+.site-nav a:hover,
+.theme-toggle:hover {
+  color: var(--text);
+  background: var(--brand-soft);
+}
+
+.nav-repo {
+  border-color: var(--line-strong) !important;
+  color: var(--text) !important;
+}
+
+.theme-toggle {
+  width: 44px;
+  padding: 0;
+  border-color: var(--line);
+}
+
+.theme-toggle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.theme-toggle .i-auto,
+.theme-toggle .i-light,
+.theme-toggle .i-dark {
+  display: none;
+}
+
+:root:not([data-theme]) .theme-toggle .i-auto,
+:root[data-theme="light"] .theme-toggle .i-light,
+:root[data-theme="dark"] .theme-toggle .i-dark {
+  display: block;
+}
+
+@media (max-width: 62rem) {
+  .site-nav li:not(.nav-keep) {
+    display: none;
+  }
+}
+
+section {
+  padding-block: var(--section);
+  border-top: 1px solid var(--line);
+}
+
+.eyebrow {
+  font: 500 0.74rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 1.12rem;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 1.45rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.section-head {
+  margin-bottom: clamp(1.8rem, 5vw, 3.2rem);
+}
+
+.section-head h2 {
+  max-width: 24ch;
+  font-size: clamp(2rem, 4.7vw, 3.55rem);
+}
+
+.lede {
+  margin-top: 1.05rem;
+  max-width: 64ch;
+  color: var(--text-2);
+  font-size: clamp(1.01rem, 1.45vw, 1.2rem);
+}
+
+.hero {
+  border-top: 0;
+  padding-top: clamp(2.8rem, 7vw, 5.2rem);
+}
+
+.hero-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+/* Grid items default to `min-width: auto`, which resolves to their min-content
+   width — so the column could not shrink below the longest unbreakable thing
+   inside it and dragged the whole page sideways at 390px. The two-column rule
+   below already says minmax(0, …) for the same reason; this is that fix for
+   the single-column case, which is the one phones get. */
+.hero-grid > * {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+}
+
+.hero h1 {
+  max-width: 16ch;
+  font-size: clamp(2.4rem, 6.2vw, 4.6rem);
+}
+
+.hero-sub {
+  margin-top: 1.3rem;
+  max-width: 58ch;
+  color: var(--text-2);
+  font-size: clamp(1.04rem, 1.45vw, 1.23rem);
+}
+
+.hero-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.72rem;
+}
+
+.btn {
+  min-height: 44px;
+  padding: 0.67rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  font-weight: 620;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  font: inherit;
+  transition: 160ms var(--ease);
+}
+
+.btn-primary {
+  background: var(--brand-fill, var(--brand));
+  color: var(--brand-ink);
+  border-color: transparent;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  color: var(--text);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--brand-soft);
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0.42rem 0.72rem;
+  font-size: 0.86rem;
+}
+
+.cmd {
+  margin-top: 1.22rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: oklch(from var(--surface) l c h / 0.74);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.cmd-text {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.76rem 0.9rem;
+  font-family: var(--mono);
+  color: var(--text-2);
+}
+
+/* Wraps rather than scrolls. A nowrap command in an overflow-x container is a
+   scrollable region with no way to reach it from a keyboard (axe
+   scrollable-region-focusable), and the usual remedy — tabindex="0" — buys a
+   tab stop on a div to read text that could simply have been shown. Breaking
+   at spaces keeps every token selectable; `anywhere` is the backstop for a
+   single token longer than the line, which is the only case that could still
+   push the page sideways. */
+.cmd-text code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.cmd-prompt {
+  color: var(--brand);
+}
+
+.copy {
+  min-width: 44px;
+  border: 0;
+  border-inline-start: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-2);
+  padding: 0.7rem 0.92rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.copy[data-state="done"] {
+  color: var(--ok);
+}
+
+.copy[data-state="fail"] {
+  color: var(--warn);
+}
+
+.hero-board {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(
+      145deg,
+      oklch(from var(--surface) l c h / 0.9),
+      oklch(from var(--surface-2) l c h / 0.86)
+    ),
+    var(--surface);
+  box-shadow: var(--shadow);
+  padding: 1.2rem;
+}
+
+.hero-board h2 {
+  font-size: 1rem;
+  margin-bottom: 0.95rem;
+  color: var(--text);
+}
+
+.hero-board li {
+  padding: 0.72rem;
+  border-radius: 10px;
+  background: oklch(from var(--bg) l c h / 0.38);
+  border: 1px solid var(--line);
+  font-size: 0.95rem;
+  color: var(--text-2);
+}
+
+.hero-board li + li {
+  margin-top: 0.56rem;
+}
+
+.board-foot {
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--text-3);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  min-height: 32px;
+  padding: 0.34rem 0.68rem;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.figures {
+  display: grid;
+  gap: 0.7rem;
+}
+
+@media (min-width: 40rem) {
+  .figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .figures {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.figure {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(from var(--surface) l c h / 0.7);
+  padding: 0.95rem;
+}
+
+.figure dt {
+  color: var(--text-3);
+  font-size: 0.85rem;
+}
+
+.figure dd {
+  margin: 0.45rem 0 0;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 760;
+}
+
+/* Deliberately not three equal cards.
+ *
+ * The hero names that exact pattern — "three equal cards" — as what every
+ * generated page looks like, and this section was `repeat(3, 1fr)` bordered
+ * boxes at the grid's default `stretch`, which is that pattern precisely. The
+ * page cannot make the argument and then be the example. So: heights follow
+ * their own content, the tracks are unequal, and the boxes become rules.
+ * The middle step carries the most prose and gets the widest track. */
+.steps {
+  display: grid;
+  gap: 1.7rem 2.4rem;
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .steps {
+    grid-template-columns: 1.02fr 1.28fr 1fr;
+  }
+}
+
+.step {
+  border-top: 1px solid var(--line-strong);
+  padding-top: 0.85rem;
+}
+
+.step h3 {
+  font-size: 1.03rem;
+}
+
+.step p {
+  margin-top: 0.58rem;
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(from var(--surface) l c h / 0.67);
+}
+
+.panel-bar {
+  border-bottom: 1px solid var(--line);
+  min-height: 2.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.56rem;
+  padding-inline: 0.85rem;
+  font: 600 0.82rem/1 var(--mono);
+  color: var(--text-2);
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.panel-body {
+  padding: 0.95rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.44rem;
+}
+
+.field-label {
+  color: var(--text-3);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: oklch(from var(--bg) l c h / 0.54);
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 0.74rem 0.85rem;
+}
+
+textarea {
+  min-height: 15rem;
+  resize: vertical;
+}
+
+.examples {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.examples-label {
+  color: var(--text-3);
+  font-size: 0.82rem;
+  margin-inline-end: 0.3rem;
+}
+
+.route {
+  margin-top: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.86rem;
+  background: oklch(from var(--bg) l c h / 0.45);
+}
+
+.route-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.route-id {
+  font-family: var(--mono);
+  color: var(--brand);
+}
+
+.route-verdict {
+  color: var(--text-3);
+  font-size: 0.86rem;
+}
+
+.route-covers {
+  margin-top: 0.72rem;
+  color: var(--text-2);
+}
+
+.route-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 56rem) {
+  .route-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.route-block h4 {
+  font-size: 0.86rem;
+  color: var(--text-3);
+  margin-bottom: 0.5rem;
+}
+
+.route-files {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.route-files li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-height: 40px;
+  padding: 0.45rem 0.58rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-wrap: anywhere;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.tag {
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  min-height: 22px;
+  padding-inline: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  font: 700 0.64rem/1 var(--mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.route-cost {
+  font-size: 1.2rem;
+  font-weight: 730;
+}
+
+.route-cost small {
+  margin-inline-start: 0.2rem;
+  color: var(--text-3);
+  font-size: 0.83rem;
+  font-weight: 500;
+}
+
+.meter {
+  margin-top: 0.7rem;
+  height: 0.52rem;
+  border-radius: 999px;
+  background: oklch(from var(--bg) l c h / 0.6);
+  overflow: hidden;
+}
+
+.meter-fill {
+  display: block;
+  width: var(--fill, 0%);
+  height: 100%;
+  background: var(--brand);
+}
+
+.meter-legend {
+  margin-top: 0.45rem;
+  color: var(--text-3);
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.meter-legend b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.route-ask {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.54rem;
+  color: var(--text-2);
+}
+
+.route-ask .q {
+  color: var(--brand);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.defaults-id {
+  margin-top: 0.72rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.badge {
+  min-height: 24px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  padding: 0.2rem 0.52rem;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.checks-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 64rem) {
+  .checks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  /* The findings run several screens long and the editor is one screen short.
+     Stretched, the left column was mostly empty box — a tall border with a
+     small textarea at the top of it. Sticky instead, so the code you are
+     editing stays beside the finding you are reading. `align-items: start`
+     above is what lets it stick: a stretched item is already as tall as the
+     row and has nowhere to travel. Offset clears the sticky header. */
+  .checks-grid > .panel:first-child {
+    position: sticky;
+    top: 4.6rem;
+  }
+
+  .checks-grid textarea {
+    min-height: 21rem;
+  }
+}
+
+.checks-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-height: 40px;
+  padding: 0.42rem 0.62rem;
+  color: var(--text-2);
+}
+
+.verdict-count {
+  color: var(--brand);
+  font: 800 1.08rem/1 var(--mono);
+}
+
+.verdict[data-state="pass"] .verdict-count {
+  color: var(--ok);
+}
+
+.verdict[data-state="fail"] .verdict-count {
+  color: var(--warn);
+}
+
+.findings {
+  margin-top: 0.72rem;
+  display: grid;
+  gap: 0.58rem;
+}
+
+.finding {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: oklch(from var(--bg) l c h / 0.42);
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.38rem;
+}
+
+.finding-id {
+  font: 700 0.72rem/1 var(--mono);
+  color: var(--brand);
+}
+
+.finding-sev {
+  color: var(--warn);
+  font-size: 0.8rem;
+}
+
+.finding-desc {
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+/* Same reasoning as .cmd-text: this echoes a line of the reader's own pasted
+   code, so its length is not ours to predict, and a scroll container here would
+   be one more region a keyboard cannot reach. It already wraps at spaces —
+   `anywhere` covers the minified line with none. */
+.finding-evidence {
+  color: var(--text-3);
+  font-size: 0.76rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45rem;
+  overflow-wrap: anywhere;
+}
+
+.skill-group h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.skill-group + .skill-group {
+  margin-top: 1.1rem;
+}
+
+.skill {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(from var(--surface) l c h / 0.62);
+  overflow: clip;
+}
+
+.skill + .skill {
+  margin-top: 0.58rem;
+}
+
+.skill summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.85rem 0.95rem;
+  display: grid;
+  gap: 0.32rem;
+}
+
+.skill summary::-webkit-details-marker {
+  display: none;
+}
+
+.skill-id {
+  font-family: var(--mono);
+  color: var(--brand);
+  font-size: 0.83rem;
+}
+
+.skill-covers {
+  color: var(--text-2);
+}
+
+.skill-cost {
+  color: var(--text-3);
+  font-size: 0.84rem;
+}
+
+.skill-detail {
+  border-top: 1px solid var(--line);
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.86rem;
+}
+
+@media (min-width: 58rem) {
+  .skill-detail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.skill-detail h4 {
+  font-size: 0.86rem;
+  color: var(--text-3);
+  margin-bottom: 0.44rem;
+}
+
+.skill-try blockquote {
+  margin: 0;
+  border-inline-start: 2px solid var(--brand);
+  padding-inline-start: 0.66rem;
+  color: var(--text-2);
+}
+
+.exhibits {
+  display: grid;
+  gap: 0.92rem;
+}
+
+.exhibit {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: oklch(from var(--surface) l c h / 0.64);
+  overflow: clip;
+  display: grid;
+}
+
+@media (min-width: 64rem) {
+  .exhibit {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+  .exhibit--flip {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  }
+  .exhibit--flip .exhibit-figure {
+    order: 2;
+  }
+}
+
+.exhibit-figure {
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 64rem) {
+  .exhibit-figure {
+    border-bottom: 0;
+    border-inline-end: 1px solid var(--line);
+  }
+  .exhibit--flip .exhibit-figure {
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--line);
+  }
+}
+
+.exhibit-body {
+  padding: 1rem;
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+}
+
+.stamp {
+  display: inline-flex;
+  min-height: 25px;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  padding: 0.2rem 0.56rem;
+  font: 700 0.68rem/1 var(--mono);
+  width: fit-content;
+}
+
+[data-kind="earned"] {
+  color: var(--ok);
+}
+
+[data-kind="permitted"] {
+  color: var(--brand);
+}
+
+.exhibit-body h3 {
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+}
+
+.exhibit-body h3 span {
+  display: block;
+  margin-top: 0.36rem;
+  font-size: 0.88rem;
+  font-weight: 550;
+  color: var(--text-3);
+  letter-spacing: normal;
+}
+
+.exhibit-body p {
+  color: var(--text-2);
+}
+
+.tabs {
+  margin-bottom: 0.82rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tab {
+  min-height: 38px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-2);
+  padding: 0.34rem 0.8rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--brand-ink);
+  background: var(--brand);
+  border-color: transparent;
+}
+
+.tabpanel {
+  display: grid;
+  gap: 0.7rem;
+}
+
+/* The `hidden` attribute is a display:none in the UA sheet and nothing more,
+   so the rule above silently outranked it and all three panels rendered at
+   once — the tabs switched `hidden` correctly and changed nothing on screen.
+   Any component that sets display on a node it also toggles with `hidden`
+   needs this line. */
+.tabpanel[hidden] {
+  display: none;
+}
+
+.tabpanel h3 {
+  font-size: 1rem;
+}
+
+.callout {
+  margin-top: 0.86rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: oklch(from var(--bg) l c h / 0.44);
+  padding: 0.72rem;
+  color: var(--text-2);
+}
+
+.callout strong {
+  color: var(--text);
+}
+
+a.tx {
+  color: var(--brand);
+  text-underline-offset: 3px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.4rem 0 2.1rem;
+}
+
+.footer-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.footer-grid p {
+  color: var(--text-3);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+}
+
+.footer-links a {
+  color: var(--text-2);
+  text-decoration: none;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-links a:hover {
+  color: var(--brand);
+}
+
+.reveal {
+  transition: opacity 620ms var(--ease), transform 620ms var(--ease);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+.reveal.is-hidden {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Exhibit verdicts ──────────────────────────────────────────────────────
+   The two deployed demos carry opposite verdicts and the distinction is the
+   argument, so it cannot be carried by the label text alone — an "Earned" and
+   a "Permitted" badge rendered identically is a comparison the reader has to
+   take on faith. Ratios hold in both themes: --ok and --text-3 are both text
+   tokens already measured against these grounds. */
+.stamp[data-kind="earned"] {
+  color: var(--ok);
+  border-color: var(--ok);
+  background: oklch(from var(--ok) l c h / 0.12);
+}
+
+.stamp[data-kind="permitted"] {
+  color: var(--text-2);
+  border-color: var(--line-strong);
+}
+
+.stamp[data-kind="static"] {
+  color: var(--text-3);
+  border-color: var(--line);
+  background: transparent;
+}
+
+/* ── Host chips ─────────────────────────────────────────────────────────── */
+
+.hosts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.host {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0.28rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: oklch(from var(--bg) l c h / 0.5);
+  color: var(--text-2);
+  font: 500 0.78rem/1 var(--mono);
+}
+
+/* The trace board's steps lead with a marker, so the marker and its sentence
+   have to sit on one baseline rather than the pill pushing the text down. */
+.hero-board li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.hero-board li .pill {
+  flex: none;
+  min-height: 24px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: var(--brand);
+}
+
+.hero-board .board-foot strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}

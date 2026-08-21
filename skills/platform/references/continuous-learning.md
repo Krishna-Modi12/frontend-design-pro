@@ -5,6 +5,22 @@ React/Next.js — TypeScript throughout. No filler.
 
 ---
 
+## Contents
+
+- [1. User Preference Learning](#1-user-preference-learning)
+- [2. A/B Testing in UI](#2-ab-testing-in-ui)
+- [3. Error Telemetry Feedback](#3-error-telemetry-feedback)
+- [4. Usage Analytics for UI Decisions](#4-usage-analytics-for-ui-decisions)
+- [5. Adaptive Defaults](#5-adaptive-defaults)
+- [6. Feedback Widgets](#6-feedback-widgets)
+- [7. Model-in-the-Loop UI](#7-model-in-the-loop-ui)
+- [8. Rollout Strategies](#8-rollout-strategies)
+- [9. Personalization Tokens](#9-personalization-tokens)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Quick-Reference: Learning Loop Lifecycle](#quick-reference-learning-loop-lifecycle)
+
+---
+
 ## 1. User Preference Learning
 
 ### Zustand store with localStorage persistence

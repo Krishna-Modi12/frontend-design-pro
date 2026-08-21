@@ -1,10 +1,11 @@
 ---
 name: forms
 description: Forms and auth — validation, RHF + Zod, error states, checkout, login/signup, OTP/MFA, payments. Use when the UI collects input — contact, newsletter, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings panels. React Hook Form, Zod, aria-describedby or Stripe PaymentElement route here.
-version: "14.10.1"
-core-deps:
-  - core/component-api.md
-  - core/accessibility-baseline.md
+metadata:
+  version: "14.10.1"
+  core-deps:
+    - core/component-api.md
+    - core/accessibility-baseline.md
 ---
 
 # Forms

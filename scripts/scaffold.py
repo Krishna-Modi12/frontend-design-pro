@@ -2486,7 +2486,11 @@ def main():
         description=description,
     )
 
-    Path(output).write_text(code)
+    # encoding is explicit: the generated header carries a U+00B7 separator, and
+    # write_text() without it uses the platform default. On Windows that is
+    # cp1252, which emits a bare 0xB7 — not valid UTF-8 — and the pack's own
+    # scripts/test_constraints.py reads with encoding="utf-8" and dies on it.
+    Path(output).write_text(code, encoding="utf-8")
     print(f"✓ Generated {intent} scaffold → {output}")
     print(f"  Component : {name}")
     print(f"  Template  : {'purpose-built' if template_key in TEMPLATES else 'generic (all 4 states)'}")

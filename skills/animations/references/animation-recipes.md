@@ -8,6 +8,30 @@ Curated, production-ready animation patterns for React/Next.js. Each recipe is c
 
 ---
 
+## Contents
+
+- [1. Staggered List Reveal](#1-staggered-list-reveal)
+- [2. Counter Number Ticker](#2-counter-number-ticker)
+- [3. Typewriter / Text Scramble](#3-typewriter--text-scramble)
+- [4. Page / Route Transition (Fade-Slide)](#4-page--route-transition-fade-slide)
+- [5. Shared Element Morph (Card → Detail)](#5-shared-element-morph-card--detail)
+- [6. Scroll-Progress Bar](#6-scroll-progress-bar)
+- [7. Magnetic Button](#7-magnetic-button)
+- [8. Confetti Burst on Action](#8-confetti-burst-on-action)
+- [9. Skeleton Loading Shimmer](#9-skeleton-loading-shimmer)
+- [10. Hover Lift Card](#10-hover-lift-card)
+- [11. Toast Notification (Sonner)](#11-toast-notification-sonner)
+- [12. Bottom Sheet / Drawer (Vaul)](#12-bottom-sheet--drawer-vaul)
+- [13. Command Palette with Animation](#13-command-palette-with-animation)
+- [14. Parallax Hero Image](#14-parallax-hero-image)
+- [15. Accordion / Disclosure with Height Animation](#15-accordion--disclosure-with-height-animation)
+- [16. Infinite Marquee / Logo Scroll](#16-infinite-marquee--logo-scroll)
+- [17. Popover / Tooltip with Scale Origin](#17-popover--tooltip-with-scale-origin)
+- [Quick Reference: Timing Cheat Sheet](#quick-reference-timing-cheat-sheet)
+- [Anti-patterns to Avoid](#anti-patterns-to-avoid)
+
+---
+
 ## 1. Staggered List Reveal
 
 **Use case:** Feature lists, team cards, pricing tiers — elements that appear one-by-one on scroll.

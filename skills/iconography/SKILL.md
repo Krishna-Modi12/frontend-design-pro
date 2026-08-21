@@ -1,10 +1,11 @@
 ---
 name: iconography
 description: Icon systems — sizing, weight matching, colour inheritance, hit areas, SVG accessibility, and avatar patterns. Use when selecting, sizing, colouring or aligning icons, building icon-only controls, choosing a family or weight, or working on avatars, initials and empty-state illustration — anything where an SVG sits next to or instead of text.
-version: "14.10.1"
-core-deps:
-  - core/design-tokens.md
-  - core/accessibility-baseline.md
+metadata:
+  version: "14.10.1"
+  core-deps:
+    - core/design-tokens.md
+    - core/accessibility-baseline.md
 ---
 
 # Iconography

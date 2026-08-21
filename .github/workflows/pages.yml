@@ -15,11 +15,19 @@ name: Deploy showcase to Pages
 # a second page existed. Both demos disclose themselves, but only in their
 # footers, and nobody scrolls to the footer of a page they do not understand.
 #
-# So the root now serves .github/pages/index.html — an index that names both
-# specimens, states what separates them, and links out. The exhibits move down
-# one level to /showcase/ and /landing-page/. The reasoning that used to justify
-# the showcase holding the root (it is the fuller artifact, so meet it first) is
-# now what orders the index, where it costs nobody their bearings.
+# So the root serves .github/pages/index.html and the exhibits move down one
+# level to /showcase/ and /landing-page/. The reasoning that used to justify the
+# showcase holding the root (it is the fuller artifact, so meet it first) is now
+# what orders the exhibits further down that page, where it costs nobody their
+# bearings.
+#
+# That root began as an index of the two specimens, which was still a gallery
+# with a caption — everything the pack claims was asserted there and none of it
+# could be tried. It is a product page now: the registry the router resolves
+# against and the constraint patterns the checker runs are both generated from
+# the same sources the release gates read, so a visitor can route a request and
+# fail a snippet rather than take our word for either. `site.css`, `app.js` and
+# the generated `data.js` are copied alongside index.html below.
 
 on:
   push:
@@ -71,6 +79,9 @@ jobs:
         working-directory: demo/showcase
         run: npm ci
 
+      - name: Verify generated Pages data
+        run: node tools/pages-data/generate.mjs --check
+
       - name: Export the showcase (/showcase/)
         working-directory: demo/showcase
         env:
@@ -96,6 +107,9 @@ jobs:
           set -euo pipefail
           mkdir -p site
           cp .github/pages/index.html site/index.html
+          cp .github/pages/site.css site/site.css
+          cp .github/pages/app.js site/app.js
+          cp .github/pages/data.js site/data.js
           mkdir -p site/showcase
           cp -r demo/showcase/out/. site/showcase/
           mkdir -p site/landing-page
@@ -107,6 +121,12 @@ jobs:
           # could disagree with the committed ones.
           cp demo/showcase/screenshot.png site/thumb-showcase.png
           cp demo/landing-page/screenshot.png site/thumb-landing-page.png
+          # The other two demos are stub-typed rather than installed, so there is
+          # no export to serve and they appear on the index as captures only. The
+          # index says so on each of them — a screenshot with no link and no
+          # explanation reads as a broken exhibit.
+          cp demo/dashboard/screenshot.png site/thumb-dashboard.png
+          cp demo/auth-form/screenshot.png site/thumb-auth-form.png
           # Pages serves the uploaded artifact directly rather than running
           # Jekyll, so this is belt-and-braces — but Jekyll strips directories
           # beginning with an underscore, and everything Next emits is in _next/.

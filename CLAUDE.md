@@ -20,20 +20,52 @@ npm run constraints  # Gate 5 only — 43 regex constraints over skills/
 npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run figures:test # proof that Gate 11's patterns read the prose forms people write
 npm run evals        # 22 eval cases, self-test
-npm run regression   # 13 synthetic parser-vs-regex divergence cases
+npm run regression   # 14 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
+npm run banner:check # the README banner still draws the current figures
 ```
 
-Renderer-level checks, for when you touch anything under `demo/`. These need a
-browser and real vendor libraries, so they live in `tools/screenshots/` (its own
-package.json, absent from the archive manifest) and are **not** in CI:
+**`npm run gates` alone is not enough before you push.** Two artifacts are
+*generated* from the figures and checked only in CI, by re-rendering and
+byte-comparing: the README banner (`.github/assets/router.svg`) and the Pages
+site's data file (`.github/pages/data.js`, which carries the band, the depth and
+every per-skill budget). Gate 11 cannot police either — its patterns match inside
+markup and JSON, but every hit dies in the forbid look-back window, which in
+markup is attribute soup rather than sentence.
+
+So any change that moves a figure leaves a green 11/11 locally and a red `gates`
+job on the PR. The frontmatter migration in this branch did it twice: once for
+the banner, then again for `data.js` after the merge brought the Pages site in.
+After any figure sweep run both, and commit what they write:
+
+```bash
+npm run banner && npm run pages:data
+npm run banner:check && npm run pages:data:check   # what CI will assert
+```
+
+Renderer-level checks, for when you touch anything under `demo/` or
+`.github/pages/`. These need a browser and real vendor libraries, so they live in
+`tools/screenshots/` (its own package.json, absent from the archive manifest) and
+are **not** in CI:
 
 ```bash
 npm run demos:verify     # page errors · console errors · hydration · axe WCAG 2.1 AA
                          # · overflow at 390/768/1920 — dev AND production, both schemes
 npm run demos:typecheck  # the demos against REAL vendor typings, not demo/_stubs.d.ts
+npm run pages:verify     # the Pages site: the same renderer checks, plus whether its
+                         # two interactive panels do what the copy says they do
 npm run screenshots      # regenerate every image README.md links
 ```
+
+`pages:verify` serves `.github/pages/` directly, so it needs no build; pass a
+composed directory to check a real upload instead. It is worth knowing what it
+found the first time it ran, because none of it is visible in source: the tab
+panels set `display: grid` and so silently outranked the `hidden` attribute the
+tab script was toggling, meaning the tabs changed nothing on screen; a grid
+item's default `min-width: auto` dragged the page sideways at 390px; and the
+stylesheet had no `prefers-color-scheme` block at all, so its entire light
+palette was unreachable except by clicking the toggle. A green gate chain says
+nothing about any of these.
 
 Single-file checks while iterating on an example (much faster than the full chain):
 
@@ -80,43 +112,51 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | Tier | Loaded |
 |---|---|
 | `SKILL.md` (root) | **Always.** Identity, anti-slop wall, the routing table, loading protocol. |
-| `core/*.md` (8 files) | The 3–4 a matched skill declares in its frontmatter `core-deps`. |
+| `core/*.md` (8 files) | The 3–4 a matched skill declares in its frontmatter `metadata.core-deps`. |
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,961–7,525 tokens against ~362k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 5,965–7,530 tokens against ~360k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
 ## Adding or changing a skill — the contract
 
-Five requirements, each enforced by a different gate. Missing any one fails the build:
+Six requirements, each enforced by a different gate. Missing any one fails the build:
 
-1. **Frontmatter** must declare `name`, `description`, `version`, `core-deps`, and `version` must **exactly equal `metadata.json`'s version** (Gate 2). A new skill declares the *current* version, not the version you plan to release under.
+1. **Frontmatter** must declare `name` and `description` at the top level, and `version` plus `core-deps` nested under `metadata:` — Anthropic's own validator rejects any other top-level key, so pack-specific fields live under the one key its schema reserves for them. `metadata.version` must **exactly equal `metadata.json`'s version** (Gate 2). A new skill declares the *current* version, not the version you plan to release under.
 2. **A registry row** in the root `SKILL.md`, matching this shape exactly — the parser regex requires the deps cell to hold **exactly one** backticked `core/*.md`. Two deps in that cell means the row is not parsed and the skill silently becomes an orphan:
    `| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |`
-   (The skill's own YAML `core-deps:` may still list several.)
+   (The skill's own YAML `metadata.core-deps:` may still list several.)
 3. **`skills/{id}/examples/` must contain at least one `*.tsx`** (Gate 8b). A markdown-only examples directory fails.
 4. **Every `good-*.tsx` needs a 1:1 `good-*.test.tsx`** (Gate 7), and both must compile strict.
 5. **Every `references/*.md` must be cited** in that skill's Reference Index, or path integrity warns about an orphan — a reference nothing routes to can never be loaded, so it ships as dead weight.
+6. **Every `references/*.md` over 300 lines needs a `## Contents` index**, and every anchor in it must resolve (Stage 3). Anthropic's skill-creator asks for this and the reason is progressive disclosure: an agent that loads a 1,400-line file with no index has to read all of it to find one section. `markdown_links()` skips `#` targets, so a Contents entry left pointing at a renamed heading is invisible to every other check.
 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
 `python scripts/scaffold.py <intent>` generates differentiated component boilerplate by intent type.
 
-**Our frontmatter is a superset of Anthropic's schema, and their own validator
-rejects it.** `skill-creator`'s `quick_validate.py` allows exactly six keys —
+**The frontmatter matches Anthropic's published schema, and Gate 2 re-applies
+their rules.** `skill-creator`'s `quick_validate.py` allows six top-level keys —
 `name`, `description`, `license`, `allowed-tools`, `metadata`, `compatibility` —
-and treats anything else as an error. Every skill here declares `version` and
-`core-deps`, so all 19 fail it; the root `SKILL.md` passes. Before treating that
-as a defect, note the same validator would reject `mattpocock/skills`, which uses
-`disable-model-invocation` and `argument-hint` — so the script is stricter than
-the hosts, and extra keys are tolerated in practice. **It is an interop risk, not
-a live bug**: any host that adopts strict validation would refuse the pack. The
-spec-clean form is to nest both under the permitted `metadata:` key, which
-preserves every value, but it moves what Gate 2 parses, what `--bump-patch`
-writes, and what the registry reads — a cross-cutting change that deserves its
-own commit and its own gate run, not a ride-along on a content change.
+and errors on anything else. All 19 skills used to declare `version` and
+`core-deps` at the top level and failed it, while the root `SKILL.md` passed;
+`package_skill.py` runs that validator before zipping, so the official packager
+would have refused every sub-skill. Both keys now nest under `metadata:`, the key
+the schema reserves for exactly this, and `SPEC_KEYS` in `build_release.py`
+enforces the same six so a new key cannot drift back out.
+
+Worth knowing before you trust that gate: `_frontmatter()` used to partition each
+line on ":" without ever reading indentation, so top-level `version:` and
+`metadata.version:` parsed identically. **Gate 2 printed the same green line
+before and after the 19-file migration it exists to police** — nesting alone
+would have "passed" without the gate ever seeing the shape. It reads indentation
+now and consumes folded scalars, so a colon inside a wrapped `description:` can
+no longer invent a top-level key either. The cost is measured, not free:
+`metadata:` plus two indent levels adds ~5 tokens to every skill, moving the
+per-request band to 5,965–7,530 and leaving `design-research` 452 tokens of
+Gate 8a headroom.
 
 ## The rules no gate reads
 
@@ -143,7 +183,7 @@ Still unenforced from that same line, and worth a manual look: equal-height card
 grids, gradient fills on large headings, custom cursors, `<div>`-built fake
 screenshots, and numbered `01/02/03` markers on content that is not a sequence.
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 361,815 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 359,557 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts
@@ -159,13 +199,13 @@ Write new golds by modelling closely on an existing one (`skills/landing-pages/e
 - **Version-leak scan.** Pre-flight fails if the *current* version string appears in any file outside an allowlist: `metadata.json`, `README.md`, `package.json`, `docs/CHANGELOG.md`, anything under `skills/`, `.github/workflows/`, `demo/showcase/`, and any `RELEASE_NOTES-*`. **This file is not on that list** — never write the current version literal into `CLAUDE.md`, `docs/MAINTENANCE.md`, or any other doc. A *branch name* containing the version counts as a leak too.
 - **Version bumps touch five places**, and this entry said *three* through the two releases that were burned by the fourth and fifth. Gates 1–2 fail on any being out of step: `metadata.json`, a new top `## [x.y.z]` header in `docs/CHANGELOG.md`, the `version:` line in **every** `skills/*/SKILL.md`, `.claude-plugin/plugin.json`, and the `## What's new in vX` heading in `README.md`. `--bump-patch` writes the first four and deliberately leaves the README heading alone — a stub there would put a new version above the previous release's prose, which reads as current and is a worse lie than a stale heading. It prints what it did not do; read that line. **Only Stage 6 checks the README heading, and Stage 6 does not run under `--dry-run`**, so an 11/11 dry run cannot catch this one.
 - **Published figures are LF/git-index measurements**, not Windows working-tree ones. A CRLF checkout measures marginally higher, so `build_release.py` run locally on Windows prints larger numbers than the canonical ones. Do not "correct" the docs back to a local Windows reading.
-- **Documented figures are gated now — run `npm run figures` before you argue with it.** Counts and token figures hardcoded across ~30 documents going stale silently was the single most repeated defect in this repo's history, and several releases exist only to correct it. Gate 11 (`scripts/check_figures.py`) recomputes every figure from the filesystem and fails the build on any document that disagrees, so a count change no longer depends on remembering the sweep list. It also checks that stated deltas subtract correctly — `A → B … C tokens` where `B - A ≠ C` is the shape that kept slipping through, when a blanket substitution moved an endpoint and left the delta behind. (Writing that example with real numbers fails the gate, which is the gate working.) It reads **across hard wraps** — prose here is wrapped at ~80 characters, and a line-by-line scan cannot see `35 regex` / `constraints` split over the fold, which is how a *public* triage document sat seven wrong while the gate called it clean. It also catches gate counts **spelled as words**. What it still cannot see: anything in a document outside `SCAN`, and spelled-out counts for nouns other than gates — a deliberate omission, since "when two skills match" and "adding two skills cost 103 tokens" mean subsets, not the corpus, and a gate that shouts about those gets muted. **A figure it cannot see is worse than one it gets wrong, because a green run reads as proof.** That has now happened three times, and the third time all three tracked launch documents held a superseded router size while the gate reported 0 drift. `scripts/figure_pattern_test.py` (`npm run figures:test`) is what holds the patterns to the prose forms people actually write — 68 prose fixtures over 11 figures, asserting in both directions, blocking in the chain. **Extend it in the same commit as any pattern change**, and keep the negative cases: a widening that flags a correct file is a regression wearing a fix's clothes, and one of these fixtures exists because the registry anchor briefly read the *per-skill* router range out of `skills/{id}/SKILL.md`.
+- **Documented figures are gated now — run `npm run figures` before you argue with it.** Counts and token figures hardcoded across ~30 documents going stale silently was the single most repeated defect in this repo's history, and several releases exist only to correct it. Gate 11 (`scripts/check_figures.py`) recomputes every figure from the filesystem and fails the build on any document that disagrees, so a count change no longer depends on remembering the sweep list. It also checks that stated deltas subtract correctly — `A → B … C tokens` where `B - A ≠ C` is the shape that kept slipping through, when a blanket substitution moved an endpoint and left the delta behind. (Writing that example with real numbers fails the gate, which is the gate working.) It reads **across hard wraps** — prose here is wrapped at ~80 characters, and a line-by-line scan cannot see `35 regex` / `constraints` split over the fold, which is how a *public* triage document sat seven wrong while the gate called it clean. It also catches gate counts **spelled as words**. What it still cannot see: anything in a document outside `SCAN`, and spelled-out counts for nouns other than gates — a deliberate omission, since "when two skills match" and "adding two skills cost 113 tokens" mean subsets, not the corpus, and a gate that shouts about those gets muted. **A figure it cannot see is worse than one it gets wrong, because a green run reads as proof.** That has now happened three times, and the third time all three tracked launch documents held a superseded router size while the gate reported 0 drift. `scripts/figure_pattern_test.py` (`npm run figures:test`) is what holds the patterns to the prose forms people actually write — 67 prose fixtures over 11 figures, asserting in both directions, blocking in the chain. **Extend it in the same commit as any pattern change**, and keep the negative cases: a widening that flags a correct file is a regression wearing a fix's clothes, and one of these fixtures exists because the registry anchor briefly read the *per-skill* router range out of `skills/{id}/SKILL.md`.
 
 - **The constraint roster is checked against the suites now, and `--self-test` is not where that check lives.** `core/validate-checklist.md` is the list an agent is told to self-check against, and it is maintained by hand. It drifted twice: a `## Regex-enforced (N)` heading six short of the real count, then — in the commit that fixed *that* — a corrected heading above a roster still ending one ID early, and a closing `**Total:**` line still carrying the previous release's numbers in a prose shape ("machine-enforced", not "constraints") no figure pattern matches. `roster_check()` in `test_constraints.py` compares the listed IDs and all four numbers in that Total line against `CONSTRAINTS` and `PARSER_CHECK_IDS`, and runs on **every** invocation rather than under `--self-test`, because `test_constraints.py --self-test` is not in the release chain. Only IDs above `## Self-checks` are compared; `BEHAV-01`–`04` are correctly listed there and enforced by nothing.
 
 - **A waived constraint prints its waiver on every run.** `GRANDFATHERED` in `test_constraints.py` carries `demo/showcase` → `SLOP-05`, because the showcase is named Nexus and the rename is deferred for the reason written in its own README (sixteen files including `package-lock.json`, plus a screenshot only the out-of-CI browser harness can regenerate). The waiver is echoed with its reason in the summary line so it cannot quietly become permanent. Delete the entry with the rename.
 
-**Blind spots still open, each found with a stale figure sitting in it, so check these by hand after any sweep:** a figure written `N files` rather than `N references` is unmatched (widening it to `files` would catch "20 knowledge files per GPT" on the same row, which is why it was not); the `REFERENCES` forbid reads a 50-character window backwards and so misfires on a *table row* whose preceding cell ends in a backticked path, suppressing a real corpus claim; the per-skill budget table in `docs/ARCHITECTURE.md` lists values one per line, which no range pattern can read (`RANGE` now matches `A to B` as well as a dashed pair, but not a column); `DEPTH`'s trailing `(?![\d,])` — there to avoid biting into a longer number — also drops any depth figure a sentence happens to follow with a comma; and the `k`-rounded depth figure is now gated by `DEPTH-K` **only where the noun says so** — "references" or "depth" resolves to `reference_depth_tokens`; "a monolithic pack of ~Nk tokens" is deliberately left unclaimed, because nothing computes a whole-pack total and a pattern that grabbed it would fail `README.md` for telling the truth. Two negative fixtures hold that line. This entry previously said the whole family was ungateable; that was true of the family and false of six of its members, one of which was `AGENT_SYSTEM_PROMPT.md`. **The constraint split had one readable form and the corpus writes four** — `(P parser + R regex)` with no `AST`, `P semantic + R syntactic = T` with no brackets, and `(P AST via the TypeScript compiler API + R regex)` with a clause in the middle were all invisible, and twelve surfaces carried a stale half through the sweep that corrected everything the gate could read. All four are matched now, along with the halves counted as `checks` and the `**Syntactic (R regex)**` heading form. **Two further shapes were closed after they shipped stale on the front door itself**: a qualifier sitting between the digits and the noun (`N machine-checked constraints` — the README's opening sentence), and a **total stated immediately before its own split** (`N (P AST + R regex)`), where the split validated cleanly while contradicting the total printed beside it on the same line. Both had survived the sweep that corrected the checklist they were quoting, which is the recurring shape of this defect: the gate reads the source of a figure and not the sentence that repeats it. Deliberately still unclaimed: a **bare** `N checks`, because gate chains, evals and CI jobs all count checks and a pattern that grabbed those would shout on every one; the comma-separated split (`P AST …, R regex`) had one instance and was reworded to `+` instead of widened for. **Write shapes, not digits, when documenting a pattern** — the three examples above were first written with real numbers and the gate flagged this file, correctly. **Leave `docs/RELEASE_NOTES-*` and prior `CHANGELOG.md` entries alone** — they were accurate when cut, rewriting them falsifies the record, and the gate exempts them for that reason.
+**Blind spots still open, each found with a stale figure sitting in it, so check these by hand after any sweep:** a figure written `N files` rather than `N references` is unmatched (widening it to `files` would catch "20 knowledge files per GPT" on the same row, which is why it was not); the `REFERENCES` forbid reads a 50-character window backwards and so misfires on a *table row* whose preceding cell ends in a backticked path, suppressing a real corpus claim; the per-skill budget table in `docs/ARCHITECTURE.md` lists values one per line, which no range pattern can read (`RANGE` now matches `A to B` as well as a dashed pair, but not a column); `DEPTH`'s trailing `(?![\d,])` — there to avoid biting into a longer number — also drops any depth figure a sentence happens to follow with a comma; and the `k`-rounded depth figure is now gated by `DEPTH-K` **only where the noun says so** — "references" or "depth" resolves to `reference_depth_tokens`; "a monolithic pack of ~Nk tokens" is deliberately left unclaimed, because nothing computes a whole-pack total and a pattern that grabbed it would fail `README.md` for telling the truth. Two negative fixtures hold that line. This entry previously said the whole family was ungateable; that was true of the family and false of six of its members, one of which was `AGENT_SYSTEM_PROMPT.md`. **The constraint split had one readable form and the corpus writes four** — `(P parser + R regex)` with no `AST`, `P semantic + R syntactic = T` with no brackets, and `(P AST via the TypeScript compiler API + R regex)` with a clause in the middle were all invisible, and twelve surfaces carried a stale half through the sweep that corrected everything the gate could read. All four are matched now, along with the halves counted as `checks` and the `**Syntactic (R regex)**` heading form. **Two further shapes were closed after they shipped stale on the front door itself**: a qualifier sitting between the digits and the noun (`N machine-checked constraints` — the README's opening sentence), and a **total stated immediately before its own split** (`N (P AST + R regex)`), where the split validated cleanly while contradicting the total printed beside it on the same line. Both had survived the sweep that corrected the checklist they were quoting, which is the recurring shape of this defect: the gate reads the source of a figure and not the sentence that repeats it. Deliberately still unclaimed: a **bare** `N checks`, because gate chains, evals and CI jobs all count checks and a pattern that grabbed those would shout on every one; the comma-separated split (`P AST …, R regex`) had one instance and was reworded to `+` instead of widened for. **In markup, emphasis around a figure disables the gate.** `GLOBAL_FORBID` lists a bare `<` and `>` among the comparison operators, so that a bound (`≤ N tokens`) is correctly read as a limit rather than a measurement — but the look-back is 50 characters of raw text, and the `>` that closes *any* HTML tag lands in it. `<strong>N skills</strong>` is therefore suppressed by its own opening tag and silently unguarded, as is every figure written immediately after any tag at all. The gate reports no drift on such a page because it never read it. `.github/pages/index.html` consequently wraps emphasis around the *sentence* and never around the number, with a comment at each site saying why. Do not narrow the rule to fix this: `docs/audit-report.html` says `10 References` as the *name* of gate ten, and a tighter window flags that correct file. Found by corrupting each figure in turn on a page the gate had just called clean — which is the only way this class is ever found, and the fourth time it has been found here. **Write shapes, not digits, when documenting a pattern** — the three examples above were first written with real numbers and the gate flagged this file, correctly. **Leave `docs/RELEASE_NOTES-*` and prior `CHANGELOG.md` entries alone** — they were accurate when cut, rewriting them falsifies the record, and the gate exempts them for that reason.
 
 ## Git discipline
 

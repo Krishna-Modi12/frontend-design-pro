@@ -11,6 +11,26 @@ Swiss is cold, typographic, monochrome.
 
 ---
 
+## Contents
+
+- [Core Signature](#core-signature)
+- [OKLCH Color Palette](#oklch-color-palette)
+- [Button — The Signature Component](#button--the-signature-component)
+- [Card](#card)
+- [Input / Form Fields](#input--form-fields)
+- [Badge / Tag](#badge--tag)
+- [Modal / Dialog](#modal--dialog)
+- [Navigation](#navigation)
+- [Typography](#typography)
+- [Spacing & Layout Rules](#spacing--layout-rules)
+- [Animation Rules](#animation-rules)
+- [Dark Mode Neo-Brutalism](#dark-mode-neo-brutalism)
+- [Complete Page Example](#complete-page-example)
+- [Validation Gate (Step 7 additions for neo-brutalism)](#validation-gate-step-7-additions-for-neo-brutalism)
+- [Anti-Patterns](#anti-patterns)
+
+---
+
 ## Core Signature
 
 ```

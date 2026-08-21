@@ -51,6 +51,7 @@ TRUTH = {
     "core_files": 8, "example_files": 55, "anti_examples": 10,
     "test_files": 45, "parser_constraints": 17, "regex_constraints": 42,
     "ci_constraints": 59, "reference_depth_tokens": 349445,
+    "regression_cases": 14,
 }
 
 # (figure id, prose, must_flag, why)
@@ -251,6 +252,26 @@ CASES = [
      False, "names the whole pack — a different quantity, and nothing computes it"),
     ("DEPTH-K", "a monolithic 330k-token pack could not be loaded",
      False, "same claim, hyphenated: 'pack' is not 'depth'"),
+    # ── REGRESSION ──────────────────────────────────────────────────────────
+    ("REGRESSION", "npm run regression   # 13 synthetic parser-vs-regex divergence cases",
+     True, "the CLAUDE.md command comment, the longest form in the corpus"),
+    ("REGRESSION", "13 parser-vs-regex divergence cases",
+     True, "same claim without the 'synthetic' qualifier"),
+    ("REGRESSION", "A parser-regression proof runs alongside gate 4: 13 synthetic cases",
+     True, "the short form, where 'cases' is qualified only by 'synthetic'"),
+    ("REGRESSION", "holds **13 synthetic divergence cases**, each a file where",
+     True, "bolded, with 'parser-vs-regex' dropped from the middle"),
+    ("REGRESSION", "- 13 regression cases where the AST check and the regex disagree.",
+     True, "launch-copy bullet form"),
+    # Load-bearing negatives: 'cases' is a common noun in this corpus and a
+    # pattern that grabbed every use of it would shout on prose about edge cases
+    # and test cases, which is how a gate gets muted.
+    ("REGRESSION", "The router handles 13 cases where two skills match at once.",
+     False, "bare 'N cases' — a different quantity, and nothing computes it"),
+    ("REGRESSION", "13 test cases cover the sort cycle.",
+     False, "'test cases' is not the regression harness"),
+    ("REGRESSION", "22 evals and 13 edge cases were reviewed by hand.",
+     False, "'edge cases' shares the noun and nothing computes it"),
 ]
 
 

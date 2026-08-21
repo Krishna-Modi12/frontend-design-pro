@@ -8,6 +8,22 @@ Works best against rich backgrounds (gradients, imagery, 3D). Fails on flat/whit
 
 ---
 
+## Contents
+
+- [Core Concept](#core-concept)
+- [4-Layer Glass Stack (build bottom-up)](#4-layer-glass-stack-build-bottom-up)
+- [OKLCH Token System for Glass](#oklch-token-system-for-glass)
+- [Blur Intensity Guide](#blur-intensity-guide)
+- [Light vs Dark Glassmorphism](#light-vs-dark-glassmorphism)
+- [Depth Hierarchy (multiple glass layers)](#depth-hierarchy-multiple-glass-layers)
+- [Component Patterns](#component-patterns)
+- [Background Requirements](#background-requirements)
+- [Performance Rules](#performance-rules)
+- [Validation Gate (Step 7 additions for glassmorphism)](#validation-gate-step-7-additions-for-glassmorphism)
+- [Anti-Patterns](#anti-patterns)
+
+---
+
 ## Core Concept
 
 Glassmorphism = **perceived depth through translucency**. The blur reveals layers behind,

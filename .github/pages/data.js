@@ -1,0 +1,546 @@
+/* GENERATED FILE — do not edit by hand.
+ *
+ * Written by tools/pages-data/generate.mjs from the registry in SKILL.md, each
+ * skill's frontmatter, README's skill tables and `check_figures.py --truth`.
+ *
+ *   npm run pages:data          rewrite this file
+ *   npm run pages:data:check    fail if it is stale (runs in CI)
+ */
+window.FDP = {
+  "figures": {
+    "skills": 19,
+    "coreFiles": 8,
+    "referenceFiles": 101,
+    "referenceDepthTokens": 359557,
+    "exampleFiles": 55,
+    "antiExamples": 10,
+    "testFiles": 45,
+    "releaseGates": 11,
+    "parserConstraints": 17,
+    "regexConstraints": 43,
+    "ciConstraints": 60,
+    "registryTokens": 2099,
+    "bandLow": 5965,
+    "bandHigh": 7530
+  },
+  "baseDeps": [
+    "core/accessibility-baseline.md",
+    "core/validate-checklist.md"
+  ],
+  "skills": [
+    {
+      "id": "agent-ops",
+      "path": "skills/agent-ops/SKILL.md",
+      "keywords": [
+        "agent ops",
+        "token budget",
+        "context window",
+        "memory persistence",
+        "subagent",
+        "orchestration",
+        "verification loop",
+        "parallelization",
+        "continuous learning",
+        "self-check"
+      ],
+      "registryDep": "core/agent-behavior.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/agent-behavior.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6502,
+      "group": "Meta",
+      "covers": "The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration",
+      "trySaying": "\"You keep re-reading the same files. Set up a context budget.\""
+    },
+    {
+      "id": "ai-ui-generation",
+      "path": "skills/ai-ui-generation/SKILL.md",
+      "keywords": [
+        "ai generate",
+        "prompt to ui",
+        "json to ui",
+        "generative interface",
+        "component registry",
+        "openui",
+        "tambo",
+        "morphic",
+        "llm ui"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6040,
+      "group": "Meta",
+      "covers": "Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships",
+      "trySaying": "\"Render components from this JSON schema, and validate before it hits the DOM.\""
+    },
+    {
+      "id": "animations",
+      "path": "skills/animations/SKILL.md",
+      "keywords": [
+        "animation",
+        "motion",
+        "transition",
+        "framer",
+        "gsap",
+        "animate",
+        "scroll",
+        "parallax",
+        "view transition"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6269,
+      "group": "Making it look right",
+      "covers": "Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion",
+      "trySaying": "\"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion.\""
+    },
+    {
+      "id": "canvas-typography",
+      "path": "skills/canvas-typography/SKILL.md",
+      "keywords": [
+        "canvas typography",
+        "kinetic type",
+        "particle text",
+        "generative text",
+        "text animation",
+        "variable font",
+        "text on path",
+        "scramble text"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 7144,
+      "group": "Making it look right",
+      "covers": "Type rendered as a system: particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path — with the real string always left in the DOM",
+      "trySaying": "\"A hero headline that assembles from particles on mouse-over, and still reads fine with JS off.\""
+    },
+    {
+      "id": "color-themes",
+      "path": "skills/color-themes/SKILL.md",
+      "keywords": [
+        "color theme",
+        "palette generation",
+        "oklch theme",
+        "theme generator",
+        "auto theme",
+        "image palette",
+        "color scheme",
+        "harmonic colors"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6237,
+      "group": "Making it look right",
+      "covers": "Colour computed rather than chosen: OKLCH token generation from one hue, harmonic schemes, palettes extracted from an image, light/dark/auto architecture, contrast measured before a token ships",
+      "trySaying": "\"Generate a full dark theme from this brand blue, and prove the text passes AA.\""
+    },
+    {
+      "id": "component-patterns",
+      "path": "skills/component-patterns/SKILL.md",
+      "keywords": [
+        "component library",
+        "pattern",
+        "animated text",
+        "background effect",
+        "magnetic",
+        "spotlight",
+        "tilt",
+        "react bits",
+        "aceternity",
+        "cult ui",
+        "bento-card"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6367,
+      "group": "Making it look right",
+      "covers": "Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit",
+      "trySaying": "\"Give me an animated headline like Aceternity's, but keyboard-accessible.\""
+    },
+    {
+      "id": "data-tables",
+      "path": "skills/data-tables/SKILL.md",
+      "keywords": [
+        "table",
+        "grid",
+        "data",
+        "list",
+        "pagination",
+        "sort",
+        "filter",
+        "tanstack",
+        "datatable",
+        "chart",
+        "dashboard",
+        "kpi",
+        "analytics"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6005,
+      "group": "Building something new",
+      "covers": "Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query",
+      "trySaying": "\"Sortable, filterable users table with pagination and a loading skeleton.\""
+    },
+    {
+      "id": "design-principles",
+      "path": "skills/design-principles/SKILL.md",
+      "keywords": [
+        "design",
+        "ux",
+        "laws",
+        "principles",
+        "hierarchy",
+        "contrast",
+        "gestalt",
+        "cognitive load",
+        "why",
+        "critique"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6784,
+      "group": "Making it look right",
+      "covers": "The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction",
+      "trySaying": "\"Critique this layout. Why does it feel cluttered, and what's the actual fix?\""
+    },
+    {
+      "id": "design-research",
+      "path": "skills/design-research/SKILL.md",
+      "keywords": [
+        "inspired by",
+        "reference",
+        "mood board",
+        "like this site",
+        "dribbble",
+        "mobbin",
+        "live design",
+        "browse",
+        "extract palette",
+        "source url"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 7530,
+      "group": "Making it look right",
+      "covers": "Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints before any code",
+      "trySaying": "\"Build a hero inspired by this Dribbble shot: <url> — dark, developer tool.\""
+    },
+    {
+      "id": "design-system",
+      "path": "skills/design-system/SKILL.md",
+      "keywords": [
+        "tokens",
+        "theme",
+        "colors",
+        "palette",
+        "typography",
+        "design system",
+        "dark mode",
+        "spacing",
+        "brand",
+        "font",
+        "figma"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6205,
+      "group": "Making it look right",
+      "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
+      "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
+    },
+    {
+      "id": "forms",
+      "path": "skills/forms/SKILL.md",
+      "keywords": [
+        "form",
+        "validation",
+        "contact",
+        "checkout",
+        "auth",
+        "login",
+        "signup",
+        "register",
+        "newsletter",
+        "rhf",
+        "zod",
+        "otp",
+        "mfa",
+        "payment"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6077,
+      "group": "Building something new",
+      "covers": "Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement",
+      "trySaying": "\"Multi-step checkout with Zod validation and errors wired to aria-describedby.\""
+    },
+    {
+      "id": "iconography",
+      "path": "skills/iconography/SKILL.md",
+      "keywords": [
+        "icon",
+        "phosphor",
+        "lucide",
+        "svg",
+        "icon button",
+        "icon size",
+        "icon weight",
+        "avatar-icon",
+        "initials"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 5965,
+      "group": "Making it look right",
+      "covers": "Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration",
+      "trySaying": "\"These icons look off next to the text — fix the sizing and optical alignment.\""
+    },
+    {
+      "id": "landing-pages",
+      "path": "skills/landing-pages/SKILL.md",
+      "keywords": [
+        "landing",
+        "hero",
+        "pricing",
+        "testimonials",
+        "bento",
+        "marketing",
+        "saas",
+        "homepage",
+        "features",
+        "cta",
+        "social proof",
+        "empty state",
+        "onboarding"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 5986,
+      "group": "Building something new",
+      "covers": "Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding",
+      "trySaying": "\"Build a landing page for a CI tool. Dark, technical, no stock-photo energy.\""
+    },
+    {
+      "id": "platform",
+      "path": "skills/platform/SKILL.md",
+      "keywords": [
+        "mobile",
+        "pwa",
+        "desktop",
+        "electron",
+        "tauri",
+        "keyboard shortcut",
+        "react native",
+        "expo",
+        "i18n",
+        "locale",
+        "rtl",
+        "right-to-left",
+        "seo",
+        "metadata",
+        "email",
+        "stripe",
+        "ai chat",
+        "streaming"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6348,
+      "group": "Making it work well",
+      "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
+      "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
+    },
+    {
+      "id": "react-components",
+      "path": "skills/react-components/SKILL.md",
+      "keywords": [
+        "component",
+        "button",
+        "card",
+        "modal",
+        "dialog",
+        "dropdown",
+        "tabs",
+        "accordion",
+        "tooltip",
+        "badge",
+        "avatar",
+        "shadcn",
+        "radix",
+        "compound"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6265,
+      "group": "Building something new",
+      "covers": "One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, forwardRef, CVA",
+      "trySaying": "\"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly.\""
+    },
+    {
+      "id": "react-performance",
+      "path": "skills/react-performance/SKILL.md",
+      "keywords": [
+        "performance",
+        "optimize",
+        "waterfall",
+        "bundle",
+        "memo",
+        "lazy",
+        "dynamic import",
+        "preload",
+        "rsc",
+        "core web vitals"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6093,
+      "group": "Making it work well",
+      "covers": "Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals",
+      "trySaying": "\"This page has a 4s LCP. Find the waterfall and fix it.\""
+    },
+    {
+      "id": "testing",
+      "path": "skills/testing/SKILL.md",
+      "keywords": [
+        "test",
+        "vitest",
+        "testing",
+        "testing library",
+        "playwright",
+        "axe",
+        "coverage",
+        "storybook",
+        "story"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 5986,
+      "group": "Making it work well",
+      "covers": "Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy",
+      "trySaying": "\"Write tests for this form — including the validation errors and an axe pass.\""
+    },
+    {
+      "id": "threejs-3d",
+      "path": "skills/threejs-3d/SKILL.md",
+      "keywords": [
+        "3d",
+        "three.js",
+        "r3f",
+        "scene",
+        "shader",
+        "webgl",
+        "canvas",
+        "model",
+        "gltf",
+        "glb",
+        "geometry",
+        "spline",
+        "raycast"
+      ],
+      "registryDep": "core/component-api.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/component-api.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6183,
+      "group": "Building something new",
+      "covers": "Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes",
+      "trySaying": "\"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion.\""
+    },
+    {
+      "id": "web-interface",
+      "path": "skills/web-interface/SKILL.md",
+      "keywords": [
+        "review",
+        "audit",
+        "guidelines",
+        "wig",
+        "copywriting",
+        "microcopy",
+        "contrast-check",
+        "a11y audit",
+        "ux rules"
+      ],
+      "registryDep": "core/design-tokens.md",
+      "deps": [
+        "core/accessibility-baseline.md",
+        "core/design-tokens.md",
+        "core/validate-checklist.md"
+      ],
+      "budget": 6120,
+      "group": "Making it work well",
+      "covers": "Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas",
+      "trySaying": "\"Review this component. What's wrong with it that I'm not seeing?\""
+    }
+  ]
+};

@@ -5,6 +5,24 @@ Version: 10.17.0
 
 ---
 
+## Contents
+
+- [1. Setup](#1-setup)
+- [2. register vs Controller](#2-register-vs-controller)
+- [3. Zod Schema Patterns](#3-zod-schema-patterns)
+- [4. Error Display](#4-error-display)
+- [5. Field Arrays (useFieldArray)](#5-field-arrays-usefieldarray)
+- [6. Dynamic / Conditional Fields](#6-dynamic--conditional-fields)
+- [7. Multi-Step Wizard](#7-multi-step-wizard)
+- [8. File Upload Validation](#8-file-upload-validation)
+- [9. Async Validation](#9-async-validation)
+- [10. Server Actions Integration (Next.js)](#10-server-actions-integration-nextjs)
+- [11. Reset + Programmatic Control](#11-reset--programmatic-control)
+- [12. Performance](#12-performance)
+- [13. Anti-Patterns](#13-anti-patterns)
+
+---
+
 ## 1. Setup
 
 ### Installation

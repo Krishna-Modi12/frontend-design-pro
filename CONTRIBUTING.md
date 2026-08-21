@@ -51,7 +51,7 @@ npm run typecheck    # tsc --noEmit strict over every example
 npm run constraints  # the 43 regex constraints over skills/
 npm run figures      # every documented count and token figure vs. the filesystem
 npm run evals        # 22 eval cases
-npm run regression   # 13 parser-vs-regex divergence cases
+npm run regression   # 14 parser-vs-regex divergence cases
 ```
 
 Single file, fastest loop of all:
@@ -130,20 +130,23 @@ counts as a leak too.
 
 ## Adding a skill
 
-Five requirements, each enforced by a different gate:
+Six requirements, each enforced by a different gate:
 
-1. **Frontmatter** declaring `name`, `description`, `version`, `core-deps` — where
+1. **Frontmatter** declaring `name` and `description`, plus `metadata.version` and `metadata.core-deps` nested under `metadata:` — where
    `version` exactly equals `metadata.json`'s current version.
 2. **A registry row** in the root `SKILL.md`, in this exact shape. The parser
    requires the deps cell to hold *exactly one* backticked `core/*.md`; two deps
    there means the row is not parsed and the skill silently becomes an orphan:
    ``| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |``
-   (The skill's own YAML `core-deps:` may still list several.)
+   (The skill's own YAML `metadata.core-deps:` may still list several.)
 3. **At least one `*.tsx` in `skills/{id}/examples/`.** A markdown-only examples
    directory fails.
 4. **A 1:1 test for every gold**, both compiling strict.
 5. **Every `references/*.md` cited** in that skill's Reference Index. A reference
    nothing routes to can never be loaded, so it ships as dead weight.
+6. **A `## Contents` index in every `references/*.md` over 300 lines**, with every
+   anchor resolving. Anthropic's skill-creator asks for it, and an unindexed
+   1,400-line file forces an agent to read all of it to find one section.
 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any
 existing skill. `python scripts/scaffold.py <intent>` generates boilerplate.
