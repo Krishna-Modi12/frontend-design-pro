@@ -638,13 +638,22 @@ SCAN: Sequence[str] = (
     # because it stopped at 9.
     ".github/ISSUE_TEMPLATE/*.md",
     ".github/workflows/*.yml",
-    # The gallery index served at the root of the Pages site. It carries no
-    # figure today and is written to keep it that way, so this entry buys
-    # nothing right now — which is the moment to add it rather than after
-    # someone puts a count on the most public page this project has. The three
-    # launch documents were outside SCAN on the same reasoning and held a
-    # superseded router size in live prose while the gate reported no drift.
-    ".github/pages/*.html",
+    # The pack's own homepage, served at the root of the Pages site — the most
+    # public page this project has. It used to be hand-written HTML at
+    # `.github/pages/*.html`, entered here for the reason recorded below; that
+    # page was retired and rebuilt as `home/`, a real Next app, in the same
+    # release that added canvas-typography motion to it. Three entries replace
+    # the one: components carry prose ("60 machine-checked constraints"), lib
+    # carries the same in ported copy strings, and the generated JSON this app
+    # is built from is included for the same belt-and-braces reason
+    # `demo/landing-page/*.json` already is. The three launch documents were
+    # outside SCAN on the reasoning "carries no figure today" and held a
+    # superseded router size in live prose while the gate reported no drift —
+    # so this entry is added now, at zero figures, rather than after someone
+    # puts a count on the page.
+    "home/components/*.tsx",
+    "home/lib/*.ts",
+    "home/*.json",
     # NOT `.github/assets/*.svg`, and the attempt is recorded because it looked
     # obviously right and is not.
     #

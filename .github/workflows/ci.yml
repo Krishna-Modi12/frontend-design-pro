@@ -127,16 +127,17 @@ jobs:
         if: ${{ !cancelled() }}
         run: node tools/readme-router/generate.mjs --check
 
-      # Same reasoning one surface over. `.github/pages/data.js` drives the two
-      # interactive panels on the Pages site — the registry the router resolves
-      # against and the budgets it reports — and Gate 11 cannot see it, because
-      # its SCAN list covers the site's HTML and not its JavaScript. So a stale
-      # payload there is a wrong number on a public page with nothing behind it.
+      # Same reasoning one surface over. `home/lib/data.generated.json` drives
+      # the two interactive panels on the Pages site — the registry the router
+      # resolves against and the budgets it reports — and Gate 11 cannot see
+      # it, because its SCAN list covers `home/`'s components and lib source,
+      # not a generated JSON payload. So a stale payload there is a wrong
+      # number on a public page with nothing behind it.
       #
       # pages.yml checks this too, but only when a deploy runs, and a deploy
-      # only runs when something under .github/pages or demo/ changes. Moving a
-      # figure anywhere else in the pack is exactly the change that staleness
-      # comes from and exactly the one that would not trigger it.
+      # only runs when something under home/ or demo/ changes. Moving a figure
+      # anywhere else in the pack is exactly the change that staleness comes
+      # from and exactly the one that would not trigger it.
       - name: Pages data is current
         if: ${{ !cancelled() }}
         run: node tools/pages-data/generate.mjs --check

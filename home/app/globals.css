@@ -1,0 +1,17 @@
+/**
+ * Import order is load-bearing — same reasoning as `demo/landing-page`:
+ *
+ * 1. Tailwind first, so its `@theme` defaults exist to be extended.
+ * 2. `../tokens.css` second — the palette, liftable into another project on
+ *    its own.
+ * 3. The font families last, aliased through `@theme inline` because both
+ *    read `var(--font-geist-*)`, which does not exist until the `geist`
+ *    package sets it on `<html>` at runtime.
+ */
+@import "tailwindcss";
+@import "../tokens.css";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
