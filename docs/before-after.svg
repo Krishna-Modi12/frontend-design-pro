@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="100%" role="img" aria-label="Illustration comparing a generic AI-generated layout against the pack's enforced defaults: equal-height cards and a purple-to-pink gradient hero on the left, an asymmetric layout with one accent colour on the right.">
+  <defs>
+    <linearGradient id="genericGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="50%" stop-color="#d946ef"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="640" fill="#0d0f12"/>
+
+  <!-- LEFT PANEL: generic default -->
+  <g>
+    <rect x="24" y="24" width="560" height="592" rx="12" fill="#f4f4f5"/>
+    <text x="54" y="70" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="1.5" fill="#71717a">DEFAULT AI OUTPUT</text>
+
+    <!-- gradient hero -->
+    <rect x="54" y="96" width="500" height="140" rx="8" fill="url(#genericGradient)"/>
+    <text x="80" y="150" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#ffffff">Elevate your workflow</text>
+    <text x="80" y="178" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#f4f4f5" opacity="0.9">Trusted by teams at Acme and Cloudly</text>
+
+    <!-- three equal cards -->
+    <g font-family="Arial, Helvetica, sans-serif">
+      <rect x="54" y="256" width="153" height="150" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+      <rect x="223.5" y="256" width="153" height="150" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+      <rect x="393" y="256" width="153" height="150" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+      <circle cx="130.5" cy="296" r="14" fill="#d4d4d8"/>
+      <circle cx="300" cy="296" r="14" fill="#d4d4d8"/>
+      <circle cx="469.5" cy="296" r="14" fill="#d4d4d8"/>
+      <rect x="70" y="326" width="90" height="10" rx="3" fill="#a1a1aa"/>
+      <rect x="239.5" y="326" width="90" height="10" rx="3" fill="#a1a1aa"/>
+      <rect x="409" y="326" width="90" height="10" rx="3" fill="#a1a1aa"/>
+      <rect x="70" y="346" width="122" height="8" rx="3" fill="#d4d4d8"/>
+      <rect x="239.5" y="346" width="122" height="8" rx="3" fill="#d4d4d8"/>
+      <rect x="409" y="346" width="122" height="8" rx="3" fill="#d4d4d8"/>
+      <rect x="70" y="362" width="100" height="8" rx="3" fill="#d4d4d8"/>
+      <rect x="239.5" y="362" width="100" height="8" rx="3" fill="#d4d4d8"/>
+      <rect x="409" y="362" width="100" height="8" rx="3" fill="#d4d4d8"/>
+    </g>
+
+    <!-- fake testimonial + price -->
+    <rect x="54" y="426" width="500" height="90" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+    <circle cx="86" cy="458" r="16" fill="#d4d4d8"/>
+    <text x="112" y="454" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#3f3f46">John Doe</text>
+    <text x="112" y="470" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#71717a">$99.00/mo · Pro plan</text>
+    <rect x="70" y="484" width="380" height="8" rx="3" fill="#e4e4e7"/>
+
+    <rect x="54" y="534" width="140" height="42" rx="21" fill="#18181b"/>
+    <text x="88" y="560" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#ffffff">Get Started</text>
+
+    <g font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#a1a1aa">
+      <text x="54" y="606">TYP-02 · COL-03 · SLOP-01 · SLOP-02 · SLOP-05</text>
+    </g>
+  </g>
+
+  <!-- RIGHT PANEL: enforced -->
+  <g>
+    <rect x="616" y="24" width="560" height="592" rx="12" fill="#0a0b0d" stroke="#1c1f24"/>
+    <text x="646" y="70" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" fill="#5b7fff">WITH THE PACK</text>
+
+    <!-- asymmetric hero: wide left, narrow right -->
+    <rect x="646" y="96" width="330" height="230" rx="8" fill="#131519" stroke="#22262d"/>
+    <text x="670" y="150" font-family="'Segoe UI', Arial, sans-serif" font-size="24" font-weight="600" fill="#f4f4f5">Every migration</text>
+    <text x="670" y="180" font-family="'Segoe UI', Arial, sans-serif" font-size="24" font-weight="600" fill="#f4f4f5">runs twice.</text>
+    <rect x="670" y="206" width="220" height="9" rx="3" fill="#3a3f47"/>
+    <rect x="670" y="224" width="180" height="9" rx="3" fill="#3a3f47"/>
+    <rect x="670" y="256" width="120" height="36" rx="6" fill="#3b5bdb"/>
+    <text x="696" y="279" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">Start free</text>
+
+    <rect x="992" y="96" width="184" height="230" rx="8" fill="#131519" stroke="#22262d"/>
+    <text x="1012" y="128" font-family="Consolas, monospace" font-size="11" fill="#5b7fff">rows touched</text>
+    <text x="1012" y="152" font-family="Consolas, monospace" font-size="22" font-weight="700" fill="#f4f4f5">128,406</text>
+    <text x="1012" y="184" font-family="Consolas, monospace" font-size="11" fill="#5b7fff">longest lock</text>
+    <text x="1012" y="208" font-family="Consolas, monospace" font-size="22" font-weight="700" fill="#f4f4f5">2.3s</text>
+    <text x="1012" y="240" font-family="Consolas, monospace" font-size="11" fill="#5b7fff">traffic replayed</text>
+    <text x="1012" y="264" font-family="Consolas, monospace" font-size="22" font-weight="700" fill="#f4f4f5">41.2%</text>
+
+    <!-- one showpiece card + two smaller, not equal -->
+    <rect x="646" y="342" width="330" height="140" rx="8" fill="#131519" stroke="#22262d"/>
+    <rect x="670" y="366" width="26" height="26" rx="6" fill="#3b5bdb" opacity="0.9"/>
+    <rect x="670" y="404" width="200" height="10" rx="3" fill="#c7cad1"/>
+    <rect x="670" y="422" width="260" height="8" rx="3" fill="#3a3f47"/>
+    <rect x="670" y="438" width="230" height="8" rx="3" fill="#3a3f47"/>
+
+    <rect x="992" y="342" width="184" height="66" rx="8" fill="#131519" stroke="#22262d"/>
+    <rect x="1012" y="362" width="18" height="18" rx="4" fill="#3b5bdb" opacity="0.7"/>
+    <rect x="1012" y="388" width="140" height="8" rx="3" fill="#3a3f47"/>
+
+    <rect x="992" y="416" width="184" height="66" rx="8" fill="#131519" stroke="#22262d"/>
+    <rect x="1012" y="436" width="18" height="18" rx="4" fill="#3b5bdb" opacity="0.7"/>
+    <rect x="1012" y="462" width="140" height="8" rx="3" fill="#3a3f47"/>
+
+    <rect x="646" y="534" width="150" height="42" rx="6" fill="#3b5bdb"/>
+    <text x="672" y="560" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="700" fill="#ffffff">Start monitoring</text>
+
+    <g font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#5b7fff">
+      <text x="646" y="606">min-h-[100dvh] · OKLCH tokens · A11Y-01 · asymmetric layout</text>
+    </g>
+  </g>
+</svg>
