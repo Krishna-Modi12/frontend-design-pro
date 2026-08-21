@@ -6,6 +6,21 @@ End-to-end and component testing with Playwright: setup, core API, visual regres
 
 ---
 
+## Contents
+
+- [1. Setup](#1-setup)
+- [2. Core API](#2-core-api)
+- [3. Visual Regression](#3-visual-regression)
+- [4. Accessibility Testing](#4-accessibility-testing)
+- [5. Network Mocking](#5-network-mocking)
+- [6. Fixtures & Hooks](#6-fixtures--hooks)
+- [7. CI Configuration](#7-ci-configuration)
+- [8. Patterns for Common Components](#8-patterns-for-common-components)
+- [9. Anti-Patterns](#9-anti-patterns)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## 1. Setup
 
 ### Install `@playwright/experimental-ct-react`

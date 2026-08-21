@@ -9,6 +9,24 @@ Storybook 8 is the standard tool for developing, documenting, and visually testi
 
 ---
 
+## Contents
+
+- [1. Setup — Storybook 8 with Next.js or Vite](#1-setup--storybook-8-with-nextjs-or-vite)
+- [2. Typed Story Authoring — CSF3](#2-typed-story-authoring--csf3)
+- [3. args + argTypes Controls](#3-args--argtypes-controls)
+- [4. Parameters](#4-parameters)
+- [5. Decorators — Wrapping with Providers](#5-decorators--wrapping-with-providers)
+- [6. play Functions — Interaction Testing](#6-play-functions--interaction-testing)
+- [7. MDX Documentation](#7-mdx-documentation)
+- [8. autodocs Tag](#8-autodocs-tag)
+- [9. Viewport Addon + a11y Addon](#9-viewport-addon--a11y-addon)
+- [10. Chromatic Visual Regression](#10-chromatic-visual-regression)
+- [11. Worked Examples](#11-worked-examples)
+- [12. composeStories — Unit Test Integration](#12-composestories--unit-test-integration)
+- [13. Anti-Patterns](#13-anti-patterns)
+
+---
+
 ## 1. Setup — Storybook 8 with Next.js or Vite
 
 **Next.js:**

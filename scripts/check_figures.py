@@ -217,6 +217,10 @@ def _fixture_counts() -> Dict[str, object]:
     except ImportError:                      # the proof script is not installed
         return {}                            # in the archive; skip rather than fail
     return {
+        "regression_cases": len(re.findall(
+            r'^\s{2}\{\s*$',
+            (ROOT / "scripts" / "parser_regression_test.js").read_text(encoding="utf-8"),
+            re.M)),
         "figure_fixtures": len(fpt.CASES),
         "figure_fixture_figures": len({c[0] for c in fpt.CASES}),
     }
@@ -377,6 +381,19 @@ FIGURES: Sequence[Figure] = (
     # published count, or the word in ordinary use, and a pattern that cannot
     # tell them apart would be muted within a release. Tied to the full phrase,
     # it is unambiguous.
+    # The parser-regression count sat hardcoded on eight surfaces, three of them
+    # launch documents, and `docs/LAUNCH_KIT.md` opens by calling every number in
+    # it verified. Adding one case moved the truth and the gate reported 0 drift
+    # — the fourth instance of this exact class, in the same documents as the
+    # third. Counted from the harness rather than from prose.
+    Figure(
+        "REGRESSION",
+        "synthetic parser-vs-regex divergence cases",
+        r"(?<![\d,])(\d{1,3})\s+(?:synthetic\s+)?(?:parser-vs-regex\s+)?"
+        r"(?:divergence\s+|regression\s+)cases\b"
+        r"|(?<![\d,])(\d{1,3})\s+synthetic\s+cases\b",
+        lambda t: (str(t.get("regression_cases", "")),),
+    ),
     Figure(
         "FIXTURES",
         "prose fixtures in the figure-pattern proof, and the figures they cover",
@@ -403,9 +420,22 @@ FIGURES: Sequence[Figure] = (
         # `(?!\s+to\b)` because "137 references to docs/*.md" counts pointers,
         # not reference files. A count followed by "to" always names what is
         # being pointed at, never the corpus.
-        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b(?!\s+to\b)",
+        # The second alternate reads `N reference files`, which four shipped
+        # install adapters and two setup docs use. This was recorded as
+        # deliberately unmatched because widening to a bare `files` would also
+        # grab "20 knowledge files per GPT" on the same row — but requiring the
+        # word `reference` separates the two cleanly, and while the shape went
+        # unread six live consumer-facing claims sat ten short.
+        r"(?<![\d,])(\d{2,3})\s+(?:deep\s+|on-demand\s+)?references\b(?!\s+to\b)"
+        r"|(?<![\d,])(\d{2,3})\s+reference\s+files\b",
         lambda t: (str(t["reference_files"]),),
-        forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.]{0,10}$",
+        # `[^.|]` not `[^.]`: the backtick branch exists to suppress a per-file
+        # claim like "`foo.md` has 12 references", where the path and the count
+        # share a clause. A table PIPE between them means they are separate
+        # cells and the count is the corpus — which is how
+        # `| `skills/{id}/references/*.md` | N deep references |` hid a stale
+        # figure while the row's own token count was being swept correctly.
+        forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.|]{0,10}$",
     ),
     Figure(
         "DEPTH",

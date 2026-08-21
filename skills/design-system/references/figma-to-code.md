@@ -8,6 +8,23 @@ Best practices for translating Figma designs into production React/Next.js compo
 
 ---
 
+## Contents
+
+- [Figma MCP Integration](#figma-mcp-integration)
+- [Figma → Tailwind Translation](#figma--tailwind-translation)
+- [Color Token Extraction](#color-token-extraction)
+- [Component Extraction Patterns](#component-extraction-patterns)
+- [Design Token → SKILL.md Format](#design-token--skillmd-format)
+- [Reading Figma Spacing](#reading-figma-spacing)
+- [Figma Variants → Tailwind Conditional Classes](#figma-variants--tailwind-conditional-classes)
+- [State Extraction](#state-extraction)
+- [Responsive Breakpoints](#responsive-breakpoints)
+- [Typography Extraction Checklist](#typography-extraction-checklist)
+- [Common Figma → Code Mistakes](#common-figma--code-mistakes)
+- [Delivery Checklist (Figma → PR)](#delivery-checklist-figma--pr)
+
+---
+
 ## Figma MCP Integration
 
 When the Figma MCP is available (`mcp__figma__*`), Claude can read designs directly. Workflow:

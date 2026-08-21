@@ -7,6 +7,21 @@ Version: 10.10.0
 
 ---
 
+## Contents
+
+- [Dark Precision Archetype — Extended](#dark-precision-archetype--extended)
+- [Luminous Minimal Archetype — Extended](#luminous-minimal-archetype--extended)
+- [Neon Developer Archetype — Extended](#neon-developer-archetype--extended)
+- [Enterprise System Archetype — Extended](#enterprise-system-archetype--extended)
+- [Fintech Trust Archetype — Extended](#fintech-trust-archetype--extended)
+- [Consumer Delight Archetype — Extended](#consumer-delight-archetype--extended)
+- [Luxury Automotive Archetype — Extended](#luxury-automotive-archetype--extended)
+- [Creative Tool Archetype — Extended](#creative-tool-archetype--extended)
+- [AI / LLM Archetype — Extended](#ai--llm-archetype--extended)
+- [v2 Additions — Extended Brand Profiles](#v2-additions--extended-brand-profiles)
+
+---
+
 ## Dark Precision Archetype — Extended
 
 *See brand-core.md for Linear and Raycast (the primary references).*

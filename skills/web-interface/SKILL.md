@@ -1,10 +1,11 @@
 ---
 name: web-interface
 description: UI review and audit — Vercel Web Interface Guidelines, copywriting, typography detail, contrast, touch targets, safe areas. Use when auditing or polishing existing UI rather than building new — design review, accessibility audit, copy review, typography and contrast passes, "make this feel more finished", "what's wrong with this component".
-version: "14.10.1"
-core-deps:
-  - core/design-tokens.md
-  - core/accessibility-baseline.md
+metadata:
+  version: "14.11.0"
+  core-deps:
+    - core/design-tokens.md
+    - core/accessibility-baseline.md
 ---
 
 # Web Interface Review

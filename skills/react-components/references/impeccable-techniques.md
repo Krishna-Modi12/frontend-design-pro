@@ -7,6 +7,32 @@ Advanced techniques not covered in other reference files. Load alongside the pri
 
 ---
 
+## Contents
+
+- [Color: OKLCH Over HSL](#color-oklch-over-hsl)
+- [Color: Tinted Neutrals](#color-tinted-neutrals)
+- [Color: Dual-Layer Token Architecture](#color-dual-layer-token-architecture)
+- [Spacing: 4pt Scale (Not 8pt)](#spacing-4pt-scale-not-8pt)
+- [Spatial: Hierarchy with the Squint Test](#spatial-hierarchy-with-the-squint-test)
+- [Spatial: Optical Adjustments](#spatial-optical-adjustments)
+- [Interaction: The 8 Interactive States](#interaction-the-8-interactive-states)
+- [Interaction: Height Animation via grid-template-rows](#interaction-height-animation-via-grid-template-rows)
+- [Interaction: CSS Anchor Positioning (Dropdowns Fix)](#interaction-css-anchor-positioning-dropdowns-fix)
+- [Interaction: Native Modal + Focus Trap](#interaction-native-modal--focus-trap)
+- [Interaction: Semantic Z-Index Scale](#interaction-semantic-z-index-scale)
+- [Interaction: Roving Tabindex (Tab Components)](#interaction-roving-tabindex-tab-components)
+- [Interaction: Undo Over Confirmation](#interaction-undo-over-confirmation)
+- [Motion: Stagger with CSS Custom Properties](#motion-stagger-with-css-custom-properties)
+- [Motion: Perceived Performance](#motion-perceived-performance)
+- [Responsive: Pointer Media Queries](#responsive-pointer-media-queries)
+- [Responsive: Safe Area Insets](#responsive-safe-area-insets)
+- [Typography: Font Metrics Override (FOUT Fix)](#typography-font-metrics-override-fout-fix)
+- [Typography: OpenType Features](#typography-opentype-features)
+- [Typography: Fluid vs Fixed Scale Decision](#typography-fluid-vs-fixed-scale-decision)
+- [The Craft Flow (5 Steps)](#the-craft-flow-5-steps)
+
+---
+
 ## Color: OKLCH Over HSL
 
 **Always use OKLCH for new color definitions. Stop using HSL.**

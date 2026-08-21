@@ -4,6 +4,25 @@
 
 ---
 
+## Contents
+
+- [DARK MODE STRATEGY OPTIONS](#dark-mode-strategy-options)
+- [SETUP — NEXT.JS (App Router)](#setup--nextjs-app-router)
+- [TAILWIND DARK MODE CONFIG](#tailwind-dark-mode-config)
+- [TOKEN ARCHITECTURE](#token-architecture)
+- [DARK MODE TAILWIND CLASSES — PATTERNS](#dark-mode-tailwind-classes--patterns)
+- [DARK MODE TOGGLE COMPONENT](#dark-mode-toggle-component)
+- [DARK MODE IMAGE HANDLING](#dark-mode-image-handling)
+- [DARK MODE CODE SYNTAX HIGHLIGHT](#dark-mode-code-syntax-highlight)
+- [DARK MODE CHARTS (Recharts)](#dark-mode-charts-recharts)
+- [DARK MODE WITHOUT NEXT-THEMES (plain React)](#dark-mode-without-next-themes-plain-react)
+- [DARK SURFACE HIERARCHY (key rule)](#dark-surface-hierarchy-key-rule)
+- [DARK MODE CHECKLIST](#dark-mode-checklist)
+- [ROUTING IN SKILL (when to load this file)](#routing-in-skill-when-to-load-this-file)
+- [Vercel additions](#vercel-additions)
+
+---
+
 ## DARK MODE STRATEGY OPTIONS
 
 | Strategy | When to use |

@@ -7,6 +7,22 @@ Community components, animation libraries, theme tools, and starters that extend
 
 ---
 
+## Contents
+
+- [Component Finder (by Need)](#component-finder-by-need)
+- [Animation Libraries for shadcn](#animation-libraries-for-shadcn)
+- [Theme / Color Tools](#theme--color-tools)
+- [Figma Design Files](#figma-design-files)
+- [Storybook](#storybook)
+- [Boilerplate Starters (Best Picks)](#boilerplate-starters-best-picks)
+- [Community Component Registries](#community-component-registries)
+- [Framework Ports](#framework-ports)
+- [Design System Integration](#design-system-integration)
+- [Key Third-Party Packages (Direct npm)](#key-third-party-packages-direct-npm)
+- [Anti-Patterns with shadcn + Ecosystem](#anti-patterns-with-shadcn--ecosystem)
+
+---
+
 ## Component Finder (by Need)
 
 *"I need a ___" → use this community component instead of building from scratch.*

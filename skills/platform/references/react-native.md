@@ -9,6 +9,26 @@ React Native with Expo SDK 51+ enables production-quality iOS and Android apps f
 
 ---
 
+## Contents
+
+- [1. Expo Router v3 — File-Based Routing](#1-expo-router-v3--file-based-routing)
+- [2. SafeAreaView + useSafeAreaInsets](#2-safeareaview--usesafeareainsets)
+- [3. react-native-gesture-handler](#3-react-native-gesture-handler)
+- [4. react-native-reanimated](#4-react-native-reanimated)
+- [5. Pressable vs TouchableOpacity](#5-pressable-vs-touchableopacity)
+- [6. FlatList + SectionList](#6-flatlist--sectionlist)
+- [7. Platform-Specific Code](#7-platform-specific-code)
+- [8. NativeWind — Tailwind in React Native](#8-nativewind--tailwind-in-react-native)
+- [9. expo-image — Lazy Loading + Caching](#9-expo-image--lazy-loading--caching)
+- [10. expo-haptics](#10-expo-haptics)
+- [11. Status Bar + KeyboardAvoidingView](#11-status-bar--keyboardavoidingview)
+- [12. Dark Mode](#12-dark-mode)
+- [13. Deep Links with Expo Router](#13-deep-links-with-expo-router)
+- [14. 44pt Touch Targets](#14-44pt-touch-targets)
+- [15. Anti-Patterns](#15-anti-patterns)
+
+---
+
 ## 1. Expo Router v3 — File-Based Routing
 
 The `app/` directory mirrors Next.js App Router conventions. Every file in `app/` is a route; `_layout.tsx` files define navigation shells.

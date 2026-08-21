@@ -51,6 +51,7 @@ TRUTH = {
     "core_files": 8, "example_files": 55, "anti_examples": 10,
     "test_files": 45, "parser_constraints": 17, "regex_constraints": 42,
     "ci_constraints": 59, "reference_depth_tokens": 349445,
+    "regression_cases": 14,
 }
 
 # (figure id, prose, must_flag, why)
@@ -203,6 +204,36 @@ CASES = [
     ("CONSTRAINTS-AST", "the 17 AST checks on every authored file",
      False, "same noun, correct count"),
 
+    # ── REFERENCES, and the two shapes that hid eight stale claims ──────────
+    # This figure read `N references` and nothing else. Two forms escaped it and
+    # both were carrying live, consumer-facing numbers ten short of the corpus:
+    # a table row where the preceding cell's backticked path tripped the
+    # per-file suppressor, and `N reference files`, which the install adapters
+    # prefer. The negatives are the load-bearing half here — the reason `files`
+    # was never widened bare is the platform cap in the fourth case.
+    ("REFERENCES",
+     "| `skills/{id}/references/*.md` | 99 deep references | **349,445 tokens** |",
+     True, "table row: a backticked path in the PRECEDING CELL must not suppress "
+           "a corpus claim — this row's token count was swept while its file "
+           "count sat stale"),
+    ("REFERENCES", "The 99 reference files reach the model only if you paste one in by hand.",
+     True, "`N reference files` — the noun four shipped install adapters use"),
+    ("REFERENCES", "you are choosing a subset of 99 reference files before the conversation starts",
+     True, "same shape mid-sentence, no backticks anywhere near it"),
+    ("REFERENCES", "A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT.",
+     False, "a platform cap, not the corpus — widening to a bare `files` would "
+            "flag this, which is precisely why it stayed unmatched for so long"),
+    ("REFERENCES", "| `skills/{id}/references/*.md` | 101 deep references |",
+     False, "correct value in the table row the fix opened up"),
+    ("REFERENCES", "The 101 reference files reach the model only if you paste one in.",
+     False, "correct value in the newly-read shape"),
+    ("REFERENCES", "`design-system` has 15 references, the newest of them",
+     False, "per-skill count — the skill-name suppressor still has to hold"),
+    ("REFERENCES", "22 shipped files carried 137 references to `docs/*.md`",
+     False, "counts pointers, not reference files"),
+    ("REFERENCES", "the pack has 8 core files, 19 skill routers and 101 references",
+     False, "correct value; `8 core files` on the same line must stay unclaimed"),
+
     # ── DEPTH-K ─────────────────────────────────────────────────────────────
     # The whole point of this figure is the line it refuses to cross. The
     # `k`-rounded family names two quantities; only the ones whose own noun
@@ -221,6 +252,26 @@ CASES = [
      False, "names the whole pack — a different quantity, and nothing computes it"),
     ("DEPTH-K", "a monolithic 330k-token pack could not be loaded",
      False, "same claim, hyphenated: 'pack' is not 'depth'"),
+    # ── REGRESSION ──────────────────────────────────────────────────────────
+    ("REGRESSION", "npm run regression   # 13 synthetic parser-vs-regex divergence cases",
+     True, "the CLAUDE.md command comment, the longest form in the corpus"),
+    ("REGRESSION", "13 parser-vs-regex divergence cases",
+     True, "same claim without the 'synthetic' qualifier"),
+    ("REGRESSION", "A parser-regression proof runs alongside gate 4: 13 synthetic cases",
+     True, "the short form, where 'cases' is qualified only by 'synthetic'"),
+    ("REGRESSION", "holds **13 synthetic divergence cases**, each a file where",
+     True, "bolded, with 'parser-vs-regex' dropped from the middle"),
+    ("REGRESSION", "- 13 regression cases where the AST check and the regex disagree.",
+     True, "launch-copy bullet form"),
+    # Load-bearing negatives: 'cases' is a common noun in this corpus and a
+    # pattern that grabbed every use of it would shout on prose about edge cases
+    # and test cases, which is how a gate gets muted.
+    ("REGRESSION", "The router handles 13 cases where two skills match at once.",
+     False, "bare 'N cases' — a different quantity, and nothing computes it"),
+    ("REGRESSION", "13 test cases cover the sort cycle.",
+     False, "'test cases' is not the regression harness"),
+    ("REGRESSION", "22 evals and 13 edge cases were reviewed by hand.",
+     False, "'edge cases' shares the noun and nothing computes it"),
 ]
 
 

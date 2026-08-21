@@ -5,6 +5,23 @@
 # Server Actions, concurrent features, error boundaries, and custom hook recipes.
 # ─────────────────────────────────────────────────────────────────────────────
 
+## Contents
+
+- [React 19 Quick Cheat Sheet](#react-19-quick-cheat-sheet)
+- [1. Compound Components](#1-compound-components)
+- [2. useReducer for Complex State (Wizards, Multi-Step Forms)](#2-usereducer-for-complex-state-wizards-multi-step-forms)
+- [3. React 19 Concurrent Features](#3-react-19-concurrent-features)
+- [4. Server Actions (React 19 / Next.js App Router)](#4-server-actions-react-19--nextjs-app-router)
+- [5. Custom Hook Recipes](#5-custom-hook-recipes)
+- [6. Performance Patterns](#6-performance-patterns)
+- [7. Error Boundaries](#7-error-boundaries)
+- [8. Context + Zustand Decision Matrix](#8-context--zustand-decision-matrix)
+- [9. Render Props Pattern](#9-render-props-pattern)
+- [10. Anti-patterns to Avoid](#10-anti-patterns-to-avoid)
+- [10. TypeScript Patterns for React](#10-typescript-patterns-for-react)
+
+---
+
 ## React 19 Quick Cheat Sheet
 
 ```tsx

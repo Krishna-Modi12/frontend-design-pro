@@ -158,7 +158,26 @@ walk(sf, (n) => { if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)
 {
   const typeDecls = [];
   walk(sf, (n) => { if (ts.isInterfaceDeclaration(n) || ts.isTypeAliasDeclaration(n)) typeDecls.push(n); });
-  let ok = typeDecls.length > 0;
+  // A file with nothing to type is not an untyped file. Requiring at least one
+  // declaration unconditionally made this rule unsatisfiable for a component
+  // that takes no props: omitting a type failed here, and adding one to satisfy
+  // it failed the dead-declaration check twelve lines below. Every one of the
+  // 45 non-test golds happens to take props, so the contradiction never showed
+  // up in-house — it showed up the first time someone wrote an App Router
+  // `page.tsx`, which takes no parameters at all.
+  //
+  // The blanket requirement is also redundant with Gate 3: `tsc --noEmit` under
+  // strict already refuses a file whose parameters lack types. What is left
+  // here is the part only an AST pass can see — that a declared `*Props` is
+  // actually referenced.
+  const takesParams = [];
+  walk(sf, (n) => {
+    if (ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) ||
+        ts.isArrowFunction(n) || ts.isMethodDeclaration(n)) {
+      if (n.parameters && n.parameters.length > 0) takesParams.push(n);
+    }
+  });
+  let ok = typeDecls.length > 0 || takesParams.length === 0;
   if (!ok) fail("TS-01-AST", sf, "no interface/type declarations found");
   // every *Props declaration must be referenced somewhere beyond its declaration
   const refs = new Map();

@@ -183,6 +183,19 @@ export default function Progress() {
 }
 `,
   },
+  {
+    name: "propless_component.tsx",
+    parserCheck: "TS-01-AST", parserExpected: true, legacy: "TS-01", legacyExpected: false,
+    why: "a component that takes no props has nothing to declare — the naive regex demands the word 'interface', and the AST check used to demand a declaration just as bluntly, which made the rule unsatisfiable: omitting a type failed the blanket check and adding one failed the dead-declaration check. Found by writing an App Router page.tsx, a shape none of the 45 non-test golds has",
+    code: `export function EmptyState() {
+  return (
+    <div className="rounded-lg border p-8 text-center">
+      <p className="text-base">Nothing here yet.</p>
+    </div>
+  )
+}
+`,
+  },
 ];
 
 let pass = 0, fail = 0;

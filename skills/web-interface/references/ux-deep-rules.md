@@ -6,6 +6,24 @@
 # Companion to ux-guidelines.md (principles) — this file is implementation spec.
 # ─────────────────────────────────────────────────────────────────────────────
 
+## Contents
+
+- [Priority Matrix](#priority-matrix)
+- [1. Accessibility (CRITICAL)](#1-accessibility-critical)
+- [2. Touch & Interaction (CRITICAL)](#2-touch--interaction-critical)
+- [3. Performance (HIGH)](#3-performance-high)
+- [4. Style Selection (HIGH)](#4-style-selection-high)
+- [5. Layout & Responsive (HIGH)](#5-layout--responsive-high)
+- [6. Typography & Color (MEDIUM)](#6-typography--color-medium)
+- [7. Animation (MEDIUM) — Most detailed — read in full](#7-animation-medium--most-detailed--read-in-full)
+- [8. Forms & Feedback (MEDIUM)](#8-forms--feedback-medium)
+- [9. Navigation Patterns (HIGH)](#9-navigation-patterns-high)
+- [10. Charts & Data (LOW → HIGH for data products)](#10-charts--data-low--high-for-data-products)
+- [Cross-Cutting Rules](#cross-cutting-rules)
+- [Vercel additions (web-interface-guidelines)](#vercel-additions-web-interface-guidelines)
+
+---
+
 ## Priority Matrix
 
 | Priority | Category | Impact |

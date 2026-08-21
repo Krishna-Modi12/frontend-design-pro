@@ -1,5 +1,30 @@
 # Next.js Patterns (App Router / React 19)
 
+## Contents
+
+- [Project structure](#project-structure)
+- [Font loading — always next/font](#font-loading--always-nextfont)
+- [Images — always next/image](#images--always-nextimage)
+- [Server vs Client Components](#server-vs-client-components)
+- [Data fetching patterns](#data-fetching-patterns)
+- [Server Actions — mutations](#server-actions--mutations)
+- [Metadata](#metadata)
+- [Route handlers (API)](#route-handlers-api)
+- [Lazy loading heavy components](#lazy-loading-heavy-components)
+- [Environment variables](#environment-variables)
+- [Common performance patterns](#common-performance-patterns)
+- [Caching Deep Dive](#caching-deep-dive)
+- [Streaming with loading.tsx](#streaming-with-loadingtsx)
+- [Parallel Routes](#parallel-routes)
+- [Intercepting Routes](#intercepting-routes)
+- [Server Actions — Production Patterns](#server-actions--production-patterns)
+- [`generateStaticParams` — Static Dynamic Routes](#generatestaticparams--static-dynamic-routes)
+- [Middleware](#middleware)
+- [RSC Architecture Rules](#rsc-architecture-rules)
+- [Turbopack (Next.js 16+)](#turbopack-nextjs-16)
+
+---
+
 ## Project structure
 
 ```

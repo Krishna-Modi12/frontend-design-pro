@@ -1,10 +1,11 @@
 ---
 name: react-components
 description: Reusable React component APIs — buttons, cards, modals, tabs, dropdowns, shadcn/Radix primitives, compound components. Use when building or refining a single reusable component or a small family of them — button, card, modal, dropdown, tabs, accordion, tooltip, badge, avatar, select, popover — or when the request mentions shadcn/ui, Radix, compound components, forwardRef, CVA or asChild. Not for a whole page (landing-pages).
-version: "14.10.1"
-core-deps:
-  - core/component-api.md
-  - core/accessibility-baseline.md
+metadata:
+  version: "14.11.0"
+  core-deps:
+    - core/component-api.md
+    - core/accessibility-baseline.md
 ---
 
 # React Components
@@ -42,6 +43,7 @@ Load only for the specific task:
 |---|---|
 | Advanced composition, compound components, API anti-patterns, full forwardRef rules | `core/component-api-deep.md` |
 | Hooks, context, error boundaries, React 19 APIs | `references/react-patterns.md` |
+| The layer under shadcn — which package to install, `data-state` styling contract, `asChild`/Slot rules, exit animations, focus and dismissal, per-primitive labelling | `references/radix-primitives.md` |
 | shadcn component usage, theming, `cn()`, CLI | `references/shadcn.md` |
 | Community components, MagicUI/Aceternity, registries | `references/shadcn-ecosystem.md` |
 | Icons, avatars, icon sizing and a11y | `../iconography/SKILL.md` |

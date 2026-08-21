@@ -4,6 +4,24 @@ A reference for AI agents building UIs efficiently. Every line counts — write 
 
 ---
 
+## Contents
+
+- [1. Component Token Budget](#1-component-token-budget)
+- [2. State Initialization Patterns](#2-state-initialization-patterns)
+- [3. Conditional Rendering Shortcuts](#3-conditional-rendering-shortcuts)
+- [4. Tailwind Class Compression](#4-tailwind-class-compression)
+- [5. Type Inference](#5-type-inference)
+- [6. Import Optimization](#6-import-optimization)
+- [7. Data Structure Efficiency](#7-data-structure-efficiency)
+- [8. Comment Discipline](#8-comment-discipline)
+- [9. Token Budget Table](#9-token-budget-table)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Quick Reference: cn() Setup](#quick-reference-cn-setup)
+- [Checklist Before Submitting a Component](#checklist-before-submitting-a-component)
+- [Token Optimization for LLM UI Generation](#token-optimization-for-llm-ui-generation)
+
+---
+
 ## 1. Component Token Budget
 
 **Bad — unnecessary wrapping, verbose props:**

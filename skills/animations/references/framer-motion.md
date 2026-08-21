@@ -5,6 +5,24 @@ Version: 10.15.0
 
 ---
 
+## Contents
+
+- [1. When to Use Framer Motion vs GSAP](#1-when-to-use-framer-motion-vs-gsap)
+- [2. Core motion.* Components](#2-core-motion-components)
+- [3. AnimatePresence](#3-animatepresence)
+- [4. Variants System](#4-variants-system)
+- [5. Spring Physics Table](#5-spring-physics-table)
+- [6. Layout Animations](#6-layout-animations)
+- [7. Gesture Animations](#7-gesture-animations)
+- [8. Scroll-Driven Animations](#8-scroll-driven-animations)
+- [9. Drag](#9-drag)
+- [10. Performance](#10-performance)
+- [11. React / Next.js Gotchas](#11-react--nextjs-gotchas)
+- [12. Exit Animation Patterns](#12-exit-animation-patterns)
+- [13. Common Component Recipes](#13-common-component-recipes)
+
+---
+
 ## 1. When to Use Framer Motion vs GSAP
 
 | Criterion | Framer Motion | GSAP |

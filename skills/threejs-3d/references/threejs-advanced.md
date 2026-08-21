@@ -4,6 +4,26 @@ Route: `BUILD_3D`, `ADD_3D_EFFECTS` → +threejs-advanced. Shortcodes `[shader]`
 Load after: `threejs-fundamentals.md`. Interaction and camera control live in `threejs-interaction.md`.
 Source: topic scope from `CloudAI-X/threejs-skills` (MIT); the R3F-first treatment is this pack's and is **not a verbatim extraction** — see `threejs-fundamentals.md` for what diverges and why.
 
+## Contents
+
+- [Animation](#animation)
+- [Loaders](#loaders)
+- [3 — ASSET LOADING (GLTF, TEXTURES, MODELS)](#3--asset-loading-gltf-textures-models)
+  - [LoadingManager — track all asset progress](#loadingmanager--track-all-asset-progress)
+  - [GLTF / GLB loading](#gltf--glb-loading)
+  - [R3F — useGLTF (drei)](#r3f--usegltf-drei)
+  - [Texture loading](#texture-loading)
+  - [ShaderMaterial basics](#shadermaterial-basics)
+  - [Vertex displacement shader](#vertex-displacement-shader)
+  - [R3F — shaderMaterial (drei helper)](#r3f--shadermaterial-drei-helper)
+  - [GLSL utility functions (include in shaders)](#glsl-utility-functions-include-in-shaders)
+  - [Setup EffectComposer (vanilla)](#setup-effectcomposer-vanilla)
+  - [R3F postprocessing (@react-three/postprocessing)](#r3f-postprocessing-react-threepostprocessing)
+  - [Performance: selective bloom (only certain objects glow)](#performance-selective-bloom-only-certain-objects-glow)
+- [ROUTING IN SKILL (when to load this file)](#routing-in-skill-when-to-load-this-file)
+
+---
+
 ## Animation
 
 `useFrame` is the loop. It receives `(state, delta)` — **always drive motion by `delta`**, never by counting frames, or the scene runs at different speeds on 60 Hz and 120 Hz displays (constraint `3D-06`).

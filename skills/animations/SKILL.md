@@ -1,10 +1,11 @@
 ---
 name: animations
 description: Motion — easing and timing rules, Framer Motion, GSAP, scroll-driven experiences, view transitions, reduced motion. Use when something has to move — entrances and exits, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, marquees, physics-based movement.
-version: "14.10.1"
-core-deps:
-  - core/design-tokens.md
-  - core/accessibility-baseline.md
+metadata:
+  version: "14.11.0"
+  core-deps:
+    - core/design-tokens.md
+    - core/accessibility-baseline.md
 ---
 
 # Animations
@@ -44,6 +45,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | **Motion direction — what a motion communicates, personality archetypes, choreography, Disney principles, animation smells** | **`references/motion-direction.md`** |
+| **How much this page should move at all — the L1/L2/L3 tiers, intent→tier table, per-page ceilings, reveal granularity** | **`references/motion-budget.md`** |
 | Timing/easing decisions, which library to reach for | `references/animation-framework.md` |
 | 17 copy-paste recipes (stagger, counter, toast, marquee…) | `references/animation-recipes.md` |
 | motion.*, AnimatePresence, variants, layoutId, springs | `references/framer-motion.md` |
