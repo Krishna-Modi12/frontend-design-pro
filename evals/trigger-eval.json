@@ -1,22 +1,82 @@
 [
-  {"query": "Build me a SaaS dashboard with metric cards, revenue graphs, and user activity feed", "should_trigger": true},
-  {"query": "Fix this React button component's alignment and spacing issues", "should_trigger": true},
-  {"query": "Create a responsive navigation menu that works on mobile devices", "should_trigger": true},
-  {"query": "Add smooth animations and transitions to my page hero section", "should_trigger": true},
-  {"query": "Audit this contact form for WCAG 2.1 AA accessibility compliance", "should_trigger": true},
-  {"query": "Design a landing page for our new developer tool with hero, features, and CTA", "should_trigger": true},
-  {"query": "Improve the rendering performance of my React dashboard component", "should_trigger": true},
-  {"query": "Build a notification center component with unread badge and animations", "should_trigger": true},
-  {"query": "Create an accessible modal dialog with focus trap and keyboard navigation", "should_trigger": true},
-  {"query": "Review this form's touch targets and keyboard accessibility for mobile", "should_trigger": true},
-  {"query": "Set up a REST API endpoint for user authentication with JWT tokens", "should_trigger": false},
-  {"query": "Design the database schema for our e-commerce platform", "should_trigger": false},
-  {"query": "Optimize the Node.js server performance for handling 10k concurrent users", "should_trigger": false},
-  {"query": "Create a Python script to process and clean CSV data", "should_trigger": false},
-  {"query": "Set up Docker containerization and compose files for our microservices", "should_trigger": false},
-  {"query": "Write the backend logic for the payment checkout flow", "should_trigger": false},
-  {"query": "Configure the CI/CD pipeline using GitHub Actions workflows", "should_trigger": false},
-  {"query": "Design a scalable microservices architecture for our platform", "should_trigger": false},
-  {"query": "Write SQL queries to fetch user data with complex joins", "should_trigger": false},
-  {"query": "Set up Kubernetes cluster configuration and deploy manifests", "should_trigger": false}
+  {
+    "query": "our onboarding modal looks like garbage on my coworkers 13in macbook — the buttons overlap the copy and the primary CTA ends up below the fold. its components/onboarding/WelcomeModal.tsx, next 15 app router + tailwind",
+    "should_trigger": true
+  },
+  {
+    "query": "i need to show about 40k rows of device telemetry without the tab locking up. right now its a plain <table> and it freezes around 2k rows. dont really care what library",
+    "should_trigger": true
+  },
+  {
+    "query": "Please audit our checkout flow against WCAG 2.2 AA and remediate whatever fails in the payment step. We have a VPAT due to a customer on the 14th and the payment step is the one nobody has looked at.",
+    "should_trigger": true
+  },
+  {
+    "query": "we're a climbing gym booking app and honestly every page looks like a bootstrap template from 2014. i want an actual visual identity — typeface, colour, the spacing system, all of it. where do i even start",
+    "should_trigger": true
+  },
+  {
+    "query": "the three pricing cards on marketing/pricing are just three identical boxes and our head of marketing says it 'looks AI generated'. she's not wrong. can you make it not look like that",
+    "should_trigger": true
+  },
+  {
+    "query": "scroll animations on the landing hero stutter badly on my pixel 7 but are fine on the macbook. using framer motion, its the parallax on the screenshot block",
+    "should_trigger": true
+  },
+  {
+    "query": "signup form silently swallows 500s — user clicks create account, nothing happens, no error. also one of our engineers uses a screen reader and cant tell which field failed validation",
+    "should_trigger": true
+  },
+  {
+    "query": "want a slowly rotating 3d product model on the hero instead of the static png. the glb our industrial designer exported is 12mb which i assume is way too big. r3f ok",
+    "should_trigger": true
+  },
+  {
+    "query": "dark mdoe is broken on the settings panel — about half the labels are invisible, looks like theyre inheriting the light text colour. tailwind v4, we use the class strategy",
+    "should_trigger": true
+  },
+  {
+    "query": "when someone creates a brand new workspace the reports page is just a blank white area with the word 'None'. needs to actually say something useful and point them somewhere",
+    "should_trigger": true
+  },
+  {
+    "query": "the /api/dashboard endpoint takes about 8 seconds. i think we're doing an n+1 on the widgets relation — want to add redis caching and cursor pagination on the query side",
+    "should_trigger": false
+  },
+  {
+    "query": "plot monthly churn from this dataframe as a matplotlib chart i can drop into the board deck. df has cohort_month, churned, total. save it as a png at 300dpi",
+    "should_trigger": false
+  },
+  {
+    "query": "need a one-page PDF leave-behind for a conference next month, same brand as the website. A4, print-ready, our designer is on leave",
+    "should_trigger": false
+  },
+  {
+    "query": "our SwiftUI settings screen needs a toggle row that matches the iOS system style, with the label on the left and the switch trailing",
+    "should_trigger": false
+  },
+  {
+    "query": "set up a staging environment on vercel with a preview deploy per PR and branch-scoped env vars. also need the preview URL posted back to the PR",
+    "should_trigger": false
+  },
+  {
+    "query": "the hero headline on our homepage is way too long and nobody reads past the first line. can you write me five shorter options, we sell payroll software to restaurants",
+    "should_trigger": false
+  },
+  {
+    "query": "add an index on invoices(issued_at, account_id) — the billing table query does a seq scan and its 4s on prod. postgres 16",
+    "should_trigger": false
+  },
+  {
+    "query": "write vitest unit tests for calculateProratedAmount in lib/pricing.ts — mid-cycle upgrades, downgrades, and the leap-year edge case that bit us",
+    "should_trigger": false
+  },
+  {
+    "query": "our figma file is a disaster, components named 'Button', 'Button 2', 'Button copy final'. can you propose a naming convention and a page structure for the library",
+    "should_trigger": false
+  },
+  {
+    "query": "set up posthog funnels for the signup flow so we can see where people drop off between email entry and workspace creation",
+    "should_trigger": false
+  }
 ]
