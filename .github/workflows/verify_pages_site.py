@@ -3,9 +3,10 @@
 
 Usage: verify_pages_site.py <site-dir> <base-path>
 
-Gate 9 builds a server bundle; the Pages workflow ships static exports, of two
-apps at two different prefixes, under a hand-written index at the root. Nothing
-upstream of the deploy can see that path, so this is what covers it.
+Gate 9 builds a server bundle; the Pages workflow ships static exports of three
+apps at three different prefixes — `home` at the bare project path, the other
+two one level below it. Nothing upstream of the deploy can see that path, so
+this is what covers it.
 
 The question being asked is "would this 404 when served", so it is asked
 directly: resolve every asset each page references against the files actually
@@ -14,16 +15,18 @@ that has the right strings and none of the files.
 
 The failure this exists to catch is quiet. A missing or wrong base path leaves
 a page that still returns 200 and renders as unstyled HTML — it reads like a
-CSS bug and is a routing one. Composing two apps makes it likelier rather than
-less: the landing page's assets have to carry /landing-page, the showcase's
-have to carry /showcase, and one shared config drives both.
+CSS bug and is a routing one. Composing three apps makes it likelier rather
+than less: the landing page's assets have to carry /landing-page, the
+showcase's have to carry /showcase, home's have to carry the bare project path
+and nothing after it, and one shared config drives all three.
 
-The index at the root is checked differently on purpose. It references its
-exhibits with relative URLs — `showcase/`, `thumb-showcase.png` — which resolve
-correctly under any prefix and so cannot suffer the base-path failure above at
-all. What they CAN do is point at a file the compose step forgot to copy, which
-renders as a front door with two broken images on it, so those are resolved
-against the upload by name.
+`home` used to be a hand-written index at the root, referencing its exhibits
+with relative URLs that resolved under any prefix and so could not suffer the
+base-path failure above at all — checked separately, by name, for exactly the
+files it copied in. It is a real Next export now, with the same baked-in
+`_next/` asset URLs and the same failure mode as the other two, so it is
+checked the same way: by resolving every asset reference against the upload,
+not by name.
 """
 
 from __future__ import annotations
@@ -71,31 +74,12 @@ def main(argv: list[str]) -> int:
 
     # The entry points a visitor actually lands on. Checking assets alone would
     # pass an upload that lost a page entirely.
-    #
-    # The thumbnails are entry points in the same sense: they are the only thing
-    # on the index that shows what any exhibit looks like, they are copied by a
-    # different step from the one that builds the exports, and a front door with
-    # broken images is the most visible way this deploy can fail while every
-    # other check stays green.
-    #
-    # The stylesheet, the behaviour script and the generated data belong here for
-    # a sharper reason. The index references them RELATIVELY, so they are outside
-    # the base-path check below by design — and a missing stylesheet renders as
-    # unstyled HTML that still returns 200, which is the exact failure mode this
-    # file was written to catch one level up.
     required = {
-        "the index (site root)": site / "index.html",
+        "home (site root)": site / "index.html",
         "the showcase (/showcase/)": site / "showcase" / "index.html",
         "the landing page (/landing-page/)": site / "landing-page" / "index.html",
         "the overview endpoint the landing page reads on mount":
             site / "landing-page" / "api" / "site" / "overview",
-        "the showcase thumbnail the index renders": site / "thumb-showcase.png",
-        "the landing-page thumbnail the index renders": site / "thumb-landing-page.png",
-        "the dashboard thumbnail the index renders": site / "thumb-dashboard.png",
-        "the auth-form thumbnail the index renders": site / "thumb-auth-form.png",
-        "the index stylesheet": site / "site.css",
-        "the generated Pages data": site / "data.js",
-        "the index behaviour script": site / "app.js",
     }
     missing_pages = [label for label, path in required.items() if not path.is_file()]
     for label in missing_pages:

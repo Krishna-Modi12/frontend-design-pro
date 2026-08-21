@@ -1,5 +1,6 @@
 /**
- * Generates `.github/pages/data.js` — the payload behind the Pages site.
+ * Generates `home/lib/data.generated.json` — the payload behind the pack's
+ * own homepage (`home/`, served at the root of the Pages site).
  *
  * Run:  node tools/pages-data/generate.mjs
  *       node tools/pages-data/generate.mjs --check     # fail if it is stale
@@ -8,17 +9,25 @@
  *
  * The site has two interactive panels that are only worth building if they are
  * true: a router that resolves a sentence to one skill the way the pack does,
- * and a cost meter that states what that request loads. Both need the registry's
- * trigger keywords, each skill's declared core deps, and each skill's measured
- * token budget — which is to say, three sources that move independently and have
- * each gone stale in this repo before.
+ * and a checker that runs a subset of the constraint suite against pasted
+ * code. Both need the registry's trigger keywords, each skill's declared core
+ * deps, and each skill's measured token budget — three sources that move
+ * independently and have each gone stale in this repo before.
  *
- * Gate 11 scans `.github/pages/*.html`, so a figure written in the page's prose
- * is held to the filesystem. It does not scan `.js`, and a hand-maintained
- * `data.js` would therefore be the one surface on the most public page in the
- * project with no gate behind it. That is the exact shape of the defect this
- * project has shipped most often, so the file is not hand-maintained: it is
- * rendered from the same sources the gate reads, and `--check` byte-compares it.
+ * `scripts/check_figures.py`'s `SCAN` list covers `home/components/*.tsx`,
+ * `home/lib/*.ts` and `home/*.json`, so a figure written in the page's prose
+ * is held to the filesystem exactly as it was for `.github/pages/*.html`
+ * before this file replaced it. That is why the payload below is imported at
+ * build time rather than fetched or hand-copied: a React component that reads
+ * `data.figures.ciConstraints` cannot itself go stale, because there is no
+ * second, hand-typed copy of the number for it to drift from. The file this
+ * generator used to write (`.github/pages/data.js`) needed a second check —
+ * `checkMarkupFallbacks` — specifically because the static page ALSO carried a
+ * bare-numeral `<dd>` fallback for readers with JavaScript off, and that
+ * fallback was a hand-typed literal with nothing else forcing it to agree.
+ * `home/` has no JS-off fallback to duplicate a number into, so that check has
+ * no counterpart here — removing it is a simplification the new architecture
+ * earns, not a check dropped for convenience.
  *
  * ── The sources, and what each one is authoritative for ──────────────────────
  *
@@ -31,6 +40,8 @@
  *                        prose; copying it here by hand would fork it.
  *   check_figures.py     every count and token figure, including the per-skill
  *                        budget table
+ *   install/             one directory per shipped adapter — the source of
+ *                        the "14 adapters" figure `metadata.json` states
  *
  * Nothing is counted where it can be derived. The predecessor of this file
  * (`tools/readme-router/generate.mjs`) shipped a banner whose skill count was
@@ -39,7 +50,9 @@
  * So every cross-source relationship below is asserted as a SET, not a count —
  * the registry's ids against the directories on disk against the README's rows
  * against the budget table's rows. A skill missing from any one of them is a
- * named failure, not a silently shorter list.
+ * named failure, not a silently shorter list. The adapter label map below
+ * follows the same rule: an `install/` directory with no mapped label fails
+ * generation rather than falling back to a guessed display name.
  */
 
 import { execFileSync } from "node:child_process";
@@ -49,8 +62,7 @@ import { fileURLToPath } from "node:url";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const REPO = join(HERE, "..", "..");
-const OUT = join(REPO, ".github", "pages", "data.js");
-const PAGE = join(REPO, ".github", "pages", "index.html");
+const OUT = join(REPO, "home", "lib", "data.generated.json");
 
 const CHECK = process.argv.includes("--check");
 
@@ -58,6 +70,27 @@ const CHECK = process.argv.includes("--check");
 // root SKILL.md states it in prose right under the registry table. The router
 // panel has to add them or its cost meter under-reports every request.
 const BASE_DEPS = ["core/accessibility-baseline.md", "core/validate-checklist.md"];
+
+// Directory name under install/ -> display label on the homepage's adapter
+// matrix. `readme` isn't a directory; `generic` covers the AGENTS.md
+// convention rather than one product, so it gets that name instead of a
+// capitalized directory name that would mean nothing to a reader.
+const ADAPTER_LABELS = {
+  agents: "AGENTS.md",
+  aider: "Aider",
+  chatgpt: "ChatGPT",
+  claude: "Claude Code",
+  cline: "Cline",
+  codex: "Codex",
+  continue: "Continue",
+  copilot: "GitHub Copilot",
+  cursor: "Cursor",
+  gemini: "Gemini CLI",
+  generic: "Generic (AGENTS.md-style)",
+  roo: "Roo",
+  windsurf: "Windsurf",
+  zed: "Zed",
+};
 
 // ── Truth table ──────────────────────────────────────────────────────────────
 
@@ -161,7 +194,7 @@ function declaredDeps(id) {
  * than inventing a second description of the same nineteen things.
  *
  * Markdown emphasis and backticks are stripped, because the consumer sets these
- * as `textContent` — the page never builds markup out of this payload.
+ * as plain text — the page never builds markup out of this payload.
  */
 function readmeCopy() {
   const src = readFileSync(join(REPO, "README.md"), "utf8");
@@ -192,6 +225,33 @@ function readmeCopy() {
   }
   if (!copy.size) throw new Error("parsed no skill rows out of README's skill tables");
   return copy;
+}
+
+/** The release this payload was generated from — the navbar's version badge. */
+function packVersion() {
+  const meta = JSON.parse(readFileSync(join(REPO, "metadata.json"), "utf8"));
+  if (typeof meta.version !== "string" || !meta.version) {
+    throw new Error("metadata.json has no version string");
+  }
+  return meta.version;
+}
+
+/** One entry per directory under `install/`, sorted — the shipped adapters. */
+function adapters() {
+  const dirs = readdirSync(join(REPO, "install"), { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
+    .sort();
+  if (!dirs.length) throw new Error("install/ holds no adapter directories");
+
+  const unmapped = dirs.filter((d) => !(d in ADAPTER_LABELS));
+  if (unmapped.length) {
+    throw new Error(
+      `install/ has directories with no display label: ${unmapped.join(", ")}\n` +
+        "  add them to ADAPTER_LABELS in tools/pages-data/generate.mjs",
+    );
+  }
+  return dirs.map((dir) => ({ dir, label: ADAPTER_LABELS[dir] }));
 }
 
 // ── Cross-source agreement ───────────────────────────────────────────────────
@@ -269,54 +329,11 @@ function render() {
     },
     baseDeps: BASE_DEPS,
     skills,
+    adapters: adapters(),
+    version: packVersion(),
   };
 
-  return (
-    "/* GENERATED FILE — do not edit by hand.\n" +
-    " *\n" +
-    " * Written by tools/pages-data/generate.mjs from the registry in SKILL.md, each\n" +
-    " * skill's frontmatter, README's skill tables and `check_figures.py --truth`.\n" +
-    " *\n" +
-    " *   npm run pages:data          rewrite this file\n" +
-    " *   npm run pages:data:check    fail if it is stale (runs in CI)\n" +
-    " */\n" +
-    "window.FDP = " +
-    JSON.stringify(payload, null, 2) +
-    ";\n"
-  );
-}
-
-/* The four headline numerals in the page's markup.
- *
- * `initFigures()` overwrites each `<dd data-figure="…">` from this payload on
- * load, so what a reader sees is generated and correct. The literal in the HTML
- * is the value a reader without JavaScript gets — and it is the one figure on
- * the page that Gate 11 structurally cannot read, because a bare number carries
- * no noun to anchor a pattern to and the `>` that closes its own tag suppresses
- * it anyway. Found by corrupting each in turn: both survived, silently.
- *
- * Checking them here rather than widening the gate. This tool already holds the
- * truth table and already runs in CI, and a pattern loose enough to match a bare
- * number would fire on every version string and port number in the corpus.
- */
-function checkMarkupFallbacks(figures) {
-  const html = readFileSync(PAGE, "utf8");
-  const problems = [];
-  const seen = new Set();
-  const re = /<dd data-figure="([A-Za-z]+)">([\d,]+)<\/dd>/g;
-  for (const [, key, shown] of html.matchAll(re)) {
-    seen.add(key);
-    const truth = figures[key];
-    if (truth === undefined) {
-      problems.push(`  data-figure="${key}" is not a key this tool exports`);
-    } else if (Number(shown.replace(/,/g, "")) !== truth) {
-      problems.push(`  data-figure="${key}" markup says ${shown}, truth is ${truth}`);
-    }
-  }
-  if (!seen.size) {
-    problems.push("  no <dd data-figure> literals found — has the markup changed shape?");
-  }
-  return problems;
+  return JSON.stringify(payload, null, 2) + "\n";
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
@@ -324,21 +341,15 @@ function checkMarkupFallbacks(figures) {
 const rendered = render();
 
 if (CHECK) {
-  const stale = checkMarkupFallbacks(JSON.parse(rendered.slice(rendered.indexOf("{"), -2)).figures);
-  if (stale.length) {
-    console.error("✗ .github/pages/index.html states a figure the truth table disagrees with:");
-    console.error(stale.join("\n"));
-    process.exit(1);
-  }
-
   const current = existsSync(OUT) ? readFileSync(OUT, "utf8") : "";
   if (current === rendered) {
-    console.log("✓ .github/pages/data.js is current, and its markup fallbacks agree");
+    console.log("✓ home/lib/data.generated.json is current");
     process.exit(0);
   }
   console.error(
-    "✗ .github/pages/data.js is stale — the registry, a skill's deps, README's\n" +
-      "  skill tables or a figure has moved since it was generated.\n" +
+    "✗ home/lib/data.generated.json is stale — the registry, a skill's deps,\n" +
+      "  README's skill tables, install/'s adapters or a figure has moved since\n" +
+      "  it was generated.\n" +
       "  Run `npm run pages:data` and commit the result.",
   );
   process.exit(1);
@@ -346,4 +357,4 @@ if (CHECK) {
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, rendered);
-console.log(`✓ wrote .github/pages/data.js (${rendered.length} bytes)`);
+console.log(`✓ wrote home/lib/data.generated.json (${rendered.length} bytes)`);

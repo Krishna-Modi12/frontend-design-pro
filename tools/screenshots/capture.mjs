@@ -28,9 +28,9 @@ const FULL_PAGE_WIDTH = 1440;
 
 /**
  * `demos` serves the two stub-typed projects, which ship no runtime of their own.
- * `landing-page` and `showcase` are real installed apps and are served from their
- * own directories — capturing either any other way would not be capturing the
- * thing README describes.
+ * `home`, `landing-page` and `showcase` are real installed apps and are served
+ * from their own directories — capturing any of them any other way would not
+ * be capturing the thing README describes.
  */
 const SITES = [
   {
@@ -41,6 +41,15 @@ const SITES = [
       { name: "dashboard", route: "/dashboard", scheme: "light", out: "demo/dashboard" },
       { name: "auth-form", route: "/auth-form", scheme: "light", out: "demo/auth-form" },
     ],
+  },
+  {
+    id: "home",
+    cwd: join(REPO, "home"),
+    port: 3314,
+    needsInstall: true, // its own package.json; skipped with a notice if absent
+    // Renders deterministically — no seeded/WebGL content — so a recapture
+    // only moves pixels when the page actually changed, same as landing-page.
+    shots: [{ name: "home", route: "/", scheme: "light", out: "home" }],
   },
   {
     id: "landing-page",

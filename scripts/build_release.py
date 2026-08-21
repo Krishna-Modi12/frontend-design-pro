@@ -51,7 +51,17 @@ def hdr(m):  print(f"\n{'='*64}\n{m}\n{'='*64}")
 # The current version may appear only in these files. Anything else is a leak.
 ALLOWED_VERSION_FILES = {"metadata.json", "README.md", "package.json",
                          "docs/CHANGELOG.md", "CHANGELOG.md",
-                         "_meta/CHANGELOG.md", "_meta/ROADMAP.md"}
+                         "_meta/CHANGELOG.md", "_meta/ROADMAP.md",
+                         # home/'s own version badge — generated fresh from
+                         # metadata.json by `tools/pages-data/generate.mjs`
+                         # on every run, and `pages:data:check` fails the
+                         # build if this file is stale relative to that
+                         # source. Same kind of file as metadata.json above,
+                         # not a hand-typed copy that could drift — only the
+                         # generated JSON is exempt, not the rest of home/,
+                         # so a version hand-typed anywhere else under it
+                         # still leaks exactly like it would in prose.
+                         "home/lib/data.generated.json"}
 # Exempt by design: Gate 2 *requires* every skill file to declare the current
 # version in its frontmatter, and CI/release workflows pin the release notes path.
 # Lockfiles are exempt too: they pin arbitrary third-party package versions that

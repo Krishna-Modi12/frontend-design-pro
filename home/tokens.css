@@ -1,0 +1,72 @@
+/**
+ * home/ — design tokens, registered with Tailwind at build time.
+ *
+ * `@theme` is a Tailwind compiler directive, not CSS — it has to be compiled,
+ * so it lives here rather than in `lib/tokens.ts`, which carries only the
+ * plain CSS that is valid at runtime. Same split `demo/landing-page` uses, for
+ * the same reason: a browser handed `@theme` in a runtime `<style>` drops it as
+ * an unknown at-rule, and every utility built from it silently resolves to
+ * nothing.
+ *
+ * ── Every ratio below is computed, not eyed ──────────────────────────────────
+ *
+ * OKLCH → OKLab → linear sRGB → relative luminance → WCAG ratio, worst case
+ * across the three light grounds (`bg-page` / `bg-surface` / `bg-elevated`).
+ * Four of these values were corrected from a first draft that specified
+ * plausible-looking numbers and did not measure them — the same category of
+ * mistake `demo/landing-page/tokens.css` documents finding six of. Corrections
+ * here:
+ *
+ *   FAIL  text-muted   at L=65%          3.05 / 2.80 / 3.22   (needs 4.5)
+ *   FAIL  text-primary on bg-invert      1.00                 (needs 4.5)
+ *   FAIL  text-secondary on bg-invert    2.53                 (needs 4.5)
+ *   FAIL  border as a control boundary   1.49                 (needs 3.0)
+ *
+ * The fixes: `text-muted` moved to L=50% (5.67 / 5.19 / 5.98). `bg-invert`
+ * (footer only) gets its own ink pair at the SAME hue as the invert ground
+ * rather than reusing the page's warm ink, which is the same move
+ * `demo/landing-page` made for its dark surface's neutrals — `ink-invert`
+ * 15.31:1, `ink-invert-secondary` 6.53:1. `border-strong` is a second,
+ * darker token (L=60%, 3.73 / 3.42 / 3.94) for anything a control's boundary
+ * has to clear WCAG 1.4.11 on; the original `border` value stays as a
+ * decorative hairline, which carries no WCAG floor — same reasoning
+ * `demo/landing-page/tokens.css` gives for its own hairline border.
+ */
+
+@theme {
+  /* ── Ground ─────────────────────────────────────────────────────────────── */
+  --color-bg-page: oklch(98% 0.008 80);
+  --color-bg-surface: oklch(95% 0.015 85);
+  --color-bg-elevated: oklch(100% 0.005 80);
+  /* Footer only. The one dark section on the page — see `SectionInstall`. */
+  --color-bg-invert: oklch(18% 0.02 270);
+
+  /* ── Accent — one chromatic colour on the whole page ──────────────────────
+     Terracotta clears AA in both directions without splitting into two tokens
+     the way `demo/landing-page`'s cobalt had to: as text on every light ground
+     (4.92 / 4.50 / 4.92 / 5.19) AND as a fill under white (5.21). One token
+     does both jobs here. The one place it does NOT clear AA-body is as small
+     text on `bg-invert` (3.61, large-text only) — the footer uses it for large
+     numerals/headings and button fills only, never small links; see
+     `ink-invert-secondary` for footer body/link colour. */
+  --color-accent: oklch(55% 0.18 45);
+  --color-accent-ink: oklch(100% 0 0);
+  --color-accent-glow: oklch(55% 0.18 45 / 0.12);
+
+  /* ── Ink ────────────────────────────────────────────────────────────────── */
+  --color-text-primary: oklch(18% 0.02 80);
+  --color-text-secondary: oklch(45% 0.03 85);
+  --color-text-muted: oklch(50% 0.025 85);
+
+  /* ── Edges ──────────────────────────────────────────────────────────────── */
+  --color-border: oklch(84% 0.02 80);
+  --color-border-strong: oklch(60% 0.03 80);
+
+  /* ── Footer-only ink, at bg-invert's own hue (H=270) ───────────────────────
+     `text-primary` measures 1.00:1 against `bg-invert` — they sit at nearly
+     identical lightness, one warm and one cool, and neither reads on the
+     other. A near-white/muted-cool pair scoped to the footer avoids reusing
+     the page's warm ink where it cannot be read. */
+  --color-ink-invert: oklch(93% 0.01 270);
+  --color-ink-invert-secondary: oklch(68% 0.02 270);
+}

@@ -589,6 +589,11 @@ npm run dev   # http://localhost:3000
 
 ### See it in action
 
+<div align="center">
+<a href="https://krishna-modi12.github.io/frontend-design-pro/"><img src="home/screenshot.png" alt="frontend-design-pro's own homepage — warm off-white ground, a canvas particle-typography headline reading Change what your agent reaches for, and a terracotta accent used nowhere else on the page" width="80%"></a>
+<br><sub><a href="https://krishna-modi12.github.io/frontend-design-pro/">Open it live</a> · <a href="home/">source</a> · <a href="home/screenshot-full.png">full page</a> — the router and the checker are further down, both running the real thing.</sub>
+</div>
+
 > [!TIP]
 > **[Open the live site →](https://krishna-modi12.github.io/frontend-design-pro/)** — no install, no clone.
 > Two panels there run the real thing rather than describing it. Type a request and the router resolves it against this registry, showing which skill opens, which core files come with it and what that costs — including the case where nothing matches and it asks a question instead of guessing. Paste a component and the constraints fire in your browser, on patterns copied verbatim out of the suite that runs in CI.

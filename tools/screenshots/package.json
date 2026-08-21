@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start -p 3311",
     "verify": "node verify.mjs",
-    "verify:pages": "node verify-pages.mjs"
+    "verify:home": "node verify-home.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

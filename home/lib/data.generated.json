@@ -1,12 +1,4 @@
-/* GENERATED FILE — do not edit by hand.
- *
- * Written by tools/pages-data/generate.mjs from the registry in SKILL.md, each
- * skill's frontmatter, README's skill tables and `check_figures.py --truth`.
- *
- *   npm run pages:data          rewrite this file
- *   npm run pages:data:check    fail if it is stale (runs in CI)
- */
-window.FDP = {
+{
   "figures": {
     "skills": 19,
     "coreFiles": 8,
@@ -542,5 +534,64 @@ window.FDP = {
       "covers": "Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas",
       "trySaying": "\"Review this component. What's wrong with it that I'm not seeing?\""
     }
-  ]
-};
+  ],
+  "adapters": [
+    {
+      "dir": "agents",
+      "label": "AGENTS.md"
+    },
+    {
+      "dir": "aider",
+      "label": "Aider"
+    },
+    {
+      "dir": "chatgpt",
+      "label": "ChatGPT"
+    },
+    {
+      "dir": "claude",
+      "label": "Claude Code"
+    },
+    {
+      "dir": "cline",
+      "label": "Cline"
+    },
+    {
+      "dir": "codex",
+      "label": "Codex"
+    },
+    {
+      "dir": "continue",
+      "label": "Continue"
+    },
+    {
+      "dir": "copilot",
+      "label": "GitHub Copilot"
+    },
+    {
+      "dir": "cursor",
+      "label": "Cursor"
+    },
+    {
+      "dir": "gemini",
+      "label": "Gemini CLI"
+    },
+    {
+      "dir": "generic",
+      "label": "Generic (AGENTS.md-style)"
+    },
+    {
+      "dir": "roo",
+      "label": "Roo"
+    },
+    {
+      "dir": "windsurf",
+      "label": "Windsurf"
+    },
+    {
+      "dir": "zed",
+      "label": "Zed"
+    }
+  ],
+  "version": "14.10.1"
+}
