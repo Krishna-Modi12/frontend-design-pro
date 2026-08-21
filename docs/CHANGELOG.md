@@ -4,6 +4,77 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.0] — 2026-08-21
+
+Four PRs that had been landing since the last tag, two of them carrying "no
+version bump, no tag" in their own description by design. Bundled here as one
+release.
+
+### Conformance: all 19 skills now pass Anthropic's own `skill-creator` validator
+
+`skill-creator/scripts/quick_validate.py` permits six top-level frontmatter
+keys; every skill here declared `version` and `core-deps` at the top level and
+failed it — 19 of 20 files, the root `SKILL.md` the lone pass. Anthropic's own
+`package_skill.py` runs that validator before zipping, so it refused every
+sub-skill. Both keys now nest under `metadata:`, the key the schema reserves
+for them. Gate 2 was rewritten to read frontmatter indentation instead of
+partitioning each line on `:`, because the old parser printed the same green
+line before and after the 19-file migration it exists to police. All 45
+oversized references (over ~300 lines) gained a verified `## Contents` index —
+658 anchors, checked against GitHub's own slugging rather than assumed, and
+Stage 3 now confirms both that the index exists and that every anchor in it
+resolves.
+
+### Three coverage gaps, closed after being measured, and the detection failure adding them exposed
+
+`skills/design-system/references/typographic-finishing.md`,
+`skills/animations/references/motion-budget.md` and
+`skills/react-components/references/radix-primitives.md` — each written only
+after grepping the pack for zero hits on its own terms (`text-box-trim`, any
+motion-tier language, Radix `Slot`) despite the surrounding skills depending on
+ground they never covered. Adding them moved the corpus 101 → 104 references,
+which uncovered two figure shapes Gate 11 could not read (a bare `>` closing an
+HTML tag suppressing the figure written after it; `N reference files` sitting
+outside the `reference`-scoped pattern) and eight live consumer-facing figures
+already stale behind them, corrected by hand with per-edit assertions and nine
+new fixtures, four of them negative. Also landed in the same PR: 15 more
+`design-system` brand profiles, palettes computed into OKLCH.
+
+### The Pages site rebuilt as a product page, not a gallery
+
+`.github/pages/` was a two-item index restating the pack's claims with nothing
+behind them — the one thing this project's own data can actually demonstrate.
+It now runs two panels against the real thing: a router that resolves a typed
+request against the actual registry and reports what loads and what it costs,
+including the case every demo skips (asking a question when nothing matches,
+rather than guessing), and a constraint checker running 15 of the 43 regex
+rules in-browser, cross-checked so every ported id exists in
+`test_constraints.py` and scores identically in both places. `.github/pages/data.js`
+is now generated from the registry, each skill's frontmatter, README's tables
+and `check_figures.py --truth`, and `--check` runs in CI on every push. Found
+and fixed in the process: two more figure shapes Gate 11 could not see, both in
+markup rather than prose — one a home-grown gate blind spot, the other a stale
+reference count sitting in a `data-*` attribute the text-only sweep had missed.
+
+### Typography measured against the sites the brief names
+
+`xiaopu-ai/web-design`, `impeccable.style` and `tasteskill.dev`, loaded in a
+browser at 1440 and measured rather than read from source, since a declared
+value and a used one are different things. Section headings 41px → 57px — the
+single biggest gap against all three, and most of why the page read quieter
+than the sites it stands beside. The four figures the release recomputes from
+the filesystem moved into JetBrains Mono with `tabular-nums`. The header became
+a contained pill. Deliberately not taken: a serif second voice and a gradient
+hero — the first is one of the three AI-design defaults this pack's own
+anti-slop wall bans, the second sits at a contrast its own accessibility check
+would reject.
+
+### Verification
+
+11/11 gates green · 0 figure drift over 104 references / 371,905 tokens · 45/45
+example files, 232/232 tests · 658 anchors resolve · `npm run pages:verify`
+green at 390/768/1920, both themes, reduced motion.
+
 ## [14.10.1] — 2026-08-14
 
 **Gate 11 could not read the sentence "SKILL.md is 2,018 tokens."** The anchor

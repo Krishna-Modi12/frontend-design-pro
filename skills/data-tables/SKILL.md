@@ -2,7 +2,7 @@
 name: data-tables
 description: Tables, grids, charts and dashboards — sorting, filtering, pagination, selection, KPIs, data fetching. Use when the UI is tabular or data-dense — data tables, lists, grids, pagination, sorting, filtering, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table or Query route here.
 metadata:
-  version: "14.10.1"
+  version: "14.11.0"
   core-deps:
     - core/component-api.md
     - core/accessibility-baseline.md

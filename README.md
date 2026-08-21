@@ -650,7 +650,57 @@ No horizontal scroll at 390px.
 
 ## Release history
 
-## What's new in v14.10.1
+## What's new in v14.11.0
+
+Four PRs that had been landing since the last tag, two of them saying "no
+version bump, no tag" in their own description on purpose. Released together.
+
+**All 19 skills now pass Anthropic's own `skill-creator` validator.** Every one
+declared `version` and `core-deps` at the top level of its frontmatter, which
+`skill-creator/scripts/quick_validate.py` rejects — 19 of 20 files failed it,
+and Anthropic's own packager refused to zip any of them. Both keys now nest
+under `metadata:`, the key the schema reserves for exactly this, and Gate 2 was
+rewritten to read indentation rather than partition every line on `:` — the old
+parser printed the same green line before and after the migration it exists to
+police. All 45 oversized references also gained a verified `## Contents` index,
+658 anchors checked against GitHub's own slugging rather than assumed.
+
+**Three coverage gaps closed, each measured before anything was written.**
+[`typographic-finishing.md`](skills/design-system/references/typographic-finishing.md),
+[`motion-budget.md`](skills/animations/references/motion-budget.md) and
+[`radix-primitives.md`](skills/react-components/references/radix-primitives.md)
+were written only after grepping the pack for zero hits on their own terms.
+Adding them moved the corpus 101 → 104 references and uncovered two figure
+shapes Gate 11 could not read — a bare `>` closing an HTML tag suppressing the
+number written after it, and `N reference files` sitting outside the
+`reference`-scoped pattern — plus eight live consumer-facing figures already
+stale behind them. `design-system` also gained 15 more brand profiles.
+
+**The Pages site is a product page now, not a gallery.** It runs two panels
+against the real thing: a router that resolves a typed request against the
+actual registry, and a constraint checker running regex rules in-browser,
+cross-checked so the ported copy cannot drift from `test_constraints.py`.
+`.github/pages/data.js` is generated from the registry and README, and checked
+in CI on every push — closing two more figure shapes Gate 11 could not see, one
+of them a stale count sitting in a `data-*` attribute.
+
+**Typography measured against the sites the brief names**, loaded in a browser
+and measured rather than read from source. Section headings 41px → 57px — the
+single biggest gap against `xiaopu-ai/web-design`, `impeccable.style` and
+`tasteskill.dev`. Deliberately not taken: a serif second voice (one of this
+pack's own anti-slop defaults) and a gradient hero that would fail its own
+accessibility check.
+
+11/11 gates green · 0 figure drift over 104 references / 371,905 tokens ·
+658 anchors resolve · `pages:verify` green at 390/768/1920, both themes,
+reduced motion.
+
+<details>
+<summary><b>Earlier releases — v14.10.1 back to v14.5.0</b></summary>
+
+<br>
+
+## Previously — v14.10.1
 
 <!-- figures:historical — quotes the superseded 2,018 router size and 5,665/7,266 band verbatim; they are the evidence for what the patterns could not read, and correcting them would delete the finding -->
 
@@ -670,11 +720,6 @@ Two more forms of the same defect sat beside it. `RANGE` only ever matched a das
 **The patterns get fixtures of their own.** [`scripts/figure_pattern_test.py`](scripts/figure_pattern_test.py) holds **76 prose fixtures over 12 figures**, asserting in both directions and blocking in the chain — a proof step like the parser regression proof beside it, not a twelfth gate. The negative cases are the point: widened naively, the anchor reached out of `skills/{id}/SKILL.md` and read the **per-skill** router range as if it were the registry, which would have failed two tables that were correct. A matcher fix that breaks correct files is not a fix. Reverting any of the three widenings fails the suite, and that was checked rather than assumed.
 
 **Mostly closed, and the reasoning that kept it open was half wrong.** The `k`-rounded depth figure was recorded here as ungateable: the strings name two different quantities — some mean reference depth, some mean the whole pack — and one expected value cannot serve both. That is true of the *family* and false of most of its members, because **the noun says which**. `DEPTH-K` now claims every surface whose own words say "references" or "depth" and refuses the ones that say "pack"; `344k` against 371,905 is 1.56% out, past the 1% rounding tolerance, so the stale readings fail and a correct `349k` passes. It found six documents, including [`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md) — the drop-in system prompt — and two negative fixtures hold the line at "pack", which stays unclaimed until something computes a whole-pack total.
-
-<details>
-<summary><b>Earlier releases — v14.10.0 back to v14.5.0</b></summary>
-
-<br>
 
 ## Previously — v14.10.0
 
