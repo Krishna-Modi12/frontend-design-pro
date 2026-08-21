@@ -10,8 +10,8 @@ window.FDP = {
   "figures": {
     "skills": 19,
     "coreFiles": 8,
-    "referenceFiles": 101,
-    "referenceDepthTokens": 359557,
+    "referenceFiles": 104,
+    "referenceDepthTokens": 371905,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -99,7 +99,7 @@ window.FDP = {
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6269,
+      "budget": 6310,
       "group": "Making it look right",
       "covers": "Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion",
       "trySaying": "\"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion.\""
@@ -284,7 +284,7 @@ window.FDP = {
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6205,
+      "budget": 6261,
       "group": "Making it look right",
       "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
       "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
@@ -432,7 +432,7 @@ window.FDP = {
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6265,
+      "budget": 6317,
       "group": "Building something new",
       "covers": "One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, forwardRef, CVA",
       "trySaying": "\"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly.\""

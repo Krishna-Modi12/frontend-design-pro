@@ -1,7 +1,12 @@
 # Brand Design Systems Reference
 
-Source: VoltAgent/awesome-design-md (68 companies, 9 categories) — synthesized from public design systems  
-Version: 10.10.0
+Source: VoltAgent/awesome-design-md (MIT) — synthesized from public design systems.
+83 companies across 9 archetypes. The last 15, under **Additional Profiles**, were
+added from the same upstream corpus by way of `xiaopu-ai/web-design` (MIT), which
+republishes it; their palettes were computed from the source hex into OKLCH rather
+than estimated. Profiles describe an observed design language at a point in time —
+sites redesign, so treat a palette as a starting point and re-verify contrast
+against your own surfaces.
 
 ## Contents
 
@@ -1422,6 +1427,393 @@ function SQLBlock({ sql, filename }: { sql: string; filename?: string }) {
   )
 }
 ```
+
+---
+
+## Additional Profiles
+
+Fifteen more from the same upstream corpus, each tagged with the archetype it
+belongs to above. Every palette here was **computed** from the source's published
+hex values into OKLCH rather than estimated, so the values are usable directly.
+
+Two house rules bite on this set and are applied throughout:
+
+- **Proprietary faces are named as fact, not prescribed.** Nine of these brands
+  ship a custom typeface you cannot license. The profile records what the brand
+  uses, then prescribes an available substitute — per the standing rule that a
+  reference never has you lift a licensed font.
+- **Pure black and pure white are translated, not copied.** Several of these use
+  `#000`/`#fff` as surfaces. `SKILL.md` rule 3 forbids that, so the values below
+  are the tinted near-equivalents.
+
+---
+
+### ClickHouse
+*Archetype: Neon Developer*
+
+**Atmosphere:** Acid-bright volt yellow on absolute black. Database-fast, slightly aggressive, unmistakably not enterprise-blue.
+
+**Palette (OKLCH)**
+```css
+--ch-bg:      oklch(14% 0.006 110);  /* Near-black, faintly olive-tinted */
+--ch-surface: oklch(19.1% 0.004 110);/* Button and elevated surface */
+--ch-border:  oklch(37.5% 0.004 110);/* Primary border, used at ~80% opacity */
+--ch-text:    oklch(97% 0.004 110);  /* Primary text on dark */
+--ch-muted:   oklch(70.6% 0.003 110);/* Secondary body text */
+--ch-volt:    oklch(96.9% 0.170 111);/* THE brand colour — acid yellow-green */
+--ch-forest:  oklch(44.8% 0.108 151);/* Secondary CTA, deep saturated green */
+--ch-olive:   oklch(41.9% 0.092 111);/* Ghost-button border */
+```
+
+**Typography** — Brand uses Inter; substitute Manrope or the system stack, since Inter is a banned display face here. Tight headings, monospace for query snippets and metrics.
+
+**Key Signals**
+- The volt yellow is a *single* accent — one element per viewport, never two.
+- Borders carry elevation; shadows are largely absent.
+- Numbers and query text are monospace with `tabular-nums`.
+
+---
+
+### Composio
+*Archetype: Neon Developer*
+
+**Atmosphere:** Deep cobalt and electric cyan on void black. Agent-infrastructure energy — wired, high-voltage, technical.
+
+**Palette (OKLCH)**
+```css
+--cmp-bg:      oklch(16.8% 0.004 264);/* Void black, faint blue cast */
+--cmp-surface: oklch(29.3% 0.004 264);/* Secondary buttons, card interiors */
+--cmp-text:    oklch(97% 0.003 264);  /* Primary heading text */
+--cmp-muted:   oklch(38.7% 0.004 264);/* De-emphasised body, metadata */
+--cmp-cobalt:  oklch(38.7% 0.264 264);/* Core brand — deep, very saturated */
+--cmp-cyan:    oklch(90.5% 0.155 195);/* Electric cyan, attention only */
+--cmp-signal:  oklch(63.4% 0.201 254);/* Interactive blue */
+```
+
+**Typography** — Brand uses abcDiatype (proprietary); substitute Manrope. Grotesque, tight tracking on headings.
+
+**Key Signals**
+- Cobalt at chroma 0.264 is near the sRGB edge — verify contrast after any lightness change.
+- Cyan is a highlight, never a surface. It fails text contrast on dark at body sizes.
+
+---
+
+### opencode.ai
+*Archetype: Dark Precision*
+
+**Atmosphere:** Monospace everywhere. A terminal that happens to be a website — no decoration, no display face, total typographic uniformity.
+
+**Palette (OKLCH)**
+```css
+--oc-bg:     oklch(23.4% 0.005 17);  /* Warm-tinted dark, not neutral */
+--oc-text:   oklch(99.2% 0.001 17);  /* Near-white on dark */
+--oc-muted:  oklch(68.1% 0.002 17);  /* Secondary text, muted links */
+--oc-border: oklch(49.8% 0.003 17);  /* 1px outline borders */
+--oc-accent: oklch(60.3% 0.218 257); /* Links, interactive */
+--oc-accent-hover:  oklch(46.8% 0.164 257);
+--oc-accent-active: oklch(38% 0.129 256);
+```
+
+**Typography** — Brand uses Berkeley Mono for *everything*; substitute JetBrains Mono or IBM Plex Mono. The whole design depends on one mono face at several sizes, so keep the substitution consistent — mixing a sans in breaks the concept.
+
+**Key Signals**
+- A three-step accent ramp (rest → hover → active) that darkens rather than lightens.
+- The warm hue 17 on near-neutrals is deliberate; a cool grey reads wrong here.
+
+---
+
+### RunwayML
+*Archetype: AI / LLM*
+
+**Atmosphere:** Gallery-black with cool-slate secondary text. Image-forward, editorial, the interface receding behind the work.
+
+**Palette (OKLCH)**
+```css
+--rw-bg:      oklch(12% 0.004 265);   /* Near-black canvas */
+--rw-surface: oklch(21.8% 0.004 265); /* Elevated cards */
+--rw-border:  oklch(27.4% 0.005 286); /* The single dark border tone */
+--rw-text:    oklch(97% 0.003 265);   /* On dark */
+--rw-light:   oklch(94.3% 0.009 265); /* Cool light section background */
+--rw-slate:   oklch(58.8% 0.019 259); /* Secondary text — distinctly blue-grey */
+--rw-ink:     oklch(37.1% 0.004 265); /* Body text on light surfaces */
+```
+
+**Typography** — Brand uses abcNormal (proprietary); substitute Manrope. Restrained scale; the media carries the hierarchy.
+
+**Key Signals**
+- Radius stays 4–8px. Nothing pill-shaped.
+- Secondary text is *blue*-grey, not neutral — that cast is the whole personality.
+- Light and dark sections alternate; both need their own border tone.
+
+---
+
+### MiniMax
+*Archetype: AI / LLM*
+
+**Atmosphere:** Confident blue with a pink counter-accent. Built for Chinese-first typography, which changes the type rules more than the colour ones.
+
+**Palette (OKLCH)**
+```css
+--mm-brand:      oklch(52.3% 0.239 263);/* Primary brand blue */
+--mm-sky:        oklch(72.4% 0.154 244);/* Lighter brand variant */
+--mm-pink:       oklch(69.1% 0.203 341);/* Secondary accent */
+--mm-brand-deep: oklch(38.6% 0.109 257);/* Deep blue for emphasis */
+--mm-text:       oklch(25.2% 0.006 263);/* Primary text */
+--mm-text-2:     oklch(43% 0.026 251);  /* Secondary text */
+--mm-muted:      oklch(64.8% 0.007 286);/* Tertiary, muted labels */
+--mm-bg:         oklch(99% 0.002 263);  /* Page background */
+--mm-border:     oklch(92.8% 0.006 265);/* Component borders */
+```
+
+**Typography** — For any Chinese copy, `references/cjk-typography.md` governs: the fallback-chain order, no synthetic italics, and line-height at 1.7 or above. A Latin-only scale applied to Chinese text is the failure mode this brand exists to demonstrate.
+
+**Key Signals**
+- Blue ramp is a full 200→700 scale, not three tints — use it as a scale.
+- Pink appears sparingly against the blue; it is a counter-accent, not a second brand.
+
+---
+
+### NVIDIA
+*Archetype: Enterprise System*
+
+**Atmosphere:** That green on black. Industrial, technical, decades-consistent — the accent is doing all the identity work.
+
+**Palette (OKLCH)**
+```css
+--nv-bg:     oklch(13% 0.004 131);  /* Near-black page */
+--nv-surface:oklch(21.8% 0.004 131);/* Dark card surfaces */
+--nv-green:  oklch(71.3% 0.194 131);/* THE signature */
+--nv-lime:   oklch(89.4% 0.210 124);/* Bright highlight variant */
+--nv-orange: oklch(64.6% 0.175 48); /* Alerts, featured badges */
+--nv-amber:  oklch(73.8% 0.165 66); /* Secondary warm accent */
+--nv-text:   oklch(97% 0.003 131);  /* On dark */
+--nv-muted:  oklch(63% 0.003 131);  /* Secondary text */
+--nv-border: oklch(48.2% 0.003 131);/* Dividers */
+```
+
+**Typography** — Brand uses NVIDIA-EMEA (proprietary, Arial fallback); substitute Manrope or the system stack. Never Arial as the display face.
+
+**Key Signals**
+- Green is used for borders and link underlines as much as for fills.
+- Hover shifts *blue*, not to a lighter green — a genuinely unusual choice worth copying deliberately or not at all.
+
+---
+
+### Renault
+*Archetype: Luxury Automotive*
+
+**Atmosphere:** Pantone yellow, hard corners, no softness anywhere. Industrial European automotive rather than luxury-serif automotive.
+
+**Palette (OKLCH)**
+```css
+--rn-yellow: oklch(88.8% 0.188 104);/* Signature Pantone */
+--rn-yellow-soft: oklch(92.3% 0.172 105);
+--rn-ink:    oklch(18% 0.004 104);  /* Buttons, headings */
+--rn-bg:     oklch(99% 0.002 104);  /* Editorial surface */
+--rn-alt:    oklch(96.1% 0.003 104);/* Alternate light surface */
+--rn-dark:   oklch(25.2% 0.004 104);/* Dark text-heavy sections */
+--rn-blue:   oklch(62.2% 0.203 256);/* Link hover */
+--rn-warm:   oklch(88.4% 0.004 106);/* Disabled states */
+--rn-border: oklch(86.1% 0.003 104);/* Input borders */
+```
+
+**Typography** — Brand uses NouvelR, a proprietary geometric sans; substitute Manrope, which shares the geometric skeleton.
+
+**Key Signals**
+- `border-radius: 0` on buttons. The sharpness is the brand.
+- Yellow is a surface here, not just an accent — which forces dark ink on it for contrast.
+
+---
+
+### SpaceX
+*Archetype: Dark Precision*
+
+**Atmosphere:** Two colours. Black and a slightly cool off-white. The most restrained palette in this whole file, and the restraint *is* the design.
+
+**Palette (OKLCH)**
+```css
+--sx-bg:   oklch(11% 0.005 286);   /* The void — near-black, faintly cool */
+--sx-text: oklch(95.8% 0.013 286); /* Spectral white, deliberately not #fff */
+```
+
+**Typography** — Condensed uppercase sans for headings, wide tracking, generous scale. Substitute the system stack; the effect comes from tracking and case, not from the face.
+
+**Key Signals**
+- Two tokens. Adding a third accent breaks the concept — if a state needs distinguishing, use opacity or tracking.
+- Full-bleed imagery carries every section; type sits over it, never beside it.
+- This is the reference for "what if we removed the accent colour entirely".
+
+---
+
+### Sanity
+*Archetype: Creative Tool*
+
+**Atmosphere:** Near-black with a warm coral CTA and a genuinely wide accent range. Developer-facing but not monochrome-austere.
+
+**Palette (OKLCH)**
+```css
+--sn-bg:      oklch(15% 0.004 28);   /* Sanity black */
+--sn-surface: oklch(24.8% 0.004 28); /* Cards, secondary surfaces */
+--sn-border:  oklch(32.9% 0.004 28); /* Tertiary surface and border */
+--sn-text:    oklch(97% 0.003 28);   /* On dark */
+--sn-muted:   oklch(78.6% 0.003 28); /* Body copy on dark */
+--sn-red:     oklch(68.2% 0.178 28); /* Primary CTA — warm coral-red */
+--sn-blue:    oklch(51.3% 0.244 262);/* Universal hover/active */
+--sn-blue-lt: oklch(76.7% 0.134 239);/* Secondary blue */
+--sn-green:   oklch(76.1% 0.256 142);/* Vivid success/highlight */
+```
+
+**Typography** — Brand uses waldenburgNormal (proprietary); substitute Manrope for display, JetBrains Mono for schema and code.
+
+**Key Signals**
+- Radius ranges from 13px to fully pill — the pill is used for tags and status, not buttons.
+- Hover is a *hue change* to blue rather than a lightness change. Consistent everywhere.
+
+---
+
+### Superhuman
+*Archetype: Luminous Minimal*
+
+**Atmosphere:** Deep purple hero over warm cream body. Fast-email premium — the gradient does the luxury and the cream keeps it readable.
+
+**Palette (OKLCH)**
+```css
+--sh-purple:   oklch(23.4% 0.058 284);/* Hero gradient base */
+--sh-lavender: oklch(82% 0.096 298);  /* Primary accent, highlights */
+--sh-ink:      oklch(27.8% 0.002 68); /* Headings on light */
+--sh-link:     oklch(51.1% 0.161 296);/* Underlined links */
+--sh-bg:       oklch(99% 0.002 85);   /* Dominant page surface */
+--sh-cream:    oklch(92.3% 0.012 85); /* Button background, warm neutral */
+--sh-border:   oklch(88.2% 0.008 61); /* Parchment card borders */
+```
+
+**Typography** — Brand uses Super Sans VF, a custom variable font with non-standard axes; substitute a variable-weight face and animate `wght` only. `references/typographic-finishing.md` covers doing that without forcing optical size.
+
+**Key Signals**
+- The radius scale is exactly two values: 8px and 16px. No others.
+- Cool purple against warm cream — the temperature clash is intentional and load-bearing.
+
+---
+
+### Zapier
+*Archetype: Consumer Delight*
+
+**Atmosphere:** Warm cream and one confident orange. Approachable-utility — friendly without being childish.
+
+**Palette (OKLCH)**
+```css
+--zp-ink:     oklch(21% 0.018 19);   /* Primary text, dark buttons */
+--zp-bg:      oklch(99.7% 0.004 91); /* Cream-white page */
+--zp-bg-alt:  oklch(99.4% 0.006 85); /* Secondary surface */
+--zp-orange:  oklch(67% 0.222 37);   /* Primary CTA, active underline */
+--zp-text-2:  oklch(32.5% 0.011 92); /* Secondary and footer text */
+--zp-muted:   oklch(65.2% 0.018 95); /* Tertiary, timestamps */
+--zp-border:  oklch(80.8% 0.021 92); /* Sand — primary border */
+--zp-sand-lt: oklch(93.7% 0.010 94); /* Secondary button background */
+```
+
+**Typography** — Brand pairs GT Alpina (serif display) with Inter (UI). Substitute any editorial serif for display and Manrope for UI; Inter is banned as a display face here.
+
+**Key Signals**
+- Every neutral is warm (hue 85–95). A cool grey anywhere reads as a mistake.
+- Orange appears once per section, on the primary action only.
+
+---
+
+### Airtable
+*Archetype: Enterprise System*
+
+**Atmosphere:** Trustworthy productivity blue on white. Dense, grid-first, unshowy.
+
+**Palette (OKLCH)**
+```css
+--at-ink:     oklch(23% 0.019 262);  /* Deep navy primary text */
+--at-blue:    oklch(51.3% 0.176 259);/* CTA buttons, links */
+--at-blue-2:  oklch(45.5% 0.158 263);/* Link/accent variant */
+--at-bg:      oklch(99% 0.002 262);  /* Primary surface */
+--at-surface: oklch(98.4% 0.003 248);/* Subtle raised surface */
+--at-text-2:  oklch(32.1% 0.004 262);/* Secondary text */
+--at-border:  oklch(91.2% 0.006 265);/* Card borders */
+```
+
+**Typography** — Brand uses Roboto; substitute Manrope or the system stack, as Roboto is a banned display face here. Dense UI sizes, 13–14px body.
+
+**Key Signals**
+- Navy text rather than black — softer, and the reason the blue reads as calm.
+- Borders define every region; elevation is minimal.
+
+---
+
+### Clay
+*Archetype: Creative Tool*
+
+**Atmosphere:** Warm paper cream with black type and oat borders. Editorial-adjacent, tactile, distinctly un-SaaS.
+
+**Palette (OKLCH)**
+```css
+--cl-bg:       oklch(98.2% 0.003 85); /* Warm paper page */
+--cl-ink:      oklch(18% 0.004 85);   /* Type, headings */
+--cl-muted:    oklch(69.1% 0.012 85); /* Secondary, footer links */
+--cl-charcoal: oklch(44.2% 0.008 89); /* Tertiary text */
+--cl-border:   oklch(87.1% 0.018 85); /* Oat — the structural border */
+--cl-border-2: oklch(93.5% 0.014 85); /* Lighter border */
+--cl-cool:     oklch(93.1% 0.006 265);/* Cool border for contrast sections */
+```
+
+**Typography** — Editorial sans at generous size with a serif or mono counterpoint. Substitute Manrope with JetBrains Mono for labels.
+
+**Key Signals**
+- Warm neutrals at hue ~85 throughout, with a deliberate cool border for contrast bands.
+- The oat border is the design; remove it and the page loses all structure.
+
+---
+
+### Expo
+*Archetype: Luminous Minimal*
+
+**Atmosphere:** Cool cloud-grey surfaces, tight radii, documentation-first. Calm, dense, developer-legible.
+
+**Palette (OKLCH)**
+```css
+--ex-bg:      oklch(95.6% 0.004 286);/* Cloud grey page */
+--ex-surface: oklch(99% 0.002 286);  /* Cards, buttons */
+--ex-ink:     oklch(24.1% 0.010 248);/* Body text */
+--ex-dark:    oklch(21.8% 0.004 248);/* Dark-theme widget surface */
+--ex-link:    oklch(55.6% 0.162 252);/* Standard link cobalt */
+--ex-sky:     oklch(77.2% 0.138 234);/* Widget accent */
+--ex-purple:  oklch(51.7% 0.173 306);/* "Preview" states */
+--ex-slate:   oklch(50.2% 0.014 264);/* Workhorse secondary text */
+--ex-border:  oklch(34.7% 0.010 254);/* Borders on dark surfaces */
+```
+
+**Typography** — Brand uses Inter; substitute Manrope or the system stack. Monospace for CLI output and config, which is most of the content.
+
+**Key Signals**
+- Radius stays under 6px on interactive elements.
+- Purple is reserved for a single semantic meaning ("preview"). Semantic accents that mean one thing are worth copying.
+
+---
+
+### Lovable
+*Archetype: Luminous Minimal*
+
+**Atmosphere:** Warm cream with charcoal type. Soft, approachable, generous whitespace — prompt-to-app friendliness without cartoon.
+
+**Palette (OKLCH)**
+```css
+--lv-bg:      oklch(96.8% 0.010 87); /* Cream page and card surface */
+--lv-ink:     oklch(22.6% 0.004 87); /* Type, dark buttons */
+--lv-on-dark: oklch(98.8% 0.004 91); /* Button text on dark */
+--lv-muted:   oklch(48.5% 0.003 107);/* Descriptions, captions */
+--lv-border:  oklch(93.7% 0.008 91); /* Card borders, dividers */
+--lv-ring:    oklch(62.3% 0.188 260);/* Focus ring, at ~50% alpha */
+```
+
+**Typography** — Brand uses Camera Plain Variable (proprietary); substitute Manrope. Large, friendly headings; relaxed 1.6+ body leading.
+
+**Key Signals**
+- The focus ring is the only saturated colour in the system — which makes it genuinely visible, and is the right instinct.
+- Warm cream carries hue 87–91 consistently; the single cool value is the ring.
 
 ---
 
