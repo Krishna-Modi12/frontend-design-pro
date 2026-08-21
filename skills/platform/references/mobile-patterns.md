@@ -5,6 +5,23 @@ Version: 10.15.0
 
 ---
 
+## Contents
+
+- [1. Mobile-First Principles](#1-mobile-first-principles)
+- [2. Bottom Navigation Bar](#2-bottom-navigation-bar)
+- [3. Bottom Sheet / Drawer (vaul)](#3-bottom-sheet--drawer-vaul)
+- [4. Pull-to-Refresh](#4-pull-to-refresh)
+- [5. Swipe Gestures (Framer Motion)](#5-swipe-gestures-framer-motion)
+- [6. Touch Feedback Patterns](#6-touch-feedback-patterns)
+- [7. Safe Area Insets](#7-safe-area-insets)
+- [8. Mobile Typography](#8-mobile-typography)
+- [9. Mobile Performance](#9-mobile-performance)
+- [10. PWA Patterns](#10-pwa-patterns)
+- [11. Mobile Navigation Patterns](#11-mobile-navigation-patterns)
+- [12. Pointer Media Queries](#12-pointer-media-queries)
+
+---
+
 ## 1. Mobile-First Principles
 
 Use `min-h-[100dvh]` over `h-screen`. The `dvh` unit accounts for dynamic viewport changes (browser chrome appearing/disappearing). `svh` (small viewport height) is the smallest the viewport will ever be — use it when you need content to never overflow regardless of browser chrome.

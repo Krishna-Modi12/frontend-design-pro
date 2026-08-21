@@ -4,6 +4,22 @@ Patterns for building data integrity, validation, and error-recovery loops into 
 
 ---
 
+## Contents
+
+- [1. Client-Side Validation](#1-client-side-validation)
+- [2. Server-Side Validation](#2-server-side-validation)
+- [3. Optimistic UI + Rollback](#3-optimistic-ui--rollback)
+- [4. Data Integrity Checks](#4-data-integrity-checks)
+- [5. API Response Validation](#5-api-response-validation)
+- [6. E2E State Verification (TanStack Query)](#6-e2e-state-verification-tanstack-query)
+- [7. Accessibility Verification](#7-accessibility-verification)
+- [8. Visual Regression Patterns](#8-visual-regression-patterns)
+- [9. Error Boundaries](#9-error-boundaries)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## 1. Client-Side Validation
 
 ### Zod Schema + React Hook Form

@@ -4,6 +4,22 @@ Concurrency in frontend work means doing more things at the same time — fetchi
 
 ---
 
+## Contents
+
+- [1. Parallel Data Fetching](#1-parallel-data-fetching)
+- [2. Concurrent Rendering — React 18](#2-concurrent-rendering--react-18)
+- [3. Parallel Route Segments (Next.js)](#3-parallel-route-segments-nextjs)
+- [4. Web Workers for CPU Work](#4-web-workers-for-cpu-work)
+- [5. Streaming SSR](#5-streaming-ssr)
+- [6. Optimistic Parallelism](#6-optimistic-parallelism)
+- [7. Parallel Asset Loading](#7-parallel-asset-loading)
+- [8. Intersection Observer Batching](#8-intersection-observer-batching)
+- [9. Request Deduplication](#9-request-deduplication)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## 1. Parallel Data Fetching
 
 ### Promise.all vs Promise.allSettled

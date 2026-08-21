@@ -1,6 +1,6 @@
 # Agent Compatibility
 
-One fact decides how well this pack works on a given host: can the agent decide, *mid-conversation*, to open one specific file it wasn't given up front? That is what makes the registry's loading model real — `SKILL.md` always in context, one matched `skills/{id}/SKILL.md`, its declared `core/*.md` deps, roughly 5,961–7,525 tokens per request against 349,467 tokens of reference depth (see [ARCHITECTURE.md](ARCHITECTURE.md)).
+One fact decides how well this pack works on a given host: can the agent decide, *mid-conversation*, to open one specific file it wasn't given up front? That is what makes the registry's loading model real — `SKILL.md` always in context, one matched `skills/{id}/SKILL.md`, its declared `core/*.md` deps, roughly 5,965–7,530 tokens per request against 359,557 tokens of reference depth (see [ARCHITECTURE.md](ARCHITECTURE.md)).
 
 **Claude Code is the only host with a real filesystem for that.** Everywhere else, lazy loading degrades to retrieval search, manual `@`-referencing, or pasting. Routing and the anti-slop wall survive the trip; on-demand depth does not.
 

@@ -7,6 +7,29 @@ Rules not covered elsewhere in this skill. Load alongside ux-guidelines.md for f
 
 ---
 
+## Contents
+
+- [Web Interface Rules (Unique to This File)](#web-interface-rules-unique-to-this-file)
+  - [Typography Precision](#typography-precision)
+  - [Scroll Anchoring](#scroll-anchoring)
+  - [Touch Interaction](#touch-interaction)
+  - [URL Reflects State](#url-reflects-state)
+  - [Form Refinements](#form-refinements)
+  - [Dark Mode + Color Scheme](#dark-mode--color-scheme)
+  - [Locale and i18n](#locale-and-i18n)
+  - [Hydration Safety](#hydration-safety)
+  - [Flex Text Truncation](#flex-text-truncation)
+  - [Performance Micro-Rules](#performance-micro-rules)
+- [React Performance Rules](#react-performance-rules)
+  - [CRITICAL: Eliminating Waterfalls](#critical-eliminating-waterfalls)
+  - [CRITICAL: Bundle Size](#critical-bundle-size)
+  - [HIGH: Server-Side Performance](#high-server-side-performance)
+  - [MEDIUM: Re-render Optimization](#medium-re-render-optimization)
+  - [Performance Anti-Patterns Quick-Reference](#performance-anti-patterns-quick-reference)
+- [UX Anti-Patterns Quick-Reference](#ux-anti-patterns-quick-reference)
+
+---
+
 ## Web Interface Rules (Unique to This File)
 
 *Source: vercel-labs/web-interface-guidelines*

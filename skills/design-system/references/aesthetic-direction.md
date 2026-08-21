@@ -9,6 +9,23 @@
 # principle, font inspiration categories, color inspiration sources.
 # ─────────────────────────────────────────────────────────────────────────────
 
+## Contents
+
+- [⚡ CORE PRINCIPLE (from Anthropic official skill)](#-core-principle-from-anthropic-official-skill)
+- [1. Pre-Code Design Thinking Protocol](#1-pre-code-design-thinking-protocol)
+- [2. Spatial Composition Rules](#2-spatial-composition-rules)
+- [3. Typography — The #1 Design Signal](#3-typography--the-1-design-signal)
+- [4. Color & Theme System](#4-color--theme-system)
+- [5. Motion — High-Impact Over Scattered](#5-motion--high-impact-over-scattered)
+- [6. Backgrounds & Visual Effects](#6-backgrounds--visual-effects)
+- [7. Complexity Matching Principle](#7-complexity-matching-principle)
+- [8. The DISTILLED_AESTHETICS_PROMPT (Anthropic official)](#8-the-distilled_aesthetics_prompt-anthropic-official)
+- [9. Quick Self-Check Before Output](#9-quick-self-check-before-output)
+- [10. Visual Audit Scoring System (ECC)](#10-visual-audit-scoring-system-ecc)
+- [11. AI Slop Detection Patterns (ECC extended list)](#11-ai-slop-detection-patterns-ecc-extended-list)
+
+---
+
 ## ⚡ CORE PRINCIPLE (from Anthropic official skill)
 
 > "Claude tends to converge toward generic, 'on distribution' outputs. In frontend

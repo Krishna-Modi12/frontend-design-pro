@@ -2,6 +2,23 @@
 
 Source: nextlevelbuilder/ui-ux-pro-max-skill (25 chart types)
 
+## Contents
+
+- [Selection Guide](#selection-guide)
+- [Performance Thresholds](#performance-thresholds)
+- [Recommended Libraries](#recommended-libraries)
+- [Accessibility Rules](#accessibility-rules)
+- [Color in Charts](#color-in-charts)
+- [Chart Selection Decision Tree](#chart-selection-decision-tree)
+- [Accessibility Requirements Per Chart Type](#accessibility-requirements-per-chart-type)
+- [Recharts Implementation Patterns](#recharts-implementation-patterns)
+- [Color Rules for Data Visualization](#color-rules-for-data-visualization)
+- [When NOT to Use Each Chart (Anti-Patterns)](#when-not-to-use-each-chart-anti-patterns)
+- [Animation Guidelines for Charts](#animation-guidelines-for-charts)
+- [Responsive Patterns for Charts](#responsive-patterns-for-charts)
+
+---
+
 ## Selection Guide
 
 | Data question | Chart type | Accessibility |

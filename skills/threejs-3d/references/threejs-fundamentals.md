@@ -5,6 +5,31 @@ Load before: `threejs-advanced.md`, `threejs-interaction.md`.
 Source: `CloudAI-X/threejs-skills` (MIT, declared in its README rather than a LICENSE file) — topic scope only, for this file and the two below. **Not a verbatim extraction, and deliberately not one:** upstream is raw `three` across ten skill files — 0 of 10 mention React Three Fiber, 8 pass raw hex to `THREE.Color(0x…)` against our `3D-05`, and 3 drive `requestAnimationFrame` directly against `3D-02`. The R3F-first framing, the OKLCH colour rule and every constraint reference here are this pack's.
 Consolidates the former `three-js.md` + `react-three-fiber.md` plus geometry/materials/lighting/textures. **Write R3F, not raw Three.js** — drop to imperative `three` only for things R3F has no JSX form for.
 
+## Contents
+
+- [R3F stack](#r3f-stack)
+- [Scene setup](#scene-setup)
+- [Geometry](#geometry)
+- [Colors — OKLCH, never raw hex](#colors--oklch-never-raw-hex)
+- [Performance](#performance)
+- [Accessibility](#accessibility)
+- [2 — LIGHTING & SHADOWS](#2--lighting--shadows)
+  - [Light types quick-reference](#light-types-quick-reference)
+  - [Production 3-point lighting rig](#production-3-point-lighting-rig)
+  - [IBL — Image-Based Lighting (HDRI environment)](#ibl--image-based-lighting-hdri-environment)
+  - [R3F — Environment (drei shorthand)](#r3f--environment-drei-shorthand)
+  - [Shadow performance tips](#shadow-performance-tips)
+  - [Material decision tree](#material-decision-tree)
+  - [MeshStandardMaterial — full config](#meshstandardmaterial--full-config)
+  - [MeshPhysicalMaterial — glass / car paint](#meshphysicalmaterial--glass--car-paint)
+  - [Dispose materials to prevent GPU memory leaks](#dispose-materials-to-prevent-gpu-memory-leaks)
+  - [Texture settings — critical](#texture-settings--critical)
+  - [UV manipulation](#uv-manipulation)
+  - [Environment / cube maps](#environment--cube-maps)
+  - [R3F — useTexture (drei)](#r3f--usetexture-drei)
+
+---
+
 ## R3F stack
 
 | Package | Role |

@@ -25,7 +25,7 @@ Before writing or editing any frontend code, read `frontend-design-pro/SKILL.md`
 
 It is a registry, not a document. Match the request against its Trigger Keywords
 column, load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
-`core-deps` named in that skill's frontmatter, plus `core/accessibility-baseline.md`
+`metadata.core-deps` named in that skill's frontmatter, plus `core/accessibility-baseline.md`
 and `core/validate-checklist.md`. Budget 8,000 tokens total. Do not load every skill.
 
 Load a `skills/{id}/references/*.md` file only when the skill file points at it.

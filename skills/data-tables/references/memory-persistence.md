@@ -4,6 +4,22 @@ Reference for AI agents building React/Next.js UIs. Covers every layer of the pe
 
 ---
 
+## Contents
+
+- [1. State Persistence Tiers](#1-state-persistence-tiers)
+- [2. URL State Patterns](#2-url-state-patterns)
+- [3. localStorage Patterns](#3-localstorage-patterns)
+- [4. sessionStorage — Tab-Scoped Persistence](#4-sessionstorage--tab-scoped-persistence)
+- [5. Form State Persistence — Draft Recovery](#5-form-state-persistence--draft-recovery)
+- [6. Cross-Tab Sync](#6-cross-tab-sync)
+- [7. Server State Memory — TanStack Query](#7-server-state-memory--tanstack-query)
+- [8. Zustand Persist Middleware](#8-zustand-persist-middleware)
+- [9. Cookie Patterns](#9-cookie-patterns)
+- [10. Anti-Patterns](#10-anti-patterns)
+- [Quick Reference Cheat Sheet](#quick-reference-cheat-sheet)
+
+---
+
 ## 1. State Persistence Tiers
 
 Choose the narrowest scope that satisfies the requirement.

@@ -12,7 +12,7 @@ Paste the output.
 
 If yes, confirm each step from `docs/ARCHITECTURE.md`'s "Adding to the pack":
 
-- [ ] Frontmatter present (`name`, `description`, `version` matching `metadata.json`, `core-deps`)
+- [ ] Frontmatter present (`name`, `description`, and under `metadata:` a `version` matching `metadata.json` plus `core-deps`)
 - [ ] Reference index updated (every reference file cited in the skill's Reference Index — an uncited reference fails the path-integrity stage)
 - [ ] Example + test included (at least one `examples/good-*.tsx`; Gate 8b fails a skill with none)
 - [ ] Registry row added to `SKILL.md` (id, path, trigger keywords, core dep)

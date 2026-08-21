@@ -8,6 +8,23 @@ Resend sends via Server Actions or API routes.
 
 ---
 
+## Contents
+
+- [Email vs Web CSS — Critical Differences](#email-vs-web-css--critical-differences)
+- [Installation](#installation)
+- [React Email Primitives](#react-email-primitives)
+- [Welcome Email — Full Example](#welcome-email--full-example)
+- [OTP / Verification Code Email](#otp--verification-code-email)
+- [Password Reset Email](#password-reset-email)
+- [Resend Integration — Next.js Server Action](#resend-integration--nextjs-server-action)
+- [Responsive Email](#responsive-email)
+- [Dark Mode in Email](#dark-mode-in-email)
+- [Typography in Email](#typography-in-email)
+- [Preview Server Setup](#preview-server-setup)
+- [Anti-Patterns Table](#anti-patterns-table)
+
+---
+
 ## Email vs Web CSS — Critical Differences
 
 | Feature | Web | Email |

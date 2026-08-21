@@ -14,8 +14,8 @@ So the pack is not a document. It is a **registry that routes**.
 |---|---|---|---|
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,099 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,843, 2,919, 3,011 or 3,747 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **843–1,718 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 99 deep references | **349,467 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/SKILL.md` | One skill router | **848–1,722 tokens** | exactly one per request |
+| `skills/{id}/references/*.md` | 99 deep references | **359,557 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
@@ -43,7 +43,7 @@ design-research     7,476   ← heaviest
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,173 tokens, while `design-research` is the second-largest router in the pack at 1,559 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,476 tokens against 349,467 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,476 tokens against 359,557 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. A Windows working tree with CRLF endings measures marginally higher — the reference depth reads a few dozen tokens above the canonical 343,695, the excess being one byte per line in whichever files that checkout happens to hold with CRLF. Do not pin that number: it moves as git normalises endings, which is exactly why it is not the one published. So `build_release.py` run locally on Windows prints the larger numbers. The LF figure is the canonical one, because it is what a reader who downloads the archive can reproduce. Do not "correct" these back to a local Windows measurement.
 
@@ -89,7 +89,7 @@ dist/                    build output, gitignored
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
 | 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 2,018 tokens; version consistent; no leaks |
-| 2 | Frontmatter | every skill declares `name`/`description`/`version`/`core-deps`; version matches `metadata.json`; every declared dep exists on disk | 19/19 |
+| 2 | Frontmatter | all 20 files pass Anthropic's `quick_validate.py` schema (no top-level key outside its six); every skill declares `metadata.version`/`metadata.core-deps`; version matches `metadata.json`; every declared dep exists on disk | 20/20 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 17/17 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
 | 5 | Syntactic | 43 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 45/45 · 3/3 demo projects |
@@ -106,12 +106,12 @@ The source guard fetches `origin` and refuses to build an archive unless `HEAD` 
 
 The smoke test also reads the archive's prose: that the README's "What's new" heading names the version being shipped, that `_meta/CHANGELOG.md` tops out at it, and that every `demo/**/*.png` in the source reached the archive. The version-heading mismatch shipped twice before this check existed, and the screenshot expectation is derived from the source tree rather than hardcoded — a literal would be one more figure to go stale.
 
-A parser-regression proof runs alongside gate 4: 13 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
+A parser-regression proof runs alongside gate 4: 14 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 
 ### Why gate 10 exists
 
 Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 101
-references are ~349k tokens and are the part an agent actually opens for depth,
+references are ~360k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
 the chain that the product's central claim rests on.
@@ -134,7 +134,7 @@ published hex as documentation — are declared per file and per constraint in
 
 Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby` is not accessibility. `bg-white` on a `<button>` is not a design violation. A fake loading delay spelled `setPhase` instead of `setLoading` has no regex vocabulary at all.
 
-`scripts/parser_regression_test.js` holds **13 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
+`scripts/parser_regression_test.js` holds **14 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
 
 | Case | Regex | Parser | Why the parser is right |
 |---|---|---|---|

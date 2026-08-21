@@ -2,6 +2,29 @@
 
 Source: nextlevelbuilder/ui-ux-pro-max-skill
 
+## Contents
+
+- [Navigation](#navigation)
+- [Animation & Motion](#animation--motion)
+- [Touch & Mobile](#touch--mobile)
+- [Interactive States](#interactive-states)
+- [Forms](#forms)
+- [Empty States](#empty-states)
+- [Error Handling](#error-handling)
+- [Performance Perception](#performance-perception)
+- [Accessibility Essentials](#accessibility-essentials)
+- [Emerging Patterns](#emerging-patterns)
+- [Visual Hierarchy](#visual-hierarchy)
+- [Grid System Compliance](#grid-system-compliance)
+- [Whitespace Standards](#whitespace-standards)
+- [Contrast Ratios (WCAG 2.2)](#contrast-ratios-wcag-22)
+- [Responsive Design Rules](#responsive-design-rules)
+- [Microinteraction Recipes](#microinteraction-recipes)
+- [Content Design Rules](#content-design-rules)
+- [Animation additions (Vercel web-interface-guidelines)](#animation-additions-vercel-web-interface-guidelines)
+
+---
+
 ## Navigation
 
 - Smooth scroll: `scroll-behavior: smooth` on html

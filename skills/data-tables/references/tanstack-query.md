@@ -5,6 +5,24 @@ Version: 10.17.0
 
 ---
 
+## Contents
+
+- [1. Installation + QueryClient Setup](#1-installation--queryclient-setup)
+- [2. useQuery](#2-usequery)
+- [3. Query Key Factory Pattern](#3-query-key-factory-pattern)
+- [4. Loading / Error / Skeleton Patterns](#4-loading--error--skeleton-patterns)
+- [5. useMutation](#5-usemutation)
+- [6. Optimistic Updates](#6-optimistic-updates)
+- [7. Cache Invalidation](#7-cache-invalidation)
+- [8. useInfiniteQuery](#8-useinfinitequery)
+- [9. Prefetching in Next.js Server Components](#9-prefetching-in-nextjs-server-components)
+- [10. Parallel + Dependent Queries](#10-parallel--dependent-queries)
+- [11. TypeScript Patterns](#11-typescript-patterns)
+- [12. Common Anti-Patterns](#12-common-anti-patterns)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## 1. Installation + QueryClient Setup
 
 ### Install packages

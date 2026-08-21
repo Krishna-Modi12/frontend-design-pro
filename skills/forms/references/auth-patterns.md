@@ -5,6 +5,23 @@ Version: 10.15.0
 
 ---
 
+## Contents
+
+- [1. Auth UI Principles](#1-auth-ui-principles)
+- [2. Login Form](#2-login-form)
+- [3. Sign-up Form](#3-sign-up-form)
+- [4. OAuth Buttons](#4-oauth-buttons)
+- [5. Magic Link Form](#5-magic-link-form)
+- [6. Password Reset Flow](#6-password-reset-flow)
+- [7. Multi-Step Onboarding](#7-multi-step-onboarding)
+- [8. Protected Route Patterns](#8-protected-route-patterns)
+- [9. User Menu / Avatar Dropdown](#9-user-menu--avatar-dropdown)
+- [10. Auth Error States](#10-auth-error-states)
+- [11. Form Security](#11-form-security)
+- [MFA / OTP CODE INPUT](#mfa--otp-code-input)
+
+---
+
 ## 1. Auth UI Principles
 
 - **Clear error states**: Show inline field errors and form-level errors distinctly. Field errors sit below the input; form-level errors (wrong credentials) appear above the submit button.
