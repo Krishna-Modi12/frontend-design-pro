@@ -65,3 +65,37 @@ first. Pushing a `v*` tag fires `.github/workflows/release.yml`, which re-runs t
 entire chain on a clean runner and publishes the archive as a release asset. The
 archive attached to a GitHub Release is the only artifact to trust — there is no
 npm package and no CDN copy.
+
+## What this pack does on your machine
+
+You are about to let an agent load this into a repository that probably has secrets
+in it, and `npx skills add` means most people will never see the tree first. So,
+plainly:
+
+- **It is markdown and TypeScript files.** Nothing in the pack runs. The agent
+  *reads* it; the `.tsx` examples are read too, not executed — no build step, no
+  postinstall, no bundled binary.
+- **It makes no network calls and collects no telemetry.** No analytics endpoint,
+  no beacon, no phone-home. Two example files call `fetch()`, and both are
+  demonstrating a real loading state in code you would copy — they run only if you
+  run them.
+- **The only thing that executes is `setup.sh` / `setup.ps1`**, which you can read
+  in full. Between them they invoke `basename`, `cp`, `dirname`, `find`, `mkdir` and
+  `printf`. No `eval`, no `curl`, no `sudo`, no elevation.
+- **It needs no credentials, keys or environment variables**, and reads none.
+- **It writes only adapter rules files** into your project, all listed by
+  `setup.sh --dry-run` before anything is written, and never overwrites without
+  `--force`.
+
+Verify rather than trust it — these are the checks, not a summary of them:
+
+```bash
+grep -nE 'curl|wget|eval|exec|sudo|base64' setup.sh setup.ps1        # expect: no matches
+grep -rlE 'sendBeacon|XMLHttpRequest|axios|new WebSocket' skills/     # expect: no matches
+bash setup.sh --dry-run                                              # every path it would write
+```
+
+The one caveat is the installer, not the pack: `npx skills` sends anonymous install
+telemetry by default. `DISABLE_TELEMETRY=1` turns it off, and the git-clone and
+archive routes documented in [docs/INSTALL.md](docs/INSTALL.md) never involve it at
+all.
