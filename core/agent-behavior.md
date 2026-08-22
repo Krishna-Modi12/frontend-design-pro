@@ -2,13 +2,13 @@
 
 Route: **all intents** — load first for non-trivial tasks (>3 files or >200 lines expected). Shortcode `[behavior]`.
 Load before: any technical reference. This governs *how* you approach a task; the other files govern *what* you build.
-Source: multica-ai/andrej-karpathy-skills (4 behavioral principles), adapted to frontend work.
+Source: multica-ai/andrej-karpathy-skills (4 behavioral principles), adapted to frontend work. P5 is a house addition, not part of that source.
 
 **Tradeoff, stated honestly:** these principles bias toward caution over speed. For a one-line CSS fix, use judgment and skip the ceremony. For anything a senior engineer would review, follow them.
 
 ---
 
-## The four principles
+## The five principles
 
 ### P1 — Think Before Coding
 **Don't assume. Don't hide confusion. Surface tradeoffs.** State assumptions explicitly; if uncertain, ask. Multiple readings exist → present them, never pick silently. A simpler approach exists → say so; push back when warranted. Unclear → stop, name what's confusing, ask ONE question.
@@ -26,16 +26,19 @@ Examples of the transform: *add a form* → typed component, RHF+Zod, render tes
 
 Multi-step work states a plan with checkpoints. **Self-verify before returning** — never hand back code you haven't mentally run against the VALIDATE gate.
 
+### P5 — Named-Priority Ordering
+**A concern the user names as primary outranks feature work, visibly.** When the user states a specific concern as the main one — "the main thing is accessibility," "keyboard support is what matters here" — implement and verify *that* concern first, before secondary features, and say so explicitly in the plan ("doing X first since you named it as the priority"). A correct feature built alongside a correctly-implemented named concern is not enough if the effort — and the plan's own ordering — visibly went to the feature first. Verification order should match the stated priority order, not build order.
+
 ## Integration with the pipeline
 
 | Stage | Principle |
 |---|---|
 | DETECT | P1 — restate intent, ask if ambiguous |
-| **REASON (1.5)** | P1 + P4 — assumptions, tradeoffs, success criteria, plan |
+| **REASON (1.5)** | P1 + P4 + P5 — assumptions, tradeoffs, success criteria, plan, priority order |
 | CLASSIFY | P1 — confirm stack, surface tradeoffs |
 | ROUTE | P4 — criteria determine which references are actually needed |
-| BUILD | P2 — simplicity · P3 — surgical scope |
-| VALIDATE | P4 — self-verify against constraints |
+| BUILD | P2 — simplicity · P3 — surgical scope · P5 — named concern first |
+| VALIDATE | P4 + P5 — self-verify against constraints, in priority order |
 | **SELF-VERIFY (5.5)** | P3 + P2 — every line traces to the request; nothing speculative |
 | OUTPUT | P4 — confirm the stated criteria were met |
 
@@ -49,6 +52,7 @@ Multi-step work states a plan with checkpoints. **Self-verify before returning**
 | "I assume you want…" *(then proceeding)* | State it *and* ask, or don't assume (P1) |
 | "Here's the code, it probably works" | Unverified output (P4) |
 | Silently picking one of two readings | Hidden confusion (P1) |
+| Building the feature first, checking the named concern last | Priority named, not honored (P5) |
 
 **Working if:** diffs contain fewer unrelated changes, fewer rewrites for overcomplication, and clarifying questions arrive *before* implementation rather than after the mistake.
 

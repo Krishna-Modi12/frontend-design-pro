@@ -2,7 +2,7 @@
 name: platform
 description: Platform surfaces — mobile/PWA, desktop, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI. Use when the work targets a platform surface rather than a generic component — mobile and PWA patterns, desktop and Electron/Tauri conventions, React Native/Expo, internationalization and RTL, SEO and metadata, Stripe payments, transactional email, AI chat and streaming UI.
 metadata:
-  version: "14.11.0"
+  version: "14.11.1"
   core-deps:
     - core/component-api.md
     - core/accessibility-baseline.md
@@ -18,14 +18,15 @@ React 19 · Next.js App Router · Expo (RN) · next-intl · Stripe · React Emai
 
 ## Core Rules
 1. **Mobile is not a narrow desktop** — and desktop is not a wide phone. Bottom tab nav for primary navigation, bottom sheets over centre modals, pull-to-refresh where a list is the content, `env(safe-area-inset-*)` on anything full-bleed. On a pointer surface, none of those four transfer: see `references/desktop-patterns.md`.
-2. **Touch targets ≥44×44px** with ≥24px spacing; `touch-action: manipulation`; `overscroll-behavior: contain` in sheets and drawers. 44 is the house rule and WCAG §2.5.5 (AAA); the AA floor in §2.5.8 is 24×24 and applies only to pointer-only chrome.
-3. **React Native is a different renderer, not different rules.** `SafeAreaView`, `Pressable` (never a bare `TouchableOpacity` for primary actions), `FlatList` with `keyExtractor`, Reanimated for motion, 44pt targets, dark mode via `useColorScheme`.
-4. **i18n from the start.** `next-intl` routing, ICU messages, `Intl.*` for dates/numbers/currency, RTL via CSS logical properties (never `margin-left`), copy expansion budget of ~30% for German.
-5. **SEO is structural.** Next.js metadata API, Open Graph, JSON-LD, sitemap and robots, canonical URLs, and Core Web Vitals as the ranking-relevant part — LCP image `priority`, no CLS from unsized media.
-6. **Payments.** Stripe PaymentElement over hand-built card fields, Appearance API for brand match, error handling by decline code, webhooks for truth (never trust the client), saved methods behind explicit consent.
-7. **Email is a different CSS universe.** Tables for layout, inline styles, no flex/grid, ~600px width, dark-mode-safe colours, plain-text alternative, tested across clients.
-8. **AI chat UI.** Stream tokens, keep a stop control, autoscroll only when the user is at the bottom, announce completion via `aria-live`, surface tool calls rather than hiding them.
-9. **Long-running work needs status, not spinners** — progress, an estimate, a cancel path, and `aria-live` announcements.
+2. **Responsive web layout reflows, it does not just shrink.** `min-width` media queries for progressive enhancement, not `max-width` cascading down from desktop. Grids stack to one column below 640px (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`); wide tables get a horizontal-scroll container below 768px rather than squashed columns; nav collapses to a hamburger below 768px. Touch-target sizing (rule 3) applies at every width — a mouse cursor is not permission to shrink a target back down on desktop. Test at 390px, 768px, 1024px and 1440px, not just one desktop viewport. `min-h-[100dvh]` on the root; reserve `min-h-[100svh]` for scroll-driven containers that must not resize under the mobile URL bar.
+3. **Touch targets ≥44×44px** with ≥24px spacing; `touch-action: manipulation`; `overscroll-behavior: contain` in sheets and drawers. 44 is the house rule and WCAG §2.5.5 (AAA); the AA floor in §2.5.8 is 24×24 and applies only to pointer-only chrome.
+4. **React Native is a different renderer, not different rules.** `SafeAreaView`, `Pressable` (never a bare `TouchableOpacity` for primary actions), `FlatList` with `keyExtractor`, Reanimated for motion, 44pt targets, dark mode via `useColorScheme`.
+5. **i18n from the start.** `next-intl` routing, ICU messages, `Intl.*` for dates/numbers/currency, RTL via CSS logical properties (never `margin-left`), copy expansion budget of ~30% for German.
+6. **SEO is structural.** Next.js metadata API, Open Graph, JSON-LD, sitemap and robots, canonical URLs, and Core Web Vitals as the ranking-relevant part — LCP image `priority`, no CLS from unsized media.
+7. **Payments.** Stripe PaymentElement over hand-built card fields, Appearance API for brand match, error handling by decline code, webhooks for truth (never trust the client), saved methods behind explicit consent.
+8. **Email is a different CSS universe.** Tables for layout, inline styles, no flex/grid, ~600px width, dark-mode-safe colours, plain-text alternative, tested across clients.
+9. **AI chat UI.** Stream tokens, keep a stop control, autoscroll only when the user is at the bottom, announce completion via `aria-live`, surface tool calls rather than hiding them.
+10. **Long-running work needs status, not spinners** — progress, an estimate, a cancel path, and `aria-live` announcements.
 
 ## Patterns
 - **Bottom sheet** (vaul) with snap points and safe-area padding.

@@ -246,7 +246,11 @@ CONSTRAINTS: List[Constraint] = [
     Constraint(
         id="SLOP-04",
         category="Anti-AI-Slop",
-        description="Organic data values (not all-round numbers like 50%, $10,000)",
+        # Catches bare placeholder-round values (50%, $10,000). It does not evaluate
+        # whether the actual figures in a file are plausible for their domain — a file
+        # full of clean-but-fabricated numbers passes. Agent judgment is still required
+        # for realistic-looking invented data; do not cite this as coverage for that.
+        description="No bare placeholder-round data values (50%, $10,000) — does not detect other fabricated figures",
         severity="medium",
         check=lambda c: (
             # Pass if there are some non-round values OR no numeric data at all

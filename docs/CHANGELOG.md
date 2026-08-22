@@ -4,6 +4,61 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.1] — 2026-08-22
+
+**Four documentation defects found by a 12-fresh-agent behavioral audit —
+genuinely isolated agents, zero conversation history, run against `SKILL.md`
+as an installed skill rather than reasoned about from its prose.** No
+engineering failures; every finding was the pack's own docs disagreeing with
+themselves or with what the constraint suites actually enforce.
+
+### Fixed
+
+- **Anti-slop wall vs. `TYP-03`.** `SKILL.md`'s wall banned "gradient fills on
+  large headings" absolutely; `TYP-03` — the machine-enforced rule — calls the
+  same pattern legitimate on a display heading and bans it only on body text.
+  Narrowed the wall line to `TYP-03`'s scope. No gold examples needed touching
+  — nothing was widened, the wall just stopped contradicting what's already
+  checked. This also keeps a claim in `core/validate-checklist.md` (that a
+  named competitor's gradient-text detector, unlike this pack's actual
+  behavior, fires unconditionally on display headings) true.
+- **`SLOP-04` claimed more coverage than its regex has.** The check's own
+  pattern lets `$100,000` pass as "organic" data rather than flagging it as a
+  round placeholder. Narrowed the constraint's description to what it actually
+  catches (bare placeholder values) instead of widening the regex — a regex
+  fix needs a gold-corpus regression pass first and is left as a follow-up.
+- **`platform` owned "responsive on mobile" routing with no web-layout
+  content.** Its Core Rules were entirely native/PWA — touch targets,
+  safe-area insets — with nothing about breakpoints or reflow. Added a Core
+  Rule: `min-width` queries, grid stacking below 640px, horizontal-scroll
+  tables below 768px, hamburger nav below 768px, a 390/768/1024/1440px test
+  matrix. `skills/platform/SKILL.md` moves from 1,224 to ~1,402 tokens alone,
+  still well under Gate 8a's 3,000-token solo cap.
+- **No principle protected a user-named priority.** `core/agent-behavior.md`'s
+  four principles had nothing about a concern the user explicitly names as
+  primary outranking feature work. Added a fifth: implement and verify the
+  named concern first, state the ordering explicitly in the plan. Wired into
+  the pipeline-stage and anti-pattern tables alongside P1-P4; noted as a house
+  addition, not part of the four-principle upstream source.
+
+### Verified, not changed
+
+A prior working plan named 5 reference files (`component-registry.md`,
+`interaction-patterns.md`, `openui.md`, `aceternity.md`, `gestalt.md`) as still
+owed from an earlier ingestion sprint. `docs/CHANGELOG.md`'s own v14.9.0 entry
+had already resolved this: each is covered elsewhere in the pack already
+(`shadcn-ecosystem.md`, `laws-of-ux.md`'s Gestalt section, `react-bits.md`), or
+— for `openui.md` — deliberately rejected, since its transferable content is
+provider-abstraction infrastructure, not UI. Writing them now would have
+recreated files a reasoned decision already closed. Left alone.
+
+### Figures
+
+Registry 2,099 → 2,112 tokens (the wall-line edit); per-request band
+5,965–7,530 → 5,978–7,543. 11/11 gates green, 0 figure drift across 123 claim
+surfaces after the sweep. No reference count change — 104 references,
+371,905 tokens of on-demand depth, unchanged.
+
 ## [14.11.0] — 2026-08-21
 
 Four PRs that had been landing since the last tag, two of them carrying "no

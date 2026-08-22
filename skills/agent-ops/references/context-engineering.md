@@ -25,7 +25,7 @@ budget, which leaves the middle progressively under-attended as the context grow
 
 ### What that means here, measured
 
-Our always-loaded root `SKILL.md` is **2,099 tokens** — below the threshold. The
+Our always-loaded root `SKILL.md` is **2,112 tokens** — below the threshold. The
 anti-slop wall sits at 18% of the file and the loading protocol at 80%, so the
 two directive sections already occupy the attention-favoured ends, with the
 registry table (a lookup, scanned rather than recalled) in between. **No change

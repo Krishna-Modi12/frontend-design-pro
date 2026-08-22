@@ -23,7 +23,7 @@ npx skills add Krishna-Modi12/frontend-design-pro --list               # one ent
 npx skills add Krishna-Modi12/frontend-design-pro --list --full-depth  # the router plus all 19 behind it, as peers
 ```
 
-The second form replaces a 2,099-token registry with nineteen skills competing to
+The second form replaces a 2,112-token registry with nineteen skills competing to
 match each request — the architecture this pack exists to avoid. `--skill <name>`
 has the same effect for the skills it names, and is only useful if you genuinely
 want one skill and not the router.
@@ -85,7 +85,7 @@ while anything is red.
 
    > Create a landing page for a SaaS product
 
-   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~5,965–7,530 tokens). See [USAGE.md](USAGE.md).
+   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~5,978–7,543 tokens). See [USAGE.md](USAGE.md).
 
 > **Optional — `AGENT_SYSTEM_PROMPT.md`:** if your host has a system-prompt field, paste it in. `SKILL.md` alone is sufficient (it carries the identity, behavioural preamble, anti-slop wall, routing table and failure handling), but the system prompt makes the loading protocol, the intake trigger, the per-pass core-file citations and the validation contract explicit. It is version-free and every path it cites is verified by Gate 6 on each build.
 

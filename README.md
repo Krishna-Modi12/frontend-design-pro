@@ -27,7 +27,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **104** | **371,905 tokens** | **2,099 tokens** | **5,965–7,530** | **60** | **11** |
+| **19** | **104** | **371,905 tokens** | **2,112 tokens** | **5,978–7,543** | **60** | **11** |
 
 </div>
 
@@ -386,12 +386,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,099 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,112 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,867 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
 | `skills/{id}/references/` | Deep material | **371,905 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,965–7,530 tokens, not 371,905.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,978–7,543 tokens, not 371,905.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -520,50 +520,50 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
-## What's new in v14.11.0
+## What's new in v14.11.1
 
-Four PRs that had been landing since the last tag, two of them saying "no
-version bump, no tag" in their own description on purpose. Released together.
+A 12-fresh-agent behavioral audit — genuinely isolated agents, zero conversation
+history, pointed at `SKILL.md` as an installed skill — found 4 documentation
+defects. No engineering failures: every one was a place the pack's own prose
+disagreed with itself or with what it actually enforces. All 4 fixed here.
 
-**All 19 skills now pass Anthropic's own `skill-creator` validator.** Every one
-declared `version` and `core-deps` at the top level of its frontmatter, which
-`skill-creator/scripts/quick_validate.py` rejects — 19 of 20 files failed it,
-and Anthropic's own packager refused to zip any of them. Both keys now nest
-under `metadata:`, the key the schema reserves for exactly this, and Gate 2 was
-rewritten to read indentation rather than partition every line on `:` — the old
-parser printed the same green line before and after the migration it exists to
-police. All 45 oversized references also gained a verified `## Contents` index,
-658 anchors checked against GitHub's own slugging rather than assumed.
+**The anti-slop wall banned what `TYP-03` explicitly permits.** `SKILL.md`'s
+wall listed "gradient fills on large headings" as an absolute ban, no exception
+— while `TYP-03`, the rule the regex suite actually enforces, calls the same
+pattern "legitimate on a display heading" and only bans it on body text. The
+wall now says what's enforced: banned on body-sized text, `bg-clip-text` is
+display-only. This also keeps a claim elsewhere in the docs true — that this
+pack, unlike a named competitor, doesn't fire a gradient-text detector
+unconditionally on headings.
 
-**Three coverage gaps closed, each measured before anything was written.**
-[`typographic-finishing.md`](skills/design-system/references/typographic-finishing.md),
-[`motion-budget.md`](skills/animations/references/motion-budget.md) and
-[`radix-primitives.md`](skills/react-components/references/radix-primitives.md)
-were written only after grepping the pack for zero hits on their own terms.
-Adding them moved the corpus 101 → 104 references and uncovered two figure
-shapes Gate 11 could not read — a bare `>` closing an HTML tag suppressing the
-number written after it, and `N reference files` sitting outside the
-`reference`-scoped pattern — plus eight live consumer-facing figures already
-stale behind them. `design-system` also gained 15 more brand profiles.
+**`SLOP-04` claimed more than its regex catches.** It's meant to flag
+round-number placeholder data, but its own pattern lets `$10,000` pass as
+"organic." Rather than widen the regex blind — that risks failing gold examples
+that currently pass it, unchecked — the constraint's description now says what
+it actually covers: bare placeholder values, not fabricated-but-plausible
+figures. Widening the check itself is a scoped follow-up, not this release.
 
-**The Pages site is a product page now, not a gallery.** It runs two panels
-against the real thing: a router that resolves a typed request against the
-actual registry, and a constraint checker running regex rules in-browser,
-cross-checked so the ported copy cannot drift from `test_constraints.py`.
-`.github/pages/data.js` is generated from the registry and README, and checked
-in CI on every push — closing two more figure shapes Gate 11 could not see, one
-of them a stale count sitting in a `data-*` attribute.
+**"Responsive on mobile" routed to a skill with zero web-layout content.**
+`platform` owns that routing, but its Core Rules were 100% native/PWA — touch
+targets, safe-area insets, nothing about breakpoints. It now has a real rule:
+`min-width` queries over `max-width`, grid stacking below 640px, horizontal-
+scroll tables below 768px, a 390/768/1024/1440px test matrix.
 
-**Typography measured against the sites the brief names**, loaded in a browser
-and measured rather than read from source. Section headings 41px → 57px — the
-single biggest gap against `xiaopu-ai/web-design`, `impeccable.style` and
-`tasteskill.dev`. Deliberately not taken: a serif second voice (one of this
-pack's own anti-slop defaults) and a gradient hero that would fail its own
-accessibility check.
+**A user-named priority had no rule keeping it first.** `agent-behavior.md`'s
+four principles said nothing about a concern the user explicitly calls out as
+primary — e.g. "the main thing is accessibility." A fifth principle now says
+that concern gets implemented and verified first, stated explicitly in the
+plan, not just correctly built alongside whatever else the request asked for.
 
-11/11 gates green · 0 figure drift over 104 references / 371,905 tokens ·
-658 anchors resolve · `pages:verify` green at 390/768/1920, both themes,
-reduced motion.
+Also closed this cycle, with no new files: a prior plan named 5 reference files
+as still owed. `docs/CHANGELOG.md` had already resolved that — each one is
+covered elsewhere in the pack (`shadcn-ecosystem.md`, `laws-of-ux.md`'s Gestalt
+section, `react-bits.md`) or, for one, deliberately rejected as infrastructure
+rather than UI content. Recorded, not rewritten.
+
+11/11 gates green · 0 figure drift · registry 2,099 → 2,112 tokens (the wall
+edit), band 5,965–7,530 → 5,978–7,543 · every skill still fits the 8,000-token
+budget with room to spare.
 
 **Full history, v14.2.2 through today** — every prior release, what shipped and what it fixed: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
