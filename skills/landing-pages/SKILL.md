@@ -2,7 +2,7 @@
 name: landing-pages
 description: Marketing pages — heroes, pricing, testimonials, bento grids, social proof, CTAs, empty states, onboarding. Use when building a full marketing or product page and its sections — hero, features, pricing, testimonials, logo wall, comparison table, FAQ, CTA bar, footer — plus empty states and onboarding. Not for a single reusable component (react-components).
 metadata:
-  version: "14.11.1"
+  version: "14.11.2"
   core-deps:
     - core/design-tokens.md
     - core/accessibility-baseline.md
