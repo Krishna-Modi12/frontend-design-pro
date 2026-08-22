@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import type { ReactElement } from "react";
 import { gsap, ScrollTrigger } from "../lib/gsapClient";
 import RouterPanel from "./RouterPanel";
+import BrowserChrome from "./BrowserChrome";
 import { HOW_IT_WORKS } from "../lib/content";
 import type { SkillRecord, Figures } from "../lib/data.types";
 import useStaggerReveal from "../lib/useStaggerReveal";
@@ -89,7 +90,9 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
             the page.
           </p>
           <div className="mt-4">
-            <RouterPanel skills={skills} figures={figures} />
+            <BrowserChrome url="frontend-design-pro.dev/router">
+              <RouterPanel skills={skills} figures={figures} />
+            </BrowserChrome>
           </div>
         </div>
       </div>
