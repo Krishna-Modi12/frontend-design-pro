@@ -75,6 +75,13 @@ body {
   animation-play-state: paused;
 }
 
+/* Set by \`Marquee.tsx\`'s own IntersectionObserver — a scrolling track
+   nobody can see still costs a compositor layer, so it pauses off-viewport
+   the same way it already pauses on hover. */
+[data-marquee][data-offscreen] [data-marquee-track] {
+  animation-play-state: paused;
+}
+
 /* The belt to \`useFadeUp\`'s braces, same reasoning \`demo/landing-page\`
    documents: the hook checks the media query once at mount and reveals
    immediately when it matches, but a reader who turns the preference ON

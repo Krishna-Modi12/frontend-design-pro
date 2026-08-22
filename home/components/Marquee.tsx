@@ -19,12 +19,16 @@ export interface MarqueeProps {
  * than hardcoded, so the loop rate stays 40px/s regardless of how much
  * content `items` holds.
  *
- * Pauses on hover via the `[data-marquee]:hover` rule in `lib/tokens.ts`, and
+ * Pauses on hover via the `[data-marquee]:hover` rule in `lib/tokens.ts`,
  * stops entirely under `prefers-reduced-motion` via the same file's media
- * block — a scrolling list of text is exactly the kind of decorative motion
- * that preference exists to remove.
+ * block, and pauses whenever the track scrolls out of the viewport (an
+ * `IntersectionObserver` toggling `data-offscreen`, same file) — a scrolling
+ * list of text is exactly the kind of decorative motion that preference
+ * exists to remove, and it costs nothing to also stop compositing it when
+ * nobody can see it.
  */
 export function Marquee({ items, speed = 40 }: MarqueeProps): ReactElement {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -43,8 +47,28 @@ export function Marquee({ items, speed = 40 }: MarqueeProps): ReactElement {
     return () => observer.disconnect();
   }, [speed, items]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container === null) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry === undefined) return;
+        container.toggleAttribute("data-offscreen", !entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div data-marquee className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+    <div
+      ref={containerRef}
+      data-marquee
+      className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]"
+    >
       <div ref={trackRef} data-marquee-track className="flex w-max gap-3">
         {[0, 1].map((copy) => (
           <div key={copy} aria-hidden={copy === 1} className="flex shrink-0 gap-3">
