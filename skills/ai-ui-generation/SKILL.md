@@ -2,7 +2,7 @@
 name: ai-ui-generation
 description: Prompt-to-UI, JSON-to-UI and generative-interface patterns — component registries, schema validation, and the guardrails generated markup must pass. Use when building or consuming AI-generated UI — prompt-to-component scaffolding, schema-driven or server-driven rendering, a chat surface that renders components rather than prose — or when reviewing model-generated markup before it ships.
 metadata:
-  version: "14.11.2"
+  version: "14.11.3"
   core-deps:
     - core/component-api.md
     - core/validate-checklist.md

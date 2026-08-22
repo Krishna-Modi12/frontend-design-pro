@@ -2,7 +2,7 @@
 name: platform
 description: Platform surfaces — mobile/PWA, desktop, React Native, i18n, SEO/metadata, payments, transactional email, AI chat UI. Use when the work targets a platform surface rather than a generic component — mobile and PWA patterns, desktop and Electron/Tauri conventions, React Native/Expo, internationalization and RTL, SEO and metadata, Stripe payments, transactional email, AI chat and streaming UI.
 metadata:
-  version: "14.11.2"
+  version: "14.11.3"
   core-deps:
     - core/component-api.md
     - core/accessibility-baseline.md
@@ -34,6 +34,12 @@ React 19 · Next.js App Router · Expo (RN) · next-intl · Stripe · React Emai
 - **Locale switcher** — path-based routing, preserved deep link.
 - **Checkout** — PaymentElement + order summary + four states (see also `forms`).
 - **OTP email** — React Email template + Resend Server Action.
+- **AI-generated image** — generating state per rule 9, not a blank frame; a
+  distinct rejected-by-moderation state, never silently swapped for the
+  network-error state (the fix is different: rephrase the prompt, not retry).
+  `alt` describes the image's actual content once generated, same as any other
+  image — never the prompt text, which describes intent, not what rendered. A
+  visible regenerate affordance, since an unpredictable result is the point.
 
 ## Examples
 `examples/good-mobile.tsx` (bottom nav, sheet, pull-to-refresh, swipe) · `examples/good-react-native.tsx` (Expo Router, gesture-handler, Reanimated) · `examples/good-ai-chat.tsx` (streaming, stop, autoscroll).

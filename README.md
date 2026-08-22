@@ -520,35 +520,29 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
-## What's new in v14.11.2
+## What's new in v14.11.3
 
-A web-research pass, prompted directly by the question "what's changed out
-there since this pack last checked" rather than by a bug report. Most of what
-it found was already correct — React 19, Next.js's App Router and Tailwind v4
-are all still current as of August 2026, no React 20 or Tailwind v5 exists yet.
-One real gap turned up.
+The second half of the same audit: a real, confirmed-empty coverage gap,
+closed. AI-generated images — DALL·E/Midjourney-style output a product
+generates on demand — had zero mentions anywhere in the pack.
 
-**shadcn/ui quietly changed its own default, and this pack never said so.**
-As of shadcn's July 2026 update, `shadcn init` defaults new projects to Base UI
-over Radix — the project's own changelog puts new `shadcn/create` projects at
-roughly 2:1 in Base UI's favor. Radix is not deprecated (every update still
-ships for both, and `shadcn init -b radix` keeps the old default), so this
-pack's own Radix-based examples and conventions stay correct — but
-`references/radix-primitives.md` opened by calling shadcn "a thin wrapper over
-Radix," full stop, which is no longer true of every project an agent will
-open. It now says so, names the one prop rename that matters most (`asChild` →
-`render`), and points at Base UI's own docs rather than guessing at a second
-API it doesn't carry. `core/component-api.md`'s `asChild` rule gained the same
-one-line pointer.
+**Generated images fail differently than fetched ones, and nothing said so.**
+`platform` already had a generic long-running-work rule (progress, an
+estimate, `aria-live`) and an images rule about CLS from `web-interface` — but
+neither covers what's specific to generation: a moderation rejection is not a
+network error and needs a different fix (rephrase the prompt, not retry) but
+the two states are easy to collapse into one; `alt` text has no ground truth
+to describe until the image exists, so it can't be written up front and must
+never just be the prompt, which describes intent rather than what rendered;
+and a regenerate affordance is not optional polish, because an unpredictable
+result is the entire point of the feature. Added as a Pattern in `platform`,
+next to `Checkout` and `OTP email` rather than as a new numbered Core Rule —
+it composes the two existing rules rather than replacing either.
 
-Also checked and closed with no changes needed: the three component-library
-references that lean on a single named external project — `react-bits.md`,
-`componentry.md`, `toon-format.md` — are all confirmed actively maintained as
-of this week, not the abandonment risk they read as on paper.
+Registry and every skill's token budget are unchanged — this was a same-file
+addition to an existing skill, not a new reference.
 
-11/11 gates green · 0 figure drift · reference depth grew 307 tokens to
-372,212 · band 5,978–7,543 → 5,978–7,598 · `react-components` and
-`component-patterns` still comfortably inside the 8,000-token budget.
+11/11 gates green · 0 figure drift.
 
 **Full history, v14.2.2 through today** — every prior release, what shipped and what it fixed: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 

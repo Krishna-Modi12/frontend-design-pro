@@ -394,7 +394,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6594,
+      "budget": 6710,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -593,5 +593,5 @@
       "label": "Zed"
     }
   ],
-  "version": "14.11.2"
+  "version": "14.11.3"
 }

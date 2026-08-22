@@ -2,7 +2,7 @@
 name: design-system
 description: Design tokens, OKLCH palettes, typography scales, spacing, theming, dark mode, brand systems, Figma handoff. Use when the token system itself is the work — palettes, type and spacing scales, theming and dark mode, brand-inspired aesthetics, font pairing, Figma-to-code translation. Not for applying tokens inside one component (react-components).
 metadata:
-  version: "14.11.2"
+  version: "14.11.3"
   core-deps:
     - core/design-tokens.md
     - core/accessibility-baseline.md

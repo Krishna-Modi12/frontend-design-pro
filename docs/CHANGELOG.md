@@ -4,6 +4,43 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.3] — 2026-08-22
+
+**Second half of the same web-research pass** — closing a confirmed-empty
+coverage gap the earlier survey flagged and deliberately deferred rather than
+rushed into the previous release.
+
+### Added
+
+- **AI-generated image handling, previously absent everywhere in the pack.**
+  Confirmed zero mentions across every `skills/*/references/*.md` before
+  writing anything. `platform` already covered long-running-work status
+  generically (rule 10) and `web-interface` covered image CLS (rule 8), but
+  neither addressed what's specific to on-demand generation: a moderation
+  rejection needs a different fix than a network failure (rephrase the
+  prompt, not retry) and the two are easy to collapse into one error state;
+  `alt` text can't be authored up front since there's no ground truth until
+  the image exists, and must never default to the prompt text, which
+  describes intent rather than what actually rendered; a regenerate
+  affordance isn't optional polish when unpredictability is the feature.
+  Added as a new Pattern in `skills/platform/SKILL.md`, composing the
+  existing long-running-work and images rules rather than duplicating them —
+  no new numbered Core Rule, no new reference file.
+
+### Verified, not changed
+
+- Browser-extension (Manifest V3 popup/options) and VS Code extension
+  (webview) UI remain genuinely uncovered. Left open — the pack's stated
+  frame is "browser: what users see and click" (`SKILL.md`), and extension
+  chrome is a different enough surface that adding it deserves its own scoped
+  pass, not a rushed addition here.
+
+### Figures
+
+Registry, band and every skill's token budget unchanged — this release edited
+one existing skill file, not a reference or the registry. 11/11 gates green,
+0 figure drift across 131 claim surfaces.
+
 ## [14.11.2] — 2026-08-22
 
 **A web-research pass rather than a bug report** — checking what's changed
