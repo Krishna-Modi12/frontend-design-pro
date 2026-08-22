@@ -37,16 +37,19 @@ export const HOW_IT_WORKS = [
   {
     letter: "A",
     title: "Trigger keywords match intent",
+    caption: "Matched by keyword, not guessed",
     body: "The router reads your prompt, matches it against every skill's trigger keywords, and loads exactly one — the most specific match — plus the core files it declares. No match, and it asks a clarifying question instead of guessing. Try it below.",
   },
   {
     letter: "B",
     title: "Constraints run first",
+    caption: "Checked before it ships",
     body: "What gets written is held to 60 machine-checked constraints (17 AST + 43 regex) — the first half walked through the TypeScript compiler API, the second run as patterns. Ten deliberate anti-examples exist to prove the checks actually fire.",
   },
   {
     letter: "C",
     title: "Lazy-loaded, type-safe output",
+    caption: "Only what's needed loads",
     body: "One skill plus its declared dependencies — nothing else opens. A typical request loads a few thousand tokens against the full depth available, and every shipped example compiles under tsc --strict.",
   },
 ] as const;
@@ -70,6 +73,10 @@ export interface WallCategory {
   id: string;
   title: string;
   body: string;
+  /** Short resting-state caption, shown in place of `body` until the card's
+      disclosure opens. Categories with a live `count` use `title` for this
+      instead (already 2-3 words) rather than duplicating it here. */
+  caption?: string;
   /** Key into `Figures`, when this category has a live count to show. */
   count?: "parserConstraints" | "regexConstraints";
   wide?: boolean;
@@ -93,21 +100,25 @@ export const WALL_CATEGORIES: WallCategory[] = [
   {
     id: "slop",
     title: "No placeholder anything",
+    caption: "No placeholder defaults, ever",
     body: "Acme, John Doe, user123, $99.99, 'Elevate your workflow' — the defaults an agent reaches for when nothing else is specified.",
   },
   {
     id: "motion",
     title: "No dated easing",
+    caption: "Motion stays calm, not bouncy",
     body: "No bounce, elastic or back easing on an entrance. No transition: all. Reduced motion is functional, not a string mention.",
   },
   {
     id: "type",
     title: "No default typefaces",
+    caption: "No default typefaces allowed",
     body: "Inter, Roboto, Arial, Poppins, DM Sans, Space Grotesk are banned as a display face — fine in a fallback stack, never carrying identity.",
   },
   {
     id: "layout",
     title: "No min-h-screen",
+    caption: "Viewport units that actually fit",
     body: "100vh ignores the mobile toolbar. min-h-[100dvh] is the only accepted form, checked by pattern on every shipped example.",
   },
 ];

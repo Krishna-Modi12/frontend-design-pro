@@ -1,5 +1,7 @@
 import type { ReactElement } from "react";
 import CopyButton from "./CopyButton";
+import AdapterIcon from "./AdapterIcons";
+import ChevronIcon from "./ChevronIcon";
 import { INSTALL_COMMAND, PRODUCT, REPO_URL } from "../lib/content";
 import type { Adapter } from "../lib/data.types";
 import { sectionShell, sectionSpacing, focusRing, tapTarget } from "../lib/tokens";
@@ -23,10 +25,6 @@ export function SectionInstall({ adapters, buildYear }: SectionInstallProps): Re
         <h2 data-display className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-ink-invert">
           Install in one command
         </h2>
-        <p className="mt-3 max-w-lg text-ink-invert-secondary">
-          Tracks the default branch. For the gated, version-stamped archive instead:{" "}
-          <code className="text-ink-invert">gh release download --repo Krishna-Modi12/frontend-design-pro --pattern &apos;*.skill&apos;</code>
-        </p>
 
         <div className="mt-6 flex max-w-2xl items-center gap-3 rounded-xl border border-white/15 bg-white/5 p-4">
           {/* `overflow-x-auto` here would create a horizontally-scrollable region
@@ -40,6 +38,19 @@ export function SectionInstall({ adapters, buildYear }: SectionInstallProps): Re
           <CopyButton text={INSTALL_COMMAND} />
         </div>
 
+        <details data-disclosure className="mt-4 max-w-2xl">
+          <summary className={`${focusRing} inline-flex items-center gap-1.5 rounded text-sm text-ink-invert-secondary hover:text-ink-invert`}>
+            Prefer a pinned release?
+            <ChevronIcon />
+          </summary>
+          <p className="mt-2 text-sm text-ink-invert-secondary">
+            Tracks the default branch. For the gated, version-stamped archive instead:{" "}
+            <code className="text-ink-invert [overflow-wrap:anywhere]">
+              gh release download --repo Krishna-Modi12/frontend-design-pro --pattern &apos;*.skill&apos;
+            </code>
+          </p>
+        </details>
+
         <div className="mt-14">
           <p className="text-xs font-semibold uppercase tracking-widest text-ink-invert-secondary">
             Adapters this ships for
@@ -48,9 +59,10 @@ export function SectionInstall({ adapters, buildYear }: SectionInstallProps): Re
             {adapters.map((adapter) => (
               <div
                 key={adapter.dir}
-                className="rounded-lg border border-white/10 px-3 py-3 text-center text-xs text-ink-invert-secondary"
+                className="flex flex-col items-center gap-2 rounded-lg border border-white/10 px-3 py-4 text-center"
               >
-                {adapter.label}
+                <AdapterIcon dir={adapter.dir} label={adapter.label} />
+                <span className="text-xs text-ink-invert-secondary">{adapter.label}</span>
               </div>
             ))}
           </div>

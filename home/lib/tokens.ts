@@ -151,6 +151,99 @@ body {
     transform: rotateY(360deg) rotateX(-8deg);
   }
 }
+
+/*
+ * \`<details data-disclosure>\` — the one on-demand-reveal primitive used by
+ * \`SectionHow\`, \`SectionWall\` and \`SectionInstall\`. A native \`<details>\`
+ * is keyboard- and touch-operable for free (no ARIA, no React state), which
+ * is why it replaced an earlier hover-only sketch for the same cards — this
+ * repo's own renderer harness has caught a hover-only interaction defect on
+ * this page before (see CLAUDE.md's \`pages:verify\` findings), so a reveal
+ * that only opens on \`:hover\` never shipped here a second time. The marker
+ * triangle is removed in favour of the chevron each caller renders itself.
+ */
+[data-disclosure] > summary {
+  list-style: none;
+  cursor: pointer;
+}
+[data-disclosure] > summary::-webkit-details-marker {
+  display: none;
+}
+[data-disclosure] > summary::marker {
+  content: "";
+}
+[data-disclosure] [data-disclosure-chevron] {
+  transition: transform 200ms ease-out;
+}
+[data-disclosure][open] [data-disclosure-chevron] {
+  transform: rotate(180deg);
+}
+
+/* Card motifs (\`SectionHow.tsx\`, \`SectionWall.tsx\`) — small, continuous,
+   two-property loops, same economy as the gallery keyframes above and
+   covered by the same reduced-motion override. */
+@keyframes chip-cycle {
+  0%, 100% {
+    background-color: var(--color-bg-page);
+    color: var(--color-text-muted);
+  }
+  50% {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+}
+
+@keyframes dim-to-bright {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes crossfade-swap {
+  0%, 45% {
+    opacity: 1;
+  }
+  50%, 95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sweep-highlight {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(220%);
+  }
+}
+
+/* \`transform: translateX(%)\` resolves against the moving element's OWN box,
+   not its container, so the travel distance is a fixed rem value sized to
+   \`WallMotif\`'s 3.5rem track minus its 0.625rem dot and 0.25rem of inset —
+   not a percentage, which would move the dot by only its own width. */
+@keyframes track-slide {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2.625rem);
+  }
+}
+
+@keyframes bar-grow {
+  0%, 100% {
+    height: 40%;
+  }
+  50% {
+    height: 100%;
+  }
+}
 `;
 
 /** Horizontal rhythm shared by every section shell on the page. */
