@@ -36,7 +36,7 @@ Base type is `ComponentPropsWithoutRef<'element'>` — never re-declare `onClick
 
 ## 3. Polymorphism Doctrine
 
-- `asChild` (Radix Slot): the component is a **behavior wrapper** — Tooltip trigger, DialogTrigger, Link-wrapping Button. Renders the child element, merges props onto it.
+- `asChild` (Radix Slot): the component is a **behavior wrapper** — Tooltip trigger, DialogTrigger, Link-wrapping Button. Renders the child element, merges props onto it. Base UI's equivalent is the `render` prop, not `asChild` — check which primitive library a project actually has installed before assuming Radix's name (`react-components/references/radix-primitives.md` has the detail).
 - `as` (string tag): only in **typography/layout primitives** (Heading, Text, Box) where the tag changes but behavior doesn't (`<Heading as="h2">`).
 - NEVER support both on one component. NEVER `as` on interactive components — behavior + tag swapping breaks a11y contracts.
 

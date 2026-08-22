@@ -2,7 +2,7 @@
 name: agent-ops
 description: Agent operating discipline — token budgeting, cross-session memory, self-improvement loops, self-verification, parallel work, and subagent orchestration. Use when the work is the agent's own process rather than the UI it produces — deciding what to load, persisting a correction so it sticks, verifying a change before reporting done, or dispatching subagents. Not for building dashboards or persistence UI.
 metadata:
-  version: "14.11.1"
+  version: "14.11.2"
   core-deps:
     - core/agent-behavior.md
     - core/validate-checklist.md

@@ -1,10 +1,24 @@
 # Radix Primitives
 
 `references/shadcn.md` covers the *styled* layer. This file covers what is
-underneath it, because shadcn/ui is a thin wrapper over Radix and every hard
-question — why the exit animation does not play, why focus jumps, why the
-dropdown is clipped, why the dialog fails an audit — is a Radix question wearing
-a shadcn class list.
+underneath it, because shadcn/ui has been a thin wrapper over Radix for most of
+its life and every hard question — why the exit animation does not play, why
+focus jumps, why the dropdown is clipped, why the dialog fails an audit — is a
+Radix question wearing a shadcn class list.
+
+**That is no longer the only underneath.** As of shadcn/ui's July 2026 update,
+`shadcn init` defaults new projects to Base UI over Radix — the project's own
+numbers say new `shadcn/create` projects now pick Base UI roughly 2:1. Radix is
+**not deprecated** and every update still ships for both; `shadcn init -b radix`
+keeps the old default. This file, `references/shadcn.md`, and this pack's own
+gold examples are all written against Radix — a legitimate, still fully
+supported and still current choice, not a stale one. But if you land in a
+project that already ran `shadcn init` after July 2026 without that flag, it is
+on Base UI, and forcing Radix's contract onto it produces confidently wrong
+code. The one prop rename that matters most: Radix's `asChild` is Base UI's
+`render`. See "`asChild` and the Slot contract" below for what Radix's version
+actually guarantees; Base UI's own docs (`base-ui.com`) are the source for its
+version of the same contract — this file does not carry both.
 
 Radix ships behaviour and accessibility with no styling at all. That is the whole
 product: it implements the WAI-ARIA pattern, keyboard model, focus management and
@@ -276,3 +290,7 @@ the relative frequency of each data attribute, the Slot single-child throw and t
 Dialog labelling behaviour were all read from `radix-ui/primitives` at the time of
 writing (MIT, © WorkOS). Attribute value tables should be confirmed in devtools
 for the version you have installed.
+
+The Base UI default switch, the 2:1 adoption figure, the non-deprecation
+statement and the `-b radix` escape hatch are from shadcn/ui's own July 2026
+changelog entry announcing it, read 2026-08-22.

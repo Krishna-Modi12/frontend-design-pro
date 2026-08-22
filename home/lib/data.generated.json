@@ -3,7 +3,7 @@
     "skills": 19,
     "coreFiles": 8,
     "referenceFiles": 104,
-    "referenceDepthTokens": 371905,
+    "referenceDepthTokens": 372212,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -13,7 +13,7 @@
     "ciConstraints": 60,
     "registryTokens": 2112,
     "bandLow": 5978,
-    "bandHigh": 7543
+    "bandHigh": 7598
   },
   "baseDeps": [
     "core/accessibility-baseline.md",
@@ -66,7 +66,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6053,
+      "budget": 6108,
       "group": "Meta",
       "covers": "Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships",
       "trySaying": "\"Render components from this JSON schema, and validate before it hits the DOM.\""
@@ -116,7 +116,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 7157,
+      "budget": 7212,
       "group": "Making it look right",
       "covers": "Type rendered as a system: particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path — with the real string always left in the DOM",
       "trySaying": "\"A hero headline that assembles from particles on mouse-over, and still reads fine with JS off.\""
@@ -167,7 +167,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6380,
+      "budget": 6435,
       "group": "Making it look right",
       "covers": "Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit",
       "trySaying": "\"Give me an animated headline like Aceternity's, but keyboard-accessible.\""
@@ -196,7 +196,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6018,
+      "budget": 6073,
       "group": "Building something new",
       "covers": "Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query",
       "trySaying": "\"Sortable, filterable users table with pagination and a loading skeleton.\""
@@ -249,7 +249,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 7543,
+      "budget": 7598,
       "group": "Making it look right",
       "covers": "Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints before any code",
       "trySaying": "\"Build a hero inspired by this Dribbble shot: <url> — dark, developer tool.\""
@@ -306,7 +306,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6090,
+      "budget": 6145,
       "group": "Building something new",
       "covers": "Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement",
       "trySaying": "\"Multi-step checkout with Zod validation and errors wired to aria-describedby.\""
@@ -394,7 +394,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6539,
+      "budget": 6594,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -424,7 +424,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6330,
+      "budget": 6385,
       "group": "Building something new",
       "covers": "One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, forwardRef, CVA",
       "trySaying": "\"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly.\""
@@ -450,7 +450,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6106,
+      "budget": 6161,
       "group": "Making it work well",
       "covers": "Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals",
       "trySaying": "\"This page has a 4s LCP. Find the waterfall and fix it.\""
@@ -475,7 +475,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 5999,
+      "budget": 6054,
       "group": "Making it work well",
       "covers": "Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy",
       "trySaying": "\"Write tests for this form — including the validation errors and an axe pass.\""
@@ -504,7 +504,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6196,
+      "budget": 6251,
       "group": "Building something new",
       "covers": "Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes",
       "trySaying": "\"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion.\""
@@ -593,5 +593,5 @@
       "label": "Zed"
     }
   ],
-  "version": "14.11.1"
+  "version": "14.11.2"
 }

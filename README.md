@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **104** | **371,905 tokens** | **2,112 tokens** | **5,978–7,543** | **60** | **11** |
+| **19** | **104** | **372,212 tokens** | **2,112 tokens** | **5,978–7,598** | **60** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 371,905 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 372,212 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -387,11 +387,11 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | Layer | What it is | Cost |
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,112 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,867 tokens — the deps one skill declares |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,922 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **371,905 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **372,212 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,978–7,543 tokens, not 371,905.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,978–7,598 tokens, not 372,212.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -520,50 +520,35 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
-## What's new in v14.11.1
+## What's new in v14.11.2
 
-A 12-fresh-agent behavioral audit — genuinely isolated agents, zero conversation
-history, pointed at `SKILL.md` as an installed skill — found 4 documentation
-defects. No engineering failures: every one was a place the pack's own prose
-disagreed with itself or with what it actually enforces. All 4 fixed here.
+A web-research pass, prompted directly by the question "what's changed out
+there since this pack last checked" rather than by a bug report. Most of what
+it found was already correct — React 19, Next.js's App Router and Tailwind v4
+are all still current as of August 2026, no React 20 or Tailwind v5 exists yet.
+One real gap turned up.
 
-**The anti-slop wall banned what `TYP-03` explicitly permits.** `SKILL.md`'s
-wall listed "gradient fills on large headings" as an absolute ban, no exception
-— while `TYP-03`, the rule the regex suite actually enforces, calls the same
-pattern "legitimate on a display heading" and only bans it on body text. The
-wall now says what's enforced: banned on body-sized text, `bg-clip-text` is
-display-only. This also keeps a claim elsewhere in the docs true — that this
-pack, unlike a named competitor, doesn't fire a gradient-text detector
-unconditionally on headings.
+**shadcn/ui quietly changed its own default, and this pack never said so.**
+As of shadcn's July 2026 update, `shadcn init` defaults new projects to Base UI
+over Radix — the project's own changelog puts new `shadcn/create` projects at
+roughly 2:1 in Base UI's favor. Radix is not deprecated (every update still
+ships for both, and `shadcn init -b radix` keeps the old default), so this
+pack's own Radix-based examples and conventions stay correct — but
+`references/radix-primitives.md` opened by calling shadcn "a thin wrapper over
+Radix," full stop, which is no longer true of every project an agent will
+open. It now says so, names the one prop rename that matters most (`asChild` →
+`render`), and points at Base UI's own docs rather than guessing at a second
+API it doesn't carry. `core/component-api.md`'s `asChild` rule gained the same
+one-line pointer.
 
-**`SLOP-04` claimed more than its regex catches.** It's meant to flag
-round-number placeholder data, but its own pattern lets `$10,000` pass as
-"organic." Rather than widen the regex blind — that risks failing gold examples
-that currently pass it, unchecked — the constraint's description now says what
-it actually covers: bare placeholder values, not fabricated-but-plausible
-figures. Widening the check itself is a scoped follow-up, not this release.
+Also checked and closed with no changes needed: the three component-library
+references that lean on a single named external project — `react-bits.md`,
+`componentry.md`, `toon-format.md` — are all confirmed actively maintained as
+of this week, not the abandonment risk they read as on paper.
 
-**"Responsive on mobile" routed to a skill with zero web-layout content.**
-`platform` owns that routing, but its Core Rules were 100% native/PWA — touch
-targets, safe-area insets, nothing about breakpoints. It now has a real rule:
-`min-width` queries over `max-width`, grid stacking below 640px, horizontal-
-scroll tables below 768px, a 390/768/1024/1440px test matrix.
-
-**A user-named priority had no rule keeping it first.** `agent-behavior.md`'s
-four principles said nothing about a concern the user explicitly calls out as
-primary — e.g. "the main thing is accessibility." A fifth principle now says
-that concern gets implemented and verified first, stated explicitly in the
-plan, not just correctly built alongside whatever else the request asked for.
-
-Also closed this cycle, with no new files: a prior plan named 5 reference files
-as still owed. `docs/CHANGELOG.md` had already resolved that — each one is
-covered elsewhere in the pack (`shadcn-ecosystem.md`, `laws-of-ux.md`'s Gestalt
-section, `react-bits.md`) or, for one, deliberately rejected as infrastructure
-rather than UI content. Recorded, not rewritten.
-
-11/11 gates green · 0 figure drift · registry 2,099 → 2,112 tokens (the wall
-edit), band 5,965–7,530 → 5,978–7,543 · every skill still fits the 8,000-token
-budget with room to spare.
+11/11 gates green · 0 figure drift · reference depth grew 307 tokens to
+372,212 · band 5,978–7,543 → 5,978–7,598 · `react-components` and
+`component-patterns` still comfortably inside the 8,000-token budget.
 
 **Full history, v14.2.2 through today** — every prior release, what shipped and what it fixed: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 

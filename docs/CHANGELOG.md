@@ -4,6 +4,53 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.2] — 2026-08-22
+
+**A web-research pass rather than a bug report** — checking what's changed
+upstream since the pack's claims were last measured against source, not
+reacting to a reported defect.
+
+### Fixed
+
+- **shadcn/ui's default primitive library changed and this pack didn't know
+  it.** shadcn's July 2026 update makes `shadcn init` default new projects to
+  Base UI over Radix (~2:1 adoption on new `shadcn/create` projects, per
+  shadcn's own changelog). Radix is not deprecated — every update still ships
+  for both, and the old default is one flag away (`-b radix`) — so nothing
+  about this pack's own Radix-based conventions or gold examples was wrong.
+  But `skills/react-components/references/radix-primitives.md` opened by
+  calling shadcn "a thin wrapper over Radix" unconditionally, which stopped
+  being true of every project the moment Base UI became the default. Added a
+  section naming the switch, the non-deprecation of Radix, and the one prop
+  rename that matters most (`asChild` → `render`), sourced from shadcn's own
+  changelog and read 2026-08-22. `core/component-api.md`'s `asChild` rule
+  gained a matching one-line pointer.
+
+### Verified, not changed
+
+- **Current-stack claims hold.** Checked React (19, no 20 yet), Next.js (App
+  Router, v16.3.0 current), and Tailwind (v4.3.3 current, no v5) against
+  upstream — the pack's existing Stack lines are still accurate, no edits
+  needed.
+- **Three single-source reference files, checked for abandonment risk.**
+  `react-bits.md`, `componentry.md` and `toon-format.md` each lean heavily on
+  one named external project. All three confirmed actively maintained this
+  week (commits, stars, non-archived) — not the staleness risk they read as
+  from the file structure alone.
+- Confirmed no coverage gap for e-commerce/checkout, drag-and-drop, file
+  upload, video/media, or onboarding/empty-states — each has real, if
+  scattered, coverage already. AI-generated-image handling (alt text,
+  moderation, generation-failure states) and browser/VS Code extension UI
+  remain genuinely uncovered; left open as scoped follow-ups, not attempted
+  here.
+
+### Figures
+
+Reference depth 371,905 → 372,212 tokens (the reference-file addition);
+per-request band 5,978–7,543 → 5,978–7,598. Registry unchanged at 2,112
+tokens — this release touched no always-loaded file. 11/11 gates green, 0
+figure drift across 129 claim surfaces after the sweep.
+
 ## [14.11.1] — 2026-08-22
 
 **Four documentation defects found by a 12-fresh-agent behavioral audit —
