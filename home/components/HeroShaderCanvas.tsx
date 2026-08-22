@@ -78,7 +78,10 @@ const vertexShader = /* glsl */ `
     vUv = uv;
     vec3 pos = position;
     float mouseDist = distance(uv, uMouse);
-    float mouseBump = smoothstep(0.5, 0.0, mouseDist) * 0.12;
+    // Halved from 0.12 — the pointer warp read as too interactive/gimmicky
+    // at full strength; still present, just an ambient nudge now rather
+    // than something that visibly chases the cursor.
+    float mouseBump = smoothstep(0.5, 0.0, mouseDist) * 0.06;
     float elevation = snoise(vec3(pos.xy * 0.6, uTime * 0.08)) * 0.35 + mouseBump * sin(uTime * 0.6);
     pos.z += elevation;
     vElevation = elevation;
@@ -90,13 +93,21 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uColorA;
   uniform vec3 uColorB;
   uniform float uOpacity;
+  uniform float uScrollProgress;
   varying vec2 vUv;
   varying float vElevation;
 
   void main() {
     float mixFactor = clamp(vUv.y + vElevation * 0.6, 0.0, 1.0);
     vec3 color = mix(uColorB, uColorA, mixFactor);
-    gl_FragColor = vec4(color, uOpacity);
+    // Scrolling past the hero cools the gradient toward uColorB — already
+    // the page's own neutral background token, not a new colour — rather
+    // than rotating hue. This palette has no cold/blue member, so "cooling"
+    // here means falling chroma, not a different hue family. Capped at 0.6
+    // so it settles into a quieter version of the same gradient, never
+    // flattens to the bare background.
+    vec3 cooled = mix(color, uColorB, uScrollProgress * 0.6);
+    gl_FragColor = vec4(cooled, uOpacity);
   }
 `;
 
@@ -155,6 +166,7 @@ export function HeroShaderCanvas({ reduced }: HeroShaderCanvasProps): ReactEleme
       uColorB: { value: readColorVar("--color-bg-page", "oklch(98% 0.008 80)") },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uOpacity: { value: 0.18 },
+      uScrollProgress: { value: 0 },
     };
     const geometry = new THREE.PlaneGeometry(1, 1, 48, 48);
     const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true });
@@ -189,6 +201,22 @@ export function HeroShaderCanvas({ reduced }: HeroShaderCanvasProps): ReactEleme
       window.addEventListener("pointermove", onPointerMove, { passive: true });
     }
 
+    // Scroll-linked cooling target — how far the viewport has moved through
+    // the hero's own height, 0 at rest, 1 a full hero-height past it. Read
+    // straight from the host's own bounding rect rather than a passed-down
+    // prop: the effect is purely local to this scene, so there's nothing to
+    // plumb through `Hero.tsx`/`HeroBackground.tsx`. Not attached at all
+    // under reduced motion, so `uScrollProgress` simply never leaves 0.
+    let scrollTarget = 0;
+    const onScroll = (): void => {
+      const rect = host.getBoundingClientRect();
+      scrollTarget = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
+    };
+    if (!reduced) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
     const clock = new THREE.Clock();
     let rafId: number | null = null;
     let cancelled = false;
@@ -198,6 +226,7 @@ export function HeroShaderCanvas({ reduced }: HeroShaderCanvasProps): ReactEleme
       const delta = clock.getDelta(); // delta-driven, never a frame counter (3D-06)
       uniforms.uTime.value += delta;
       uniforms.uMouse.value.lerp(new THREE.Vector2(mouseTarget.x, mouseTarget.y), 0.05);
+      uniforms.uScrollProgress.value += (scrollTarget - uniforms.uScrollProgress.value) * 0.08;
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(tick);
     };
@@ -212,6 +241,7 @@ export function HeroShaderCanvas({ reduced }: HeroShaderCanvasProps): ReactEleme
       cancelled = true;
       if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("scroll", onScroll);
       resizeObserver.disconnect();
       geometry.dispose();
       material.dispose();
