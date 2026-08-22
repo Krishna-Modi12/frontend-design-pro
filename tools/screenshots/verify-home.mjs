@@ -166,14 +166,42 @@ async function checkInteractivity(browser, base) {
   await ctx.grantPermissions(["clipboard-read", "clipboard-write"]);
   const page = await ctx.newPage();
   await page.goto(base, { waitUntil: "networkidle", timeout: 90_000 });
+  // The hero's WebGL layer is a dynamically-imported chunk (`next/dynamic`,
+  // `ssr: false`) that mounts after a `matchMedia` check in a `useEffect` —
+  // give it a beat past `networkidle` to actually attach the canvas.
+  await page.waitForTimeout(500);
 
   const problems = [];
+
+  // Hero: the WebGL shader background actually mounted (desktop viewport is
+  // >=640px, so `HeroBackground` should have enabled the Canvas chunk). This
+  // is the one thing nothing else here would catch — a silent shader-compile
+  // failure that resolves without throwing still leaves the layer empty.
+  const heroCanvasCount = await page.locator("[data-hero-scene] canvas").count();
+  if (heroCanvasCount === 0) problems.push("hero shader canvas did not mount at desktop width");
+
+  // Wall: the mock UI gallery renders all six cards.
+  const galleryCardCount = await page.locator("[data-mock-gallery] > *").count();
+  if (galleryCardCount !== 6) problems.push(`mock UI gallery rendered ${galleryCardCount} cards, expected 6`);
 
   // Router: the default request resolves to a real skill.
   const defaultKind = await page.locator("[data-route-output]").getAttribute("data-route-kind");
   if (defaultKind !== "hit") problems.push(`default request did not resolve to a skill (kind=${defaultKind})`);
   const routeId = await page.locator("[data-route-id]").textContent().catch(() => "");
   if (!routeId) problems.push("router hit produced no [data-route-id]");
+
+  // Router: the "narrowing the cost" token countdown settles rather than
+  // looping. Its GSAP timeline finishes well under 2.5s after mount
+  // (two 0.9s tweens plus short gaps between them); wait it out, then read
+  // the displayed text twice, 300ms apart, and require it to have stopped
+  // changing.
+  await page.waitForTimeout(2500);
+  const countdownFirst = await page.locator("[data-route-output] [data-metric].font-mono").last().textContent().catch(() => "");
+  await page.waitForTimeout(300);
+  const countdownSecond = await page.locator("[data-route-output] [data-metric].font-mono").last().textContent().catch(() => "");
+  if (!countdownFirst || countdownFirst !== countdownSecond) {
+    problems.push(`token countdown did not settle (read "${countdownFirst}" then "${countdownSecond}")`);
+  }
 
   // Router: an out-of-scope request asks rather than guesses.
   await page.locator('[data-example="rewrite the billing service in Go"]').click();
@@ -198,7 +226,10 @@ async function checkInteractivity(browser, base) {
   const clip = await page.evaluate(() => navigator.clipboard.readText()).catch(() => "");
   if (!clip.includes("npx skills add")) problems.push("install copy button did not write the command to the clipboard");
 
+  report("hero shader canvas mounted", problems.filter((p) => p.includes("hero shader canvas")));
+  report("mock UI gallery renders all 6 cards", problems.filter((p) => p.includes("mock UI gallery")));
   report("router resolves the real registry and refuses to guess", problems.filter((p) => p.includes("route") || p.includes("skill")));
+  report("token countdown settles", problems.filter((p) => p.includes("token countdown")));
   report("checker fails the bad snippet and clears the good one", problems.filter((p) => p.includes("snippet")));
   report("install command actually copies", problems.filter((p) => p.includes("clipboard")));
 
