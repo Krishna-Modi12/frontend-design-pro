@@ -13,29 +13,41 @@ Next 15 app instead, for the same reason `demo/landing-page` and `demo/showcase`
 are: the panels are React state now, not DOM queries, and the page can use the
 same component conventions the rest of this repo's examples are held to.
 
-## Why this palette, why particles
+## Why this palette, why a shader mesh
 
-The design brief this page was rebuilt from asked for a warm-editorial ground,
-a terracotta accent, and a hero headline rendered as canvas particle
-typography. All three are checked against this pack's own rules before
-shipping, not just against the brief:
+The design brief this page was rebuilt from asked for a warm-editorial ground
+and a terracotta accent; the v2.1 polish pass replaced the original canvas
+particle-typography hero with a Three.js shader-mesh background. Both are
+checked against this pack's own rules before shipping, not just against a
+brief:
 
 - Every token in [`tokens.css`](tokens.css) is measured, not eyed — four pairs
-  in the brief's original values failed WCAG AA and were corrected (`text-muted`
+  in the original brief's values failed WCAG AA and were corrected (`text-muted`
   moved from 65% to 50% lightness; the footer's dark section needed its own
   `ink-invert` pair; `border` needed a second, darker `border-strong` for
   control boundaries, since the decorative border alone clears nothing at
   WCAG 1.4.11's 3:1).
-- The particle field in [`components/HeroCanvas.tsx`](components/HeroCanvas.tsx)
-  scales its particle count from the viewport and `navigator.deviceMemory`,
-  never a fixed number. `skills/canvas-typography/SKILL.md` — the pack's own
-  rule for this exact pattern — names "a particle count fixed at 5,000
-  regardless of viewport" as its own anti-pattern in as many words. It also
-  reads the real `<h1>`'s computed font, size and position at build time
-  (`sourceRef`, not an independently guessed size), the fix for a real
-  alignment bug: the first version sized its own text from a guessed
-  `clamp()` formula that did not match the real heading, and rendered as a
-  misaligned near-duplicate sitting behind it.
+- The gradient plane in
+  [`components/HeroShaderCanvas.tsx`](components/HeroShaderCanvas.tsx) is
+  raw `three`, a deliberate, measured exception to
+  `skills/threejs-3d/SKILL.md`'s default ("write R3F, not raw Three.js"): an
+  React Three Fiber build of this exact one-mesh scene shipped a lazy chunk
+  that gzipped to ~174KB (R3F's reconciler needs a generic catalog covering
+  most of THREE's export surface to support arbitrary JSX tags, which
+  defeats tree-shaking even here) — more than 3x this pass's own ">50KB, find
+  a lighter alternative" ceiling. The manual scene touches only the eight
+  THREE classes it needs and still follows that skill's constraint ids by
+  hand: dpr capped at 2 (3D-01), geometry/material built once and disposed on
+  unmount (3D-03), an OKLCH token read into `THREE.Color` rather than a raw
+  hex literal (3D-05), a delta from `THREE.Clock` rather than a frame counter
+  (3D-06). [`components/HeroBackground.tsx`](components/HeroBackground.tsx)
+  owns the policy around it: the canvas is still behind a dynamic import
+  (`ssr: false`) so `three` never blocks the server-rendered headline, never
+  mounts at all below 640px per
+  `skills/animations/references/motion-budget.md`'s heavy-background rule,
+  and freezes (one static frame, no further `requestAnimationFrame`) rather
+  than unmounting under `prefers-reduced-motion` — the scene still renders,
+  it just never moves on its own.
 
 ## Run it
 

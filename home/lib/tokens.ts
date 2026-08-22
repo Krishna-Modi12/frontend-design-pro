@@ -109,8 +109,46 @@ body {
   [data-marquee-track] {
     animation: none !important;
   }
-  canvas[data-particle-canvas] {
+  [data-hero-scene] {
     display: none;
+  }
+}
+
+/* Slop card violation badge (\`ProblemComparison.tsx\`) — purely decorative,
+   inside an \`aria-hidden\` subtree, covered by the generic reduced-motion
+   rule above like every other keyframe on this page. */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* Kinetic-type gallery card (\`MockUIGallery.tsx\`). */
+@keyframes kinetic-rise {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* 3D-hero gallery card (\`MockUIGallery.tsx\`) — a CSS \`rotate3d\`/\`perspective\`
+   illusion, not a second WebGL canvas; Three.js stays confined to the real
+   hero background. */
+@keyframes card-spin-3d {
+  from {
+    transform: rotateY(0deg) rotateX(-8deg);
+  }
+  to {
+    transform: rotateY(360deg) rotateX(-8deg);
   }
 }
 `;
