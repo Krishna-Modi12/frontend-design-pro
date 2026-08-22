@@ -5,7 +5,9 @@ import type { ReactElement } from "react";
 import { route } from "../lib/router";
 import { ROUTER_DEFAULT_REQUEST, ROUTER_EXAMPLES } from "../lib/content";
 import type { SkillRecord, Figures } from "../lib/data.types";
-import { cardShell, cardInset, focusRing, tapTarget } from "../lib/tokens";
+import { cardInset, focusRing, tapTarget } from "../lib/tokens";
+import SkillPreviewThumbnail from "./SkillPreviewThumbnail";
+import useTokenCountdown from "../lib/useTokenCountdown";
 
 export interface RouterPanelProps {
   skills: SkillRecord[];
@@ -27,7 +29,7 @@ export function RouterPanel({ skills, figures }: RouterPanelProps): ReactElement
   const result = useMemo(() => route(skills, request), [skills, request]);
 
   return (
-    <div className={`${cardShell} overflow-hidden`}>
+    <div className="overflow-hidden">
       <div className={`${cardInset} border-b border-border bg-bg-surface`}>
         <label className="block">
           <span className="text-sm font-medium text-text-secondary">
@@ -93,18 +95,29 @@ function RouteOutput({
   const depth = figures.referenceDepthTokens || 0;
   const pct = depth ? Math.round((skill.budget / depth) * 1000) / 10 : 0;
   const fillPct = Math.max(pct, 0.4);
+  const countdownRef = useTokenCountdown([depth, figures.registryTokens, skill.budget]);
 
   return (
     <div>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span data-metric data-route-id className="text-lg font-semibold text-accent">
-          {skill.id}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="flex items-center gap-2.5">
+          <SkillPreviewThumbnail group={skill.group} />
+          <span data-metric data-route-id className="text-lg font-semibold text-accent">
+            {skill.id}
+          </span>
         </span>
         <span className="text-xs uppercase tracking-wide text-text-muted">
           one skill · most specific wins
         </span>
       </div>
       <p className="mt-2 text-sm text-text-secondary">{skill.covers}</p>
+
+      <p className="mt-4 flex items-center gap-2 text-xs text-text-muted">
+        <span className="uppercase tracking-wide">narrowing the cost</span>
+        <span data-metric ref={countdownRef} className="font-mono text-sm font-semibold text-accent">
+          {fmt.format(depth)}
+        </span>
+      </p>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div>
