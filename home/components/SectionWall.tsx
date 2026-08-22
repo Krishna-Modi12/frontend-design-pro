@@ -7,13 +7,74 @@ import BrowserChrome from "./BrowserChrome";
 import MockUIGallery from "./MockUIGallery";
 import Marquee from "./Marquee";
 import ConstraintBadge from "./ConstraintBadge";
+import ChevronIcon from "./ChevronIcon";
 import { gsap, ScrollTrigger } from "../lib/gsapClient";
 import { WALL_MARQUEE, WALL_CATEGORIES } from "../lib/content";
 import type { Figures } from "../lib/data.types";
-import { sectionShell, sectionSpacing, cardShell, cardInset } from "../lib/tokens";
+import { sectionShell, sectionSpacing, cardShell, cardInset, focusRing } from "../lib/tokens";
 
 export interface SectionWallProps {
   figures: Figures;
+}
+
+/** Six small, continuous CSS-only motifs, one per `WALL_CATEGORIES` id — the
+    same economy and reduced-motion coverage as `SectionHow`'s `StepMotif`. */
+function WallMotif({ id }: { id: string }): ReactElement {
+  if (id === "ast") {
+    return (
+      <span
+        aria-hidden="true"
+        className="mt-3 inline-block h-2 w-2 rounded-full bg-accent"
+        style={{ animation: "pulse-dot 1.8s ease-in-out infinite" }}
+      />
+    );
+  }
+  if (id === "regex") {
+    return (
+      <div aria-hidden="true" className="relative mt-3 h-1.5 w-16 overflow-hidden rounded-full bg-bg-page">
+        <span
+          className="absolute inset-y-0 w-6 rounded-full bg-accent [animation:sweep-highlight_2.2s_ease-in-out_infinite]"
+        />
+      </div>
+    );
+  }
+  if (id === "slop") {
+    return (
+      <span
+        aria-hidden="true"
+        className="mt-3 inline-block h-2 w-2 rounded-full"
+        style={{ background: "oklch(65% 0.22 25)", animation: "pulse-dot 1.6s ease-in-out infinite" }}
+      />
+    );
+  }
+  if (id === "motion") {
+    return (
+      <div aria-hidden="true" className="relative mt-3 h-3.5 w-14 rounded-full bg-bg-page">
+        <span className="absolute left-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-accent [animation:track-slide_1.8s_ease-in-out_infinite]" />
+      </div>
+    );
+  }
+  if (id === "type") {
+    return (
+      <div aria-hidden="true" className="relative mt-3 h-5 w-8">
+        <span className="absolute inset-0 font-sans text-sm text-text-muted [animation:crossfade-swap_2.6s_ease-in-out_infinite]">
+          Aa
+        </span>
+        <span
+          data-display
+          className="absolute inset-0 text-sm font-semibold text-accent [animation:crossfade-swap_2.6s_ease-in-out_infinite_1.3s]"
+        >
+          Aa
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div aria-hidden="true" className="mt-3 flex h-5 items-end gap-1">
+      <span className="w-1.5 rounded-full bg-border-strong" style={{ height: "100%" }} />
+      <span className="w-1.5 rounded-full bg-accent [animation:bar-grow_2s_ease-in-out_infinite]" />
+    </div>
+  );
 }
 
 /**
@@ -81,33 +142,35 @@ export function SectionWall({ figures }: SectionWallProps): ReactElement {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           {WALL_CATEGORIES.map((category) => (
-            <article
+            <details
               key={category.id}
+              data-disclosure
               className={`${cardShell} ${cardInset} ${category.wide ? "sm:col-span-2" : ""}`}
             >
-              <h3 className="text-base font-semibold text-text-primary">
-                {category.title}
-                {category.count ? (
-                  <span data-metric className="ml-2 text-sm font-normal text-accent">
-                    {figures[category.count]}
-                  </span>
-                ) : null}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{category.body}</p>
-            </article>
+              <summary className={`${focusRing} flex items-start justify-between gap-3 rounded-lg`}>
+                <div>
+                  <h3 className="text-base font-semibold text-text-primary">
+                    {category.title}
+                    {category.count ? (
+                      <span data-metric className="ml-2 text-sm font-normal text-accent">
+                        {figures[category.count]}
+                      </span>
+                    ) : null}
+                  </h3>
+                  {category.caption ? <p className="mt-1 text-sm text-text-muted">{category.caption}</p> : null}
+                  <WallMotif id={category.id} />
+                </div>
+                <ChevronIcon />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-text-secondary">{category.body}</p>
+            </details>
           ))}
         </div>
 
         <div ref={playgroundRef} className="mt-12">
-          <p className="text-sm text-text-muted">
-            Paste a component. Both snippets below are cross-checked against{" "}
-            <code>scripts/test_constraints.py</code> in both directions before this ships.
-          </p>
-          <div className="mt-4">
-            <BrowserChrome url="frontend-design-pro.dev/wall">
-              <CheckerPanel />
-            </BrowserChrome>
-          </div>
+          <BrowserChrome url="frontend-design-pro.dev/wall">
+            <CheckerPanel />
+          </BrowserChrome>
         </div>
 
         <div className="mt-14">

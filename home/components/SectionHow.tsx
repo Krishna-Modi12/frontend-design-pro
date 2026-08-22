@@ -5,10 +5,66 @@ import type { ReactElement } from "react";
 import { gsap, ScrollTrigger } from "../lib/gsapClient";
 import RouterPanel from "./RouterPanel";
 import BrowserChrome from "./BrowserChrome";
+import ChevronIcon from "./ChevronIcon";
 import { HOW_IT_WORKS } from "../lib/content";
 import type { SkillRecord, Figures } from "../lib/data.types";
 import useStaggerReveal from "../lib/useStaggerReveal";
-import { sectionShell, sectionSpacing, cardShell, cardInset } from "../lib/tokens";
+import { sectionShell, sectionSpacing, cardShell, cardInset, focusRing } from "../lib/tokens";
+
+/** Three small, continuous CSS-only motifs — one per card, keyed by letter.
+    No React state: each is a plain keyframe loop from `tokens.ts`, covered
+    by the same reduced-motion override every other decoration on this page
+    uses. */
+function StepMotif({ letter }: { letter: string }): ReactElement | null {
+  if (letter === "A") {
+    return (
+      <div aria-hidden="true" className="mt-4 flex items-center gap-1.5">
+        {[40, 56, 32].map((width, i) => (
+          <span
+            key={i}
+            className="h-5 rounded-full bg-bg-page [animation:chip-cycle_2.4s_ease-in-out_infinite]"
+            style={{ width, animationDelay: `${i * 0.3}s` }}
+          />
+        ))}
+      </div>
+    );
+  }
+  if (letter === "B") {
+    return (
+      <div aria-hidden="true" className="relative mt-4 h-6 w-6">
+        <svg
+          viewBox="0 0 24 24"
+          className="absolute inset-0 h-6 w-6 text-text-muted [animation:crossfade-swap_2.6s_ease-in-out_infinite]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+        </svg>
+        <svg
+          viewBox="0 0 24 24"
+          className="absolute inset-0 h-6 w-6 text-accent [animation:crossfade-swap_2.6s_ease-in-out_infinite_1.3s]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    );
+  }
+  return (
+    <div aria-hidden="true" className="mt-4 flex items-end gap-1">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="h-4 w-1.5 rounded-full bg-accent [animation:dim-to-bright_2.2s_ease-in-out_infinite]"
+          style={{ animationDelay: `${i * 0.15}s` }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export interface SectionHowProps {
   skills: SkillRecord[];
@@ -71,29 +127,30 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
           className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.9fr_1.05fr] lg:gap-8"
         >
           {HOW_IT_WORKS.map((step) => (
-            <article key={step.letter} className={`${cardShell} ${cardInset}`}>
-              <span
-                data-metric
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-glow text-sm font-semibold text-text-primary"
-              >
-                {step.letter}
-              </span>
-              <h3 className="mt-4 text-lg font-semibold text-text-primary">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{step.body}</p>
-            </article>
+            <details key={step.letter} data-disclosure className={`${cardShell} ${cardInset}`}>
+              <summary className={`${focusRing} flex items-start justify-between gap-3 rounded-lg`}>
+                <div>
+                  <span
+                    data-metric
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-glow text-sm font-semibold text-text-primary"
+                  >
+                    {step.letter}
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold text-text-primary">{step.title}</h3>
+                  <p className="mt-1 text-sm text-text-muted">{step.caption}</p>
+                  <StepMotif letter={step.letter} />
+                </div>
+                <ChevronIcon />
+              </summary>
+              <p className="mt-4 text-sm leading-relaxed text-text-secondary">{step.body}</p>
+            </details>
           ))}
         </div>
 
         <div className="mt-12">
-          <p className="text-sm text-text-muted">
-            Type a request below. This runs the real registry — not a lookalike written for
-            the page.
-          </p>
-          <div className="mt-4">
-            <BrowserChrome url="frontend-design-pro.dev/router">
-              <RouterPanel skills={skills} figures={figures} />
-            </BrowserChrome>
-          </div>
+          <BrowserChrome url="frontend-design-pro.dev/router">
+            <RouterPanel skills={skills} figures={figures} />
+          </BrowserChrome>
         </div>
       </div>
     </section>
