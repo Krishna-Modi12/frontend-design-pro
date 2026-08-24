@@ -4,6 +4,57 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.4] — 2026-08-24
+
+**Two fixes, both verified by running the check, not by reading it.**
+
+### Fixed
+- `SLOP-04` was structurally inert. The corpus's own deliberate anti-example
+  for this constraint (`bad-generic.tsx`) passed it outright: the two
+  dollar-figures it names as banned (`$10,000`, `$100K`) matched its own
+  organic-evidence pattern, a trailing word-boundary after `%` often failed
+  to anchor, and the bare comma-figure shape the anti-example and
+  `landing-pages/references/design-patterns.md` actually use was never in the
+  ban list. Built a standalone harness and ran every candidate fix against
+  all 137 example files before touching the real script. Fixed the
+  comma/dollar half: wrapped the check in `_uncommented()` (matching
+  `SLOP-01`/`SLOP-05`'s existing precedent) so an illustrative JSDoc comment
+  can no longer supply its own escape hatch, widened the ban to bare
+  `10,000`/`100,000` with an optional `+`, and excluded those two literals
+  from the organic-evidence pattern so they can no longer satisfy their own
+  ban. Verified: zero new false positives across the full corpus, and
+  `bad-generic.tsx` now fails SLOP-04 specifically.
+
+### Added
+- `skills/platform/references/extension-ui.md` — VS Code webview theming
+  (`--vscode-*` CSS variables, body theme classes, Webview UI Toolkit,
+  `postMessage`/`acquireVsCodeApi()`, nonce-based CSP) and browser extension
+  popup/Manifest V3 constraints (≈400px width, default CSP forbidding
+  runtime-injected `<style>`, options-page-owns-settings, keyboard/focus
+  discipline). Cited in `platform/SKILL.md`'s Reference Index and a new
+  Patterns entry.
+
+### Verified, not changed
+- The percent half of `SLOP-04` stays uncovered, deliberately. `oklch(50%_...)`
+  colors, `calc(50%-12px)`, Tailwind arbitrary values, and inline
+  `width: "100%"` are genuine, frequent, legitimate code in this corpus, and
+  every percent-aware fix attempted (even after excluding `calc()`/bracket
+  contexts) produced at least one false positive a comma-only check does not.
+  A web search for prior art (ESLint plugins, CSS regex discussions) found no
+  existing tool that reliably separates a CSS percentage from a marketing-copy
+  percentage with a regex either — every source that addresses it says this
+  needs a parser. The constraint's `description` now says exactly this instead
+  of overclaiming, the same "narrow the claim, don't fake the coverage" move
+  as this release's own predecessor's GAP-2 fix, applied to the one half of
+  the original claim that turned out to be actually fixable.
+
+### Figures
+- Reference depth grew 1,388 tokens to 373,600 (`skills/platform/references/extension-ui.md`, ~1,388 tokens).
+- Reference count grew by one file to 105.
+- Registry and per-request band unchanged — same-skill addition, no root `SKILL.md` change.
+
+11/11 gates green · 0 figure drift.
+
 ## [14.11.3] — 2026-08-22
 
 **Second half of the same web-research pass** — closing a confirmed-empty
