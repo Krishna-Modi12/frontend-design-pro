@@ -9,7 +9,7 @@ That is a real tradeoff, not a strict downgrade: you lose the "always ~5k tokens
 Put `SKILL.md` in the system instruction field, and either:
 
 - **Narrow integration:** also include the one or two `skills/{id}/SKILL.md` + `core/*.md` files you know you'll need, same as the static-context pattern in [OPENAI_API_SETUP.md](OPENAI_API_SETUP.md).
-- **Broad integration, leaning on the large context window:** include `SKILL.md`, all of `core/*.md`, and every `skills/{id}/SKILL.md` (the 19 routers, not their `references/`) — this is small enough to be cheap even without lazy loading, per the per-file token figures in [ARCHITECTURE.md](ARCHITECTURE.md). Leave `references/*.md` out unless you have a specific reason to include a particular file; the 374k tokens of reference depth is the part genuinely too large to paste wholesale even in a generous window.
+- **Broad integration, leaning on the large context window:** include `SKILL.md`, all of `core/*.md`, and every `skills/{id}/SKILL.md` (the 19 routers, not their `references/`) — this is small enough to be cheap even without lazy loading, per the per-file token figures in [ARCHITECTURE.md](ARCHITECTURE.md). Leave `references/*.md` out unless you have a specific reason to include a particular file; the 376k tokens of reference depth is the part genuinely too large to paste wholesale even in a generous window.
 
 ```python
 from google import genai

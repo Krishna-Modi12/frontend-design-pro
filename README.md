@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **105** | **373,600 tokens** | **2,112 tokens** | **5,978–7,598** | **60** | **11** |
+| **19** | **105** | **376,040 tokens** | **2,112 tokens** | **5,978–7,598** | **60** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 373,600 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 376,040 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -389,9 +389,9 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,112 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,922 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **373,600 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **376,040 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,978–7,598 tokens, not 373,600.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 5,978–7,598 tokens, not 376,040.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -547,7 +547,7 @@ Webview UI Toolkit and `postMessage`/`acquireVsCodeApi()` for host
 communication, and MV3 popup constraints (400px width, default CSP, options
 page vs. popup state, keyboard/focus discipline).
 
-Reference depth grew 1,388 tokens to 373,600; reference count grew by one file
+Reference depth grew 1,388 tokens to 376,040; reference count grew by one file
 to 105. Registry and per-request band unchanged.
 
 11/11 gates green · 0 figure drift.
