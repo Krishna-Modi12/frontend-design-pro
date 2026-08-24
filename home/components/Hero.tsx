@@ -4,6 +4,7 @@ import { forwardRef, useEffect, useRef } from "react";
 import type { ReactElement } from "react";
 import { gsap } from "../lib/gsapClient";
 import HeroBackground from "./HeroBackground";
+import HeroParticles from "./HeroParticles";
 import { focusRing, tapTarget } from "../lib/tokens";
 
 export interface HeroProps {
@@ -27,6 +28,7 @@ function HeroImpl(
   ref: React.ForwardedRef<HTMLElement>,
 ): ReactElement {
   const staggerRef = useRef<HTMLDivElement | null>(null);
+  const headlineRef = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => {
     const container = staggerRef.current;
@@ -57,6 +59,7 @@ function HeroImpl(
       }}
     >
       <HeroBackground className="pointer-events-none absolute inset-0 z-0" />
+      <HeroParticles sourceRef={headlineRef} className="pointer-events-none absolute inset-0 z-[1]" />
 
       <div ref={staggerRef} className="relative z-10 mx-auto w-full max-w-4xl px-6 text-center lg:px-8">
         <p data-label className="text-text-muted">
@@ -64,6 +67,7 @@ function HeroImpl(
         </p>
 
         <h1
+          ref={headlineRef}
           data-display
           className="relative z-10 mt-6 text-[clamp(2.75rem,7vw,5rem)] font-medium leading-[1.03] text-text-primary"
         >

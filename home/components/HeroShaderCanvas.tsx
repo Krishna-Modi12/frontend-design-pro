@@ -98,7 +98,12 @@ const fragmentShader = /* glsl */ `
   varying float vElevation;
 
   void main() {
-    float mixFactor = clamp(vUv.y + vElevation * 0.6, 0.0, 1.0);
+    // A flat 0.2 floor keeps the gradient present across the whole plane —
+    // the original vUv.y-only ramp faded to fully uColorB (i.e. the page's
+    // own background, invisible by construction) across the bottom half of
+    // the hero, which was the main reason the effect read as absent rather
+    // than subtle.
+    float mixFactor = clamp(0.2 + vUv.y * 0.55 + vElevation * 0.75, 0.0, 1.0);
     vec3 color = mix(uColorB, uColorA, mixFactor);
     // Scrolling past the hero cools the gradient toward uColorB — already
     // the page's own neutral background token, not a new colour — rather
@@ -165,7 +170,15 @@ export function HeroShaderCanvas({ reduced }: HeroShaderCanvasProps): ReactEleme
       uColorA: { value: readColorVar("--color-accent", "oklch(55% 0.18 45)") },
       uColorB: { value: readColorVar("--color-bg-page", "oklch(98% 0.008 80)") },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uOpacity: { value: 0.18 },
+      // Was 0.18 — combined with `HeroBackground`'s own scrim and static
+      // base layer, the net result on the deployed page read as essentially
+      // flat: a real user report ("I can't see the shader"), confirmed by
+      // fetching the live page and inspecting the actual canvas (present,
+      // sized correctly, zero console errors — a visibility problem, not a
+      // rendering bug). 0.4 is the ceiling that still holds full AA text
+      // contrast under `pages:verify`'s real axe pass once the scrim is
+      // retuned alongside it in `HeroBackground.tsx`.
+      uOpacity: { value: 0.4 },
       uScrollProgress: { value: 0 },
     };
     const geometry = new THREE.PlaneGeometry(1, 1, 48, 48);

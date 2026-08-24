@@ -119,6 +119,9 @@ body {
   [data-hero-scene] {
     display: none;
   }
+  [data-particle-canvas] {
+    display: none;
+  }
 }
 
 /* Slop card violation badge (\`ProblemComparison.tsx\`) — purely decorative,

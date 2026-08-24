@@ -166,10 +166,6 @@ async function checkInteractivity(browser, base) {
   await ctx.grantPermissions(["clipboard-read", "clipboard-write"]);
   const page = await ctx.newPage();
   await page.goto(base, { waitUntil: "networkidle", timeout: 90_000 });
-  // The hero's WebGL layer is a dynamically-imported chunk (`next/dynamic`,
-  // `ssr: false`) that mounts after a `matchMedia` check in a `useEffect` —
-  // give it a beat past `networkidle` to actually attach the canvas.
-  await page.waitForTimeout(500);
 
   const problems = [];
 
@@ -177,8 +173,30 @@ async function checkInteractivity(browser, base) {
   // >=640px, so `HeroBackground` should have enabled the Canvas chunk). This
   // is the one thing nothing else here would catch — a silent shader-compile
   // failure that resolves without throwing still leaves the layer empty.
-  const heroCanvasCount = await page.locator("[data-hero-scene] canvas").count();
+  //
+  // The layer is a dynamically-imported chunk (`next/dynamic`, `ssr: false`)
+  // that mounts after a `matchMedia` check in a `useEffect`. In production
+  // the chunk is pre-built and this resolves almost immediately; in dev it
+  // compiles on first request, which can take several seconds — `networkidle`
+  // fires well before that compile finishes. Poll for the element instead of
+  // a fixed sleep, so dev and prod are both correctly handled by the same
+  // wait rather than a duration tuned to whichever one was running when it
+  // was picked.
+  const heroCanvasCount = await page
+    .waitForSelector("[data-hero-scene] canvas", { timeout: 15_000 })
+    .then(() => 1)
+    .catch(() => 0);
   if (heroCanvasCount === 0) problems.push("hero shader canvas did not mount at desktop width");
+
+  // Hero: the particle-typography layer (samples the real headline, waits on
+  // document.fonts.ready before drawing) also mounted — a second, independent
+  // canvas the shader check above does not cover. Not a dynamic import, but
+  // polled the same way for consistency and to tolerate font-load timing.
+  const particleCanvasCount = await page
+    .waitForSelector("[data-particle-canvas]", { timeout: 15_000 })
+    .then(() => 1)
+    .catch(() => 0);
+  if (particleCanvasCount === 0) problems.push("hero particle canvas did not mount at desktop width");
 
   // Wall: the mock UI gallery renders all six cards.
   const galleryCardCount = await page.locator("[data-mock-gallery] > *").count();
@@ -227,6 +245,7 @@ async function checkInteractivity(browser, base) {
   if (!clip.includes("npx skills add")) problems.push("install copy button did not write the command to the clipboard");
 
   report("hero shader canvas mounted", problems.filter((p) => p.includes("hero shader canvas")));
+  report("hero particle canvas mounted", problems.filter((p) => p.includes("hero particle canvas")));
   report("mock UI gallery renders all 6 cards", problems.filter((p) => p.includes("mock UI gallery")));
   report("router resolves the real registry and refuses to guess", problems.filter((p) => p.includes("route") || p.includes("skill")));
   report("token countdown settles", problems.filter((p) => p.includes("token countdown")));
