@@ -1831,3 +1831,17 @@ Tested combinations that work well together:
 | "Creative SaaS" | Figma gradient energy + Notion warmth + Linear precision |
 | "Database/infra startup" | PlanetScale yellow on dark + GitHub code density + Vercel status patterns |
 
+
+Read down the column, not across it. Every formula above takes **palette and
+type from one source and behaviour from another** — never two palettes. That is
+the rule the table is an instance of:
+
+| Layer | Take from | Because |
+|---|---|---|
+| Palette (hues, surfaces, accent) | exactly one profile | Two palettes do not blend, they compete; the result reads as an unfinished redesign rather than a hybrid. |
+| Type pairing and weights | the same profile as the palette, usually | Colour and type are the two things a visitor reads as "the brand". Splitting them is possible but has to be deliberate. |
+| Motion tier and choreography | any profile | Behaviour is separable — a restrained palette with energetic motion is a real and common position. |
+| Radius, shadow, border weight | any profile | These carry tone without carrying identity. |
+
+So "dark but restrained" means the dark profile's palette with the minimal
+profile's motion tier and decoration rules — not an average of the two.

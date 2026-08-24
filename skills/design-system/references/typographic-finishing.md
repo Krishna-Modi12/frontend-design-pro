@@ -10,6 +10,24 @@ For CJK and mixed-script text, `references/cjk-typography.md` owns the
 fallback-chain order, kinsoku rules and font budget. This file is script-neutral
 and stops where that one starts.
 
+## Contents
+
+- [Measure — the number that matters most](#measure--the-number-that-matters-most)
+- [Trim the box, align the ink](#trim-the-box-align-the-ink)
+- [Wrapping — `balance` and `pretty` are not interchangeable](#wrapping--balance-and-pretty-are-not-interchangeable)
+- [Scale ratios, and pairing leading to size](#scale-ratios-and-pairing-leading-to-size)
+- [Scene defaults — where the scale starts](#scene-defaults--where-the-scale-starts)
+- [Fallback matching — the real fix for font-swap shift](#fallback-matching--the-real-fix-for-font-swap-shift)
+- [Optical sizing](#optical-sizing)
+- [OpenType features, via the high-level properties](#opentype-features-via-the-high-level-properties)
+- [Long-form copy and the `prose` plugin](#long-form-copy-and-the-prose-plugin)
+- [Decoration — gradient, glow and shadow on type](#decoration--gradient-glow-and-shadow-on-type)
+- [Details worth knowing but not shipping blind](#details-worth-knowing-but-not-shipping-blind)
+- [Check before you ship](#check-before-you-ship)
+- [Sources](#sources)
+
+---
+
 ## Measure — the number that matters most
 
 **65 characters is the working default**, expressed in `ch` so it tracks the font
@@ -122,6 +140,48 @@ Keep the `rem` term first inside `clamp()` so the value still responds to a
 user's browser font-size setting. A pure `vw` middle term ignores it, which is an
 accessibility regression that looks fine in every screenshot.
 
+## Scene defaults — where the scale starts
+
+A ratio does not tell you the base size. That comes from the scene: how far the
+reader is sitting, how long they intend to stay, and how much has to be legible
+at once. These are starting points to argue with, not a specification.
+
+| Scene | Largest type | Section / card title | Body | Body leading | Density |
+|---|---|---|---|---|---|
+| Marketing / landing | 3.5–5rem | 2–2.5rem | 1–1.125rem | 1.5–1.6 | Low — copy alternates with whitespace |
+| Portfolio / showcase | 4–6rem | 1.5–2rem | 0.95–1rem | 1.5–1.6 | Very low — images carry the page |
+| Blog / docs / long-form | 2–2.5rem | 1.25–1.5rem | 1–1.0625rem | 1.7–1.8 | High — leading and paragraph gaps do the breathing |
+| App UI / admin | 1.25–1.5rem | 1–1.125rem | 0.875rem | 1.5 | Medium — function first, whitespace second |
+| Dashboard / analytics | 1.5rem | 0.875–1rem | 0.8125–0.875rem | 1.4–1.5 | High — borders and grid lines separate, not space |
+| Presentation / courseware | 3–3.5rem | 1.5rem | 0.82–0.9rem | 1.5 | Medium-high — card edges do the organising |
+
+The scene is a property of a *region*, not of a site. A pricing table inside a
+marketing page is App UI density; a long explainer inside a dashboard is
+long-form. Read the table per block, not once per project.
+
+Four things it does not say on its face:
+
+1. **Leading below 1.6 is a scene exemption, not a general licence.** `SKILL.md`
+   rule 7 governs *running* copy — paragraphs a reader moves through. A table
+   cell, a KPI label, a form label is a fragment read in a single fixation, and
+   1.4 there is correct where 1.7 spends vertical space the scene needs. The
+   moment a dense surface grows an actual paragraph — an empty state, an
+   explainer, a tooltip body — that paragraph goes back above 1.6.
+2. **Fluid sizing belongs to the top three rows.** `clamp()` earns its place when
+   the same text has to work at 375px and at 1920px. A dashboard is read at a
+   desk at a fixed distance, so viewport-scaled type there renders the same table
+   at two sizes on two monitors for no reason a user can name. Fix the sizes and
+   let the grid reflow instead.
+3. **In dense scenes the number outranks the body.** A metric runs 1.5–2.5rem at
+   weight 700–800 while its label sits near 0.75rem uppercase with positive
+   tracking. The density comes from that *gap*, not from shrinking everything
+   uniformly — a dashboard set at one size reads as a spreadsheet. Every figure
+   that updates in place needs `tabular-nums`.
+4. **Email is deliberately absent.** It is a different rendering model — `px`
+   units, inline styles, table layout, and a system stack in which Arial is
+   correct rather than lazy. `../../platform/references/email-templates.md` owns
+   it, including the dark-mode and client-support caveats.
+
 ## Fallback matching — the real fix for font-swap shift
 
 `font-display` chooses *when* the swap happens. It cannot stop the page moving,
@@ -225,6 +285,78 @@ with the token system in `core/design-tokens.md`. Either drive it from your
 tokens through element modifiers, or do not use it — running both unreconciled is
 how a site ends up with two type systems.
 
+## Decoration — gradient, glow and shadow on type
+
+`TYP-03` settles the easy half: `bg-clip-text` on body-sized text is a defect,
+because clipping sets the computed colour to `transparent` and that both destroys
+contrast and defeats every contrast checker, which then measures a ratio against
+a colour no reader sees. The rule calls the same effect legitimate on a display
+heading — but "display-only" is a floor, not a reason. This section is the rest
+of the decision.
+
+**Gradient text needs all four to be true**, not just the size one:
+
+1. The element is the largest type on the page — a hero `h1`, or the display
+   heading that opens a section. One per screen.
+2. It renders at roughly 60px or more. Below about 40px the gradient's own
+   lightness range starts eating the contrast the flat colour had.
+3. The aesthetic direction already carries luminous or high-energy signals. On a
+   restrained direction — gallery-white, editorial, Swiss — a gradient heading is
+   the one element arguing with everything else, and it reads as a mistake rather
+   than a choice.
+4. There is a real colour underneath it.
+
+That last one is the part that gets skipped:
+
+```css
+.display-gradient {
+  color: var(--color-brand);          /* paints if the clip never lands */
+  background-image: linear-gradient(135deg, var(--color-brand), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .display-gradient { -webkit-text-fill-color: transparent; }
+}
+```
+
+Declaring `color` first and moving `-webkit-text-fill-color: transparent` behind
+`@supports` means a failed or unsupported paint leaves readable brand-coloured
+text instead of an invisible heading. Writing the `transparent` unconditionally —
+which is how the snippet is usually copied — makes the failure mode a blank page.
+
+The pack's own wall still applies on top: the purple → pink → blue ramp is banned
+regardless of size, because it is the default every generator reaches for. Derive
+the stops from the theme's own hues.
+
+**Text-shadow has three shapes that are defensible** and one arrangement that is
+not:
+
+| Situation | Move | Why it works |
+|---|---|---|
+| Display type on a dark surface | `text-shadow: 0 0 40px oklch(from var(--color-brand) l c h / 0.4)` | Reads as the letterform emitting light, not as a drop shadow. Needs a genuinely dark surface — on mid-grey it is just fog. |
+| A flat, graphic, high-energy direction | Layered hard offsets, no blur: `3px 3px 0 var(--color-accent), 6px 6px 0 oklch(0% 0 0 / 0.15)` | The zero blur is what keeps it a deliberate print device rather than a bevel. |
+| Serif display on a light warm surface | `0 2px 8px oklch(0% 0 0 / 0.12)` | Lifts the heading off the page by about a millimetre. Any stronger and it becomes 2010. |
+
+Never stack a shadow onto gradient text. Both are ways of saying *this line is
+the important one*, and running them together reads as neither — it reads as
+effects. And never put either on body copy: a shadow at 16px does not emphasise
+text, it defocuses it, which is indistinguishable from a rendering bug.
+
+**Smaller decoration, briefly.** A section eyebrow — the 11–13px uppercase label
+with open tracking — takes a `border-bottom` rule or a background highlight,
+never a gradient or a shadow; at that size both only blur it. Links move on
+`color` and `text-underline-offset` (`0.15em` clears most descenders) with
+`text-decoration-thickness: from-font`, never on shadow.
+
+| | Restrained | Luminous / tech | Warm professional | High-energy |
+|---|---|---|---|---|
+| Hero `h1` gradient | no | yes | no | yes |
+| Hero `h1` shadow | no | glow | soft | layered |
+| Section display gradient | no | optional | no | yes |
+| Section display shadow | no | no | soft | optional |
+| Anything on body copy | no | no | no | no |
+
 ## Details worth knowing but not shipping blind
 
 - **`hanging-punctuation: first last`** pulls opening quotes into the margin so
@@ -237,9 +369,14 @@ how a site ends up with two type systems.
 
 ## Check before you ship
 
+- Body size and leading match the scene the *region* is in, not the scene the
+  site is in — dense surfaces are not just the marketing page shrunk.
 - Measure lands between 45 and 75 characters for every block of running text.
 - Headings use `balance`, paragraphs use `pretty`, and neither is on the other.
 - Any number that updates in place has `tabular-nums`.
+- Every gradient heading declares a `color` before the clip, so switching
+  `background-clip` off in devtools leaves readable text rather than a gap.
+- No element carries both a gradient fill and a text-shadow.
 - The webfont has a metric-matched fallback, so switching it off in devtools does
   not move the layout.
 - `clamp()` middle terms include a `rem` component, so browser font-size settings
@@ -254,7 +391,15 @@ Labs) — `65ch` is that plugin's own default. Scale-ratio naming and the
 size/leading inverse from `typography.js` (MIT, Kyle Mathews); note that project
 was last released in 2023, so its *math* is durable and its tooling is not.
 Cross-platform scale roles cross-checked against `react-native-typography` (MIT,
-Hector Garcia). Variable-axis and experimental-type technique surveyed from
+Hector Garcia). The scene-defaults baselines are adapted from
+`xiaopu-ai/web-design` (MIT), translated from the Chinese original and
+reconciled with rule 7 rather than copied — the exemption note in that section
+is ours, because the upstream table states the low leading without saying which
+text it applies to. The gradient/shadow decision table is adapted from the
+same repository's text-decoration rules; the `@supports` fallback, the
+relative-colour syntax and the no-stacking rule are ours — upstream ships the
+unconditional `-webkit-text-fill-color: transparent` whose failure mode is an
+invisible heading. Variable-axis and experimental-type technique surveyed from
 `typexperiments` (Pablo Stanley) and `awesome-typography` (CC0) — the former
 publishes no licence, so it informed *what* to cover and no code was taken from
 it. Everything above is written for this pack.

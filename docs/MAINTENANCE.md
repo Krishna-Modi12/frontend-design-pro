@@ -15,7 +15,7 @@ The freeze machinery below is retained deliberately. It is what the project retu
 
 Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway. See the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped last.
 
-The pack is 19 skills, 105 references, 373,600 tokens of on-demand depth, 60 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 19 skills, 105 references, 376,040 tokens of on-demand depth, 60 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
