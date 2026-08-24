@@ -2,8 +2,8 @@
   "figures": {
     "skills": 19,
     "coreFiles": 8,
-    "referenceFiles": 104,
-    "referenceDepthTokens": 372212,
+    "referenceFiles": 105,
+    "referenceDepthTokens": 373600,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -394,7 +394,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6710,
+      "budget": 6809,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -593,5 +593,5 @@
       "label": "Zed"
     }
   ],
-  "version": "14.11.3"
+  "version": "14.11.4"
 }

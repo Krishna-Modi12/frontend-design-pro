@@ -246,16 +246,25 @@ CONSTRAINTS: List[Constraint] = [
     Constraint(
         id="SLOP-04",
         category="Anti-AI-Slop",
-        # Catches bare placeholder-round values (50%, $10,000). It does not evaluate
-        # whether the actual figures in a file are plausible for their domain — a file
-        # full of clean-but-fabricated numbers passes. Agent judgment is still required
-        # for realistic-looking invented data; do not cite this as coverage for that.
-        description="No bare placeholder-round data values (50%, $10,000) — does not detect other fabricated figures",
+        # Catches bare placeholder-round comma-figures (10,000 / $10,000 / 100,000+).
+        # Percent literals (50%, 100%) are deliberately NOT checked: bare 50%/100%
+        # are common, legitimate CSS (oklch(50%_...), calc(50%-12px), Tailwind
+        # arbitrary values, inline width:"100%") and a regex can't reliably tell
+        # that apart from marketing copy — verified against all 137 example files,
+        # where any percent-inclusive version produced false positives a comma-only
+        # check does not. It does not evaluate whether the actual figures in a file
+        # are plausible for their domain — a file full of clean-but-fabricated
+        # numbers passes. Agent judgment is still required for realistic-looking
+        # invented data and for round percentages; do not cite this as coverage
+        # for either.
+        description="No bare placeholder-round comma-figures (10,000, $10,000, 100,000+) — percent literals and other fabricated figures are not evaluated",
         severity="medium",
         check=lambda c: (
-            # Pass if there are some non-round values OR no numeric data at all
-            _has(r'\d+\.\d+%|\$\d+,\d{3}(?!\d)|\b\d{1,2},\d{3}\b', c)
-            or _lacks(r'\b(50%|100%|\$10,000|\$100,000)\b', c),
+            # Pass if there are some non-round values OR no numeric data at all.
+            # _uncommented() so illustrative "don't do X" comments (e.g. a JSDoc
+            # example citing "4,217 not 10,000+") don't count as live evidence.
+            _has(r'\d+\.\d+%|\$(?!10,000\b)(?!100,000\b)\d+,\d{3}(?!\d)|(?<![\d.])(?!10,000\b)(?!100,000\b)\d{1,2},\d{3}\b', _uncommented(c))
+            or _lacks(r'\$?(?<![\d.])(?:10,000|100,000)\+?(?!\d)', _uncommented(c)),
             "Only round-number data values found — use organic values (47.2%, $12,847)"
         )
     ),
