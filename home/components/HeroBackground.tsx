@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import useReducedMotion from "../lib/useReducedMotion";
 
-/** `three` + `@react-three/fiber` load in their own async chunk, off the
-    critical path for the server-rendered headline — this dynamic import is
-    the boundary that makes that split happen. */
+/** `three` loads in its own async chunk, off the critical path for the
+    server-rendered headline — this dynamic import is the boundary that
+    makes that split happen. (No `@react-three/fiber` — `HeroShaderCanvas`
+    is raw `three`, a measured bundle-size deviation documented there.) */
 const HeroShaderCanvas = dynamic(
   () => import("./HeroShaderCanvas").then((mod) => mod.HeroShaderCanvas),
   { ssr: false },
@@ -46,14 +47,31 @@ export function HeroBackground({ className }: HeroBackgroundProps): ReactElement
         className="absolute inset-0"
         style={{
           backgroundImage: "linear-gradient(160deg, var(--color-accent) 0%, var(--color-bg-page) 70%)",
-          opacity: 0.18,
+          opacity: 0.3,
         }}
       />
       {enableCanvas ? <HeroShaderCanvas reduced={reduced} /> : null}
+      {/* Protects the actual text column with a solid-background zone, then
+          fades to transparent by the ellipse's outer edge — the gradient
+          reads clearly around the copy instead of being washed out
+          everywhere. Sized to the FULL stagger block in `Hero.tsx`, not just
+          label/headline/subhead: the CTA row and the "Scroll to explore"
+          link extend well below the subhead, and both are already
+          low-contrast `text-text-muted` by design — an earlier version of
+          this zone only covered the top three elements, leaving the two
+          lowest-contrast pieces of text sitting in the fading edge with
+          little protection. `pages:verify`'s axe pass caught this as an
+          intermittent `color-contrast` failure (intermittent because it
+          depends on the shader's momentary animated colour under whichever
+          element the fade left exposed) once `uOpacity` rose enough for it
+          to matter — a solid inner zone that actually spans the real content
+          height removes the dependency on the shader's colour entirely,
+          rather than relying on it usually being pale enough. */}
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(60% 50% at 50% 38%, transparent 0%, var(--color-bg-page) 85%)",
+          background:
+            "radial-gradient(46% 46% at 50% 46%, var(--color-bg-page) 0%, var(--color-bg-page) 62%, transparent 100%)",
         }}
       />
     </div>
