@@ -13,7 +13,7 @@ metadata:
 ## When to Use
 The palette is *computed*, not chosen: generating a full token set from one brand hue, deriving colours from an uploaded image, building a theme switcher, or producing harmonic schemes on demand. Anything where a function returns colours.
 
-If the palette already exists and only needs applying, that is `design-system`. If the question is which hue suits a brand, that is a judgement call and belongs in `design-principles`.
+If the palette already exists and only needs applying, that is `design-system`. If the question is which hue suits a brand, that is a judgement call and belongs in `design-principles`. If the palette is to be derived from a specific painting, film grade, editor theme or other aesthetic lineage, the extraction protocol and the licensing catch for each source are in `../design-system/references/brand-extraction.md` — bring the ramp back here to convert it into OKLCH and measure it.
 
 ## Core Rules
 1. **Generate in OKLCH, always.** It is perceptually uniform: equal lightness steps look equal, and changing hue at fixed lightness does not change apparent brightness. HSL does neither — `hsl(60, 100%, 50%)` yellow and `hsl(240, 100%, 50%)` blue claim the same lightness and differ by roughly 4:1 in fact. Every generated ramp built on HSL is wrong in a way its author cannot see.
@@ -38,6 +38,7 @@ If the palette already exists and only needs applying, that is `design-system`. 
 | `references/image-palette-extraction.md` | Deriving colours from an uploaded image or a photograph |
 | `references/accessibility-aware-schemes.md` | Checking a generated pair, APCA vs WCAG, `prefers-contrast` |
 | `references/dark-light-auto-architecture.md` | Wiring the switcher, storage, SSR, and avoiding the flash of wrong theme |
+| `../design-system/references/brand-extraction.md` | The anchor is to come from a painting, a film grade or an editor theme rather than a brand hue |
 
 ## Anti-Patterns
 - Raw hex anywhere in generated output. The whole point is a colour space you can reason about.

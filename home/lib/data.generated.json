@@ -3,7 +3,7 @@
     "skills": 19,
     "coreFiles": 8,
     "referenceFiles": 105,
-    "referenceDepthTokens": 373600,
+    "referenceDepthTokens": 376040,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -140,7 +140,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6250,
+      "budget": 6363,
       "group": "Making it look right",
       "covers": "Colour computed rather than chosen: OKLCH token generation from one hue, harmonic schemes, palettes extracted from an image, light/dark/auto architecture, contrast measured before a token ships",
       "trySaying": "\"Generate a full dark theme from this brand blue, and prove the text passes AA.\""
@@ -276,7 +276,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6274,
+      "budget": 6295,
       "group": "Making it look right",
       "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
       "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
