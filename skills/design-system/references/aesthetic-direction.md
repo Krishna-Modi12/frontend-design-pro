@@ -213,6 +213,8 @@ Slab + Humanist        → Authority + approachability
 ```tsx
 import { motion, useInView } from 'motion/react'
 
+// Travel, stagger and duration are the canonical reveal — see
+// ../../animations/references/animation-framework.md § The canonical scroll reveal.
 // Page load — staggered children
 const container = {
   hidden: { opacity: 0 },
@@ -222,18 +224,18 @@ const container = {
   }
 }
 const item = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 24 },
   show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
 }
 
-// Scroll-triggered reveal
+// Scroll-triggered reveal — a whole block, so it takes the section tier
 function RevealOnScroll({ children }: { children: React.ReactNode }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 48 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >

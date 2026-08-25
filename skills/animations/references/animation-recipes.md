@@ -39,6 +39,8 @@ Curated, production-ready animation patterns for React/Next.js. Each recipe is c
 ```tsx
 import { motion, useReducedMotion } from 'motion/react'
 
+// Numbers are the canonical reveal — animation-framework.md § The canonical scroll reveal.
+// Do not re-derive them here; change them there.
 const container = {
   hidden: {},
   show: {
@@ -46,7 +48,7 @@ const container = {
   },
 }
 const item = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] } },
 }
 

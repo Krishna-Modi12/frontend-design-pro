@@ -81,14 +81,14 @@ const containerVariants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.09,
+      staggerChildren: 0.08,
       delayChildren: 0.05,
     },
   },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 22 },
+  hidden: { opacity: 0, y: 24 },
   show: {
     opacity: 1,
     y: 0,
@@ -106,7 +106,7 @@ const notifVariants = {
 
 function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
   const ref = useRef<HTMLSpanElement | null>(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const inView = useInView(ref, { once: true, margin: '-80px' })
   const motionValue = useMotionValue(0)
   const spring = useSpring(motionValue, { stiffness: 60, damping: 18, restDelta: 0.01 })
   const reduce = useReducedMotion()
@@ -476,7 +476,7 @@ export default function AnimationRecipes({ isLoading: initialLoading = false }: 
             variants={reduce ? undefined : containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ once: true, margin: '-80px' }}
             className="grid gap-4 sm:grid-cols-2"
             role="list"
             aria-label="Feature list"

@@ -17,6 +17,8 @@ import { motion, useReducedMotion } from "motion/react";
 
 const EASE_OUT = [0.23, 1, 0.32, 1];
 
+// Travel, stagger and duration are the canonical reveal — see
+// skills/animations/references/animation-framework.md § The canonical scroll reveal.
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
@@ -24,7 +26,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE_OUT } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
 };
 
 export interface LandingProps {
@@ -228,7 +230,7 @@ export default function Landing({ isLoading: initialLoading = false }: LandingPr
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, delay: i * 0.05, ease: EASE_OUT }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: EASE_OUT }}
               >
                 <div className="text-5xl lg:text-6xl font-extrabold tracking-tighter text-indigo-600 mb-3">
                   {f.stat}

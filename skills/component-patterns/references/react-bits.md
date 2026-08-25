@@ -19,7 +19,7 @@ Patterns and rules only — do not copy implementations. Each component ships in
 - **Use when** a single line must carry weight — hero headline, one key stat. Never on body copy: per-character animation destroys readability and screen-reader coherence.
 - **Structure:** wrapper splits text into spans → staggered transform/opacity per span → wrapper carries the accessible string.
 - **Accessibility (mandatory):** the split text must remain one readable string for assistive tech. Put the real sentence on the wrapper via `aria-label` and mark the split spans `aria-hidden="true"`. Otherwise a screen reader announces it letter by letter.
-- **Animation:** stagger 30–60ms per unit, 300–600ms total, ease-out. Longer reads as slow, not cinematic.
+- **Animation:** stagger **80ms** per unit (40ms per word), 300–600ms total, ease-out. Longer reads as slow, not cinematic. Canonical config: `../../animations/references/animation-framework.md`.
 - **Anti-pattern:** animating a paragraph · re-triggering on every scroll into view (use `once: true`) · animating layout properties instead of `transform`/`opacity`.
 
 ### Wrapper effects (magnetic, tilt, spotlight)

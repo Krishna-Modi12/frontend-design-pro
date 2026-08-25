@@ -10,6 +10,18 @@ Source: emilkowalski/skill — distilled from Sonner, Vaul, and animation.dev
 
 ---
 
+## Contents
+
+- [Library Decision Guide](#library-decision-guide)
+- [The Four Questions](#the-four-questions)
+- [Key Patterns](#key-patterns)
+- [Performance Rules](#performance-rules)
+- [Accessibility](#accessibility)
+- [Asymmetric Enter/Exit](#asymmetric-enterexit)
+- [Quick Implementation Reference](#quick-implementation-reference)
+
+---
+
 ## Library Decision Guide
 
 Pick ONE library per animation context. Never mix on the same element.
@@ -197,6 +209,47 @@ different durations:
 Pair it with a travel scale — hover `4px`, enter `24px`, section `48px` — and a stagger scale —
 tight `0.04s`, base `0.08s`, relaxed `0.15s`. Systematising all three is what stops each
 component inventing its own distance and delay.
+
+### The canonical scroll reveal
+
+The scale above went unapplied for long enough that this pack accumulated **seven**
+different reveal configs — six y-offsets, three trigger mechanisms, three durations — while
+four separate prose rules quoted four stagger intervals that no code sample used. This block
+is the resolution. Copy it; do not re-derive it.
+
+| Knob | Value | Where it comes from |
+|---|---|---|
+| Trigger | `{ once: true, margin: "-80px" }` | Fires before the element reaches the viewport edge, so content is already moving when the reader arrives. `once` never re-hides. |
+| Travel | `y: 24` | The `enter` tier of the travel scale above. `48` for a whole section, `4` for hover. |
+| Item stagger | `staggerChildren: 0.08` | The `base` tier. This is the number to quote in prose. |
+| Word stagger | `staggerChildren: 0.04` | The `tight` tier — per **word**, not per item. Different granularity, different tier. |
+| Item duration | `0.5` | The entrance band in `../../design-research/references/motion-easing-catalog.md`. |
+| Section duration | `0.6` | The section band in the same table. |
+| Curve | the **Entering viewport** row of § 3 | Named once, above. Restating the literal per file is how the pack ended up with two competing "defaults". |
+
+```tsx
+const ENTER = [0.23, 1, 0.32, 1] as const   // § 3 "Entering viewport" — the one source
+
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } }
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: ENTER } },
+}
+
+<motion.ul
+  variants={container}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true, margin: "-80px" }}
+>
+```
+
+Wrap it in `useReducedMotion()` the way every recipe in `animation-recipes.md` does — the
+canonical config is the motion, not permission to skip the gate.
+
+**Deviate only with a reason you can name**, and put the reason next to the number. "This
+grid has 14 cards so the stagger drops to `0.04` to stay under the 800 ms cascade ceiling"
+is a reason. Picking `0.09` because it looked right is how the seven happened.
 
 ---
 

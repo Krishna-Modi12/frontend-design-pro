@@ -84,7 +84,7 @@ Score each area 1–10. Prioritize improvements from lowest-scoring areas first.
 | No error state | Clear inline error messages — never `window.alert()` |
 | Dead links (href="#") | Either link to real destinations or visually disable the element |
 | No current page indicator in nav | Style active nav link differently (weight, color, underline) |
-| Scroll jumping | Add `scroll-behavior: smooth` to anchor clicks |
+| Scroll jumping | Add `scroll-behavior: smooth` to anchor clicks — but **not if the page uses Lenis**, which owns anchors itself (`../../animations/references/lenis-smooth-scroll.md`) |
 | Animations triggering layout reflow | Switch to `transform` and `opacity` only — GPU-accelerated |
 
 ---

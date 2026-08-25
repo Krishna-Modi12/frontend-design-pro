@@ -22,7 +22,7 @@ Values worth reusing, harvested from Motion.dev examples, GSAP demos, React Bits
 | Hover, focus, active | 150–200ms | Below ~100ms it is not perceived as motion; above ~250ms it feels unresponsive |
 | Element entrance | 300–500ms | The band where motion reads as intentional |
 | Section / page transition | 400–600ms | Long enough to orient, short enough not to block |
-| Stagger delay per item | 50–100ms | A readable cascade; below 50ms it is simultaneous, above 100ms it drags |
+| Stagger delay per item | 80ms (40ms per word) | The canonical value — see `../../animations/references/animation-framework.md`. Below 50ms it reads as simultaneous, above 100ms it drags |
 | Scroll-coupled | 1:1 with scroll | Physics-linked, no duration of its own |
 | Exit | 60–80% of the matching entrance | Leaving should be quicker than arriving |
 

@@ -9,6 +9,33 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 **Two fixes, both verified by running the check, not by reading it.**
 
 ### Fixed
+- **The reveal config had drifted into seven versions.** Six y-offsets (16, 20,
+  22, 24, 28, 32), three trigger mechanisms (`margin: '-80px'`, a bare `once`,
+  `amount: 0.3`), three durations — across `animation-recipes.md`,
+  `scroll-experience.md` (twice), `aesthetic-direction.md`,
+  `interaction-patterns.md` and both `good-anim-recipes.tsx` and
+  `good-landing.tsx`. Four prose rules quoted four different stagger intervals
+  (30–60 ms, 40–60 ms, 50–100 ms, 30–60 ms) while **every** code sample in the
+  pack used 80–90 ms, so no reader could get the same answer twice.
+  `animation-framework.md` already carried the resolution — a travel scale and a
+  stagger scale, three lines, cited by nothing and applied nowhere. It is now a
+  named section, *The canonical scroll reveal*, and the other sites take their
+  numbers from it: `y: 24` item / `y: 48` section, `0.08` item stagger / `0.04`
+  per word, `0.5` item duration / `0.6` section, `{ once: true, margin: "-80px" }`.
+  The curve is deliberately **not** restated there — it defers to the file's own
+  *Entering viewport* row, because restating a literal per file is how the pack
+  acquired two competing "defaults" in the first place. (That split — 20 uses of
+  `[0.23,1,0.32,1]` against 28 of `[0.16,1,0.3,1]` across 23 files — is real and
+  is left alone here rather than swept blind.)
+- **`scroll-behavior: smooth` and Lenis were both recommended, and never said to
+  conflict.** Four files advise the CSS property — `ux-guidelines.md`,
+  `interaction-patterns.md`, `redesign-framework.md` and
+  `demo/landing-page/lib/tokens.ts` — while `lenis-smooth-scroll.md`, 116 lines
+  on replacing native scroll, never mentioned it. They fight: Lenis drives scroll
+  position from a rAF loop and the browser animates the same property
+  independently, so anchor jumps stutter or land short. `lenis-smooth-scroll.md`
+  now states the rule and names Lenis as the anchor owner; the other four carry
+  the caveat at the point of advice.
 - `SLOP-04` was structurally inert. The corpus's own deliberate anti-example
   for this constraint (`bad-generic.tsx`) passed it outright: the two
   dollar-figures it names as banned (`$10,000`, `$100K`) matched its own

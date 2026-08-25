@@ -27,7 +27,7 @@ Source: nextlevelbuilder/ui-ux-pro-max-skill
 
 ## Navigation
 
-- Smooth scroll: `scroll-behavior: smooth` on html
+- Smooth scroll: `scroll-behavior: smooth` on html — **remove this line if the page uses Lenis**; the two drive scroll position independently and fight. See `../../animations/references/lenis-smooth-scroll.md`.
 - Sticky nav: add body padding to prevent content obscuring
 - Active state: color + underline indicator on current page/section
 - Deep linking: proper `history.pushState()` for sections
