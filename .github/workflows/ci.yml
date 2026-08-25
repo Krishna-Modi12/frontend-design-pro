@@ -172,6 +172,29 @@ jobs:
         working-directory: demo/showcase
         run: npx next build
 
+  # home/lib/router.ts is a real port of the SKILL.md routing protocol, run
+  # by the live demo on the pack's own homepage — and until now had zero
+  # test coverage of its own. Unlike the screenshot job below, there is
+  # nothing flaky about this: it is deterministic keyword matching against
+  # the live registry, so it runs as a normal blocking check.
+  home-router-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: home/package-lock.json
+
+      - name: Install home dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Router tests
+        working-directory: home
+        run: npm test
+
   # No gate in this repository renders a page and compares it to what it
   # rendered last time — this is that check, for the two demos that render
   # deterministically (demo/showcase's WebGL hero is seeded at random and is
