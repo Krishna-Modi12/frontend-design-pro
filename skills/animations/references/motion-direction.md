@@ -58,7 +58,7 @@ Skipped as not translating: exaggeration, solid drawing, appeal.
 
 Multiple elements need a rationale for their order, not just a delay:
 
-- **Stagger by reading order** — 30–60ms apart. Faster is noise, slower is a queue.
+- **Stagger by reading order** — **80ms** apart per item, 40ms per word. Faster is noise, slower is a queue. Canonical config: `animation-framework.md`.
 - **Lead with the element that answers "what happened?"** — a dashboard reveals the hero chart, then stats, then chrome. Never alphabetically or by DOM convenience.
 - **Group by relatedness** — items in one Gestalt group move together; separate groups move separately.
 - **Total sequence ≤600ms** regardless of element count. Past that, users perceive waiting rather than arrival.

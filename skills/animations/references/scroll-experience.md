@@ -14,6 +14,11 @@ Scroll animation needed?
 
 ## Framer Motion — viewport reveal (most common)
 
+The numbers below are the canonical reveal, defined once in
+`animation-framework.md` § *The canonical scroll reveal*. This is a whole section
+block, so it takes the section tier — `y: 48`, `duration: 0.6`. An item inside a
+list takes `y: 24`, `duration: 0.5`. Change them there, not here.
+
 ```tsx
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
@@ -25,7 +30,7 @@ function RevealSection({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 32 }}
+      initial={{ opacity: 0, y: 48 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
     >
@@ -38,6 +43,7 @@ function RevealSection({ children }: { children: React.ReactNode }) {
 ## Framer Motion — staggered children
 
 ```tsx
+// Canonical reveal — animation-framework.md § The canonical scroll reveal.
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } }
@@ -48,7 +54,14 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] } }
 };
 
-<motion.ul variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
+// `margin` is part of the config, not optional: without it the first item fires
+// at the viewport edge and the cascade starts late.
+<motion.ul
+  variants={container}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true, margin: "-80px" }}
+>
   {items.map((item) => (
     <motion.li key={item.id} variants={item}>{item.label}</motion.li>
   ))}

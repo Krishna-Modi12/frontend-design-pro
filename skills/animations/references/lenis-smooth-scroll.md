@@ -9,6 +9,13 @@ the monorepo; import from there).
 parallax). This file covers replacing the browser's native scroll behaviour itself, which is a
 different and riskier decision.
 
+> **When Lenis is active, remove CSS `scroll-behavior: smooth`.** The two fight: Lenis
+> drives scroll position from a rAF loop while the browser animates the same property
+> independently, so anchor jumps stutter, land short, or fire twice. Lenis owns anchors
+> instead — `useLenis().scrollTo(el)`, or its `anchors` option. Four files in this pack
+> recommend `scroll-behavior: smooth` for a page *without* Lenis, which is correct advice
+> in isolation and wrong the moment this file is also loaded; each now carries the caveat.
+
 ## Decide before installing
 
 Hijacking scroll is a **user-hostile default**. It breaks scroll-snap, fights trackpad inertia,

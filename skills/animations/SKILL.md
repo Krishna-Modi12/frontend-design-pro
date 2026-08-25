@@ -30,7 +30,7 @@ React 19 · Framer Motion (component motion) · GSAP + ScrollTrigger (scroll/tim
 11. **Set an intentional `transform-origin`**; SVG transforms go on a `<g>` with `transform-box: fill-box`.
 
 ## Patterns
-- **Stagger reveal** — container variants with `staggerChildren`, 40–60ms apart.
+- **Stagger reveal** — container variants with `staggerChildren`, **80ms** apart per item (40ms per word when splitting text). Canonical config: `references/animation-framework.md`.
 - **Shared-element morph** — `layoutId` (Framer) or `<ViewTransition name>` (React VT).
 - **Scroll sequence** — GSAP ScrollTrigger with `scrub`, pinned sections, `invalidateOnRefresh`.
 - **Magnetic / hover lift** — small transform on pointer proximity, disabled under reduced motion.

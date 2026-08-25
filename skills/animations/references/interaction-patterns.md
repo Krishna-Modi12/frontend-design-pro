@@ -98,6 +98,11 @@ html { scroll-behavior: smooth; }
 [id] { scroll-margin-top: 80px; }
 ```
 
+**Drop the `scroll-behavior` line if the page uses Lenis** — Lenis drives scroll
+from a rAF loop and the browser animating the same property alongside it makes
+anchor jumps stutter or land short. `scroll-margin-top` still applies either way.
+See `lenis-smooth-scroll.md`.
+
 `scroll-margin-top` is the one people forget; without it a fixed header covers
 the heading the anchor just jumped to.
 
@@ -234,15 +239,18 @@ pages want.
 
 ### Entrance — rise with stagger
 
+Travel and duration are the canonical reveal expressed in CSS — see
+`animation-framework.md` § *The canonical scroll reveal*.
+
 ```css
-.js .reveal-stagger { opacity: 0; transform: translateY(28px); }
+.js .reveal-stagger { opacity: 0; transform: translateY(24px); }
 .js .reveal-stagger.in-view { opacity: 1; transform: translateY(0); }
 .js .reveal-stagger > * {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(24px);
   transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .js .reveal-stagger.in-view > * { opacity: 1; transform: translateY(0); }
 ```
@@ -251,7 +259,7 @@ Rather than hand-writing `:nth-child` delays — which silently stop staggering 
 whatever count you wrote — set them from the DOM, and cap the total:
 
 ```js
-function initStaggerReveal(containerSelector = ".reveal-stagger", step = 0.1) {
+function initStaggerReveal(containerSelector = ".reveal-stagger", step = 0.08) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -266,9 +274,9 @@ function initStaggerReveal(containerSelector = ".reveal-stagger", step = 0.1) {
 }
 ```
 
-The 0.6s cap is the load-bearing line. Twelve cards at 100ms apart means the last
-one arrives 1.2 seconds after the first, by which point it reads as a slow page
-rather than as choreography.
+The 0.6s cap is the load-bearing line. Twelve cards at the canonical 80ms apart
+means the last one arrives 0.96 seconds after the first, by which point it reads
+as a slow page rather than as choreography — so the cap bites at item eight.
 
 Deeper treatment: `animation-recipes.md` § 1 Staggered List Reveal, and
 `framer-motion.md` for `staggerChildren` when Framer is present.
@@ -696,7 +704,7 @@ function splitForReveal(el, { cjkGranularity = "line" } = {}) {
     span.style.display = "inline-block";
     span.style.opacity = "0";
     span.style.transform = "translateY(100%)";
-    span.style.transition = `opacity 500ms cubic-bezier(0.16,1,0.3,1) ${i * 80}ms, transform 500ms cubic-bezier(0.16,1,0.3,1) ${i * 80}ms`;
+    span.style.transition = `opacity 500ms cubic-bezier(0.16,1,0.3,1) ${i * 40}ms, transform 500ms cubic-bezier(0.16,1,0.3,1) ${i * 40}ms`;
     el.append(span);
     if (i < parts.length - 1) el.append(document.createTextNode(" "));
   });
