@@ -29,7 +29,8 @@
     "screenshots": "npm --prefix tools/screenshots run capture --",
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
     "demos:verify": "npm --prefix tools/screenshots run verify --",
-    "pages:verify": "npm --prefix tools/screenshots run verify:home --"
+    "pages:verify": "npm --prefix tools/screenshots run verify:home --",
+  "visual-regression": "npm --prefix tools/screenshots run visual-regression --"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",

@@ -171,3 +171,60 @@ jobs:
       - name: next build
         working-directory: demo/showcase
         run: npx next build
+
+  # No gate in this repository renders a page and compares it to what it
+  # rendered last time — this is that check, for the two demos that render
+  # deterministically (demo/showcase's WebGL hero is seeded at random and is
+  # deliberately excluded; see tools/screenshots/visual-regression.mjs).
+  #
+  # `continue-on-error: true` at the job level, on purpose: baselines were
+  # captured once and this has not yet run clean across enough real commits
+  # to trust the threshold, so a false positive here should not block a
+  # merge. Promoting this to a blocking, numbered gate is tracked as
+  # follow-up work in docs/CAPABILITY_MATRIX.md, not attempted in the PR
+  # that introduced the tool.
+  visual-regression:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # tools/screenshots deliberately ships without react/react-dom of its
+      # own (see tools/screenshots/README.md) — `next` resolves them by
+      # walking up to this install. Root first, or the dev/prod server it
+      # starts has no React at all.
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      - name: Install home/ dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Install demo/landing-page dependencies
+        working-directory: demo/landing-page
+        run: npm ci
+
+      - name: Visual regression check
+        run: npm run visual-regression
+
+      - name: Upload diff artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-diffs
+          path: |
+            tools/screenshots/.diff-output/
+            tools/screenshots/visual-regression-report.json
+          retention-days: 14
