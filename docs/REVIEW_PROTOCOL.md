@@ -68,7 +68,7 @@ Assume nothing is checked unless you can name the gate that checks it.
 - **No gate reads prose.** Every figure in every `.md` is unverified.
 - **No gate reads comments.** Every suite parses examples as TypeScript, so
   prescribed code inside a `/* … */` or `// --- Required CSS ---` block — code the
-  example explicitly tells the reader to copy — is invisible to all 60
+  example explicitly tells the reader to copy — is invisible to all 61
   constraints. Grep comment blocks by hand when you touch one.
 - **Gate 8b counts `bad-*.tsx`.** It globs `examples/*.tsx`, so "every skill has an
   example" is enforced and "every skill has a **gold**" is not.

@@ -9,7 +9,7 @@ column and load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
 `frontend-design-pro/core/validate-checklist.md`. Most specific match wins —
 "form validation" routes to `forms`, not `react-components`.
 
-Budget 8,000 tokens; a correct request lands near 5,999–7,598. Do not load every
+Budget 8,000 tokens; a correct request lands near 6,000–7,599. Do not load every
 skill, and do not answer from the registry alone.
 
 Open a `frontend-design-pro/skills/{id}/references/*.md` file only when the routed
