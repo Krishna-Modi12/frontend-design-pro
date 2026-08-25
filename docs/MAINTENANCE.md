@@ -19,6 +19,20 @@ The pack is 19 skills, 111 references, 398,313 tokens of on-demand depth, 60 mac
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
+## 2026-08-25 — Owner-directed quality-system initiative
+
+There is no freeze in effect (see above), so nothing below is technically an override of one — but the same disclosure obligation applies. "New skill, reference, example, constraint or gate: requires owner approval" is the standing rule even outside a freeze, and what follows is a multi-PR initiative that will add several of those over a short window. Recording it here for the same reason the 2026-08-02 entry exists: an unexplained spike in constraint/tooling additions is exactly the pattern this file asks every future reader to be suspicious of.
+
+**Directive date:** 2026-08-25.
+
+**Directive:** Owner-supplied, explicit. A full capability audit (`docs/CAPABILITY_MATRIX.md`) followed by staged implementation of the highest-priority gaps it found: a visual-regression baseline system (new, was entirely absent), a `SEC-*` security-constraint category (new, closes a gap this project's own `docs/AUDIT.md` had already found a real bug in but never gated), targeted WCAG 2.2 constraint expansion (new IDs for SCs already named in prose in `core/accessibility-baseline.md`), routing-intent eval cases, and a small number of Phase 2/3 items scoped to what's genuinely tractable in one initiative rather than attempting the full breadth at once.
+
+**Why this isn't the failure pattern this file warns about:** every prior bad-release incident recorded below happened because of *unreviewed, ungated, or concurrent-session* changes — content landing without anyone reading it, or two sessions racing on the same working directory. This initiative is a single session, staged as independent branches each required to pass `npm run gates` before merging (the same bar as any other change, per "The bar for a freeze-period commit" above), with every new figure wired for eventual Gate 11 coverage rather than hand-asserted. The risk this file actually cares about — churn — is mitigated by scoping honestly: `docs/CAPABILITY_MATRIX.md` explicitly logs what is *not* being built this pass (remaining golden-project demos, a scoring model, generator tooling) rather than claiming false completion.
+
+**What this costs, stated plainly, same as the last entry:** more surface area lands in less time than the evidence-threshold path would allow. The mitigation is the same one used in 2026-08-02 — re-derive every published count from a green gate chain in the same commit series — plus the new capability matrix and research log (`docs/RESEARCH.md`) existing specifically so the next reader of this file can see what changed and why without reconstructing it from commit messages.
+
+**Tracked by:** `docs/CAPABILITY_MATRIX.md` (what's present/absent/deferred, with priority), `docs/RESEARCH.md` (external findings that shaped a decision), and this file's changelog cross-reference at the top of [CHANGELOG.md](CHANGELOG.md) once each stage merges.
+
 ## Feature Freeze — OVERRIDDEN
 
 **Original freeze:** in effect from 2026-07-30; earliest lift 2026-08-13, or 10 distinct enhancement requests, or 5 confirmed bugs — whichever came first. None of those thresholds was reached.
