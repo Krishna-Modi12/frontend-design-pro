@@ -172,6 +172,27 @@ jobs:
         working-directory: demo/showcase
         run: npx next build
 
+  # No SEC-* category exists in test_constraints.py — docs/AUDIT.md found a
+  # real stored-XSS bug once by manual audit and it was fixed as a prose
+  # edit, never gated. This is three narrow, proven-clean-against-the-real-
+  # corpus patterns (scripts/check_security.py); a normal blocking check,
+  # same as the constraint/reference gates it deliberately sits beside
+  # rather than inside — see the docstring in check_security.py for why it
+  # is not one of the numbered 60.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Security pattern proof
+        run: python3 scripts/test_security_patterns.py
+
+      - name: Security scan
+        run: python3 scripts/check_security.py
+
   # home/lib/router.ts is a real port of the SKILL.md routing protocol, run
   # by the live demo on the pack's own homepage — and until now had zero
   # test coverage of its own. Unlike the screenshot job below, there is
