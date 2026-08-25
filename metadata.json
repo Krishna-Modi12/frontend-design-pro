@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro",
   "version": "14.11.4",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 111 references (402,592 tokens of on-demand depth), 55 examples, 60 machine-enforced constraints, 11 release-blocking gates. A typical request loads 5,999–7,598 tokens, not 402,592. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 111 references (401,382 tokens of on-demand depth), 55 examples, 61 machine-enforced constraints, 11 release-blocking gates. A typical request loads 6,000–7,599 tokens, not 401,382. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
   "author": "krishnamodi241@gmail.com",
   "license": "MIT",
   "tags": [
@@ -107,7 +107,7 @@
     "landing_patterns": 34,
     "style_presets": 5,
     "validation_checks": 25,
-    "ci_constraints": 60,
+    "ci_constraints": 61,
     "reference_files": 111,
     "gsap_plugins": 12,
     "shortcodes": 57,
@@ -136,15 +136,15 @@
     "pipeline_stages": 6,
     "stripe_patterns": 8,
     "parser_constraints": 17,
-    "regex_constraints": 43,
+    "regex_constraints": 44,
     "test_files": 45,
     "release_gates": 11,
     "behavioral_principles": 4,
     "skills": 19,
     "core_files": 8,
-    "reference_depth_tokens": 402592,
+    "reference_depth_tokens": 401382,
     "registry_tokens": 2112,
-    "ci_constraints_detail": "60 checks across 60 distinct IDs (17 parser AST + 43 regex)"
+    "ci_constraints_detail": "61 checks across 61 distinct IDs (17 parser AST + 44 regex)"
   },
   "changelog": {
     "14.11.4": "Two fixes, both verified by running the check, not by reading it. SLOP-04 was structurally inert: the corpus's own deliberate anti-example for it (bad-generic.tsx) passed the check outright, because the two dollar-figures it named as banned matched its own organic-evidence pattern, a trailing word-boundary after percent often failed to anchor, and the bare comma-figure shape the anti-example and landing-pages's own reference doc actually use was never in the ban list. Built a standalone test harness and ran every candidate fix against all 137 example files before touching the real script. Fixed the comma/dollar half: wrapped the check in _uncommented() so an illustrative JSDoc comment can no longer supply its own escape hatch, widened the ban to bare 10,000/100,000 with an optional plus, and excluded those two literals from the organic-evidence pattern so they can no longer satisfy their own ban. Verified zero new false positives across the full corpus and that the anti-example now fails SLOP-04 specifically. Left the percent half unfixed on purpose: oklch lightness values, calc() expressions, Tailwind arbitrary values and inline width/height percentages are genuine, frequent, legitimate code in this corpus, and every percent-aware fix attempted produced a false positive a comma-only check does not; the description now states the narrower, accurate coverage instead of overclaiming, same move as the prior release's GAP-2 fix applied to the one half of the claim that turned out to be actually fixable. Second, a real and previously confirmed-empty coverage gap: platform had nothing for extension UI, VS Code webviews or browser extension popups, even though this pack's other platform surfaces are all covered. Researched current guidance from VS Code's own UX Guidelines and Webview API docs and Chrome's Manifest V3 documentation. Both surfaces share constraints nothing else in this pack assumes: a host-imposed theme rather than the app's own, a fixed small viewport, and a CSP that forbids several patterns this pack otherwise treats as normal, most notably any CSS-in-JS approach that injects style tags at runtime. New references/extension-ui.md covers VS Code theming via its CSS custom properties and body theme classes, the Webview UI Toolkit, postMessage host communication and nonce-based CSP, plus MV3 popup constraints: roughly 400px width, default CSP, options-page-owns-persisted-settings, and full keyboard/focus discipline. Reference depth grew 1,388 tokens to 373,600; reference count grew by one file to 105. Registry and per-request band unchanged. 11/11 gates green, 0 figure drift.",

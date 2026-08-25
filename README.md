@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/hero.svg" alt="frontend-design-pro — a skill pack for AI coding agents. A component sits on an audit bench while a scan beam sweeps it, and its constraints resolve one by one to green checks: type scale, contrast, focus ring, colour space — ending on a pass." width="100%">
 
 **Taste you can put in CI.**
-**60 machine-checked constraints, 11 release gates, and an agent that stops reaching for Inter.**
+**61 machine-checked constraints, 11 release gates, and an agent that stops reaching for Inter.**
 
 [![Release](https://img.shields.io/github/v/release/Krishna-Modi12/frontend-design-pro?style=for-the-badge&color=1f6feb&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/releases)
 [![Gates](https://img.shields.io/github/actions/workflow/status/Krishna-Modi12/frontend-design-pro/ci.yml?branch=main&style=for-the-badge&label=gates&color=2ea043&labelColor=161b22)](https://github.com/Krishna-Modi12/frontend-design-pro/actions/workflows/ci.yml)
@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **111** | **402,592 tokens** | **2,112 tokens** | **5,999–7,598** | **60** | **11** |
+| **19** | **111** | **401,382 tokens** | **2,112 tokens** | **6,000–7,599** | **61** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 402,592 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 401,382 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -121,7 +121,7 @@ These are not style preferences. Each row below is a check that fails a build, w
 | Equal-height card grid, 3 across | Asymmetry, hierarchy, one showpiece per viewport | anti-slop wall |
 | A component with only a happy path | All four states — loading, empty, error, success | `STA-01`, `STA-02` |
 
-The full list of 60 constraints lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
+The full list of 61 constraints lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
 ### Run them against your own code
 
@@ -133,7 +133,7 @@ python scripts/test_constraints.py --dir ../../../components --component
 python scripts/test_constraints.py --dir ../../../app                    # pages: no flag
 ```
 
-**`--component` is the flag that matters.** Eight of the 43 regex constraints describe a *page* — a declared font, a default export, landmark elements, all four states, breakpoints, a skip link. They are right about a screen and wrong about a status pill, so pointing the suite at a well-factored `components/` directory without the flag produces a wall of failures that are all artefacts of scope. The flag drops those eight and names them in the output; the remaining 35 plus all 17 AST checks still apply. Without a compiler installed the AST half skips and says so rather than failing.
+**`--component` is the flag that matters.** Eight of the 44 regex constraints describe a *page* — a declared font, a default export, landmark elements, all four states, breakpoints, a skip link. They are right about a screen and wrong about a status pill, so pointing the suite at a well-factored `components/` directory without the flag produces a wall of failures that are all artefacts of scope. The flag drops those eight and names them in the output; the remaining 35 plus all 17 AST checks still apply. Without a compiler installed the AST half skips and says so rather than failing.
 
 ---
 
@@ -387,11 +387,11 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | Layer | What it is | Cost |
 |---|---|---|
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,112 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,963–3,922 tokens — the deps one skill declares |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,964–3,923 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **402,592 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **401,382 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 5,999–7,598 tokens, not 402,592.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,000–7,599 tokens, not 401,382.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -408,7 +408,7 @@ Every skill inherits `accessibility-baseline` and `validate-checklist` whenever 
 | `core/component-api-deep.md` | Compound components, composition patterns, API anti-patterns |
 | `core/agent-behavior.md` | The four principles — think, simplify, stay surgical, verify |
 | `core/agent-behavior-patterns.md` | Design-work addendum, external behavioural patterns |
-| `core/validate-checklist.md` | All 60 constraints (17 parser + 43 regex, unique IDs) with pass criteria |
+| `core/validate-checklist.md` | All 61 constraints (17 parser + 44 regex, unique IDs) with pass criteria |
 | `core/user-intake.md` | Six questions to ask before building a site — and when not to ask them |
 
 </details>
@@ -426,7 +426,7 @@ Four projects generated by the skill routing itself — the pack eating its own 
 | [`demo/auth-form/`](demo/auth-form/) | Stub-typed | `forms` + `core/component-api.md` | RHF + Zod, `aria-describedby` errors, OAuth, jest-axe test |
 | [`demo/showcase/`](demo/showcase/) | **Runnable Next.js app** | `landing-pages` + `threejs-3d` + `forms` | R3F hero, bento grid, pricing, testimonials, validated form |
 
-The two stub-typed demos are checked by the same suites as the gold examples — `tsc --noEmit` strict, 17 AST constraints, 43 regex constraints:
+The two stub-typed demos are checked by the same suites as the gold examples — `tsc --noEmit` strict, 17 AST constraints, 44 regex constraints:
 
 ```bash
 bash demo/validate.sh              # every demo it covers
@@ -506,7 +506,7 @@ The exact prompt that generates it is documented in [`demo/showcase/README.md`](
 
 **The route it takes.** The registry matches *WebGL*, *bento*, *pricing*, *form* and *carousel* against the trigger-keyword column and loads `landing-pages`, `threejs-3d` and `forms` in turn, each pulling `core/design-tokens.md` and `core/component-api.md` from its declared `core-deps`, plus the two universal deps (`core/accessibility-baseline.md`, `core/validate-checklist.md`). Nothing else is read. The bans in the prompt — no Inter, no purple gradient, no `min-h-screen`, no equal-weight card grid — are not politeness: they are the anti-slop wall restated, and the constraint suite fails the build if the output violates them.
 
-**It is checked, not just shipped.** Unlike the two stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 17 AST checks on every authored file, the 43 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
+**It is checked, not just shipped.** Unlike the two stub-typed demos above, the showcase has real dependencies, so it gets a real check: Gate 9 runs `next build` against the actual vendor typings, and CI installs its dependencies on a clean runner to do the same. It is held to the same content rules as everything else — the 17 AST checks on every authored file, the 44 regex checks on the project. A "runnable demo" that nobody runs is a claim with a shelf life.
 
 Its capture is at the top of this page, in [What it builds](#what-it-builds) — above-the-fold, default viewport, reduced motion off, taken by a headless Chromium driving a production build, not staged and not retouched. If a future change to `demo/showcase` makes it stale, [`.github/SCREENSHOT_CONTRIBUTION.md`](.github/SCREENSHOT_CONTRIBUTION.md) has the exact recapture spec.
 
@@ -547,7 +547,7 @@ Webview UI Toolkit and `postMessage`/`acquireVsCodeApi()` for host
 communication, and MV3 popup constraints (400px width, default CSP, options
 page vs. popup state, keyboard/focus discipline).
 
-Reference depth now stands at 402,592 tokens over 111 references. Registry and
+Reference depth now stands at 401,382 tokens over 111 references. Registry and
 per-request band unchanged.
 
 11/11 gates green · 0 figure drift.
@@ -567,7 +567,7 @@ Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 | 2 | **Frontmatter** | Every file passes Anthropic's own `quick_validate.py` schema; every skill declares `metadata.version`/`metadata.core-deps`, and its deps exist |
 | 3 | **Compile** | `tsc --noEmit` strict + `noImplicitAny` over every example |
 | 4 | **Semantic** | 17 AST constraints via the TypeScript compiler API |
-| 5 | **Syntactic** | 43 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy) |
+| 5 | **Syntactic** | 44 regex constraints (tokens, fonts, spacing, anti-slop, 3D, copy) |
 | 6 | **Pipeline** | `AGENT_SYSTEM_PROMPT.md` stage markers, architecture checks, and every path it cites resolves |
 | 7 | **Evals + coverage** | 22 eval cases; every gold has a test; the suite runs and passes |
 | 8 | **Budget + registry** | Every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves |

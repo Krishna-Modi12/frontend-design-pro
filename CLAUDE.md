@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `frontend-design-pro` is a **skill pack for AI agents**, not an application. The deliverable is a `.skill` archive (a zip of markdown + TypeScript examples) that a host agent unzips and reads. Nothing here "runs" in the usual sense except `demo/showcase/`.
 
-The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 60 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
+The product's entire claim is that it is **verified rather than asserted**: every number in the docs is derived from a green gate chain, and every example is machine-checked against 61 constraints. When a change and a gate disagree, the gate is right. If a change requires relaxing a gate to land, the change is wrong.
 
 Because of that claim, the standing posture here is **judge before building**. Read [`docs/REVIEW_PROTOCOL.md`](docs/REVIEW_PROTOCOL.md) at the start of a session: it carries the five-minute spot check, the list of things no gate can see, and the severity ladder. Every release this project has had to correct was corrected for prose, not for code.
 
@@ -16,7 +16,7 @@ Because of that claim, the standing posture here is **judge before building**. R
 npm run gates        # python scripts/build_release.py --dry-run  — all 11 gates, builds nothing. THE check.
 npm run build        # full gated release: gates + archive + smoke test + release notes
 npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
-npm run constraints  # Gate 5 only — 43 regex constraints over skills/
+npm run constraints  # Gate 5 only — 44 regex constraints over skills/
 npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run figures:test # proof that Gate 11's patterns read the prose forms people write
 npm run evals        # 22 eval cases, self-test
@@ -80,7 +80,7 @@ Single-file checks while iterating on an example (much faster than the full chai
 
 ```bash
 node scripts/parser_constraints.js skills/<id>/examples/good-x.tsx   # 17 AST constraints, one file
-python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 43 regex constraints, one file
+python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 44 regex constraints, one file
 python scripts/test_constraints.py --dir <path> --component          # consumer mode: drops the 8 page-scoped rules
 python scripts/build_release.py --bump-patch                          # patch bump + gates + build
 ```
@@ -125,7 +125,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 5,999–7,598 tokens against ~403k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 6,000–7,599 tokens against ~401k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -164,12 +164,12 @@ would have "passed" without the gate ever seeing the shape. It reads indentation
 now and consumes folded scalars, so a colon inside a wrapped `description:` can
 no longer invent a top-level key either. The cost is measured, not free:
 `metadata:` plus two indent levels adds ~5 tokens to every skill, moving the
-per-request band to 5,999–7,598 and leaving `design-research` 452 tokens of
+per-request band to 6,000–7,599 and leaving `design-research` 452 tokens of
 Gate 8a headroom.
 
 ## The rules no gate reads
 
-The 60 constraints check code. **Each skill's own "Core Rules" section is checked
+The 61 constraints check code. **Each skill's own "Core Rules" section is checked
 by nothing**, and one of them was contradicted by the very example the skill
 names first: `data-tables` rule 5 says filters, sort and page live in the URL,
 and `good-data-table.tsx` held all three in `useState` for its whole life while
@@ -194,12 +194,12 @@ markers on content that is not a sequence. (Gradient fills used to be a separate
 unscoped claim on this line too — it now just restates `TYP-03`, which the regex
 suite already enforces, so it dropped off this list.)
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 402,592 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 401,382 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts
 
-`skills/*/examples/good-*.tsx` are not illustrations — they are the fixtures the constraint suites run against, and they must pass all 60 checks (17 AST via the TypeScript compiler API + 43 regex). `bad-*.tsx` are deliberate anti-examples that **must fail**; the suite asserts both directions.
+`skills/*/examples/good-*.tsx` are not illustrations — they are the fixtures the constraint suites run against, and they must pass all 61 checks (17 AST via the TypeScript compiler API + 44 regex). `bad-*.tsx` are deliberate anti-examples that **must fail**; the suite asserts both directions.
 
 Write new golds by modelling closely on an existing one (`skills/landing-pages/examples/good-landing.tsx` is the fullest). The recurring requirements: OKLCH only (no raw hex, no `[#...]`), `min-h-[100dvh]` never `min-h-screen`, a declared font (`Manrope`/system stack — never Inter/Roboto/Poppins as the display face), all four states with no `setTimeout` fake loader, a functional `useReducedMotion`, ease-out for entrances, a skip link on anything with `<nav>`/`<header>`, 44px touch targets, organic data values, an exported `*Props` interface that is actually *used* as a type, and `…` not `...`.
 

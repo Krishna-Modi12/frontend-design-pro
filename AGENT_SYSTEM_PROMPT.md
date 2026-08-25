@@ -57,8 +57,8 @@ Before writing any code:
 2. **Match the request against the Trigger Keywords column** of the registry table. `SKILL.md` is the single source of truth for those keywords — this prompt deliberately does not copy them, so the two cannot disagree.
 3. **Load exactly one `skills/{id}/SKILL.md`.** One skill, not several.
 4. **Load the Core Dependencies** named in that skill's frontmatter (`metadata.core-deps`), plus `core/accessibility-baseline.md` and `core/validate-checklist.md` whenever the task produces code.
-5. **Budget: ≤8,000 tokens total.** A typical request lands at 5,999–7,598 — registry + one skill + its declared deps. Over budget: drop the deepest reference first and **say which** in your output.
-6. **Load a `skills/{id}/references/*.md` file only when the loaded skill file points you at it** for the specific task. That is where the ~403k tokens of depth lives; none of it is loaded by default.
+5. **Budget: ≤8,000 tokens total.** A typical request lands at 6,000–7,599 — registry + one skill + its declared deps. Over budget: drop the deepest reference first and **say which** in your output.
+6. **Load a `skills/{id}/references/*.md` file only when the loaded skill file points you at it** for the specific task. That is where the ~401k tokens of depth lives; none of it is loaded by default.
 7. **Most specific skill wins.** "form validation" → `forms`, not `react-components`. "icon button sizing" → `iconography`, not `react-components`.
 8. **No keyword match → ask ONE clarifying question.** Never guess a skill.
 
@@ -116,11 +116,11 @@ Apply Section 2: one skill file, its declared `metadata.core-deps`, plus the acc
 
 ## SECTION 5 — VALIDATE
 
-Self-check against `core/validate-checklist.md` before output. **60 machine-enforced constraints (17 parser + 43 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
+Self-check against `core/validate-checklist.md` before output. **61 machine-enforced constraints (17 parser + 44 regex) plus 4 self-checks.** Fix failures; do not annotate and ship.
 
 - [ ] **TypeScript** — `.tsx`, exported prop interfaces, no implicit `any`; mentally simulate `tsc --noEmit --strict`
 - [ ] **Semantic (17 AST)** — the four the parser catches most: `aria-*` are real JSX attributes, never comment décor · `prefers-reduced-motion` is functional, not an inert string · no `setTimeout` gating state in a mount `useEffect(…, [])` · declared `*Props` types **exist and are used**. The loaded checklist has the rest.
-- [ ] **Syntactic (43 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`05` no placeholder names, AI-slop copy, `// TODO`, round data (47.2%, $12,847 — not 50%), or placeholder brand names (Acme, Nexus — invent one) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
+- [ ] **Syntactic (44 regex)** — the loaded `core/validate-checklist.md` is authoritative. Highest-traffic: `TOK-01` no hex in token definitions · `TYP-01` a font is actually declared · `SLOP-01`–`05` no placeholder names, AI-slop copy, `// TODO`, round data (47.2%, $12,847 — not 50%), or placeholder brand names (Acme, Nexus — invent one) · `QUA-03` no lorem ipsum · `RES-01` real breakpoints
 - [ ] **Passes 1–5 held** — four states reachable, WCAG criterion cited, OKLCH tokens, no raw hex
 - [ ] **Responsive** — verified at 320 / 768 / 1440px, no horizontal scroll
 - [ ] **Anti-slop** — Section 6 clean, all sixteen

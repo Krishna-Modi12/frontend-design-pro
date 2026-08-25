@@ -44,7 +44,7 @@ export const HOW_IT_WORKS = [
     letter: "B",
     title: "Constraints run first",
     caption: "Checked before it ships",
-    body: "What gets written is held to 60 machine-checked constraints (17 AST + 43 regex) — the first half walked through the TypeScript compiler API, the second run as patterns. Ten deliberate anti-examples exist to prove the checks actually fire.",
+    body: "What gets written is held to 61 machine-checked constraints (17 AST + 44 regex) — the first half walked through the TypeScript compiler API, the second run as patterns. Ten deliberate anti-examples exist to prove the checks actually fire.",
   },
   {
     letter: "C",

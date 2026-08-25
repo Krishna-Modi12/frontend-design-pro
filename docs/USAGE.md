@@ -7,7 +7,7 @@
 ```
 You:    "Build a pricing page for a developer tool"
 Agent:  matches "pricing" → loads skills/landing-pages/SKILL.md + core/design-tokens.md
-        (~5,665 tokens, not the 402,592 available)
+        (~5,665 tokens, not the 401,382 available)
 ```
 
 You never name a skill. If you *want* to force one, say its name — "use the data-tables skill" — and the agent will honour it.
@@ -64,7 +64,7 @@ Every gold example ships with one. Say "with tests" and you get a `.test.tsx` wi
 
 ## What you get automatically
 
-Whether or not you ask, generated code is checked against **60 constraints**:
+Whether or not you ask, generated code is checked against **61 constraints**:
 
 - **TypeScript strict**, exported prop interfaces, no implicit `any`
 - **OKLCH tokens** — never raw hex in component code
@@ -107,8 +107,8 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 |---|---|
 | Registry (always) | ~1,800 |
 | One skill | 848–1,722 |
-| Core deps | 2,963–3,922 |
-| **Typical request** | **~5,999–7,598** |
-| Available depth (loaded only on demand) | **402,592** |
+| Core deps | 2,964–3,923 |
+| **Typical request** | **~6,000–7,599** |
+| Available depth (loaded only on demand) | **401,382** |
 
 If you're on a small context window, say "keep it brief" — the agent will skip deep references and note the omission.
