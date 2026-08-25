@@ -112,6 +112,28 @@ Pairing the palette with type in the same artefact is the part worth copying:
 a theme that names a display face and a body face beside its ramp is usable
 immediately, where a bare palette still needs `references/font-pairings.md`.
 
+**If you are reading one of that addon's themes, three things do not transfer.**
+It is cited above for its method, not as a drop-in source, and applying a theme
+from it verbatim breaks rules this pack enforces elsewhere:
+
+- **The hex is hex.** Convert to OKLCH before use (`COL-04`). Several themes also
+  use `#FFFFFF` and `#000000` as background and text extremes, which is a direct
+  hit on rule 3 — pure black and white are never surfaces here.
+- **"Role" there means brightness rank, not a semantic slot.** Roles are assigned
+  by sorting each palette by relative luminance and zipping it against a fixed
+  ladder, so the ladder has exactly as many rungs as the palette has colours.
+  There is no border, focus-ring or destructive role to inherit; you still do the
+  semantic mapping yourself, exactly as the paragraph above says.
+- **Fonts are assigned per category, not per theme**, so four themes sharing a
+  category share a type pairing whatever their palettes look like. Check the pair
+  against `references/font-pairings.md` — at least one category pairs a display
+  face this pack bans outright, and several more use faces on its Convergence
+  Watch.
+
+Each theme is also a single mode, light or dark, with no paired counterpart. The
+`color-themes` skill treats `auto` as a third state, so a theme taken from there
+gives you one half of what you need to ship.
+
 ## Additional AI-design tells
 
 Three patterns not on the registry's anti-slop wall, each a reliable signal that a layout was

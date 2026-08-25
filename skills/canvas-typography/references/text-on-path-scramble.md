@@ -73,19 +73,44 @@ Cache `getTotalLength()`. It is not free and the path rarely changes.
 Each character cycles through random glyphs, then locks to its final value. The
 effect works because of the stagger — simultaneous resolution reads as a flicker.
 
+**Split on graphemes, not code points.** `[...target]` and `target.split("")`
+are both wrong, just at different thresholds: `split("")` tears surrogate pairs
+in half and renders a pair of replacement characters, and spreading fixes that
+but still splits a *grapheme cluster* into its parts. So `é` written as `e` +
+U+0301 scrambles as two slots and drops its accent onto whatever glyph the RNG
+picked; `👨‍👩‍👧` explodes into three people and two joiners; a flag becomes two
+letters. `Intl.Segmenter` is the primitive that gets this right, and it is a
+browser built-in — no dependency, no table to ship.
+
 ```ts
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 interface Slot { to: string; start: number; end: number; shown: string }
 
+const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+const graphemes = (s: string) => Array.from(segmenter.segment(s), (g) => g.segment);
+
 // Build once, per reveal:
-const slots: Slot[] = [...target].map((to, i) => ({
+const slots: Slot[] = graphemes(target).map((to, i) => ({
   to,
   start: i * 40,              // stagger — this is the whole effect
   end: i * 40 + 260 + Math.random() * 200,
   shown: "",
 }));
 ```
+
+Construct the segmenter once and hoist it — it is not free per call, and a
+reveal that rebuilds it every frame will show up in a profile. Passing
+`undefined` as the locale takes the runtime's own, which is what you want here:
+grapheme boundaries are near-locale-invariant, and hardcoding `"en"` only
+misreports intent.
+
+One consequence worth stating, since it changes what the effect *means*: a slot
+now holds a cluster rather than a character, so the placeholder glyph swapped in
+during the scramble is one narrow Latin character standing in for something that
+may be much wider. On CJK or emoji targets the line visibly reflows as it
+resolves. Draw each slot at a fixed advance measured from the final text if that
+matters — see the metrics section in `canvas-2d-typography.md`.
 
 Per frame, advance an elapsed clock and resolve each slot:
 

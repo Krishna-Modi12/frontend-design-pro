@@ -1,7 +1,8 @@
 # shadcn/ui Reference — Frontend Design Pro
-> shadcn/ui — copy-paste component library built on Radix UI primitives + Tailwind CSS.
+> shadcn/ui — copy-paste component library over unstyled primitives + Tailwind CSS.
 > NOT a package you install as a dep — you own the code after `npx shadcn@latest add`.
-> As of 2025: default registry at ui.shadcn.com. New York and Default style variants.
+> Default registry at ui.shadcn.com. New York and Default style variants.
+> **`init` now defaults to Base UI, not Radix** — check `package.json` first; see below.
 
 ---
 
@@ -31,8 +32,19 @@
 
 ## WHAT SHADCN IS (AND ISN'T)
 
+**Check which primitive layer you are on before you write a line of it.**
+`shadcn init` now defaults new projects to **Base UI**, not Radix. The two are
+API-similar and not API-compatible, so guidance written for one is confidently
+wrong on the other — Radix's `asChild` is Base UI's `render` prop, and the
+`data-*` state contract differs. Read `package.json`: `@radix-ui/*` or
+`radix-ui` means the Radix contract and `radix-primitives.md` applies;
+`@base-ui-components/react` means Base UI, and `base-ui.com` is the source of
+truth rather than anything in this pack. An existing Radix project is **not**
+deprecated and should not be migrated to chase the default.
+
 **IS:**
-- Radix UI primitives (accessible by default) + Tailwind styling you control
+- Accessible unstyled primitives (Base UI by default now, Radix in existing
+  projects) + Tailwind styling you control
 - Copy-paste into `/components/ui/` — you own every line
 - Style variants: `default` (rounded, softer) and `new-york` (sharper, tighter)
 - CSS variables for theming: `--background`, `--foreground`, `--primary`, etc.
