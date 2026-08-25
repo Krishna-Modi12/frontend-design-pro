@@ -1,0 +1,48 @@
+name: Regenerate visual-regression baselines
+
+# Manual only. Screenshot diffing is font/OS-sensitive, so the baseline that
+# ships has to come from this runner, not a contributor's own machine — see
+# the doc comment at the top of tools/screenshots/visual-regression.mjs.
+#
+# Run it, download the `visual-regression-baselines` artifact, extract it
+# over tools/screenshots/baselines/, review the diff, commit.
+on:
+  workflow_dispatch:
+
+jobs:
+  update-baselines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      - name: Install home/ dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Install demo/landing-page dependencies
+        working-directory: demo/landing-page
+        run: npm ci
+
+      - name: Regenerate baselines
+        run: npm run visual-regression -- --update-baselines
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-baselines
+          path: tools/screenshots/baselines/
+          retention-days: 14
