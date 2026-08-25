@@ -43,6 +43,7 @@ Load only for the specific task:
 | Sizing/weight/colour/a11y/optical-alignment rules across families | `references/icon-systems.md` |
 | Lucide usage, avatar patterns, gradient initials, AvatarGroup, empty states | `references/icons-avatars.md` |
 | Phosphor — six weights, `fill` as state, duotone's colour caveat, `IconContext`, `mirrored`/RTL, import paths | `references/phosphor.md` |
+| Which Lucide export means what — purpose-to-name lookup | `references/lucide-index.md` |
 | Touch-target and contrast floors | `core/accessibility-baseline.md` |
 
 ## Constraints

@@ -38,6 +38,41 @@ aesthetics to be inferred.
 }
 ```
 
+## Tooling — do the fetch with a script, not by eye
+
+`scripts/extract_design_tokens.py` in this repo automates the mechanical half of
+the protocol above. Standard library only, no install:
+
+```bash
+python scripts/extract_design_tokens.py --url https://example.com
+python scripts/extract_design_tokens.py --file page.html --format json
+```
+
+It fetches the page, follows and merges its linked stylesheets, and reports
+colours by frequency, font families and sizes, the spacing values actually used,
+border radii, shadows, animations, custom properties, page structure and image
+assets. That is the evidence the protocol asks for, gathered in one command
+rather than by reading devtools and typing values into a document.
+
+Three things it does not do, and one of them matters more each year:
+
+- **Its colour detection is hex-centric.** A site written in `oklch()`, `lab()`
+  or `color-mix()` reports few colours or none, because the regex looks for hex.
+  The values still appear under CSS VARIABLES when they are custom properties,
+  but the frequency ranking that nominates a "primary" is unreliable there — and
+  the sites most worth extracting from are exactly the ones that have moved.
+- **It sees server HTML.** A client-rendered application gives it very little.
+  Upstream ships a Playwright crawler for that case, which this repo did not
+  vendor: it would be our first Python third-party dependency and it downloads a
+  browser. Install it separately when you need it rather than expecting it here.
+- **Frequency is not hierarchy.** The most repeated colour on a page is usually a
+  border. The tool produces a census; deciding which value is the brand is still
+  yours, and still needs the semantic mapping the protocol describes.
+
+Run the tool, then do the judgement. The rule at the top of this file is about
+where values come from, and a script satisfies it in a way that recalling a brand
+from memory never will.
+
 ## When extraction fails
 
 If the brand publishes nothing and the site is unreadable, **say so and ask** — do not fill the

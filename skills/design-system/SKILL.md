@@ -55,7 +55,10 @@ Load only for the specific task:
 | Tone vocabulary, background effects, Design Thinking protocol | `references/aesthetic-direction.md` |
 | Auto Layout → code, variable extraction | `references/figma-to-code.md` |
 | Tokens leaving the browser — DTCG, Style Dictionary, Tokens Studio, and where hex is legitimate | `references/token-interop.md` |
+| Ten mood-keyed starting token sets — palettes in OKLCH, type pairing, radius, motion tier, and how to mix two | `references/style-seeds.md` |
 | Parsing a supplied DESIGN.md into `@theme` | `references/design-md-parser.md` |
+| Authoring a DESIGN.md — the nine-section template and the rules that make it binding | `references/design-md-template.md` |
+| Checking a build against the DESIGN.md it was made from | `references/design-md-checklist.md` |
 | Style presets (soft/minimal/brutalist/glass/neo) | `references/styles/*.md` |
 
 ## Constraints
