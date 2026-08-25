@@ -6,7 +6,7 @@
 
 A: There's no ranked "best" — see [`AGENT_COMPATIBILITY.md`](AGENT_COMPATIBILITY.md) for the full matrix across all eight host surfaces (Claude Code, Claude Desktop, Claude.ai, Cursor, ChatGPT, OpenAI API, Copilot, Gemini). The one fact that actually separates them, per that doc: *can the agent decide, mid-conversation, to open one specific file it wasn't given up front?*
 
-**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~5,999–7,598 tokens), leaving the other 398,516 tokens of reference depth untouched until the routing table points at something.
+**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~5,999–7,598 tokens), leaving the other 401,382 tokens of reference depth untouched until the routing table points at something.
 
 Everywhere else, that degrades — not uniformly, and not to zero:
 
@@ -26,7 +26,7 @@ A: Yes. `SKILL.md` carries the identity, behavioural preamble, anti-slop wall, t
 
 ## Q: Why is there a feature freeze / no v14.3.0 yet?
 
-A: Because the pack considers itself functionally done — 19 skills, 111 references, 398,516 tokens of on-demand depth, 60 machine-enforced constraints, 11 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
+A: Because the pack considers itself functionally done — 19 skills, 111 references, 401,382 tokens of on-demand depth, 60 machine-enforced constraints, 11 release-blocking gates, one runnable demo app — and at that point the biggest remaining risk is churn, not missing features ([`MAINTENANCE.md`](MAINTENANCE.md)). The freeze took effect with the release that introduced [`MAINTENANCE.md`](MAINTENANCE.md) — check that file's own note and the top entry of [`CHANGELOG.md`](CHANGELOG.md) for exactly which one, since a patch may have shipped since this was written — and covers everything after it: only typo fixes, broken-link fixes, and fixes for *reported* bugs (gate chain still green) are permitted. No refactors in passing, no unprompted dependency bumps, no rewording the anti-slop wall because a better phrasing occurred to someone.
 
 The freeze lifts on any **one** of three documented, evidence-based triggers, quoted from `MAINTENANCE.md`:
 
