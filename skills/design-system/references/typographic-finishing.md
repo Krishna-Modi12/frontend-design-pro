@@ -270,8 +270,20 @@ JavaScript config:
 What you get, and the four things worth knowing:
 
 - **Sizes** are `prose-sm` · `prose-base` · `prose-lg` · `prose-xl` ·
-  `prose-2xl`. They change more than `font-size` — the whole vertical rhythm and
-  the measure scale together, which is why a raw `text-lg` on `prose` looks off.
+  `prose-2xl`. Each redeclares `font-size` and an `em`-based vertical rhythm, but
+  **the measure is not one of them** — `max-width: 65ch` is declared once, on the
+  base `prose` class, and no size variant overrides it. The column holds at 65
+  characters at every size; only its pixel width moves, as a side effect of `ch`
+  being font-size-relative.
+  The rhythm is where they genuinely differ, and not by a constant. Body leading
+  is authored in absolute terms on a 4px grid — 14/24, 16/28, 18/32, 20/36,
+  24/40 — so the *ratio* drifts across the ramp (1.714, 1.75, 1.778, 1.8, then
+  back to 1.667 at the top, where large type wants less). That is why a raw
+  `text-lg` on `prose-base` is not `prose-lg`: `em` spacing rescales
+  proportionally, giving 31.5px leading and 22.5px paragraph gaps where
+  `prose-lg` intends 32 and 24. Close enough to look almost right, off-grid
+  enough to look wrong next to anything aligned. Change the variant, not the
+  font size.
 - **`prose-invert`** is the dark-mode variant. Pair it with your theme strategy
   (`dark:prose-invert`), not with a hand-written colour override.
 - **`not-prose`** opts a subtree out. Any component you render *inside* an
