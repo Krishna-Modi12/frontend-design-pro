@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="oklch(55% 0.18 45)" />
+  <text
+    x="32"
+    y="34"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="ui-monospace, 'SF Mono', Consolas, monospace"
+    font-size="34"
+    font-weight="600"
+    fill="oklch(98% 0.008 80)"
+  >f</text>
+</svg>
