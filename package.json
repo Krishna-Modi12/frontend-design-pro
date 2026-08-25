@@ -32,7 +32,9 @@
     "pages:verify": "npm --prefix tools/screenshots run verify:home --",
   "visual-regression": "npm --prefix tools/screenshots run visual-regression --",
   "security": "python scripts/check_security.py",
-  "security:test": "python scripts/test_security_patterns.py"
+  "security:test": "python scripts/test_security_patterns.py",
+  "token-report": "node tools/token-report/token-report.mjs",
+  "token-report:test": "node tools/token-report/token-report.test.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",
