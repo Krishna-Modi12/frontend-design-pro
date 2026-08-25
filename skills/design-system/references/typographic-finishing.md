@@ -16,6 +16,7 @@ and stops where that one starts.
 - [Trim the box, align the ink](#trim-the-box-align-the-ink)
 - [Wrapping — `balance` and `pretty` are not interchangeable](#wrapping--balance-and-pretty-are-not-interchangeable)
 - [Scale ratios, and pairing leading to size](#scale-ratios-and-pairing-leading-to-size)
+- [Baseline rhythm — snapping the scale to a grid](#baseline-rhythm--snapping-the-scale-to-a-grid)
 - [Scene defaults — where the scale starts](#scene-defaults--where-the-scale-starts)
 - [Fallback matching — the real fix for font-swap shift](#fallback-matching--the-real-fix-for-font-swap-shift)
 - [Optical sizing](#optical-sizing)
@@ -139,6 +140,65 @@ h1 { font-size: clamp(2rem, 1.2rem + 4vw, 4.5rem); line-height: 1.1; }
 Keep the `rem` term first inside `clamp()` so the value still responds to a
 user's browser font-size setting. A pure `vw` middle term ignores it, which is an
 accessibility regression that looks fine in every screenshot.
+
+The scale itself is one line — `size = base × ratio^step`, with `step` counting
+levels away from body copy, negative for anything smaller:
+
+```ts
+const ms = (step: number, base = 16, ratio = 1.25) => base * ratio ** step;
+// ms(0) → 16   ms(1) → 20   ms(2) → 25   ms(3) → 31.25   ms(-1) → 12.8
+```
+
+**A "ratio" quoted by a tool may not be the per-level ratio**, and reading one as
+the other is how a scale ends up absurd. `typography.js` themes advertise ratios
+of 2, 2.25, even 2.45, which under the formula above would put `h3` above 90px.
+They are not per-level: it assigns each heading a *fractional* exponent —
+`h1 = r^1`, `h2 = r^0.6`, `h3 = r^0.4`, `h4 = r^0`, `h5 = r^-0.2`, `h6 = r^-0.3`
+— so the number is the span from body to `h1`, spread across six levels. At
+`r = 2` that is a sane 32px `h1` and an `h4` identical to body. Check which
+convention a ratio belongs to before porting it into a table like the one above.
+
+## Baseline rhythm — snapping the scale to a grid
+
+A ratio picks sizes. It says nothing about where the lines *land*, and that is
+the part a reader notices without being able to name it: two columns of text
+side by side, one with a heading in it, and the body lines no longer agree
+across the gutter.
+
+The fix is to stop treating leading as a property of the element and treat it as
+a multiple of one number for the whole page. Pick a rhythm unit — body size
+times body leading, so 16px at 1.5 gives 24px — and round every element's line
+box **up to the nearest half of it**:
+
+```ts
+const RHYTHM = 24;  // 16px body × 1.5
+
+function leadingFor(fontSize: number, minPadding = 2): number {
+  let lines = Math.ceil((2 * fontSize) / RHYTHM) / 2;   // nearest half-line, up
+  // A cramped line — ascenders nearly touching the box — gets one more half.
+  if (lines * RHYTHM - fontSize < minPadding * 2) lines += 0.5;
+  return lines * RHYTHM;
+}
+// 16 → 24    25 → 36    31.25 → 36    48 → 60
+```
+
+Half-lines rather than whole ones are what makes this usable: whole-line
+rounding forces a 25px heading to 48px of leading, which is why strict baseline
+grids got a reputation for looking gappy. The `minPadding` guard is the other
+half — without it a size landing just under a boundary (a 34px heading against a
+36px box) gets a line box with almost no room above the ascenders, technically
+on-grid and visibly wrong.
+
+Two caveats before you reach for it. It is a **fixed-size** technique: the
+moment a heading uses `clamp()`, its computed size is a viewport function and
+cannot be snapped ahead of time, so grid-align the body and the small headings
+and let fluid display type sit outside the grid. And it constrains margins too —
+vertical space between blocks has to be a multiple of the same unit, or the
+snapping buys you nothing past the first heading.
+
+Worth it for long-form editorial and anything multi-column. Not worth it for
+dashboards, where content is boxed and nothing is meant to align across a
+gutter.
 
 ## Scene defaults — where the scale starts
 
@@ -402,8 +462,16 @@ Measure and the `prose` system from `@tailwindcss/typography` (MIT, Tailwind
 Labs) — `65ch` is that plugin's own default. Scale-ratio naming and the
 size/leading inverse from `typography.js` (MIT, Kyle Mathews); note that project
 was last released in 2023, so its *math* is durable and its tooling is not.
-Cross-platform scale roles cross-checked against `react-native-typography` (MIT,
-Hector Garcia). The scene-defaults baselines are adapted from
+The modular-scale formula and the ratio names are `modularscale-js`'s (MIT); the
+fractional per-heading exponents that make a ratio of 2 survivable are
+`typography.js`'s own `createStyles.js`, read directly rather than taken on
+trust. The half-line rounding and cramped-line guard in *Baseline rhythm* are
+the algorithm from `compass-vertical-rhythm` (MIT, Kyle Mathews) — that is
+`typography.js`'s own rhythm dependency — reimplemented here in a few lines
+rather than vendored, since the technique is the useful part and the package is
+frozen at the same 2023 release. The two caveats on it, `clamp()` and margins,
+are ours. Cross-platform scale roles cross-checked against
+`react-native-typography` (MIT, Hector Garcia). The scene-defaults baselines are adapted from
 `xiaopu-ai/web-design` (MIT), translated from the Chinese original and
 reconciled with rule 7 rather than copied — the exemption note in that section
 is ours, because the upstream table states the low leading without saying which

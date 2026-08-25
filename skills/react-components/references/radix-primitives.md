@@ -25,6 +25,23 @@ product: it implements the WAI-ARIA pattern, keyboard model, focus management an
 dismissal for a primitive, and hands you unstyled DOM plus a set of data
 attributes to style against.
 
+## Contents
+
+- [Which package to install](#which-package-to-install)
+- [Anatomy, and why `Portal` is its own part](#anatomy-and-why-portal-is-its-own-part)
+- [`data-state` is the styling contract](#data-state-is-the-styling-contract)
+- [Exit animations, and `forceMount`](#exit-animations-and-forcemount)
+- [Controlled and uncontrolled](#controlled-and-uncontrolled)
+- [`asChild` and the Slot contract](#aschild-and-the-slot-contract)
+- [Focus and dismissal](#focus-and-dismissal)
+- [Keyboard behaviour you would otherwise have to build](#keyboard-behaviour-you-would-otherwise-have-to-build)
+- [Labelling, per primitive](#labelling-per-primitive)
+- [Known rough edges](#known-rough-edges)
+- [What Radix does not do](#what-radix-does-not-do)
+- [Sources](#sources)
+
+---
+
 ## Which package to install
 
 Radix now publishes a single package that re-exports the whole set, alongside the
@@ -38,12 +55,27 @@ import { Dialog, DropdownMenu, Tooltip } from "radix-ui"
 import * as Dialog from "@radix-ui/react-dialog"
 ```
 
-At the time of writing `radix-ui` is at **1.6.7** and bundles **55** primitives;
-the individual packages move on their own versions (`react-dialog` 1.1.23,
-`react-select` 2.3.7, `react-tooltip` 1.2.16). Both are current — the individual
-packages are **not deprecated**, so do not rewrite a working codebase to chase
-the unified one. Prefer `radix-ui` for new work because it ends the class of bug
-where two primitives resolve different copies of a shared internal package.
+At the time of writing `radix-ui` is at **1.6.7**. It depends on 55 packages but
+re-exports **35** namespaces — that is the surface you can actually import. The
+other 20 are internal plumbing it uses to build the 35 (`react-popper`,
+`react-presence`, `react-focus-scope`, `react-dismissable-layer`,
+`react-roving-focus`, `react-collection`, `react-menu`, and the `use-*` hooks).
+Counting the dependencies as primitives overstates what `import { X } from
+"radix-ui"` gives you by twenty.
+
+That distinction decides which package you install. **`radix-ui` is the right
+default only if you are consuming finished primitives.** If you are building your
+own on Radix's internals, the unified package cannot supply them at any price —
+`import { FocusScope } from "radix-ui"` does not exist — and you install the
+internal packages individually. They are published and not marked private, so
+this is supported, just not through the meta-package.
+
+The individual packages move on their own versions (`react-dialog` 1.1.23,
+`react-select` 2.3.7, `react-tooltip` 1.2.16). Both routes are current — the
+individual packages are **not deprecated**, so do not rewrite a working codebase
+to chase the unified one. Prefer `radix-ui` for new consumer-facing work because
+it ends the class of bug where two primitives resolve different copies of a
+shared internal package.
 
 React 19 is supported; the peer range is `^16.8 || ^17 || ^18 || ^19`.
 
@@ -187,9 +219,19 @@ which is invalid HTML and breaks the keyboard model.
 
 The contract, verified against the Slot source:
 
-- **Exactly one child, and it must be a valid element.** Two children, a string,
-  or a fragment throws. Older versions failed with a cryptic `React.Children.only`
-  message; current versions throw a clearer error.
+- **Exactly one child, and it must be a valid element.** Two children, or a bare
+  string or number, throws — *"failed to slot onto its children. Expected a
+  single React element child or `Slottable`."* Older versions failed with a
+  cryptic `React.Children.only` message; current versions throw a clearer error.
+- **A fragment is the exception, and it fails silently instead.**
+  `React.isValidElement()` returns `true` for `<>…</>`, so Slot accepts it as the
+  single child and never reaches the throw. It then *deliberately* skips the ref:
+  `if (slottableElement.type !== React.Fragment)` guards the assignment, for React
+  19 compatibility. Nothing crashes and Radix emits no warning — you get a
+  dev-only invalid-prop complaint from React itself, if anything. The primitive is
+  left unable to measure or focus its trigger, which is the same end state as the
+  ref failure below reached with no error to search for. Check for a stray
+  fragment first when a popover lands at the origin.
 - **The child must accept a ref.** A function component that neither forwards ref
   (React 18) nor takes `ref` as a prop (React 19) silently loses the ref, and the
   primitive then cannot measure or focus it — which shows up as a popover
@@ -243,8 +285,19 @@ for using the primitive rather than a `<div>` with click handlers.
 ## Labelling, per primitive
 
 Radix wires `aria-*` between parts automatically, but only for parts you actually
-render. Verified in the Dialog source: **it does not set `aria-labelledby` at all
-when no `Title` is present.**
+render. Verified in the Dialog source: `aria-labelledby={context.titlePresent ?
+context.titleId : undefined}`, where `titlePresent` is true only once a
+`Dialog.Title` has actually mounted. **A dialog with no `Title` gets no
+`aria-labelledby` at all** — it opens as an unnamed dialog.
+
+This rule used to police itself and no longer does. Radix shipped a dev-only
+console warning for a missing `Title` or `Description` and **removed it in
+`react-dialog` 1.1.17**; the leftover `WarningProvider` in the source is now
+marked `@deprecated Noop component to avoid breaking changes`. So there is
+currently no signal of any kind: no warning, no thrown error, no `aria-labelledby`.
+The only thing that catches it is your own axe run or a human opening the dialog
+with a screen reader. Treat the rule as more load-bearing than it reads, not
+less — the safety net that made it forgiving is gone.
 
 - **Dialog / AlertDialog** need a `Title`. Always render one; if the design has no
   visible heading, wrap it: `<VisuallyHidden><Dialog.Title>…</Dialog.Title></VisuallyHidden>`.
@@ -285,11 +338,22 @@ Newer additions worth knowing exist: `one-time-password-field` and
 
 ## Sources
 
-Package versions, the peer-dependency range, the unified-package dependency count,
-the relative frequency of each data attribute, the Slot single-child throw and the
-Dialog labelling behaviour were all read from `radix-ui/primitives` at the time of
-writing (MIT, © WorkOS). Attribute value tables should be confirmed in devtools
-for the version you have installed.
+Package versions, the peer-dependency range, the 55-dependency / 35-namespace
+split, the relative frequency of each data attribute, the Slot single-child
+throw, the Fragment ref-drop and the Dialog labelling behaviour were all read
+from `radix-ui/primitives` at the time of writing (MIT, © WorkOS). Attribute
+value tables should be confirmed in devtools for the version you have installed.
+
+Two claims in the Slot and Dialog sections were **wrong in earlier revisions of
+this file and are corrected here**, both found by re-reading the source rather
+than by anything failing. This file said a fragment child throws; it does not,
+it is accepted and its ref is silently skipped (`slot.tsx`, the
+`slottableElement.type !== React.Fragment` guard). And the Dialog section
+described the missing-`Title` rule without noting that Radix's dev-only warning
+for it was **removed in `react-dialog` 1.1.17** — `WarningProvider` survives as
+a documented no-op — so the rule now has no runtime backstop at all. Both were
+sitting under the words "verified against the source", which is the failure
+worth remembering: a verification note is a claim like any other, and it ages.
 
 The Base UI default switch, the 2:1 adoption figure, the non-deprecation
 statement and the `-b radix` escape hatch are from shadcn/ui's own July 2026
