@@ -20,7 +20,7 @@ export const NAV = [
 export const PROBLEM_COPY = {
   eyebrow: "01 — The problem",
   heading: "A pack is not a document.",
-  body: "Behind the router sits 401,382 tokens of reference depth — material every skill can point into, none of it loaded until a request routes there. The pack is not handed to an agent whole: a router matches your request against trigger keywords, opens exactly one of 19 skills plus the core files it declares, and everything else stays on disk.",
+  body: "Behind the router sits 402,592 tokens of reference depth — material every skill can point into, none of it loaded until a request routes there. The pack is not handed to an agent whole: a router matches your request against trigger keywords, opens exactly one of 19 skills plus the core files it declares, and everything else stays on disk.",
 } as const;
 
 export const ROUTER_DEFAULT_REQUEST = "Build a landing page with pricing and testimonials";

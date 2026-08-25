@@ -1,7 +1,7 @@
 {
   "name": "frontend-design-pro",
   "version": "14.11.4",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 111 references (401,382 tokens of on-demand depth), 55 examples, 60 machine-enforced constraints, 11 release-blocking gates. A typical request loads 5,999–7,598 tokens, not 401,382. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. Registry + lazy loading: 19 auto-routing skills, 8 core files, 111 references (402,592 tokens of on-demand depth), 55 examples, 60 machine-enforced constraints, 11 release-blocking gates. A typical request loads 5,999–7,598 tokens, not 402,592. Setup docs for 6 agent surfaces (Claude, Cursor, ChatGPT, OpenAI API, Copilot, Gemini), native one-line install via setup.sh/setup.ps1 for 14 adapters (10 automatic, 4 manual), and two real, runnable Next.js demo apps.",
   "author": "krishnamodi241@gmail.com",
   "license": "MIT",
   "tags": [
@@ -142,7 +142,7 @@
     "behavioral_principles": 4,
     "skills": 19,
     "core_files": 8,
-    "reference_depth_tokens": 401382,
+    "reference_depth_tokens": 402592,
     "registry_tokens": 2112,
     "ci_constraints_detail": "60 checks across 60 distinct IDs (17 parser AST + 43 regex)"
   },
