@@ -62,6 +62,38 @@ Two rules keep the stubs from flattering the golds, and both are load-bearing:
 
 Where jsdom has no answer — WebGL, layout, virtualisation — the stub renders nothing rather than something no user could perceive. A `<Canvas>` that rendered its scene graph into the DOM would let a test assert on content invisible to every real user, which is exactly why the golds put `role="img"` and an `aria-label` on the wrapper instead.
 
+## `evals/evals.json` is not skill-creator's `evals.json`
+
+Same filename, same directory name, incompatible schema — deliberately. Anyone
+who tries to feed one to the other's tooling will find the field simply missing,
+so it is worth knowing why before assuming it is a bug.
+
+Anthropic's `skill-creator` defines `evals[].expectations` as a list of
+**plain-English strings**, graded by a subagent that reads a transcript and
+judges each one. This repo's `evals[].assertions` are typed objects — `regex`,
+`regex_absent`, `semantic` — consumed directly by `scripts/run_evals.py` via
+`re.search()` or a single model call.
+
+The divergence is not cosmetic and reformatting the field would not close it.
+The two systems answer different questions:
+
+| | skill-creator | here |
+|---|---|---|
+| Question | Does loading the skill improve a fresh agent's output? | Do the shipped golds still satisfy the constraints? |
+| Needs | A live session spawning with-skill and without-skill subagents in the same turn | Nothing but Python |
+| Produces | A pass-rate delta between the two configurations | A pass/fail against fixed rules |
+| Runs in CI | No | Yes |
+
+Neither is a subset of the other. This pack's claim is that it is verified rather
+than asserted, and a deterministic chain that runs unattended on every push
+serves that better than a benchmark that cannot. The cost is real and should be
+stated plainly: **nothing here measures whether the pack makes an agent better.**
+It measures whether the artefacts the pack ships are correct. Those are different
+claims, and only the second one is gated.
+
+The one artefact that *is* byte-compatible with the upstream harness is
+`evals/trigger-eval.json`, which `run_eval.py` and `run_loop.py` consume as-is.
+
 ## Measuring this honestly
 
 Each test file spins up its own jsdom environment. Unbounded, 39 of them are a real memory cost, and `vitest.config.ts` caps worker concurrency at 4 for that reason.

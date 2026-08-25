@@ -306,10 +306,15 @@ prose.
 
 Ranked by value over cost. Nothing here is committed work; it is the queue.
 
+The two cheapest items are already done and are listed here only so the queue
+reads honestly: the `assertions` / `expectations` divergence is now written up in
+`docs/TESTING.md`, and `evals/trigger-queries.md` now carries the command to
+re-run its own measurement plus a plain statement that its 20/20 is a recorded
+run rather than a gated figure. Neither needed the upstream artifacts checked in
+— saying which number is not verifiable was the honest fix, and it cost nothing.
+
 | # | Action | Cost | Note |
 |---|---|---|---|
-| 1 | Preserve the trigger-optimization run's artifacts | Low | Makes a claim in `trigger-queries.md` verifiable instead of narrated. The eval set is already byte-compatible with the upstream harness |
-| 2 | Document the `assertions` / `expectations` divergence in `evals/` | Trivial | Stops a future contributor assuming the two formats interoperate |
 | 3 | Per-glyph spring physics as a cheaper alternative to pixel-sampled particles | Low | `particle-text-systems.md` only covers sample-then-spring. Moving the *letters* needs no `getImageData` at all. Technique only — `typexperiments` publishes no licence |
 | 4 | Worked instances on the lineage axis in `brand-extraction.md` | Medium | One painting, one film grade, one editor theme — OKLCH-native, contrast-checked. The method is written and has zero examples |
 | 5 | Radix `Form` disambiguation from shadcn's RHF+Zod `Form` | Low | Same word, unrelated architectures — native `ValidityState` vs a resolver |

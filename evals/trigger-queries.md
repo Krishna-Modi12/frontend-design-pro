@@ -18,6 +18,29 @@ Result on this set: **20/20** — all 10 positives triggered on majority-of-3
 runs, only 1 false trigger across 30 negative runs (the print-leave-behind
 query, 1/3).
 
+**That figure is a recorded run, not a checked-in artefact, and it is the one
+number in this repo you cannot verify from the repo.** No `results.json` or
+report is committed, because the harness is upstream and needs model calls, so
+nothing in the gate chain can reproduce it — unlike every other figure here,
+which `check_figures.py` recomputes from the filesystem. Treat it accordingly:
+it is a measurement someone took, with the method written down, which is a
+weaker thing than the rest of this project's claims and should not be quoted as
+if it were gated.
+
+`evals/trigger-eval.json` holds the same set in the shape the upstream scripts
+consume, so re-running it needs no translation:
+
+```bash
+# from a checkout of github.com/anthropics/skills
+python -m scripts.run_eval --eval-set <path>/evals/trigger-eval.json \
+    --skill-path <path>/SKILL.md --model <your model>
+```
+
+Each query runs three times; majority decides. Re-run it after any edit to the
+root `SKILL.md` description — that description is the only input this measures,
+and it is also the thing most likely to be reworded without anyone thinking of
+this file.
+
 ## Should-Trigger (10 queries)
 
 1. "our onboarding modal looks like garbage on my coworkers 13in macbook — the buttons overlap the copy and the primary CTA ends up below the fold. its components/onboarding/WelcomeModal.tsx, next 15 app router + tailwind"
