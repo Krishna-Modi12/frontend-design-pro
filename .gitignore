@@ -11,6 +11,12 @@ npm-debug.log*
 tools/screenshots/.next/
 tools/screenshots/next-env.d.ts
 
+# visual-regression.mjs run output — diff images and the JSON summary are
+# per-run scratch, regenerated every invocation. Only tools/screenshots/baselines/
+# is the committed artifact.
+tools/screenshots/.diff-output/
+tools/screenshots/visual-regression-report.json
+
 # Python
 __pycache__/
 *.py[cod]

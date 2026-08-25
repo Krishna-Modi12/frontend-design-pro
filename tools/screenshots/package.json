@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start -p 3311",
     "verify": "node verify.mjs",
-    "verify:home": "node verify-home.mjs"
+    "verify:home": "node verify-home.mjs",
+    "visual-regression": "node visual-regression.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -26,7 +27,9 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "axe-core": "^4.12.1",
+    "pixelmatch": "^7.2.0",
     "playwright": "^1.56.0",
+    "pngjs": "^7.0.0",
     "sharp": "^0.34.4",
     "typescript": "^5.9.3"
   }

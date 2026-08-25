@@ -37,6 +37,32 @@ antialiasing noise. So review `git diff --stat -- 'demo/**/*.png'` before
 committing — a multi-kilobyte change means something really moved, and a
 few-byte change is nothing.
 
+## Visual regression
+
+```bash
+npm run visual-regression                    # check home/ and demo/landing-page against baselines
+npm run visual-regression -- --update-baselines
+```
+
+Or from the repo root: `npm run visual-regression`.
+
+Diffs `home/` and `demo/landing-page` against committed baselines under
+`baselines/` (3 viewports each, one color scheme per target — see the doc
+comment at the top of `visual-regression.mjs` for why). `demo/showcase` is
+excluded: its hero is a WebGL particle field seeded at random, so every
+capture differs from the last (see "showcase is opt-in" above) — a pixel
+diff against it would fail on every run regardless of any real change.
+
+Baselines should come from CI, not a local machine: font rendering differs
+enough across platforms that a Windows- or macOS-captured baseline produces
+false diffs against the Linux runner this also runs on. `--update-baselines`
+is for local iteration; review what it reports before committing a baseline
+it produced.
+
+Runs in CI as `visual-regression` in `.github/workflows/ci.yml`, informational
+only (`continue-on-error: true`) until it has proven stable enough to block a
+merge.
+
 ## Why this is a separate package
 
 The pack ships no runtime — that is the whole architecture, and `demo/`'s three
