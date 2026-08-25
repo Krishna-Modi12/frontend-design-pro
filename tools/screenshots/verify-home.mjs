@@ -158,6 +158,43 @@ async function checkReducedMotion(browser, base) {
   await ctx.close();
 }
 
+/**
+ * RTL resilience: force `dir="rtl"` on the document (no locale switch needed
+ * — Tailwind's `rtl:`-aware/logical-property layout is a `dir` concern, not
+ * a translation concern) and re-run the same horizontal-overflow check every
+ * other viewport pass already uses. `skills/platform/references/i18n.md`
+ * documents the logical-property/`dir` guidance this page is supposed to
+ * follow; nothing before this checked that it actually does. Layout
+ * mirroring correctness (is the right element on the right side) is a human-
+ * review call — this checks the narrower, unambiguous claim: the page does
+ * not break sideways when the writing direction flips.
+ */
+async function checkRTL(browser, base) {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS[2] });
+  const page = await ctx.newPage();
+  await page.goto(base, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector("main, h1", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => {
+    document.documentElement.setAttribute("dir", "rtl");
+  });
+  await page.waitForTimeout(300);
+  await settle(page);
+  await page.waitForTimeout(300);
+
+  const overflow = [];
+  for (const vp of VIEWPORTS) {
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.waitForTimeout(350);
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    if (over > 1) overflow.push(`${vp.label} (${vp.width}px): body scrolls ${over}px sideways under dir="rtl"`);
+  }
+  report("no horizontal overflow at 390 / 768 / 1920 under dir=\"rtl\"", overflow);
+
+  await ctx.close();
+}
+
 /** The router and checker are the two things on this page that demonstrate a
     claim rather than assert one — this is the part `verify-pages.mjs` wrote
     for the old static page, ported to React state instead of DOM queries. */
@@ -269,6 +306,7 @@ async function verifyMode(mode, browser) {
     await waitForServer(base);
     await checkRender(browser, base);
     await checkReducedMotion(browser, base);
+    await checkRTL(browser, base);
     await checkInteractivity(browser, base);
   } finally {
     await server.stop();
