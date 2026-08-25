@@ -278,6 +278,29 @@ CONSTRAINTS: List[Constraint] = [
             "Placeholder brand name found — invent one that fits the sector"
         )
     ),
+    Constraint(
+        id="SLOP-06",
+        category="Anti-AI-Slop",
+        # The wall bans "custom mouse cursors" outright — unlike the three AI-design
+        # defaults named in the same line, there is no "unless the brief asks for
+        # them" carve-out for this one, so a hard ban is the right shape here.
+        # `cursor-none` is checked because it is the mechanism a custom-cursor
+        # follower needs (hide the real pointer, then render a tracking element in
+        # its place) and has no other common legitimate use in this pack's
+        # component code; `cursor: url(...)` is the other real mechanism, a raw
+        # CSS/inline-style custom pointer image. Neither pattern occurs anywhere in
+        # this repo's own corpus today (skills/, demo/, home/, core/ — checked
+        # before shipping), so this has no real-corpus false-positive evidence
+        # either way; if a legitimate `cursor-none` use surfaces later (e.g. a
+        # canvas/game surface that hides the pointer without replacing it), add a
+        # documented exemption rather than loosening the pattern.
+        description="No custom mouse cursors (cursor-none / cursor: url(...))",
+        severity="medium",
+        check=lambda c: (
+            _lacks(r'\bcursor-none\b|cursor\s*:\s*url\(', _uncommented(c)),
+            "Custom mouse cursor found — the anti-slop wall bans this outright, no brief exemption"
+        )
+    ),
 
     # ── Responsive ───────────────────────────────────────────────────────────
     Constraint(
@@ -768,7 +791,7 @@ export default function Dashboard({ isLoading = false }: DashboardProps = {}) {
 FIXTURE_BAD = """
 function Widget() {
   return (
-    <div style={{ fontFamily: 'Inter', background: '#FFFFFF' }}>
+    <div style={{ fontFamily: 'Inter', background: '#FFFFFF' }} className="cursor-none">
       <button>✕</button>
       <input type="text" />
       <p>Hello John Doe (@user123), welcome to Acme. Elevate your experience!</p>

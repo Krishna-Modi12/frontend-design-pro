@@ -109,7 +109,7 @@ export function CheckerPanel(): ReactElement {
         </div>
 
         <p className="mt-4 text-sm leading-relaxed text-text-muted">
-          <strong className="text-text-secondary">{RULES.length} of the 43 regex checks</strong> run here.
+          <strong className="text-text-secondary">{RULES.length} of the 44 regex checks</strong> run here.
           The rest need a compiler or a filesystem: the other half of the suite walks a
           TypeScript AST, and eight page-scoped rules are deliberately excluded because they
           are right about a screen and wrong about a fragment pasted into a text box. Their

@@ -64,7 +64,7 @@ Every gold example ships with one. Say "with tests" and you get a `.test.tsx` wi
 
 ## What you get automatically
 
-Whether or not you ask, generated code is checked against **60 constraints**:
+Whether or not you ask, generated code is checked against **61 constraints**:
 
 - **TypeScript strict**, exported prop interfaces, no implicit `any`
 - **OKLCH tokens** — never raw hex in component code
@@ -107,8 +107,8 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 |---|---|
 | Registry (always) | ~1,800 |
 | One skill | 848–1,722 |
-| Core deps | 2,963–3,922 |
-| **Typical request** | **~5,999–7,598** |
+| Core deps | 2,964–3,923 |
+| **Typical request** | **~6,000–7,599** |
 | Available depth (loaded only on demand) | **401,382** |
 
 If you're on a small context window, say "keep it brief" — the agent will skip deep references and note the omission.
