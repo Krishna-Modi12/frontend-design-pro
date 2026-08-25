@@ -2,8 +2,8 @@
   "figures": {
     "skills": 19,
     "coreFiles": 8,
-    "referenceFiles": 105,
-    "referenceDepthTokens": 376040,
+    "referenceFiles": 111,
+    "referenceDepthTokens": 398313,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -12,7 +12,7 @@
     "regexConstraints": 43,
     "ciConstraints": 60,
     "registryTokens": 2112,
-    "bandLow": 5978,
+    "bandLow": 5999,
     "bandHigh": 7598
   },
   "baseDeps": [
@@ -91,7 +91,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6323,
+      "budget": 6392,
       "group": "Making it look right",
       "covers": "Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion",
       "trySaying": "\"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion.\""
@@ -276,7 +276,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6295,
+      "budget": 6388,
       "group": "Making it look right",
       "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
       "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
@@ -331,7 +331,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 5978,
+      "budget": 6002,
       "group": "Making it look right",
       "covers": "Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration",
       "trySaying": "\"These icons look off next to the text — fix the sizing and optical alignment.\""
