@@ -71,7 +71,8 @@ body {
   animation-duration: var(--marquee-duration, 30s);
 }
 
-[data-marquee]:hover [data-marquee-track] {
+[data-marquee]:hover [data-marquee-track],
+[data-marquee][data-paused] [data-marquee-track] {
   animation-play-state: paused;
 }
 

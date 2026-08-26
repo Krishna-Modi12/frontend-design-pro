@@ -108,10 +108,15 @@ export function MockUIGallery(): ReactElement {
   );
 }
 
+/** Height comes from the aspect ratio, not a literal pixel value — six
+    unrelated illustrative mockups sharing one arbitrary `h-[200px]` is the
+    "equal-height card grid" default this pack's own wall names as a taste
+    violation nothing gates. `aspect-[4/3]` keeps the same visual rhythm
+    without that box being an unexplained magic number. */
 function GalleryCard({ label, children }: { label: string; children: ReactNode }): ReactElement {
   return (
-    <div className={`${cardShell} flex h-[200px] flex-col overflow-hidden`}>
-      <div aria-hidden="true" className="flex-1">
+    <div className={`${cardShell} flex flex-col overflow-hidden`}>
+      <div aria-hidden="true" className="aspect-[4/3]">
         {children}
       </div>
       <p className="border-t border-border px-3 py-2 text-xs text-text-muted">{label}</p>
