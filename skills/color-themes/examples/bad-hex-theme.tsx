@@ -44,6 +44,11 @@ export default function BadHexTheme({ hue = 248 }: any) {
       className="min-h-screen font-[Roboto,sans-serif] transition-all duration-300"
       style={{ background: isDark ? "#0d0d12" : "#ffffff", color: isDark ? "#f2f2f2" : "#111111" }}
     >
+      {/* ❌ hex straight into the token layer — no OKLCH space to reason in */}
+      <style>{`
+        :root { --background: #ffffff; --foreground: #111111; --font-sans: "Roboto", sans-serif; }
+        @theme inline { --color-accent: #4f46e5; }
+      `}</style>
       <h1 className="text-3xl" style={{ color: "#4f46e5" }}>
         Lorem ipsum theme
       </h1>

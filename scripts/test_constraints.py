@@ -91,9 +91,11 @@ CONSTRAINTS: List[Constraint] = [
             # skills/design-system/SKILL.md and font-pairings.md all name Space Grotesk.
             # Plus Jakarta Sans is NOT an escape hatch — aesthetic-direction.md and
             # font-pairings.md's Convergence Watch both ban it.
+            # Left of the `:`/`=`: a `font-family` / `fontFamily` declaration, OR a
+            # Tailwind v4 `--font-*` theme variable (`--font-sans: "Inter"`).
             not bool(re.search(
-                r"""font[-_]?family\s*[:=]\s*["']?(Inter|Roboto|Arial|Poppins|DM Sans|Space Grotesk)["']?\s*[,;)]?\s*(?!.*Manrope|.*Geist|.*Satoshi)""",
-                c, re.IGNORECASE
+                r"""(?:font[-_]?family|--font-[\w-]+)\s*[:=]\s*["']?(Inter|Roboto|Arial|Poppins|DM Sans|Space Grotesk)["']?\s*[,;)]?\s*(?!.*Manrope|.*Geist|.*Satoshi)""",
+                _uncommented(c), re.IGNORECASE
             )),
             "Banned font used as sole display font (Inter/Roboto/Arial/Poppins/DM Sans/Space Grotesk without a premium fallback)"
         )
@@ -339,10 +341,12 @@ CONSTRAINTS: List[Constraint] = [
         description="No hex values in CSS token/variable definitions (use OKLCH)",
         severity="high",
         check=lambda c: (
-            # Scan inside :root{}, @theme{}, --color-* definitions for hex values
+            # Any CSS custom property whose value carries a hex is using hex as a
+            # colour — `--color-*`, `--shadow-*`, and the bare Tailwind-v4 / shadcn
+            # semantic tokens (`--background: #0a0a0a`, `--ring:`, `--border:` …).
             not bool(re.search(
-                r'(?:--color-[^:]+|--shadow-[^:]+)\s*:\s*[^;]*#[0-9A-Fa-f]{3,6}\b',
-                c
+                r'--[A-Za-z_][\w-]*\s*:\s*[^;{}]*#[0-9A-Fa-f]{3,8}\b',
+                _uncommented(c)
             )),
             "Hex value found in CSS token definition — convert to oklch() per impeccable-techniques.md"
         )
@@ -353,9 +357,11 @@ CONSTRAINTS: List[Constraint] = [
         description="No raw hex as Tailwind @theme values (use OKLCH)",
         severity="medium",
         check=lambda c: (
+            # `@theme {`, `@theme inline {`, `@theme static {`, `@theme inline static {`
+            # — the ` inline` option is the dominant Tailwind-v4 / shadcn form.
             not bool(re.search(
-                r'@theme\s*\{[^}]*#[0-9A-Fa-f]{3,6}',
-                c, re.DOTALL
+                r'@theme(?:\s+[a-z]+)*\s*\{[^}]*#[0-9A-Fa-f]{3,8}',
+                _uncommented(c), re.DOTALL
             )),
             "Hex value found inside @theme block — use oklch() values"
         )
@@ -785,6 +791,8 @@ export default function Dashboard({ isLoading = false }: DashboardProps = {}) {
         <span id="search-error" className="text-red-500">Error: search failed</span>
       </section>
       <style>{`
+        :root { --surface: oklch(98% 0.003 248); --ring: oklch(62% 0.19 264); }
+        @theme inline { --color-brand: oklch(62% 0.19 264); --font-sans: "Geist", system-ui; }
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after { animation-duration: 0.01ms !important; }
         }
@@ -798,6 +806,10 @@ FIXTURE_BAD = """
 function Widget() {
   return (
     <div style={{ fontFamily: 'Inter', background: '#FFFFFF' }} className="cursor-none">
+      <style>{`
+        :root { --background: #0a0a0a; --font-sans: "Inter", sans-serif; }
+        @theme inline { --color-brand: #6366f1; }
+      `}</style>
       <button>✕</button>
       <input type="text" />
       <p>Hello John Doe (@user123), welcome to Acme. Elevate your experience!</p>
