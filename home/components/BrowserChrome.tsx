@@ -8,7 +8,7 @@ export interface BrowserChromeProps {
 
 /**
  * A mock browser-chrome frame — URL bar and traffic-light dots, pure markup,
- * no state. Shared by `SectionHow` (wraps `RouterPanel`) and `SectionWall`
+ * no state. Shared by `SectionHow` (wraps `RouterPanel`) and `SectionProof`
  * (wraps `CheckerPanel`) so both live panels read as something running, not
  * a bare card.
  */

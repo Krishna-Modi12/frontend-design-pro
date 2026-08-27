@@ -141,7 +141,7 @@ body {
 
 /*
  * \`<details data-disclosure>\` — the one on-demand-reveal primitive used by
- * \`SectionHow\`, \`SectionWall\` and \`SectionInstall\`. A native \`<details>\`
+ * \`SectionHow\` and \`SectionInstall\`. A native \`<details>\`
  * is keyboard- and touch-operable for free (no ARIA, no React state), which
  * is why it replaced an earlier hover-only sketch for the same cards — this
  * repo's own renderer harness has caught a hover-only interaction defect on
@@ -166,9 +166,9 @@ body {
   transform: rotate(180deg);
 }
 
-/* Card motifs (\`SectionHow.tsx\`, \`SectionWall.tsx\`) — small, continuous,
-   two-property loops, same economy as the gallery keyframes above and
-   covered by the same reduced-motion override. */
+/* Card motifs (\`SectionHow.tsx\`) — small, continuous, two-property loops,
+   same economy as the keyframes above and covered by the same
+   reduced-motion override. */
 @keyframes chip-cycle {
   0%, 100% {
     background-color: var(--color-bg-page);
@@ -201,36 +201,6 @@ body {
   }
 }
 
-@keyframes sweep-highlight {
-  0%, 100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(220%);
-  }
-}
-
-/* \`transform: translateX(%)\` resolves against the moving element's OWN box,
-   not its container, so the travel distance is a fixed rem value sized to
-   \`WallMotif\`'s 3.5rem track minus its 0.625rem dot and 0.25rem of inset —
-   not a percentage, which would move the dot by only its own width. */
-@keyframes track-slide {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(2.625rem);
-  }
-}
-
-@keyframes bar-grow {
-  0%, 100% {
-    height: 40%;
-  }
-  50% {
-    height: 100%;
-  }
-}
 `;
 
 /** Horizontal rhythm shared by every section shell on the page. */
