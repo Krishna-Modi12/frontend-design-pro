@@ -177,10 +177,11 @@ What binds you:
 - If a gate is failing and you think it is the gate's fault, leave it red and make
   the argument.
 
-CI re-runs the whole chain on a clean Linux runner. Note that **published figures
-are LF measurements**: a CRLF checkout on Windows measures marginally higher, so
-local numbers can read larger than the canonical ones. Do not "correct" the docs
-back to a local Windows reading.
+CI re-runs the whole chain on a clean Linux runner. **Published figures are LF
+measurements** — the git index is LF (`.gitattributes` is `eol=lf`), and that is
+what CI and the archive see. Both the build gate and the figure gate LF-normalise
+their token counts, so local numbers match CI even when an editor has left a file
+you touched with CRLF endings.
 
 ## Reporting things
 

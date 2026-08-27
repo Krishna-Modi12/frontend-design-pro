@@ -62,6 +62,6 @@ Every `skills/*/SKILL.md` carries a `version:` field if you just need to know wh
 
 Run `npm run figures` before assuming the document is right. Gate 11 recomputes every published count and token figure from the filesystem, and it is the arbiter — when a document and a gate disagree, the gate is right.
 
-Two honest exceptions, both deliberate. Figures on a **Windows** checkout read marginally high, because the canonical measure is the LF byte count and a CRLF working tree is larger; and release notes state the figures that were true when they were cut, which is the point of a correction and is exempt by design.
+One honest exception, deliberate: release notes and prior changelog entries state the figures that were true when they were cut — that is the point of a correction — and are exempt by design. (Token figures are always the LF byte count; both the build gate and the figure gate normalise, so a CRLF-edited working copy no longer reads high.)
 
 </details>
