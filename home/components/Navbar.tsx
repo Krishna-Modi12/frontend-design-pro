@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { NAV, PRODUCT, REPO_URL } from "../lib/content";
-import { focusRing, tapTarget } from "../lib/tokens";
+import { cardShell, focusRing, tapTarget } from "../lib/tokens";
 
 export interface NavbarProps {
   version: string;
@@ -11,6 +11,11 @@ export interface NavbarProps {
 
 export function Navbar({ version }: NavbarProps): ReactElement {
   const [scrolled, setScrolled] = useState(false);
+  const detailsRef = useRef<HTMLDetailsElement | null>(null);
+
+  const closeMenu = (): void => {
+    if (detailsRef.current !== null) detailsRef.current.open = false;
+  };
 
   useEffect(() => {
     const onScroll = (): void => setScrolled(window.scrollY > 8);
@@ -53,9 +58,46 @@ export function Navbar({ version }: NavbarProps): ReactElement {
           >
             GitHub
           </a>
+
+          <details ref={detailsRef} data-disclosure className="relative sm:hidden">
+            <summary
+              className={`${tapTarget} ${focusRing} flex items-center justify-center rounded-lg border border-border-strong text-text-primary`}
+            >
+              <span className="sr-only">Menu</span>
+              <HamburgerIcon />
+            </summary>
+            <div className={`${cardShell} absolute right-0 top-full mt-2 w-56 p-2 shadow-lg`}>
+              <nav aria-label="Sections" className="flex flex-col">
+                {NAV.map((item) => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    onClick={closeMenu}
+                    className={`${focusRing} rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:bg-bg-surface hover:text-text-primary motion-reduce:transition-none`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+              <div data-metric className="mt-1 border-t border-border px-3 pt-2.5 text-xs text-text-muted">
+                v{version}
+              </div>
+            </div>
+          </details>
         </div>
       </div>
     </header>
+  );
+}
+
+/** Mobile-only nav trigger — paired with the `<details data-disclosure>`
+    above it. Three static bars, never animates to an "X": the brief asks for
+    restraint, not a state-change flourish on a control this small. */
+function HamburgerIcon(): ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <path d="M3 5.5h14M3 10h14M3 14.5h14" strokeLinecap="round" />
+    </svg>
   );
 }
 
