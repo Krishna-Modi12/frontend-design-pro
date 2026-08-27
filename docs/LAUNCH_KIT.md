@@ -2,7 +2,7 @@
 
 Copy-paste posts for the current release. Every body already carries the real repo URL — nothing to substitute before posting.
 
-**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 112 references · 404,917 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 44 syntactic = 61 constraints · 22 evals · 16 regression cases · registry 2,126 tokens · heaviest request 7,927 tokens.
+**Every number below is verified** against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 112 references · 404,917 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 232 tests · 17 semantic + 44 syntactic = 61 constraints · 22 evals · 16 regression cases · registry 2,126 tokens · heaviest request 7,927 tokens.
 
 > **Two claims to avoid.** They circulated in draft copy and neither survives checking:
 > - *"The TypeScript compiler found 8 bugs that 30 regexes certified as clean."* No record of this exists anywhere in the repo. The defensible version is below: 16 regression cases where AST and regex disagree, in both directions.
