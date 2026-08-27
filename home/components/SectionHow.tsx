@@ -9,7 +9,7 @@ import ChevronIcon from "./ChevronIcon";
 import { HOW_IT_WORKS } from "../lib/content";
 import type { SkillRecord, Figures } from "../lib/data.types";
 import useStaggerReveal from "../lib/useStaggerReveal";
-import { sectionShell, sectionSpacing, cardShell, cardInset, focusRing } from "../lib/tokens";
+import { sectionShell, sectionSpacing, cardShell, focusRing } from "../lib/tokens";
 
 /** Three small, continuous CSS-only motifs — one per card, keyed by letter.
     No React state: each is a plain keyframe loop from `tokens.ts`, covered
@@ -122,21 +122,25 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
           <div ref={fillRef} className="absolute inset-y-0 left-0 h-px bg-accent" />
         </div>
 
+        {/* v2.2: cards tightened (gap-8→gap-6, cardInset→p-5) and the router
+            panel below given a visual lead-in + soft accent-glow frame, so the
+            live demonstration reads as the section's point rather than a
+            fourth card of equal weight to three static ones. */}
         <div
           ref={cardsRef}
-          className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.9fr_1.05fr] lg:gap-8"
+          className="mt-8 grid gap-4 lg:grid-cols-[1.05fr_0.9fr_1.05fr] lg:gap-6"
         >
           {HOW_IT_WORKS.map((step) => (
-            <details key={step.letter} data-disclosure className={`${cardShell} ${cardInset}`}>
+            <details key={step.letter} data-disclosure className={`${cardShell} p-5`}>
               <summary className={`${focusRing} flex items-start justify-between gap-3 rounded-lg`}>
                 <div>
                   <span
                     data-metric
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-glow text-sm font-semibold text-text-primary"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-glow text-sm font-semibold text-text-primary"
                   >
                     {step.letter}
                   </span>
-                  <h3 className="mt-4 text-lg font-semibold text-text-primary">{step.title}</h3>
+                  <h3 className="mt-3 text-base font-semibold text-text-primary">{step.title}</h3>
                   <p className="mt-1 text-sm text-text-muted">{step.caption}</p>
                   <StepMotif letter={step.letter} />
                 </div>
@@ -147,10 +151,15 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
           ))}
         </div>
 
-        <div className="mt-12">
-          <BrowserChrome url="frontend-design-pro.dev/router">
-            <RouterPanel skills={skills} figures={figures} />
-          </BrowserChrome>
+        <div className="mt-14">
+          <p data-label className="mb-3 text-text-muted">
+            See it decide — live
+          </p>
+          <div className="rounded-[1.1rem] bg-accent-glow p-1">
+            <BrowserChrome url="frontend-design-pro.dev/router">
+              <RouterPanel skills={skills} figures={figures} />
+            </BrowserChrome>
+          </div>
         </div>
       </div>
     </section>

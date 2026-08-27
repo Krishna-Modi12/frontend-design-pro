@@ -235,9 +235,11 @@ async function checkInteractivity(browser, base) {
     .catch(() => 0);
   if (particleCanvasCount === 0) problems.push("hero particle canvas did not mount at desktop width");
 
-  // Wall: the mock UI gallery renders all six cards.
-  const galleryCardCount = await page.locator("[data-mock-gallery] > *").count();
-  if (galleryCardCount !== 6) problems.push(`mock UI gallery rendered ${galleryCardCount} cards, expected 6`);
+  // Showcase: all four project cards render (v2.2 — replaced the mock UI
+  // gallery this same assertion used to check; see home/README.md's showcase
+  // thumbnails section for where the images come from).
+  const showcaseCardCount = await page.locator("[data-showcase-grid] > *").count();
+  if (showcaseCardCount !== 4) problems.push(`showcase rendered ${showcaseCardCount} cards, expected 4`);
 
   // Router: the default request resolves to a real skill.
   const defaultKind = await page.locator("[data-route-output]").getAttribute("data-route-kind");
@@ -283,7 +285,7 @@ async function checkInteractivity(browser, base) {
 
   report("hero shader canvas mounted", problems.filter((p) => p.includes("hero shader canvas")));
   report("hero particle canvas mounted", problems.filter((p) => p.includes("hero particle canvas")));
-  report("mock UI gallery renders all 6 cards", problems.filter((p) => p.includes("mock UI gallery")));
+  report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report("router resolves the real registry and refuses to guess", problems.filter((p) => p.includes("route") || p.includes("skill")));
   report("token countdown settles", problems.filter((p) => p.includes("token countdown")));
   report("checker fails the bad snippet and clears the good one", problems.filter((p) => p.includes("snippet")));

@@ -13,6 +13,14 @@ These exist because everything else in this repository is machine-checked — 11
 
 **No gate checks these images.** They go stale silently the moment the UI under them changes, and a stale screenshot is a worse failure mode than a missing one: it actively misrepresents the current app. If you change anything under a `demo/` project, recapture its image in the same PR.
 
+**`home/`'s showcase cards derive from these same four images.**
+`home/public/showcase/*.png` (`bellwether`, `nexus`, `ledgerline`, `arclight`,
+the last two with a `-full` companion) are resized/compressed copies of the
+screenshots in this table, not a separate capture — regenerate them in the
+same PR with `npm run showcase-thumbs` whenever `demo/landing-page/`,
+`demo/showcase/`, `demo/dashboard/` or `demo/auth-form/`'s screenshot changes.
+See `home/README.md`'s "The showcase thumbnails" section.
+
 ## The spec
 
 Every image, regardless of which demo:

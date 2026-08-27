@@ -4,8 +4,10 @@ export const INSTALL_COMMAND = "npx skills add Krishna-Modi12/frontend-design-pr
 
 export const NAV = [
   { id: "problem", label: "Numbers" },
+  { id: "catalog", label: "Catalog" },
   { id: "how-it-works", label: "How it works" },
   { id: "wall", label: "The wall" },
+  { id: "showcase", label: "Showcase" },
   { id: "install", label: "Install" },
 ] as const;
 
@@ -22,6 +24,25 @@ export const PROBLEM_COPY = {
   heading: "A pack is not a document.",
   body: "Behind the router sits 404,917 tokens of reference depth — material every skill can point into, none of it loaded until a request routes there. The pack is not handed to an agent whole: a router matches your request against trigger keywords, opens exactly one of 19 skills plus the core files it declares, and everything else stays on disk.",
 } as const;
+
+export const CATALOG_COPY = {
+  eyebrow: "The catalog",
+  heading: "19 skills. Four of them, to scan.",
+  body: "One per group, chosen for how directly each demonstrates the pack's own argument — the full 19 are in the registry the router below searches.",
+} as const;
+
+/**
+ * Curated, not exhaustive — one per registry group (`Meta`, `Making it look
+ * right`, `Building something new`, `Making it work well`), each picked
+ * because it ties back to something else on this page: `agent-ops` is the
+ * context-budget story the router demo makes concrete; `design-system` is
+ * the DESIGN.md discipline this very page was built under; `landing-pages`
+ * is what `Bellwether` in the showcase below was built from; `react-performance`
+ * is the image/lazy-loading budget the showcase's own screenshots follow.
+ * IDs are validated against the live registry by `tools/pages-data/generate.mjs`
+ * at data-generation time — a future rename fails the build, not a card.
+ */
+export const SKILL_CATALOG_IDS = ["agent-ops", "design-system", "landing-pages", "react-performance"] as const;
 
 export const ROUTER_DEFAULT_REQUEST = "Build a landing page with pricing and testimonials";
 
@@ -68,6 +89,64 @@ export const WALL_MARQUEE = [
   "Icon-only buttons need aria-label",
   "prefers-reduced-motion is mandatory",
 ] as const;
+
+export const SHOWCASE_COPY = {
+  eyebrow: "04 — The showcase",
+  heading: "Four things this pack actually built.",
+  body: "Two are real, deployed apps — open them. Two are stub-typed reference components, checked but never installed, shown as static captures instead.",
+} as const;
+
+export interface ShowcaseProject {
+  id: "bellwether" | "nexus" | "ledgerline" | "arclight";
+  name: string;
+  tagline: string;
+  variant: "live" | "static";
+  /** Only meaningful for `variant: "live"` — the static cards' href is the
+      imported full-page screenshot, resolved in `SectionShowcase.tsx`. */
+  href: string;
+}
+
+export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
+  {
+    id: "bellwether",
+    name: "Bellwether",
+    tagline: "A landing page for a schema-migration rehearsal tool — a real, installed Next.js app, deployed.",
+    variant: "live",
+    href: "https://krishna-modi12.github.io/frontend-design-pro/landing-page/",
+  },
+  {
+    id: "nexus",
+    name: "Nexus",
+    tagline: "A dark analytics-SaaS page with a WebGL hero — a real, installed Next.js + React Three Fiber app, deployed.",
+    variant: "live",
+    href: "https://krishna-modi12.github.io/frontend-design-pro/showcase/",
+  },
+  {
+    id: "ledgerline",
+    name: "Ledgerline",
+    tagline: "An accounts dashboard — type-checked against real component contracts, never installed, shown as a static capture.",
+    variant: "static",
+    href: "",
+  },
+  {
+    id: "arclight",
+    name: "Arclight",
+    tagline: "A sign-in form with real validation — type-checked, never installed, shown as a static capture.",
+    variant: "static",
+    href: "",
+  },
+];
+
+/**
+ * SLOP-05 bans Nexus as a placeholder brand name. `demo/showcase` predates
+ * the rule and carries a `GRANDFATHERED` waiver in `scripts/test_constraints.py`
+ * for exactly that reason, stated in its own README rather than silently
+ * omitted. Surfacing it here means restating that waiver on the page itself —
+ * the same transparency call, made in the same place a reader can actually
+ * see it, not just in a script comment or a nested README.
+ */
+export const NEXUS_WAIVER =
+  "Nexus is a placeholder brand name this pack's own anti-slop rule bans (SLOP-05) — a known, deliberate exception, not an oversight. Renaming it touches sixteen files including a lockfile and forces a screenshot recapture through an out-of-CI browser harness, so the fix is tracked rather than silently deferred; see demo/showcase/README.md for the full reasoning.";
 
 export interface WallCategory {
   id: string;
