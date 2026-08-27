@@ -40,6 +40,26 @@
     "should_trigger": true
   },
   {
+    "query": "our whole app looks like a default component library and i want it to feel like Linear or Vercel — that dense, quiet, slightly technical thing. not sure where to start honestly",
+    "should_trigger": true
+  },
+  {
+    "query": "attaching four screenshots of onboarding flows i think are really well done. i want ours to have the same feeling — the progress, the microcopy, the pacing",
+    "should_trigger": true
+  },
+  {
+    "query": "https://dribbble.com/shots/9021142-pricing-card this is exactly the card hover i want. can you work out the easing and the shadow layers and apply it to our pricing cards",
+    "should_trigger": true
+  },
+  {
+    "query": "before we redesign the marketing site — what are people actually building for developer-tool landing pages right now? want to see real examples, not 2021 trends",
+    "should_trigger": true
+  },
+  {
+    "query": "the settings page. it's fine but it's not good. take a look and do whatever it needs",
+    "should_trigger": true
+  },
+  {
     "query": "the /api/dashboard endpoint takes about 8 seconds. i think we're doing an n+1 on the widgets relation — want to add redis caching and cursor pagination on the query side",
     "should_trigger": false
   },
@@ -77,6 +97,26 @@
   },
   {
     "query": "set up posthog funnels for the signup flow so we can see where people drop off between email entry and workspace creation",
+    "should_trigger": false
+  },
+  {
+    "query": "our competitors' apps — set up a job that screenshots their pricing and onboarding pages every week so we can track when they change something. python's fine",
+    "should_trigger": false
+  },
+  {
+    "query": "pull everything users have said about our checkout in the last 30 days — support tickets, the subreddit, app store reviews — and give me the top themes",
+    "should_trigger": false
+  },
+  {
+    "query": "a competitor is trending on hacker news right now over an outage. draft the positioning talking points for our sales team before it cools off",
+    "should_trigger": false
+  },
+  {
+    "query": "i need a competitive teardown of how Linear, Height and Shortcut price their team plans — seats, tiers, what's gated behind which plan",
+    "should_trigger": false
+  },
+  {
+    "query": "rewrite our landing page hero and subhead to match the voice of Stripe's docs — precise, calm, no hype",
     "should_trigger": false
   }
 ]

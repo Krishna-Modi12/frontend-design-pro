@@ -16,7 +16,10 @@ unrelated (Kubernetes manifests, SQL joins).
 
 Result on this set: **20/20** — all 10 positives triggered on majority-of-3
 runs, only 1 false trigger across 30 negative runs (the print-leave-behind
-query, 1/3).
+query, 1/3). That run covers the original 20 (Should-Trigger 1–10,
+Should-NOT-Trigger 1–10). The Phase 1e additions below — 11–15 in each section,
+added 2026-08-27 — extend the set to fifteen a side and **have not been put
+through the harness**; treat them as unmeasured until a run is recorded here.
 
 **That figure is a recorded run, not a checked-in artefact, and it is the one
 number in this repo you cannot verify from the repo.** No `results.json` or
@@ -41,7 +44,7 @@ root `SKILL.md` description — that description is the only input this measures
 and it is also the thing most likely to be reworded without anyone thinking of
 this file.
 
-## Should-Trigger (10 queries)
+## Should-Trigger (15 queries)
 
 1. "our onboarding modal looks like garbage on my coworkers 13in macbook — the buttons overlap the copy and the primary CTA ends up below the fold. its components/onboarding/WelcomeModal.tsx, next 15 app router + tailwind"
 2. "i need to show about 40k rows of device telemetry without the tab locking up. right now its a plain `<table>` and it freezes around 2k rows. dont really care what library"
@@ -54,7 +57,21 @@ this file.
 9. "dark mdoe is broken on the settings panel — about half the labels are invisible, looks like theyre inheriting the light text colour. tailwind v4, we use the class strategy"
 10. "when someone creates a brand new workspace the reports page is just a blank white area with the word 'None'. needs to actually say something useful and point them somewhere"
 
-## Should-NOT-Trigger (10 queries)
+### Phase 1e additions — Should-Trigger (2026-08-27)
+
+Coverage for `design-research`, which had no case in either direction, plus the
+ambiguous-intent cases named in `docs/CAPABILITY_MATRIX.md` — audit vs. build vs.
+redesign vs. screenshot-recreation, all `should_trigger: true` since the pack
+should engage whichever mode wins. Positives deliberately avoid the literal
+trigger words ("inspired by", "trending").
+
+11. "our whole app looks like a default component library and i want it to feel like Linear or Vercel — that dense, quiet, slightly technical thing. not sure where to start honestly" — outward reference by name; mode left open
+12. "attaching four screenshots of onboarding flows i think are really well done. i want ours to have the same feeling — the progress, the microcopy, the pacing" — screenshot-recreation, no "inspired by"
+13. "https://dribbble.com/shots/9021142-pricing-card this is exactly the card hover i want. can you work out the easing and the shadow layers and apply it to our pricing cards" — pasted URL, motion extraction
+14. "before we redesign the marketing site — what are people actually building for developer-tool landing pages right now? want to see real examples, not 2021 trends" — Phase 0 community/trend signal
+15. "the settings page. it's fine but it's not good. take a look and do whatever it needs" — deliberately vague about mode; must still engage
+
+## Should-NOT-Trigger (15 queries)
 
 1. "the /api/dashboard endpoint takes about 8 seconds. i think we're doing an n+1 on the widgets relation — want to add redis caching and cursor pagination on the query side"
 2. "plot monthly churn from this dataframe as a matplotlib chart i can drop into the board deck. df has cohort_month, churned, total. save it as a png at 300dpi"
@@ -66,3 +83,16 @@ this file.
 8. "write vitest unit tests for calculateProratedAmount in lib/pricing.ts — mid-cycle upgrades, downgrades, and the leap-year edge case that bit us"
 9. "our figma file is a disaster, components named 'Button', 'Button 2', 'Button copy final'. can you propose a naming convention and a page structure for the library"
 10. "set up posthog funnels for the signup flow so we can see where people drop off between email entry and workspace creation"
+
+### Phase 1e additions — Should-NOT-Trigger (2026-08-27)
+
+Each is genuinely adjacent to `design-research` — a named design-forward company,
+a "screenshot" / "trending" / "teardown" shape — but out of scope: the ask is
+infra, product-feedback triage, sales comms, pricing strategy, or copy tone, not
+turning an external reference into typed design constraints.
+
+11. "our competitors' apps — set up a job that screenshots their pricing and onboarding pages every week so we can track when they change something. python's fine" — build monitoring infra, not extract design
+12. "pull everything users have said about our checkout in the last 30 days — support tickets, the subreddit, app store reviews — and give me the top themes" — community signal about our own product; guards the new Phase 0 trigger against over-firing
+13. "a competitor is trending on hacker news right now over an outage. draft the positioning talking points for our sales team before it cools off" — "trending" bait, sales comms
+14. "i need a competitive teardown of how Linear, Height and Shortcut price their team plans — seats, tiers, what's gated behind which plan" — pricing strategy, not visual design
+15. "rewrite our landing page hero and subhead to match the voice of Stripe's docs — precise, calm, no hype" — references a site, but it's copy tone
