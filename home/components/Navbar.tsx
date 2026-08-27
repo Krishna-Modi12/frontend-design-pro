@@ -18,10 +18,25 @@ export function Navbar({ version }: NavbarProps): ReactElement {
   };
 
   useEffect(() => {
-    const onScroll = (): void => setScrolled(window.scrollY > 8);
+    // Coalesce a burst of scroll events into one read per frame: the listener
+    // only schedules a frame, and the frame does the work. `scrolled` is a
+    // boolean, so React already skips the re-render on every event but the two
+    // that cross the threshold — the rAF guard keeps the handler itself from
+    // doing more than that on a fast flick.
+    let frame = 0;
+    const onScroll = (): void => {
+      if (frame !== 0) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        setScrolled(window.scrollY > 8);
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame !== 0) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
