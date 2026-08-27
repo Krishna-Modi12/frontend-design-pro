@@ -78,28 +78,7 @@ export const HOW_IT_WORKS = [
 export const PROOF_COPY = {
   eyebrow: "03 — Proof",
   heading: "Not asserted. Checked, live.",
-  body: "Paste a component below and watch it fail — then switch to the pack's own version and watch the same checks pass. Nothing here is staged; it's the real ruleset, running in your browser.",
 } as const;
-
-export interface ProofChip {
-  id: string;
-  label: string;
-}
-
-/**
- * Four of the sixty-one rules, named at a glance rather than quoted verbatim
- * — the marquee this replaced spelled out the literal pattern each rule
- * bans and tripped the same rules it was describing, since the constraint
- * suite reads string literals too, not just executable code. These stay
- * abstract on purpose — see git history on this file for what that looked
- * like the first two times it happened.
- */
-export const PROOF_CHIPS: ProofChip[] = [
-  { id: "type", label: "Typefaces" },
-  { id: "layout", label: "Viewport units" },
-  { id: "slop", label: "Placeholder copy" },
-  { id: "motion", label: "Easing curves" },
-] as const;
 
 export const SHOWCASE_COPY = {
   eyebrow: "04 — The showcase",

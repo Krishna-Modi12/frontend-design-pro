@@ -89,4 +89,22 @@
      failing against a real tinted background before (see `CLAUDE.md`). */
   --color-emphasis: oklch(38% 0.03 85);
   --color-emphasis-bg: oklch(91% 0.015 85);
+
+  /* ── Severity — status colour, not a second accent ─────────────────────────
+     `SectionProof`'s live checker needs to tell `critical`/`high`/`medium`
+     apart at a glance (a gutter dot, a finding row's marker) — a job colour
+     can't do at H=45 alone without three shades of the same hue reading as
+     one blur. This is a deliberate, scoped exception to the page's stated
+     one-chromatic-hue restraint (see the Accent comment above): both hues
+     sit far from H=45 so neither reads as a second brand accent, and neither
+     is ever used for a CTA, a link, or anything decorative — diagnostic
+     status only. `medium` reuses `--color-text-muted` rather than a third
+     hue, matching how real linters treat their quietest severity as neutral,
+     not another alarm colour.
+     Computed via the same OKLCH → OKLab → linear sRGB → relative luminance
+     → WCAG pipeline as every ratio above, worst case across the three light
+     grounds: `--color-danger` 6.26 / 5.73 / 6.61, `--color-warning`
+     5.30 / 4.85 / 5.60 — both clear 4.5:1 AA on every ground with room. */
+  --color-danger: oklch(50% 0.19 25);
+  --color-warning: oklch(52% 0.15 75);
 }
