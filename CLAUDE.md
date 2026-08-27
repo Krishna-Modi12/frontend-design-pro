@@ -20,7 +20,7 @@ npm run constraints  # Gate 5 only — 44 regex constraints over skills/
 npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run figures:test # proof that Gate 11's patterns read the prose forms people write
 npm run evals        # 22 eval cases, self-test
-npm run regression   # 14 synthetic parser-vs-regex divergence cases
+npm run regression   # 16 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
 npm run banner:check # the README banner still draws the current figures
 ```

@@ -268,8 +268,21 @@ walk(sf, (n) => { if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)
     const callee = n.expression.getText(sf);
     if (callee !== "forwardRef" && callee !== "React.forwardRef") return;
     called++;
-    const impl = n.arguments[0];
-    if (!impl || !(ts.isArrowFunction(impl) || ts.isFunctionExpression(impl))) {
+    let impl = n.arguments[0];
+    // `forwardRef(Impl)` where Impl is a separately-declared function is the
+    // same pattern as an inline `forwardRef(function Impl() {…})` — and the
+    // form the React docs show for a component that reads as a name in
+    // DevTools. Resolve the identifier to its declaration, the way ANI-04
+    // does, before judging the shape.
+    if (impl && ts.isIdentifier(impl)) {
+      const name = impl.text;
+      walk(sf, (d) => {
+        if (ts.isFunctionDeclaration(d) && d.name && d.name.text === name) impl = d;
+        else if (ts.isVariableDeclaration(d) && d.name.getText(sf) === name && d.initializer &&
+                 (ts.isArrowFunction(d.initializer) || ts.isFunctionExpression(d.initializer))) impl = d.initializer;
+      });
+    }
+    if (!impl || !(ts.isArrowFunction(impl) || ts.isFunctionExpression(impl) || ts.isFunctionDeclaration(impl))) {
       ok = false; fail("COMP-01", n, "forwardRef first argument must be a function"); return;
     }
     if (impl.parameters.length < 2) { ok = false; fail("COMP-01", impl, "forwardRef render function must take (props, ref)"); }
