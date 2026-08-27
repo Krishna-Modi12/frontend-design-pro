@@ -6,7 +6,7 @@ export const NAV = [
   { id: "problem", label: "Numbers" },
   { id: "catalog", label: "Catalog" },
   { id: "how-it-works", label: "How it works" },
-  { id: "wall", label: "The wall" },
+  { id: "checks", label: "Live check" },
   { id: "showcase", label: "Showcase" },
   { id: "install", label: "Install" },
 ] as const;
@@ -75,28 +75,30 @@ export const HOW_IT_WORKS = [
   },
 ] as const;
 
+export const PROOF_COPY = {
+  eyebrow: "03 — Proof",
+  heading: "Not asserted. Checked, live.",
+  body: "Paste a component below and watch it fail — then switch to the pack's own version and watch the same checks pass. Nothing here is staged; it's the real ruleset, running in your browser.",
+} as const;
+
+export interface ProofChip {
+  id: string;
+  label: string;
+}
+
 /**
- * v2.2.1 — five of these entries used to spell out, verbatim, the exact
- * pattern each rule bans — the same trap `ProblemComparison`'s docstring hit
- * for the same reason: the constraint suite reads string literals too, not
- * just executable code, so a marquee describing the wall tripped the wall it
- * was describing. Reworded to name the shape of each rule without quoting
- * the substring the rule matches on — see SLOP-01/SLOP-02/RES-03/PERF-04R/
- * A11Y-06 in scripts/test_constraints.py for what each one reads for.
+ * Four of the sixty-one rules, named at a glance rather than quoted verbatim
+ * — the marquee this replaced spelled out the literal pattern each rule
+ * bans and tripped the same rules it was describing, since the constraint
+ * suite reads string literals too, not just executable code. These stay
+ * abstract on purpose — see git history on this file for what that looked
+ * like the first two times it happened.
  */
-export const WALL_MARQUEE = [
-  "No Inter/Roboto/Poppins as a display face",
-  "No raw hex — OKLCH tokens only",
-  "No fixed 100vh sections — dvh/svh only",
-  "No catch-all transition shorthand",
-  "No bounce or elastic easing",
-  "No placeholder brand names",
-  "No stock names or invented prices",
-  "No generic AI-marketing phrasing",
-  "No bg-clip-text on body copy",
-  "No outline removed without a replacement ring",
-  "Icon-only buttons need aria-label",
-  "prefers-reduced-motion is mandatory",
+export const PROOF_CHIPS: ProofChip[] = [
+  { id: "type", label: "Typefaces" },
+  { id: "layout", label: "Viewport units" },
+  { id: "slop", label: "Placeholder copy" },
+  { id: "motion", label: "Easing curves" },
 ] as const;
 
 export const SHOWCASE_COPY = {
@@ -157,56 +159,3 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
 export const NEXUS_WAIVER =
   "Nexus is a placeholder brand name this pack's own anti-slop rule bans (SLOP-05) — a known, deliberate exception, not an oversight. Renaming it touches sixteen files including a lockfile and forces a screenshot recapture through an out-of-CI browser harness, so the fix is tracked rather than silently deferred; see demo/showcase/README.md for the full reasoning.";
 
-export interface WallCategory {
-  id: string;
-  title: string;
-  body: string;
-  /** Short resting-state caption, shown in place of `body` until the card's
-      disclosure opens. Categories with a live `count` use `title` for this
-      instead (already 2-3 words) rather than duplicating it here. */
-  caption?: string;
-  /** Key into `Figures`, when this category has a live count to show. */
-  count?: "parserConstraints" | "regexConstraints";
-  wide?: boolean;
-}
-
-export const WALL_CATEGORIES: WallCategory[] = [
-  {
-    id: "ast",
-    title: "Semantic constraints",
-    count: "parserConstraints",
-    body: "Walked through the TypeScript compiler API rather than matched as text — the eight rules a regex cannot see without understanding the tree it's reading.",
-    wide: true,
-  },
-  {
-    id: "regex",
-    title: "Pattern constraints",
-    count: "regexConstraints",
-    body: "Run as regular expressions over source. Faster to check, and the half this page's own checker below can run in your browser.",
-    wide: true,
-  },
-  {
-    id: "slop",
-    title: "No placeholder anything",
-    caption: "No placeholder defaults, ever",
-    body: "Acme, a stock full name standing in for a real person, a numbered test handle, an invented price, upbeat template phrasing — the defaults an agent reaches for when nothing else is specified.",
-  },
-  {
-    id: "motion",
-    title: "No dated easing",
-    caption: "Motion stays calm, not bouncy",
-    body: "No bounce, elastic or back easing on an entrance. No catch-all transition shorthand either. Reduced motion is functional, not a string mention.",
-  },
-  {
-    id: "type",
-    title: "No default typefaces",
-    caption: "No default typefaces allowed",
-    body: "Inter, Roboto, Arial, Poppins, DM Sans, Space Grotesk are banned as a display face — fine in a fallback stack, never carrying identity.",
-  },
-  {
-    id: "layout",
-    title: "No 100vh sections",
-    caption: "Viewport units that actually fit",
-    body: "100vh ignores the mobile toolbar. min-h-[100dvh] is the only accepted form, checked by pattern on every shipped example.",
-  },
-];
