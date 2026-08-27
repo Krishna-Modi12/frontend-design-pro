@@ -75,17 +75,26 @@ export const HOW_IT_WORKS = [
   },
 ] as const;
 
+/**
+ * v2.2.1 — five of these entries used to spell out, verbatim, the exact
+ * pattern each rule bans — the same trap `ProblemComparison`'s docstring hit
+ * for the same reason: the constraint suite reads string literals too, not
+ * just executable code, so a marquee describing the wall tripped the wall it
+ * was describing. Reworded to name the shape of each rule without quoting
+ * the substring the rule matches on — see SLOP-01/SLOP-02/RES-03/PERF-04R/
+ * A11Y-06 in scripts/test_constraints.py for what each one reads for.
+ */
 export const WALL_MARQUEE = [
   "No Inter/Roboto/Poppins as a display face",
   "No raw hex — OKLCH tokens only",
-  "No min-h-screen",
-  "No transition-all",
+  "No fixed 100vh sections — dvh/svh only",
+  "No catch-all transition shorthand",
   "No bounce or elastic easing",
   "No placeholder brand names",
-  "No John Doe, no user123",
-  "No 'Elevate your workflow' copy",
+  "No stock names or invented prices",
+  "No generic AI-marketing phrasing",
   "No bg-clip-text on body copy",
-  "No outline-none without a focus ring",
+  "No outline removed without a replacement ring",
   "Icon-only buttons need aria-label",
   "prefers-reduced-motion is mandatory",
 ] as const;
@@ -180,13 +189,13 @@ export const WALL_CATEGORIES: WallCategory[] = [
     id: "slop",
     title: "No placeholder anything",
     caption: "No placeholder defaults, ever",
-    body: "Acme, John Doe, user123, $99.99, 'Elevate your workflow' — the defaults an agent reaches for when nothing else is specified.",
+    body: "Acme, a stock full name standing in for a real person, a numbered test handle, an invented price, upbeat template phrasing — the defaults an agent reaches for when nothing else is specified.",
   },
   {
     id: "motion",
     title: "No dated easing",
     caption: "Motion stays calm, not bouncy",
-    body: "No bounce, elastic or back easing on an entrance. No transition: all. Reduced motion is functional, not a string mention.",
+    body: "No bounce, elastic or back easing on an entrance. No catch-all transition shorthand either. Reduced motion is functional, not a string mention.",
   },
   {
     id: "type",
@@ -196,7 +205,7 @@ export const WALL_CATEGORIES: WallCategory[] = [
   },
   {
     id: "layout",
-    title: "No min-h-screen",
+    title: "No 100vh sections",
     caption: "Viewport units that actually fit",
     body: "100vh ignores the mobile toolbar. min-h-[100dvh] is the only accepted form, checked by pattern on every shipped example.",
   },
