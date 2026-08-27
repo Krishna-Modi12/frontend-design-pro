@@ -135,7 +135,11 @@ def constraint_counts() -> tuple[int, int]:
 
 
 def tokens(path: Path) -> int:
-    return path.stat().st_size // 4
+    # LF-normalised, identical to scripts/check_figures.py — Gate 8a and Gate 11
+    # must not disagree about a file's size. `stat().st_size` reads a CRLF-edited
+    # file high until git normalises it to LF on commit (`.gitattributes` is
+    # `eol=lf`), which is what CI, the archive and every doc figure measure.
+    return len(path.read_bytes().replace(b"\r\n", b"\n")) // 4
 
 
 def announced_version(readme: Path) -> str | None:

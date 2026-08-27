@@ -30,12 +30,12 @@ Design
 `metadata.json` is itself a claim, and check 3 below is what audits it. A gate
 that trusted it would agree with the drift instead of finding it.
 
-**Token figures are LF-normalised.** `build_release.py` uses `stat().st_size`,
-which reads high on a CRLF checkout; `.gitattributes` normalises the repo to LF,
+**Token figures are LF-normalised.** `.gitattributes` normalises the repo to LF,
 so the canonical figure — the one CI measures and the one a reader who downloads
-the archive can reproduce — is the LF byte count. Normalising here means this
-gate reports the same numbers on Windows and on ubuntu-latest, which a gate whose
-whole job is arithmetic has to do.
+the archive can reproduce — is the LF byte count. `build_release.py:tokens()`
+uses the identical LF-normalising body, so Gate 8a and this gate report the same
+numbers on Windows and on ubuntu-latest even when a file has been edited to CRLF
+and not yet committed — which a gate whose whole job is arithmetic has to do.
 
 Four checks
 -----------
@@ -112,9 +112,10 @@ DASH = r"[–—-]"
 def tokens(path: Path) -> int:
     """LF-normalised token count: bytes ÷ 4, the repo's canonical measure.
 
-    Deliberately not `stat().st_size`. See the module docstring — a CRLF
-    working tree reads high, and this gate must produce identical numbers on
+    Deliberately not `stat().st_size` — a file edited to CRLF and not yet
+    committed reads high, and this gate must produce identical numbers on
     every platform or it will "correct" the docs to a local artefact.
+    `build_release.py:tokens()` carries the identical body for the same reason.
     """
     return len(path.read_bytes().replace(b"\r\n", b"\n")) // 4
 
