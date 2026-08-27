@@ -27,6 +27,7 @@
     "pages:data:check": "node tools/pages-data/generate.mjs --check",
     "test": "vitest run",
     "screenshots": "npm --prefix tools/screenshots run capture --",
+    "showcase-thumbs": "npm --prefix tools/screenshots run showcase-thumbs --",
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
     "demos:verify": "npm --prefix tools/screenshots run verify --",
     "pages:verify": "npm --prefix tools/screenshots run verify:home --",

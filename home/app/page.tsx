@@ -5,8 +5,10 @@ import SmoothScroll from "../components/SmoothScroll";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import SectionProblem from "../components/SectionProblem";
+import SectionSkillCatalog from "../components/SectionSkillCatalog";
 import SectionHow from "../components/SectionHow";
 import SectionWall from "../components/SectionWall";
+import SectionShowcase from "../components/SectionShowcase";
 import SectionInstall from "../components/SectionInstall";
 import { focusRing, tokenStyles } from "../lib/tokens";
 
@@ -37,8 +39,10 @@ export default function Page(): ReactElement {
         <main id="main">
           <Hero installHref="#install" howItWorksHref="#how-it-works" />
           <SectionProblem figures={payload.figures} />
+          <SectionSkillCatalog skills={payload.skills} />
           <SectionHow skills={payload.skills} figures={payload.figures} />
           <SectionWall figures={payload.figures} />
+          <SectionShowcase />
           <SectionInstall adapters={payload.adapters} buildYear={new Date().getFullYear()} />
         </main>
       </div>

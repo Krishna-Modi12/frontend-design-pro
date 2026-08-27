@@ -69,4 +69,24 @@
      the page's warm ink where it cannot be read. */
   --color-ink-invert: oklch(93% 0.01 270);
   --color-ink-invert-secondary: oklch(68% 0.02 270);
+
+  /* ── Emphasis — subordinate to the accent, for badges only ────────────────
+     `--color-accent` already does double duty as CTA fill, metric numbers,
+     eyebrow labels and the hero glow — that is correct restraint (one
+     chromatic hue on the page, not one occurrence of it). A badge is a
+     different job: a "Live" / "Static preview" marker on a Showcase card, or
+     a group tag on a SkillCatalog card, must read as quieter than a real
+     call-to-action, or it competes with the actual CTA for attention. Same
+     neutral hue family as ink/border (H≈85), not the accent's hue (H=45) —
+     a second neutral role, not a second accent. `--color-emphasis` on
+     `--color-emphasis-bg` measures 7.67:1 (AAA); `--color-emphasis` on
+     `bg-surface`/`bg-page`/`bg-elevated` (for a badge sitting directly on a
+     section background rather than its own bg) measures 8.66 / 9.46 / 9.99:1
+     — all well clear of 4.5:1 AA. Computed via the same OKLCH → OKLab →
+     linear sRGB → relative luminance → WCAG pipeline as every ratio above;
+     re-verify against `pages:verify`'s live axe pass once built regardless,
+     since that check has caught a token measuring correctly in isolation but
+     failing against a real tinted background before (see `CLAUDE.md`). */
+  --color-emphasis: oklch(38% 0.03 85);
+  --color-emphasis-bg: oklch(91% 0.015 85);
 }

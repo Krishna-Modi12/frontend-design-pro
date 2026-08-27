@@ -659,6 +659,12 @@ GRANDFATHERED = {
         "SLOP-05": "named Nexus since before the rule existed — see "
                    "demo/showcase/README.md 'Known violation — the name'",
     },
+    "home/lib/content.ts": {
+        "SLOP-05": "surfaces the same pre-existing Nexus name in the homepage's "
+                   "showcase section, with the waiver restated on the page itself "
+                   "(see NEXUS_WAIVER) — see demo/showcase/README.md 'Known "
+                   "violation — the name'",
+    },
 }
 
 

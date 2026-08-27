@@ -35,7 +35,13 @@ export function Navbar({ version }: NavbarProps): ReactElement {
           {PRODUCT}
         </a>
 
-        <nav aria-label="Sections" className="hidden items-center gap-1 sm:flex">
+        {/* v2.2: NAV grew from 4 to 6 entries (Catalog, Showcase). The full row plus
+            the version badge and GitHub button no longer fits inside a 768px
+            viewport — measured against the logo/link/badge widths below, it runs
+            ~90-190px over budget there. Collapses to the existing <details> menu at
+            lg: (1024px) instead of sm: (640px); 1024px has ~250px of headroom for
+            the same content, tablet width uses the hamburger like mobile does. */}
+        <nav aria-label="Sections" className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
             <a
               key={item.id}
@@ -48,7 +54,7 @@ export function Navbar({ version }: NavbarProps): ReactElement {
         </nav>
 
         <div className="flex items-center gap-3">
-          <span data-metric className="hidden rounded-full border border-border px-2.5 py-1 text-xs text-text-muted sm:inline-block">
+          <span data-metric className="hidden rounded-full border border-border px-2.5 py-1 text-xs text-text-muted lg:inline-block">
             v{version}
           </span>
           <a
@@ -59,7 +65,7 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             GitHub
           </a>
 
-          <details ref={detailsRef} data-disclosure className="relative sm:hidden">
+          <details ref={detailsRef} data-disclosure className="relative lg:hidden">
             <summary
               className={`${tapTarget} ${focusRing} flex items-center justify-center rounded-lg border border-border-strong text-text-primary`}
             >

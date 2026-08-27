@@ -227,6 +227,23 @@ function readmeCopy() {
   return copy;
 }
 
+/**
+ * The homepage's own curated `SkillCatalog` picks, from `home/lib/content.ts`.
+ * Read here (not imported — this script runs standalone, before anything is
+ * built) so a future skill rename or removal fails generation loudly instead
+ * of leaving `SkillCatalogGrid` silently rendering three cards instead of
+ * four. See the comment above `SKILL_CATALOG_IDS` in `content.ts` for why
+ * each one was picked.
+ */
+function catalogIds() {
+  const src = readFileSync(join(REPO, "home", "lib", "content.ts"), "utf8");
+  const m = src.match(/SKILL_CATALOG_IDS\s*=\s*\[([^\]]*)\]/);
+  if (!m) throw new Error("could not find SKILL_CATALOG_IDS in home/lib/content.ts");
+  const ids = [...m[1].matchAll(/"([a-z0-9-]+)"/g)].map((x) => x[1]);
+  if (!ids.length) throw new Error("home/lib/content.ts's SKILL_CATALOG_IDS is empty");
+  return ids;
+}
+
 /** The release this payload was generated from — the navbar's version badge. */
 function packVersion() {
   const meta = JSON.parse(readFileSync(join(REPO, "metadata.json"), "utf8"));
@@ -289,6 +306,16 @@ function render() {
   if (ids.length !== figures.skills) {
     throw new Error(
       `the registry holds ${ids.length} rows and the truth table counts ${figures.skills} skills`,
+    );
+  }
+
+  const catalog = catalogIds();
+  const catalogMissing = catalog.filter((id) => !ids.includes(id));
+  if (catalogMissing.length) {
+    throw new Error(
+      `home/lib/content.ts's SKILL_CATALOG_IDS references skills that don't exist ` +
+        `in the registry: ${catalogMissing.join(", ")}\n` +
+        "  fix the curated list in home/lib/content.ts — a skill was renamed or removed.",
     );
   }
 

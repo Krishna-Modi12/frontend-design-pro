@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import type { ReactElement } from "react";
 import CheckerPanel from "./CheckerPanel";
 import BrowserChrome from "./BrowserChrome";
-import MockUIGallery from "./MockUIGallery";
 import Marquee from "./Marquee";
 import ConstraintBadge from "./ConstraintBadge";
 import ChevronIcon from "./ChevronIcon";
@@ -94,6 +93,14 @@ function WallMotif({ id }: { id: string }): ReactElement {
  * keystroke would be a defect, not a feature. Below 1024px and under
  * `prefers-reduced-motion` this never pins at all, matching the hero's own
  * <640px degrade philosophy.
+ *
+ * v2.2: reframed from a rules-dump to a demo of the mechanism. `CheckerPanel`
+ * now leads the section, directly under the heading; the marquee and the six
+ * category cards move below it as ambient/supporting detail (still real —
+ * every count is `figures.*`, not a literal — just no longer the section's
+ * first move). `MockUIGallery`'s six abstract mockup cards are retired: a
+ * real screenshot in the new Showcase section is stronger evidence than an
+ * illustrative one, and this was the only place still using that component.
  */
 export function SectionWall({ figures }: SectionWallProps): ReactElement {
   const playgroundRef = useRef<HTMLDivElement | null>(null);
@@ -130,11 +137,21 @@ export function SectionWall({ figures }: SectionWallProps): ReactElement {
         <p data-label className="text-accent">
           03 — The wall
         </p>
-        <h2 data-display className="mt-4 text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-text-primary">
+        <h2 data-display className="mt-4 max-w-2xl text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-text-primary">
           {figures.ciConstraints} checks catch the defaults agents keep reaching for.
         </h2>
+        <p className="mt-4 max-w-xl text-base leading-relaxed text-text-secondary">
+          Paste a component below and watch it fail — then switch to the pack's own version and watch the
+          same checks pass. Nothing here is staged; it's the real ruleset, running in your browser.
+        </p>
 
-        <div className="mt-8">
+        <div ref={playgroundRef} className="mt-8">
+          <BrowserChrome url="frontend-design-pro.dev/wall">
+            <CheckerPanel />
+          </BrowserChrome>
+        </div>
+
+        <div className="mt-14">
           <Marquee items={WALL_MARQUEE.map((text) => (
             <ConstraintBadge key={text} text={text} />
           ))} />
@@ -165,19 +182,6 @@ export function SectionWall({ figures }: SectionWallProps): ReactElement {
               <p className="mt-3 text-sm leading-relaxed text-text-secondary">{category.body}</p>
             </details>
           ))}
-        </div>
-
-        <div ref={playgroundRef} className="mt-12">
-          <BrowserChrome url="frontend-design-pro.dev/wall">
-            <CheckerPanel />
-          </BrowserChrome>
-        </div>
-
-        <div className="mt-14">
-          <p data-label className="text-accent">
-            what the rest of the pack produces
-          </p>
-          <MockUIGallery />
         </div>
       </div>
     </section>
