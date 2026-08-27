@@ -1008,7 +1008,8 @@ def main():
                 files_to_check.extend(d.rglob(ext))
             else:
                 files_to_check.extend(d.glob(ext))
-                files_to_check.extend(d.glob(f"*/examples/{ext}"))   # v13: skills/*/examples
+                files_to_check.extend(d.glob(f"examples/{ext}"))     # --dir skills/<id>
+                files_to_check.extend(d.glob(f"*/examples/{ext}"))   # --dir skills  (Gate 5)
     else:
         for path in args:
             p = Path(path)
