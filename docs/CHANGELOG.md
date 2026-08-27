@@ -4,6 +4,51 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.11.5] — 2026-08-26
+
+**`design-research` gains a Phase 0 social-and-trend pass — new depth on an
+existing skill, no new skill, no new core dep.**
+
+### Added
+- `skills/design-research/references/social-signal-research.md` (167 lines) — the
+  two optional research tools (`last30days`, `agent-reach`), what
+  `agent-reach doctor` / `last30days --preflight` report, a `raw signal → typed
+  constraint` table, three worked examples (dev-tool pricing page → `landing-pages`;
+  mobile onboarding → `component-patterns`; a zero-tooling fallback), and an
+  explicit zero/one/both degrade matrix. Cited in `design-research`'s Reference
+  Index.
+- `skills/design-research/SKILL.md` — a `## Phase 0 — Social & trend signal`
+  section, placed before the Source Registry (the gallery step). Detect
+  `agent-reach` / `last30days`; prefer them for time-sensitive, platform-specific
+  or engagement-ranked questions; fall back to `web_search` silently when absent —
+  never block, never prompt an install, the way Gate 7 already treats a missing
+  compiler. Research output leaves the phase only as a typed value (Core Rule 3),
+  as input to a decision and never as verbatim copy — `SLOP-01`/`SLOP-02`/`SLOP-05`
+  and the trust-boundary rule bind it unchanged.
+- `core/agent-behavior.md` — one universal paragraph: prefer a configured research
+  tool (a `last30days` skill, an `agent-reach` layer, an MCP browser) over an
+  unqualified `web_search` for time-sensitive or community-sentiment questions;
+  detect first, degrade silently, never block on absence.
+
+### Changed
+- `design-research`'s When-to-Use triggers and the root `SKILL.md` registry keyword
+  cell gained the community phrasings ("what's trending in X design", "what are
+  people building for Y", "community sentiment"), so those requests route here.
+- Neither `last30days` nor `agent-reach` is a dependency of `design-research` or any
+  other skill, and neither is vendored. This repo has no runtime and stays that way
+  (SECURITY.md); platform-login setup is left to each tool's own docs.
+
+### Figures
+- References 111 → 112; reference depth 402,592 → 404,917 tokens
+  (`social-signal-research.md`, ~2,325 tokens).
+- Registry 2,112 → 2,126 tokens from the added trigger keywords; per-request band
+  6,000–7,599 → 6,014–7,927.
+- `design-research` stays the heaviest skill and now sits 73 tokens under the
+  Gate 8a ceiling — one meta sentence was trimmed from its trust-boundary block to
+  make room, and Phase 0's depth lives in the reference rather than inline.
+
+11/11 gates green · 0 figure drift.
+
 ## [14.11.4] — 2026-08-24
 
 **Two fixes, both verified by running the check, not by reading it.**

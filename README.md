@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **111** | **402,592 tokens** | **2,112 tokens** | **6,000–7,599** | **61** | **11** |
+| **19** | **112** | **404,917 tokens** | **2,126 tokens** | **6,014–7,927** | **61** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 402,592 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 404,917 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -352,7 +352,7 @@ One skill loads per request. You never name it — the **Try saying** column is 
 |---|---|---|
 | [`design-system`](skills/design-system/SKILL.md) | Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff | *"Build me a token system from this brand colour, with a dark mode that isn't just inverted."* |
 | [`design-principles`](skills/design-principles/SKILL.md) | The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction | *"Critique this layout. Why does it feel cluttered, and what's the actual fix?"* |
-| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, extract palettes and easing curves, convert them to typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: &lt;url&gt; — dark, developer tool."* |
+| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, or run a social/trend pass over engagement-ranked community signal, and convert either into typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: &lt;url&gt; — dark, developer tool."* · *"What's trending in fintech dashboard design right now?"* |
 | [`animations`](skills/animations/SKILL.md) | Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion | *"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion."* |
 | [`component-patterns`](skills/component-patterns/SKILL.md) | Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit | *"Give me an animated headline like Aceternity's, but keyboard-accessible."* |
 | [`iconography`](skills/iconography/SKILL.md) | Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration | *"These icons look off next to the text — fix the sizing and optical alignment."* |
@@ -386,12 +386,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,112 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,126 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,964–3,923 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 848–1,722 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **402,592 tokens** — loaded only when a skill points at it |
+| `skills/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
+| `skills/{id}/references/` | Deep material | **404,917 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 6,000–7,599 tokens, not 402,592.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,014–7,927 tokens, not 404,917.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -520,35 +520,40 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
-## What's new in v14.11.4
+## What's new in v14.11.5
 
-Two fixes, both traced back to their own regex rather than assumed from
-reading it. `SLOP-04` — the constraint meant to catch bare placeholder-round
-data values — was structurally inert: the corpus's own deliberate anti-example
-for it passed the check outright, because the two `$`-figures it named as
-banned (`$10,000`, `$100K`) matched its *own* organic-evidence pattern, a
-trailing word-boundary after `%` often failed to anchor at all, and the bare
-`10,000`/`100K`-scale shape the anti-example and `landing-pages`'s own
-reference doc actually use wasn't in the ban list. Fixed the comma/dollar half — now
-verified to fail that anti-example and pass all 137 example files with zero
-new false positives. Left the percent half unfixed on purpose: `oklch(50%_...)`
-colors, `calc(50%-12px)`, Tailwind arbitrary values, and inline
-`width: "100%"` are genuine, frequent, legitimate code in this corpus, and
-every attempt at a percent-aware fix produced a false positive a comma-only
-check does not — the description now says exactly that instead of overclaiming.
+`design-research` learned to read a community, not just a page. A request like
+"what's trending in fintech dashboard design" or "what are people building for
+onboarding right now" routes there and runs a **Phase 0 social-and-trend pass**
+before the gallery step: it pulls an engagement-ranked signal, converts it into
+the same typed constraints a browsed page produces — an OKLCH token, an easing
+curve, a copy *tone* word, a named pattern reference — and hands off to the
+build skill.
 
-Second: a real, previously-empty coverage gap. `platform` had nothing for
-extension UI — VS Code webviews or browser extension popups — even though
-both render into a host-imposed theme, a fixed small viewport, and a CSP that
-forbids several patterns the rest of this pack assumes are fine (runtime
-CSS-in-JS, inline `eval`). New `references/extension-ui.md` covers both
-surfaces: theming via VS Code's `--vscode-*` variables and body theme classes,
-Webview UI Toolkit and `postMessage`/`acquireVsCodeApi()` for host
-communication, and MV3 popup constraints (400px width, default CSP, options
-page vs. popup state, keyboard/focus discipline).
+Two optional external tools cover that pass. **`last30days`** searches Reddit,
+X, YouTube, HN, GitHub and Polymarket in parallel, scores by real engagement,
+merges one story told across several platforms into one, and returns a cited
+brief. **`agent-reach`** gives the agent read and search access to Twitter/X,
+Reddit, YouTube, GitHub, Bilibili, XiaoHongShu, RSS and semantic web search,
+with a primary-to-backup backend list per platform. **Neither is a dependency**
+of `design-research` or any skill, and neither is vendored. They are detected
+with `agent-reach doctor` / `last30days --preflight`, preferred when healthy,
+and degraded silently to plain `web_search` — no error, no "you should install
+this" — when absent. That is the posture Gate 7 already takes toward a missing
+TypeScript compiler.
 
-Reference depth now stands at 402,592 tokens over 111 references. Registry and
-per-request band unchanged.
+Whatever the tools return is **input to a decision, never copy**: a top comment
+is a signal about what to build, not a string to paste, and
+`SLOP-01`/`SLOP-02`/`SLOP-05` plus the skill's trust-boundary rule bind research
+output exactly as they bind everything else. New
+`references/social-signal-research.md` carries the tool detail, three worked
+examples and the zero/one/both degrade matrix; `core/agent-behavior.md` gains
+one universal line preferring a configured research tool over blind `web_search`
+for time-sensitive or community-sentiment questions.
+
+Reference depth now stands at 404,917 tokens over 112 references; the registry
+is 2,126 tokens and a request costs 6,014–7,927. `design-research` stays the
+heaviest skill, 73 tokens under the Gate 8a ceiling.
 
 11/11 gates green · 0 figure drift.
 
