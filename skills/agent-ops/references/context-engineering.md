@@ -1,6 +1,6 @@
 # Context Engineering — Why Loading Less Produces Better Output, Not Just Cheaper Output
 
-This pack routes one skill per request out of ~403k tokens of depth, and the
+This pack routes one skill per request out of ~405k tokens of depth, and the
 argument for that has always been budget: a monolithic pack cannot be loaded at
 all. Budget is the weaker half of the argument. The stronger half is accuracy —
 a model that receives irrelevant context does not ignore it, and the cost of
@@ -25,7 +25,7 @@ budget, which leaves the middle progressively under-attended as the context grow
 
 ### What that means here, measured
 
-Our always-loaded root `SKILL.md` is **2,112 tokens** — below the threshold. The
+Our always-loaded root `SKILL.md` is **2,126 tokens** — below the threshold. The
 anti-slop wall sits at 18% of the file and the loading protocol at 80%, so the
 two directive sections already occupy the attention-favoured ends, with the
 registry table (a lookup, scanned rather than recalled) in between. **No change

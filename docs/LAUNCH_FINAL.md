@@ -13,7 +13,7 @@ Flat derivative of [LAUNCH_KIT.md](LAUNCH_KIT.md), which stays **canonical** —
 - **Every post now names the installer.** One command, ten agents, each in its own native rules format — the most concrete adoption story the pack has, and it appeared in none of the four posts.
 - The "no screenshot of the showcase" limitation was **false** and is replaced with the caveat that is real: the screenshot is captured by hand, not in CI, so it can go stale.
 
-Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 111 references · 402,592 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 44 syntactic = 61 constraints · 11 gates · registry 2,112 tokens · heaviest request 7,599 tokens.
+Figures below were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 112 references · 404,917 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 44 syntactic = 61 constraints · 11 gates · registry 2,126 tokens · heaviest request 7,927 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
@@ -34,14 +34,14 @@ Most agent skill packs are one big markdown file. That design has a hard
 ceiling: the pack competes with the user's prompt for context, and a pack
 worth having is bigger than the window it has to fit in.
 
-frontend-design-pro is a registry instead of a document. SKILL.md is 2,112
+frontend-design-pro is a registry instead of a document. SKILL.md is 2,126
 tokens — identity, an anti-slop wall, and a 19-row routing table. It matches
 your request against trigger keywords, loads exactly one skill plus the core
-primitives that skill declares, and leaves the other 402,592 tokens of
+primitives that skill declares, and leaves the other 404,917 tokens of
 reference material on disk.
 
-Measured, not estimated: the heaviest possible request loads 7,599 tokens.
-The lightest loads 6,000. A gate fails the build if any skill exceeds 8,000
+Measured, not estimated: the heaviest possible request loads 7,927 tokens.
+The lightest loads 6,014. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -118,13 +118,13 @@ thing you actually asked for.
 
 I built frontend-design-pro as a registry instead. 🧵
 
-2/ SKILL.md is 2,112 tokens. That's all that's always loaded.
+2/ SKILL.md is 2,126 tokens. That's all that's always loaded.
 
 It's a routing table. Match trigger keywords → load ONE skill + the core
 primitives it declares.
 
-Heaviest possible request: 7,599 tokens.
-Reference material available: 402,592 tokens.
+Heaviest possible request: 7,927 tokens.
+Reference material available: 404,917 tokens.
 
 3/ The economics of this are the whole point.
 
@@ -224,13 +224,13 @@ and usability are in direct conflict.
 
 A registry rather than a document:
 
-- `SKILL.md` — 2,112 tokens, always loaded. Routing table + anti-slop wall.
-- 19 skills, 848–1,722 tokens each. **One** loads per request.
+- `SKILL.md` — 2,126 tokens, always loaded. Routing table + anti-slop wall.
+- 19 skills, 848–1,878 tokens each. **One** loads per request.
 - 8 core primitives (tokens, a11y baseline, component API, agent behaviour,
   validation checklist, intake). A skill declares the 3–4 it needs.
-- 111 references, 402,592 tokens. Loaded only when a skill routes to one.
+- 112 references, 404,917 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **6,000 to 7,599 tokens.** A gate fails the build
+Measured per-request load: **6,014 to 7,927 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**

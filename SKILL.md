@@ -49,7 +49,7 @@ Match the request against trigger keywords. Load **one** skill. Most specific wi
 | `react-performance` | `skills/react-performance/SKILL.md` | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `core/component-api.md` |
 | `platform` | `skills/platform/SKILL.md` | mobile, pwa, desktop, electron, tauri, keyboard shortcut, react native, expo, i18n, locale, rtl, right-to-left, seo, metadata, email, stripe, ai chat, streaming | `core/component-api.md` |
 | `agent-ops` | `skills/agent-ops/SKILL.md` | agent ops, token budget, context window, memory persistence, subagent, orchestration, verification loop, parallelization, continuous learning, self-check | `core/agent-behavior.md` |
-| `design-research` | `skills/design-research/SKILL.md` | inspired by, reference, mood board, like this site, dribbble, mobbin, live design, browse, extract palette, source url | `core/design-tokens.md` |
+| `design-research` | `skills/design-research/SKILL.md` | inspired by, reference, mood board, like this site, dribbble, mobbin, live design, browse, extract palette, source url, trending, what people are building, community sentiment | `core/design-tokens.md` |
 | `canvas-typography` | `skills/canvas-typography/SKILL.md` | canvas typography, kinetic type, particle text, generative text, text animation, variable font, text on path, scramble text | `core/design-tokens.md` |
 | `color-themes` | `skills/color-themes/SKILL.md` | color theme, palette generation, oklch theme, theme generator, auto theme, image palette, color scheme, harmonic colors | `core/design-tokens.md` |
 

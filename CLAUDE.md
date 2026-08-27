@@ -125,7 +125,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 6,000–7,599 tokens against ~403k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 6,014–7,927 tokens against ~405k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -163,9 +163,9 @@ before and after the 19-file migration it exists to police** — nesting alone
 would have "passed" without the gate ever seeing the shape. It reads indentation
 now and consumes folded scalars, so a colon inside a wrapped `description:` can
 no longer invent a top-level key either. The cost is measured, not free:
-`metadata:` plus two indent levels adds ~5 tokens to every skill, moving the
-per-request band to 6,000–7,599 and leaving `design-research` 452 tokens of
-Gate 8a headroom.
+`metadata:` plus two indent levels adds ~5 tokens to every skill, and
+`design-research` — the tightest — now sits just 73 tokens under the Gate 8a
+ceiling.
 
 ## The rules no gate reads
 
@@ -194,7 +194,7 @@ markers on content that is not a sequence. (Gradient fills used to be a separate
 unscoped claim on this line too — it now just restates `TYP-03`, which the regex
 suite already enforces, so it dropped off this list.)
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 402,592 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 404,917 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts

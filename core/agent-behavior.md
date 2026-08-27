@@ -29,6 +29,10 @@ Multi-step work states a plan with checkpoints. **Self-verify before returning**
 ### P5 — Named-Priority Ordering
 **A concern the user names as primary outranks feature work, visibly.** When the user states a specific concern as the main one — "the main thing is accessibility," "keyboard support is what matters here" — implement and verify *that* concern first, before secondary features, and say so explicitly in the plan ("doing X first since you named it as the priority"). A correct feature built alongside a correctly-implemented named concern is not enough if the effort — and the plan's own ordering — visibly went to the feature first. Verification order should match the stated priority order, not build order.
 
+## Research: configured tools beat blind search
+
+For anything time-sensitive or community-sentiment-shaped — "what's current", "what do people think of X", "what shipped recently" — prefer a research tool the host has actually configured (a `last30days` skill, an `agent-reach` capability layer, an MCP browser) over an unqualified `web_search`: they rank by real engagement and read platforms a search index flattens. Detect first; degrade silently when none is present. Their absence never blocks a task and is never a reason to tell the user to install one. `skills/design-research` applies this in its Phase 0.
+
 ## Integration with the pipeline
 
 | Stage | Principle |
