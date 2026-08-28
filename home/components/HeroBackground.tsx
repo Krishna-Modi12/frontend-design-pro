@@ -4,6 +4,10 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import useReducedMotion from "../lib/useReducedMotion";
+import { useWorld } from "./WorldProvider";
+import MeshGradient from "./backgrounds/MeshGradient";
+import GrainOverlay from "./backgrounds/GrainOverlay";
+import DotGrid from "./backgrounds/DotGrid";
 
 /** `three` loads in its own async chunk, off the critical path for the
     server-rendered headline — this dynamic import is the boundary that
@@ -26,12 +30,45 @@ export interface HeroBackgroundProps {
  * 640px, not just visually hidden, which is the actual performance/battery
  * saving the rule asks for.
  *
+ * The `data-world` switch: only `signature` renders through the WebGL scene
+ * (gated behind `enableCanvas` as before); `mesh`/`grain`/`grid` render one
+ * of the three pure-CSS/SVG components in `./backgrounds`, none of them
+ * width-gated — a real coverage improvement over the shader, which never
+ * mounted at all below 640px.
+ *
+ * The whole switch is additionally gated behind `mounted`, which — like
+ * `enableCanvas` — starts `false` and only flips in an effect. `useWorld()`'s
+ * value is already correct on the very first CLIENT render (the blocking
+ * script in `app/layout.tsx` sets `data-world` on `<html>` before hydration,
+ * and `WorldProvider`'s lazy `useState` reads it straight from the DOM), but
+ * the SERVER render has no `document` and always falls back to
+ * `DEFAULT_WORLD_ID`. Switching on `world.id` directly would make the first
+ * client (hydration) render disagree with the server-rendered HTML whenever
+ * the resolved world isn't `signature` — exactly the hydration-mismatch risk
+ * this system was designed to avoid. Holding the switch back until `mounted`
+ * is `true` keeps the hydration pass identical to the server output (nothing
+ * extra, same as before this feature existed) and moves the world-specific
+ * paint into an ordinary post-hydration state update instead.
+ *
  * `aria-hidden` on the whole layer: it's decoration behind a real DOM
  * headline (`Hero.tsx`'s `<h1>`), never the only copy of anything.
+ *
+ * Reroll into `signature` needs no imperative uniform push into an
+ * already-mounted canvas: because the switch above unmounts/remounts on
+ * `world.id` rather than keeping one persistent canvas alive across worlds,
+ * landing on `signature` always mounts a *fresh* `HeroShaderCanvas`, and its
+ * own `readColorVar()` effect reads `--color-accent` at that construction
+ * moment — which `WorldProvider.reroll()` has already written to the DOM
+ * before this re-render happens. Confirmed no-op for a second, independent
+ * reason too: `signature`'s accent is the one hue that never varies across
+ * worlds (`lib/worlds.ts`), so even across repeated reroll cycles there is
+ * never a new value to push — every mount reads the same constant.
  */
 export function HeroBackground({ className }: HeroBackgroundProps): ReactElement {
   const reduced = useReducedMotion();
+  const { world } = useWorld();
   const [enableCanvas, setEnableCanvas] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 640px)");
@@ -39,6 +76,10 @@ export function HeroBackground({ className }: HeroBackgroundProps): ReactElement
     const onChange = (event: MediaQueryListEvent): void => setEnableCanvas(event.matches);
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   return (
@@ -50,7 +91,10 @@ export function HeroBackground({ className }: HeroBackgroundProps): ReactElement
           opacity: 0.3,
         }}
       />
-      {enableCanvas ? <HeroShaderCanvas reduced={reduced} /> : null}
+      {mounted && world.id === "signature" && enableCanvas ? <HeroShaderCanvas reduced={reduced} /> : null}
+      {mounted && world.id === "mesh" ? <MeshGradient /> : null}
+      {mounted && world.id === "grain" ? <GrainOverlay /> : null}
+      {mounted && world.id === "grid" ? <DotGrid /> : null}
       {/* Protects the actual text column with a solid-background zone, then
           fades to transparent by the ellipse's outer edge — the gradient
           reads clearly around the copy instead of being washed out
