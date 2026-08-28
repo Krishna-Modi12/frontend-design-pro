@@ -6,7 +6,7 @@ export const NAV = [
   { id: "problem", label: "Numbers" },
   { id: "catalog", label: "Catalog" },
   { id: "how-it-works", label: "How it works" },
-  { id: "checks", label: "Live check" },
+  { id: "checks", label: "Checks" },
   { id: "showcase", label: "Showcase" },
   { id: "install", label: "Install" },
 ] as const;
@@ -20,7 +20,7 @@ export const NAV = [
  */
 
 export const PROBLEM_COPY = {
-  eyebrow: "01 — The problem",
+  eyebrow: "The problem",
   heading: "A pack is not a document.",
   body: "Behind the router sits 415,028 tokens of reference depth — material every skill can point into, none of it loaded until a request routes there. The pack is not handed to an agent whole: a router matches your request against trigger keywords, opens exactly one of 19 skills plus the core files it declares, and everything else stays on disk.",
 } as const;
@@ -76,12 +76,12 @@ export const HOW_IT_WORKS = [
 ] as const;
 
 export const PROOF_COPY = {
-  eyebrow: "03 — Proof",
+  eyebrow: "Proof",
   heading: "Not asserted. Checked, live.",
 } as const;
 
 export const SHOWCASE_COPY = {
-  eyebrow: "04 — The showcase",
+  eyebrow: "The showcase",
   heading: "Four things this pack actually built.",
   body: "Two are real, deployed apps — open them. Two are stub-typed reference components, checked but never installed, shown as static captures instead.",
 } as const;
