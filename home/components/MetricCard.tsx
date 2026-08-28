@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import type { ReactElement } from "react";
 import { gsap, ScrollTrigger } from "../lib/gsapClient";
-import { cardShell, cardInset } from "../lib/tokens";
+import { cardShell } from "../lib/tokens";
 
 export interface MetricCardProps {
   value: number;
@@ -66,11 +66,15 @@ function MetricCardImpl(
   return (
     <div
       ref={ref}
-      className={`${cardShell} ${cardInset} flex flex-col justify-between ${
+      className={`${cardShell} flex flex-col justify-between p-4 sm:p-6 lg:p-8 ${
         span === "large" ? "sm:col-span-2" : ""
       }`}
     >
-      <span ref={numberRef} data-metric className="text-4xl font-medium text-accent sm:text-5xl">
+      <span
+        ref={numberRef}
+        data-metric
+        className="text-2xl font-medium text-accent sm:text-4xl lg:text-5xl"
+      >
         {fmt.format(value)}
       </span>
       <span className="mt-3 text-sm text-text-secondary">{label}</span>

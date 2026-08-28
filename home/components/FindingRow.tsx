@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import type { Finding } from "../lib/checkerRules";
 import ChevronIcon from "./ChevronIcon";
 import { severityColor } from "../lib/severity";
-import { focusRing } from "../lib/tokens";
+import { focusRing, tapTarget } from "../lib/tokens";
 
 export interface FindingRowProps {
   finding: Finding;
@@ -13,7 +13,9 @@ export interface FindingRowProps {
 export function FindingRow({ finding }: FindingRowProps): ReactElement {
   return (
     <details data-disclosure className="rounded-lg border border-border px-3 py-2">
-      <summary className={`${focusRing} flex list-none items-center gap-2 rounded-lg`}>
+      <summary
+        className={`${tapTarget} ${focusRing} flex list-none items-center gap-2 rounded-lg`}
+      >
         <span
           aria-hidden="true"
           className="h-2 w-2 shrink-0 rounded-full"

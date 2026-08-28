@@ -46,7 +46,11 @@ export function Navbar({ version }: NavbarProps): ReactElement {
       }`}
     >
       <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-5 sm:px-8 lg:px-8">
-        <a href="#top" data-metric className={`${focusRing} rounded text-sm font-semibold text-text-primary`}>
+        <a
+          href="#top"
+          data-metric
+          className={`${tapTarget} ${focusRing} inline-flex items-center rounded text-sm font-semibold text-text-primary`}
+        >
           {PRODUCT}
         </a>
 
@@ -94,7 +98,7 @@ export function Navbar({ version }: NavbarProps): ReactElement {
                     key={item.id}
                     href={`#${item.id}`}
                     onClick={closeMenu}
-                    className={`${focusRing} rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:bg-bg-surface hover:text-text-primary motion-reduce:transition-none`}
+                    className={`${focusRing} flex min-h-11 items-center rounded-lg px-3 text-sm text-text-secondary transition-colors duration-150 ease-out hover:bg-bg-surface hover:text-text-primary motion-reduce:transition-none`}
                   >
                     {item.label}
                   </a>
