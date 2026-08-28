@@ -4,7 +4,7 @@ Flat extraction of the post bodies from [LAUNCH_KIT.md](LAUNCH_KIT.md), for past
 
 Every body below already contains the real repo URL. Nothing to substitute.
 
-Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 112 references · 404,917 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 229 tests · 17 semantic + 44 syntactic = 61 constraints · 11 gates · registry 2,126 tokens · heaviest request 7,927 tokens.
+Figures in this copy were verified against a green `python scripts/build_release.py --dry-run`: 19 skills · 8 core files · 112 references · 404,917 tokens of lazy depth · 55 examples (45 gold + 10 anti-examples) · 45 test files, 232 tests · 17 semantic + 44 syntactic = 61 constraints · 11 gates · registry 2,126 tokens · heaviest request 7,927 tokens.
 
 **Two claims to avoid** — both circulated in draft copy and neither survives checking: that the TypeScript compiler "found 8 bugs 30 regexes certified as clean" (no record of it exists in the repo), and "42 gold examples" (there are 45 golds plus 10 deliberate anti-examples = 55 files). A launch audience fact-checks.
 
@@ -44,7 +44,7 @@ What's enforced, rather than asserted:
   and no regex vocabulary catches a fake loading delay spelled `setPhase`
 - 44 regex constraints for what regex is genuinely good at: banned display
   fonts, raw hex, min-h-screen, placeholder copy
-- 14 regression cases where the AST check and the regex it replaced disagree.
+- 16 regression cases where the AST check and the regex it replaced disagree.
   Half of them exist to kill false positives — a blanket `&&` ban flags
   correct React, a blanket `...` ban flags every rest-spread in the pack.
   Constraints that cry wolf get switched off, so precision matters.

@@ -96,7 +96,7 @@ dist/                    build output, gitignored
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
 | 5 | Syntactic | 44 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 45/45 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
-| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 229/229 tests |
+| 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 232/232 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 19/19 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
 | 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 112 references, 19 skill routers and 8 core files | 122 files · 0 violations |
@@ -108,7 +108,7 @@ The source guard fetches `origin` and refuses to build an archive unless `HEAD` 
 
 The smoke test also reads the archive's prose: that the README's "What's new" heading names the version being shipped, that `_meta/CHANGELOG.md` tops out at it, and that every `demo/**/*.png` in the source reached the archive. The version-heading mismatch shipped twice before this check existed, and the screenshot expectation is derived from the source tree rather than hardcoded — a literal would be one more figure to go stale.
 
-A parser-regression proof runs alongside gate 4: 14 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
+A parser-regression proof runs alongside gate 4: 16 synthetic cases, each proving a semantic check catches something the regex it replaced could not.
 
 ### Why gate 10 exists
 
@@ -136,7 +136,7 @@ published hex as documentation — are declared per file and per constraint in
 
 Regex sees strings; the AST sees meaning. A comment reading `// aria-describedby` is not accessibility. `bg-white` on a `<button>` is not a design violation. A fake loading delay spelled `setPhase` instead of `setLoading` has no regex vocabulary at all.
 
-`scripts/parser_regression_test.js` holds **14 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
+`scripts/parser_regression_test.js` holds **16 synthetic divergence cases**, each a file where the AST check and the regex it replaced disagree — and the suite asserts both verdicts, so the improvement is proven in both directions:
 
 | Case | Regex | Parser | Why the parser is right |
 |---|---|---|---|
@@ -179,7 +179,7 @@ Honest list, all verified against the current release.
 
 ### Recently closed
 
-**The vitest suite did not execute end-to-end** — for four minor versions the first known gap on this page read "28 of 37 test files fail at import time", because the examples' peer libraries existed only as ambient declarations. `test/stubs/` now ships one runtime module per specifier, and Gate 7 runs the suite instead of disclaiming it: **45/45 files, 229/229 tests**.
+**The vitest suite did not execute end-to-end** — for four minor versions the first known gap on this page read "28 of 37 test files fail at import time", because the examples' peer libraries existed only as ambient declarations. `test/stubs/` now ships one runtime module per specifier, and Gate 7 runs the suite instead of disclaiming it: **45/45 files, 232/232 tests**.
 
 Running it found four things that compiling it could not, which is the argument for having done it:
 
