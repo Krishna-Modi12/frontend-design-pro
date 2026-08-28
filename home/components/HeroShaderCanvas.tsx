@@ -116,6 +116,34 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
+/** `THREE.Color`'s `setStyle()` (this `three` version, 0.171.0) doesn't parse
+    `oklch()` — it logs "Unknown color model" and silently leaves the colour
+    at its constructor default, so every uniform built from a raw token
+    string was landing on the wrong colour.
+    A first attempt read the value back via `getComputedStyle` on a probe
+    element with `color` set — that failed too, because a modern Chromium's
+    computed-style serializer can hand a `color()`/`oklch()` value straight
+    back out (percentages normalized to decimals) rather than always
+    downgrading to `rgb()`, so it fed `setStyle()` an equally unparseable
+    string. A 1×1 canvas is not optional here: `fillStyle` accepts any valid
+    CSS colour the browser understands, including `oklch()`, and
+    `getImageData` always returns concrete 0-255 RGBA — pixels have no colour
+    space to preserve, so there is no serialization path back to `oklch()` to
+    fall into. That's what actually guarantees an `rgb()` string `setStyle()`
+    can read, independent of the browser's computed-style formatting
+    choices. */
+function resolveCssColor(value: string): string {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return value;
+  ctx.fillStyle = value;
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 /** Reads a real design token at runtime rather than duplicating its value —
     falls back to that same token's own literal from `tokens.css` only for
     the SSR/no-window edge, never a hex shortcut (`3D-05` /
@@ -123,7 +151,7 @@ const fragmentShader = /* glsl */ `
 function readColorVar(name: string, fallback: string): THREE.Color {
   if (typeof window === "undefined") return new THREE.Color(fallback);
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return new THREE.Color(value || fallback);
+  return new THREE.Color(resolveCssColor(value || fallback));
 }
 
 /**
