@@ -130,6 +130,29 @@ uncaught page errors, console errors, React hydration mismatches, serious and
 critical axe violations against WCAG 2.1 AA, and horizontal overflow at 390 /
 768 / 1920. Fifty assertions. It found four real defects the day it was written.
 
+## Live-audit harness
+
+`npm run live-audit:fixtures` runs `live-audit.mjs` — the deterministic,
+headless half of `web-interface`'s Layer B (`skills/web-interface/references/live-verification.md`).
+It implements the measurement primitives that workflow relies on — viewport
+sweep, real horizontal overflow, computed text contrast (including text over a
+gradient, resolved from screenshot pixels), console and network failures, dead
+scroll-reveals, heading-font resolution, one focus-restoration interaction — and
+emits the reference's findings schema.
+
+```bash
+npm run live-audit:fixtures                 # 5 golden fixtures, assert every *.expected.md
+npm run live-audit -- fixreverify           # e-contrast fixture: FOUND -> FIXED -> VERIFIED
+npm run live-audit -- url <URL> [--json] [--out report.json]
+```
+
+Fixtures live in `skills/web-interface/examples/live-audit/`. Running from
+another checkout: set `LV_FIXTURE_DIR` to that path.
+
+The interactive steps of the workflow — real user journeys, judgement on a
+`NEEDS_REVIEW` finding — stay with the MCP-driven pass; this script is the part a
+regression test can own. Not shipped in the archive, not in CI.
+
 ## Adding a demo
 
 Add a route re-export under `app/<name>/page.tsx` and an entry to `SITES` in

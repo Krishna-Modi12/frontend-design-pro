@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>b-hierarchy — page title and section heading nearly the same size</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      font: 16px/1.6 system-ui, sans-serif;
+      background: oklch(0.15 0.006 265);
+      color: oklch(0.92 0.005 265);
+    }
+    main { max-width: 640px; margin: 0 auto; padding: 48px 24px; }
+    /* DEFECT (the h1 / h2 rules below, lines 22-23): h1 renders at 20px, h2 at
+       18px — a 2px step.
+       Both are valid semantic HTML with real text, so every A11Y / TYP source
+       check passes. Only a computed-size read at runtime shows the type ramp
+       has collapsed and the page has no visual hierarchy. This is CRITIQUE,
+       not a failure — the build is not broken, the design is weak. */
+    h1 { font-size: 20px; font-weight: 600; margin: 0 0 24px; }
+    h2 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; }
+    p { margin: 0 0 16px; color: oklch(0.82 0.005 265); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Platform changelog</h1>
+    <p>Everything that shipped this quarter, newest first.</p>
+    <h2>Edge routing</h2>
+    <p>Requests now resolve at the nearest region with a warm cache.</p>
+    <h2>Audit log retention</h2>
+    <p>Retained for 400 days on the team plan, 90 on the free tier.</p>
+  </main>
+</body>
+</html>

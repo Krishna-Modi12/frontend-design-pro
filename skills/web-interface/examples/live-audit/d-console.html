@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>d-console — an uncaught exception and a 404 asset</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      font: 16px/1.5 system-ui, sans-serif;
+      background: oklch(0.15 0.006 265);
+      color: oklch(0.92 0.005 265);
+      padding: 48px 24px;
+    }
+    img { display: block; width: 320px; max-width: 100%; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Release notes</h1>
+
+    <!-- DEFECT 2 (the <img> below, line 26): the asset 404s. The <img> has
+         width/height and alt, so IMG-01 / A11Y-03 pass in source; only the
+         network log shows the request failed and the image is broken on screen. -->
+    <img src="./hero-illustration.png" width="320" height="180"
+         alt="Timeline of the 4.0 release" />
+
+    <p>Full changelog below.</p>
+  </main>
+
+  <script>
+    // DEFECT 1 (the call below, line 37): `analytics` is never defined. This
+    // throws a ReferenceError at module scope, so everything after it in this
+    // script never runs. No TypeScript error (this is plain JS in HTML), no
+    // constraint — the page's own console is the only place it shows up.
+    analytics.track('release_notes_viewed');
+    document.querySelector('p').dataset.ready = 'true';
+  </script>
+</body>
+</html>

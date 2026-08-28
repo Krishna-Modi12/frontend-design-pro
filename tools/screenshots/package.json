@@ -11,7 +11,9 @@
     "start": "next start -p 3311",
     "verify": "node verify.mjs",
     "verify:home": "node verify-home.mjs",
-    "visual-regression": "node visual-regression.mjs"
+    "visual-regression": "node visual-regression.mjs",
+    "live-audit": "node live-audit.mjs",
+    "live-audit:fixtures": "node live-audit.mjs fixtures"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
