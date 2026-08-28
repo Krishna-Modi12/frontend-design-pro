@@ -299,6 +299,13 @@ async function verifyMode(mode, browser) {
   // verify.mjs's own dev/prod pair — 3315/3316 are the next free pair.
   const port = mode === "dev" ? 3315 : 3316;
   const base = `http://localhost:${port}`;
+  // Every check below navigates to the deterministic `signature` world, not
+  // whatever a fresh session would randomly pick — `home/lib/worlds.ts`
+  // documents this as the one world full `pages:verify` coverage runs
+  // against; `mesh` gets a manual spot-check instead (see that file's own
+  // comment for the stated gap). `waitForServer` below stays on the bare
+  // `base` — it's just a health check, not a page load.
+  const url = `${base}/?world=signature`;
   console.log(`\n── ${mode} server ─────────────────────────────────────`);
 
   if (mode === "dev") rmSync(join(HOME, ".next"), { recursive: true, force: true });
@@ -306,10 +313,10 @@ async function verifyMode(mode, browser) {
   const server = startNextServer({ cwd: HOME, port, mode: mode === "dev" ? "dev" : "start" });
   try {
     await waitForServer(base);
-    await checkRender(browser, base);
-    await checkReducedMotion(browser, base);
-    await checkRTL(browser, base);
-    await checkInteractivity(browser, base);
+    await checkRender(browser, url);
+    await checkReducedMotion(browser, url);
+    await checkRTL(browser, url);
+    await checkInteractivity(browser, url);
   } finally {
     await server.stop();
   }

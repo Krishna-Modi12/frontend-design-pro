@@ -20,7 +20,7 @@ export interface SectionInstallProps {
  */
 export function SectionInstall({ adapters, buildYear }: SectionInstallProps): ReactElement {
   return (
-    <section id="install" className={`${sectionSpacing} bg-bg-invert`}>
+    <section id="install" data-section-surface className={`${sectionSpacing} bg-bg-invert`}>
       <div className={sectionShell}>
         <h2 data-display className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-ink-invert">
           Install in one command

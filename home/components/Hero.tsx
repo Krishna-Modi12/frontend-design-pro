@@ -5,6 +5,7 @@ import type { ReactElement } from "react";
 import { gsap } from "../lib/gsapClient";
 import HeroBackground from "./HeroBackground";
 import HeroParticles from "./HeroParticles";
+import { useWorld } from "./WorldProvider";
 import { focusRing, tapTarget } from "../lib/tokens";
 
 export interface HeroProps {
@@ -29,6 +30,7 @@ function HeroImpl(
 ): ReactElement {
   const staggerRef = useRef<HTMLDivElement | null>(null);
   const headlineRef = useRef<HTMLHeadingElement | null>(null);
+  const { reroll } = useWorld();
 
   useEffect(() => {
     const container = staggerRef.current;
@@ -69,7 +71,8 @@ function HeroImpl(
         <h1
           ref={headlineRef}
           data-display
-          className="relative z-10 mt-6 text-[clamp(2.75rem,7vw,5rem)] font-medium leading-[1.03] text-text-primary"
+          data-hero-headline
+          className="relative z-10 mt-6 text-[clamp(2.75rem,7vw,5rem)] leading-[1.03] text-text-primary"
         >
           {HEADLINE}
         </h1>
@@ -94,9 +97,40 @@ function HeroImpl(
           </a>
         </div>
 
+        {/* Manual reroll — picks a new curated world, excluding the current
+            one and everything already shown this session
+            (`WorldProvider.reroll()`). Reduced motion: `reroll()` itself
+            applies the swap with no transition rule active at all (see that
+            function's own comment) — this button needs no separate
+            reduced-motion branch, it just calls the same function either
+            way. Reuses the page's existing button primitives rather than a
+            bespoke style, and sits below the primary CTAs so it never
+            competes with them for attention. */}
+        <button
+          type="button"
+          onClick={reroll}
+          className={`${tapTarget} ${focusRing} mx-auto mt-6 flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm text-text-muted transition-colors duration-300 ease-out hover:text-text-primary motion-reduce:transition-none`}
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <path
+              d="M4 4v5h5M20 20v-5h-5M4.5 9a8 8 0 0 1 14.5-3.5M19.5 15a8 8 0 0 1-14.5 3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Try another world
+        </button>
+
         <a
           href={howItWorksHref}
-          className={`${focusRing} mt-16 inline-flex flex-col items-center gap-2 rounded text-sm text-text-muted`}
+          className={`${focusRing} mt-10 inline-flex flex-col items-center gap-2 rounded text-sm text-text-muted`}
         >
           Scroll to explore
           <svg

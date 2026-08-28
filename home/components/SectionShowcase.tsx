@@ -37,7 +37,7 @@ const STATIC_TARGETS: Partial<Record<ShowcaseId, string>> = {
  */
 export function SectionShowcase(): ReactElement {
   return (
-    <section id="showcase" className={`${sectionSpacing} bg-bg-page`}>
+    <section id="showcase" data-section-surface className={`${sectionSpacing} bg-bg-page`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">
           {SHOWCASE_COPY.eyebrow}

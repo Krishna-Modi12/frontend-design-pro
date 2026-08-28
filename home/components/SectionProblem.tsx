@@ -21,7 +21,7 @@ export interface SectionProblemProps {
  */
 export function SectionProblem({ figures }: SectionProblemProps): ReactElement {
   return (
-    <section id="problem" className={`${sectionSpacing} bg-bg-surface`}>
+    <section id="problem" data-section-surface className={`${sectionSpacing} bg-bg-surface`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">
           {PROBLEM_COPY.eyebrow}
