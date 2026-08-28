@@ -46,12 +46,12 @@ and paste the tail into the description.
 It takes about two minutes. Narrower checks while you iterate:
 
 ```bash
-npm test             # 229 tests across 45 files, ~23s
+npm test             # 232 tests across 45 files, ~23s
 npm run typecheck    # tsc --noEmit strict over every example
 npm run constraints  # the 44 regex constraints over skills/
 npm run figures      # every documented count and token figure vs. the filesystem
 npm run evals        # 22 eval cases
-npm run regression   # 14 parser-vs-regex divergence cases
+npm run regression   # 16 parser-vs-regex divergence cases
 ```
 
 Single file, fastest loop of all:
