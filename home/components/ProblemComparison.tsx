@@ -138,8 +138,8 @@ function SlopPanel(): ReactElement {
         ))}
       </div>
 
-      <div className="mt-auto flex items-center justify-between pt-4">
-        <div className="flex gap-2">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4">
+        <div className="flex flex-wrap gap-2">
           {["type", "layout", "motion"].map((tag) => (
             <span
               key={tag}
