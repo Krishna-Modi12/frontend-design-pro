@@ -120,8 +120,8 @@ Individual gates, when you want a faster loop:
 npm run typecheck    # strict tsc over all 55 examples
 npm run constraints  # 44 syntactic constraints
 npm run evals        # 22 eval cases
-npm run regression   # 14 parser-vs-regex divergence cases
-npm test             # vitest — 45 test files, 229 tests, run by Gate 7
+npm run regression   # 16 parser-vs-regex divergence cases
+npm test             # vitest — 45 test files, 232 tests, run by Gate 7
 ```
 
 ## Build an archive

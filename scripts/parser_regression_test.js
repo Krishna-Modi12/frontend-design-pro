@@ -28,6 +28,7 @@ const LEGACY = {
   "COPY-01":   (s) => !/\.\.\./.test(s),                        // naive: bans "..." incl. code spread
                                   // pass if string appears anywhere
   "ANI-04":    (s) => !/addEventListener\(\s*["']scroll["']/.test(s), // naive: bans every scroll listener
+  "COMP-01":   (s) => !/\bforwardRef\(\s*[A-Za-z_$][\w$]*\s*[),]/.test(s), // naive: bans passing a named function to forwardRef
 };
 
 const CASES = [
@@ -194,6 +195,32 @@ export default function Progress() {
     </div>
   )
 }
+`,
+  },
+  {
+    name: "forwardref_named_impl.tsx",
+    parserCheck: "COMP-01", parserExpected: true, legacy: "COMP-01", legacyExpected: false,
+    why: "forwardRef(NamedImpl) with a separately-declared render function is valid React — the form the docs show for a component that reads as a name in DevTools — and meets COMP-01's rule: takes (props, ref), returns JSX, exported, displayName set. A regex that bans a named identifier as the argument over-bans it; the AST resolves the identifier to its declaration and judges that",
+    code: `import { forwardRef } from "react"
+type P = { label: string }
+function ChipImpl({ label }: P, ref: React.ForwardedRef<HTMLSpanElement>) {
+  return <span ref={ref} aria-label={label} className="px-2">{label}</span>
+}
+export const Chip = forwardRef(ChipImpl)
+Chip.displayName = "Chip"
+`,
+  },
+  {
+    name: "forwardref_named_impl_one_param.tsx",
+    parserCheck: "COMP-01", parserExpected: false, legacy: "COMP-01", legacyExpected: false,
+    why: "resolving the identifier must not wave a real violation through — a render function declared separately that takes only (props) and never (props, ref) still fails COMP-01, exactly as it would inline",
+    code: `import { forwardRef } from "react"
+type P = { label: string }
+function ChipImpl({ label }: P) {
+  return <span aria-label={label} className="px-2">{label}</span>
+}
+export const Chip = forwardRef(ChipImpl)
+Chip.displayName = "Chip"
 `,
   },
 ];
