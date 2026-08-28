@@ -28,13 +28,16 @@
  * risk per-hue. Only `signature` renders through the shader; `mesh`/`grain`/
  * `grid` are pure CSS/SVG, so their accents carry no such risk.
  *
- * Known, deliberate verification gap (see `CLAUDE.md`'s own "state the gap
- * plainly" convention): full `pages:verify` (hydration, axe, overflow) runs
- * in automation against `signature` only, via the `?world=signature`
- * deterministic override every screenshot/verify script uses. `mesh` gets a
- * manual full-page spot-check alongside it. `grain` and `grid` are verified
- * structurally (OKLCH/token constraints, computed contrast above) but not
- * axe-run by a real browser before ship — not full 4-world CI coverage.
+ * Verification, stated per `CLAUDE.md`'s own "state the gap plainly"
+ * convention: full `pages:verify` (hydration, axe, overflow) runs in
+ * automation against `signature` only, via the `?world=signature`
+ * deterministic override every screenshot/verify script uses — this is not
+ * full 4-world CI coverage, and nothing here changes that. All 4 worlds
+ * (including `grain`/`grid`, previously structural-only) have since been
+ * axe-run manually in a real browser with zero violations at any impact
+ * level, closing what was originally a stated gap — but a manual pass is a
+ * point-in-time check, not a standing one; a future world or accent change
+ * needs its own manual axe pass before it can claim the same.
  */
 
 export type WorldId = "signature" | "mesh" | "grain" | "grid";
