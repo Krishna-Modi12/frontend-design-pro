@@ -109,7 +109,7 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
   }, []);
 
   return (
-    <section id="how-it-works" className={`${sectionSpacing} bg-bg-page`}>
+    <section id="how-it-works" data-section-surface className={`${sectionSpacing} bg-bg-page`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">
           02 — How it works

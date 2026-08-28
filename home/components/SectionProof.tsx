@@ -11,7 +11,7 @@ export interface SectionProofProps {
 
 export function SectionProof({ figures }: SectionProofProps): ReactElement {
   return (
-    <section id="checks" className={`${sectionSpacing} bg-bg-surface`}>
+    <section id="checks" data-section-surface className={`${sectionSpacing} bg-bg-surface`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">{PROOF_COPY.eyebrow}</p>
         <h2 data-display className="mt-4 max-w-2xl text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-text-primary">

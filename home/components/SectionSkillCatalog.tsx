@@ -18,7 +18,7 @@ export interface SectionSkillCatalogProps {
  */
 export function SectionSkillCatalog({ skills }: SectionSkillCatalogProps): ReactElement {
   return (
-    <section id="catalog" className={`${sectionSpacing} bg-bg-page`}>
+    <section id="catalog" data-section-surface className={`${sectionSpacing} bg-bg-page`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">
           {CATALOG_COPY.eyebrow}
