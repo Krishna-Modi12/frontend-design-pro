@@ -117,7 +117,7 @@ function SlopPanel(): ReactElement {
           settings
         </p>
         <span
-          className="rounded-full px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wide"
+          className="rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide"
           style={{ background: "oklch(99% 0.01 320 / 0.2)", color: "oklch(99% 0.01 320)" }}
         >
           beta
@@ -143,7 +143,7 @@ function SlopPanel(): ReactElement {
           {["type", "layout", "motion"].map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wide"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide"
               style={{ background: "oklch(30% 0.02 320 / 0.5)", color: "oklch(96% 0.02 320)" }}
             >
               <span
@@ -172,7 +172,7 @@ function CleanPanel(): ReactElement {
         <p data-label className="text-text-muted">
           settings
         </p>
-        <span className="rounded-full border border-border bg-bg-surface px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wide text-text-secondary">
+        <span className="rounded-full border border-border bg-bg-surface px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-text-secondary">
           stable
         </span>
       </div>
@@ -198,7 +198,7 @@ function CleanPanel(): ReactElement {
           {["route", "budget", "check"].map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-surface px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wide text-text-secondary"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-surface px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-text-secondary"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               {tag}

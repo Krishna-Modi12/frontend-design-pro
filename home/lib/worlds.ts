@@ -65,7 +65,7 @@ export const WORLDS: WorldDef[] = [
     accent: "oklch(54.6% 0.22 270)",
     accentInk: "oklch(100% 0 0)",
     accentGlow: "oklch(54.6% 0.22 270 / 0.12)",
-    headlineWeight: "font-semibold",
+    headlineWeight: "font-medium",
   },
   {
     id: "grain",
@@ -79,7 +79,7 @@ export const WORLDS: WorldDef[] = [
     accent: "oklch(55% 0.17 310)",
     accentInk: "oklch(100% 0 0)",
     accentGlow: "oklch(55% 0.17 310 / 0.12)",
-    headlineWeight: "font-semibold",
+    headlineWeight: "font-medium",
   },
 ];
 

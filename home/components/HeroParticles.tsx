@@ -109,8 +109,6 @@ export function HeroParticles({ sourceRef, className }: HeroParticlesProps): Rea
       const style = getComputedStyle(source);
       const offsetX = sourceRect.left - hostRect.left;
       const offsetY = sourceRect.top - hostRect.top;
-      const boxW = sourceRect.width;
-      const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.1;
 
       const sample = document.createElement("canvas");
       sample.width = cssW * dpr;
@@ -124,28 +122,54 @@ export function HeroParticles({ sourceRef, className }: HeroParticlesProps): Rea
       sctx.textAlign = "left";
       sctx.fillStyle = "#000";
 
-      const text = (source.textContent ?? "").trim();
-      const words = text.split(/\s+/);
-      const lines: string[] = [];
-      let line = "";
-      for (const word of words) {
-        const next = line ? `${line} ${word}` : word;
-        if (sctx.measureText(next).width > boxW && line) {
-          lines.push(line);
-          line = word;
-        } else {
-          line = next;
+      // Real per-word layout, read from the DOM via `Range`, rather than a
+      // second word-wrap implementation guessing where CSS would break.
+      // `[data-display]` sets `text-wrap: balance`, which picks an earlier,
+      // more even break point than a greedy "keep adding words until the
+      // line overflows `boxW`" loop — the two only happened to agree at wide
+      // viewports. At narrower ones (first caught at 768px) they diverge
+      // enough to draw a different line count entirely, which is exactly the
+      // "misaligned duplicate headline" failure this file's own header
+      // already names — just from a mismatched wrap algorithm this time,
+      // not a mismatched font size. Reading the browser's own line boxes
+      // sidesteps needing to reproduce its line-breaking at all.
+      const textNode = source.firstChild;
+      interface WordSpan {
+        text: string;
+        rect: DOMRect;
+      }
+      const wordSpans: WordSpan[] = [];
+      if (textNode !== null && textNode.nodeType === Node.TEXT_NODE) {
+        const full = textNode.textContent ?? "";
+        const range = document.createRange();
+        for (const match of full.matchAll(/\S+/g)) {
+          range.setStart(textNode, match.index);
+          range.setEnd(textNode, match.index + match[0].length);
+          const rect = range.getClientRects()[0];
+          if (rect) wordSpans.push({ text: match[0], rect });
         }
       }
-      if (line) lines.push(line);
+
+      const lineGroups: WordSpan[][] = [];
+      for (const span of wordSpans) {
+        const currentLine = lineGroups[lineGroups.length - 1];
+        const lastSpan = currentLine?.[currentLine.length - 1];
+        if (lastSpan && Math.abs(span.rect.top - lastSpan.rect.top) < 2) {
+          currentLine.push(span);
+        } else {
+          lineGroups.push([span]);
+        }
+      }
 
       const ascent = parseFloat(style.fontSize) * 0.78; // Cap-height-ish baseline offset for a sans face.
-      lines.forEach((l, i) => {
-        const w = sctx.measureText(l).width;
-        const x = offsetX + (boxW - w) / 2;
-        const y = offsetY + i * lineHeight + ascent;
-        sctx.fillText(l, x, y);
-      });
+      for (const spans of lineGroups) {
+        const lineText = spans.map((s) => s.text).join(" ");
+        const left = Math.min(...spans.map((s) => s.rect.left));
+        const top = Math.min(...spans.map((s) => s.rect.top));
+        const x = offsetX + (left - sourceRect.left);
+        const y = offsetY + (top - sourceRect.top) + ascent;
+        sctx.fillText(lineText, x, y);
+      }
 
       const imageData = sctx.getImageData(0, 0, sample.width, sample.height);
       const { data, width: iw, height: ih } = imageData;

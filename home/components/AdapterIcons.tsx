@@ -88,7 +88,7 @@ function MonogramIcon({ label }: { label: string }): ReactElement {
   const initial = label.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
   return (
     <span
-      className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 text-[10px] font-semibold text-ink-invert-secondary"
+      className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 text-[11px] font-semibold text-ink-invert-secondary"
       style={{ fontFamily: "var(--font-mono)" }}
     >
       {initial}

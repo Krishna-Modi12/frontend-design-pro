@@ -22,7 +22,7 @@ export function FindingRow({ finding }: FindingRowProps): ReactElement {
         <span data-metric className="shrink-0 text-xs font-semibold text-text-primary">
           {finding.rule.id}
         </span>
-        <span className="hidden shrink-0 text-[0.65rem] uppercase tracking-wide text-text-muted sm:inline">
+        <span className="hidden shrink-0 text-xs uppercase tracking-wide text-text-muted sm:inline">
           {finding.rule.severity}
         </span>
         <span className="min-w-0 flex-1 truncate text-sm text-text-secondary">{finding.rule.desc}</span>
