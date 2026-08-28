@@ -19,6 +19,20 @@ The pack is 19 skills, 112 references, 404,917 tokens of on-demand depth, 61 mac
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
+## 2026-08-28 — Owner-directed responsive & UX-performance depth
+
+Same disclosure obligation as the entry below. "New skill, reference, example, constraint or gate: requires owner approval" is the standing rule, and this adds four references at once — the pattern this file asks readers to be suspicious of.
+
+**Directive date:** 2026-08-28.
+
+**Directive:** Owner-supplied, explicit. A master prompt for a "responsive frontend and ultra-smooth UX engineering" capability was scoped down — with the owner — to *no new skill*. Instead, four existing skills whose territory this already covers gain one new `references/*.md` each: `platform` (`responsive-layout.md` — fluid grids, the container-query-vs-media decision, the 320px-to-ultrawide validation matrix that three existing files each stated differently, the `dvh`/`svh`/`lvh` and `visualViewport` traps), `react-performance` (`rendering-performance.md` — frame budget, INP/TBT/Long-Animation-Frames, yield-to-main, forced reflow, paint cost, measurement; and `perceived-performance.md` — the skeleton/spinner/progress decision, spinner-delay and minimum-display choreography, streaming-boundary placement, speculation rules), and `agent-ops` (`frontend-optimization-workflow.md` — an Inspect → Research → Brainstorm → Implement pass, an eight-section audit-report format, an "Impact × User Visibility × Reliability" rule, and a "never report a measurement you did not take" rule). `design-system/references/typographic-finishing.md` gains a font-payload section (format, variable-vs-static, subsetting, `unicode-range`, self-hosting) rather than a fifth file. Each new file was written only after auditing the ten nearest existing references and is required to cross-link, not restate, what `mobile-patterns.md`, `ux-guidelines.md`, `ux-deep-rules.md`, `react-performance.md`, `parallelization.md` and `motion-budget.md` already carry.
+
+**Why this isn't the failure pattern this file warns about:** single session, staged as two commits — authored content, then a mechanical figure and version sweep — each held to `npm run gates`. Every moved figure — the reference count, the reference-depth total, the per-skill budget table — is re-derived from `scripts/check_figures.py --truth` in the sweep commit, not hand-asserted. No new skill, constraint or gate; the always-loaded cost grows by four Reference-Index rows.
+
+**What this costs, stated plainly:** four references land in one release; the on-demand depth budget grows by roughly two and a half percent, none of it loaded unless a request routes to `platform`, `react-performance`, `agent-ops` or `design-system`.
+
+**Tracked by:** the top entry of [CHANGELOG.md](CHANGELOG.md) once this ships.
+
 ## 2026-08-25 — Owner-directed quality-system initiative
 
 There is no freeze in effect (see above), so nothing below is technically an override of one — but the same disclosure obligation applies. "New skill, reference, example, constraint or gate: requires owner approval" is the standing rule even outside a freeze, and what follows is a multi-PR initiative that will add several of those over a short window. Recording it here for the same reason the 2026-08-02 entry exists: an unexplained spike in constraint/tooling additions is exactly the pattern this file asks every future reader to be suspicious of.

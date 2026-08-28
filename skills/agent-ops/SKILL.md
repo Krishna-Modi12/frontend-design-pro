@@ -46,6 +46,7 @@ Load only for the specific task:
 | Decomposing tasks across subagents, grounding prompts, owning integration | `references/subagent-orchestration.md` |
 | Packaging a pack for cross-agent discovery — depth-2 walk, portable frontmatter, transport caps | `references/skill-packaging.md` |
 | Why loading less improves accuracy, not just cost — attention U-curve, the four degradation modes, where to put conclusions in a long reference | `references/context-engineering.md` |
+| Optimising a frontend — the Inspect→Research→Brainstorm→Implement pass, the eight-section audit report, never reporting a measurement you did not take | `references/frontend-optimization-workflow.md` |
 
 ## Constraints
 No claim of "done" without a run/compile/test step actually executed · no persisted memory fact without a staleness signal · no parallel dispatch across tasks that share a file or mutable state · no subagent prompt that omits facts already known to the dispatcher · no re-reading a file already fully in context without a stated reason.

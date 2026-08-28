@@ -19,6 +19,7 @@ and stops where that one starts.
 - [Baseline rhythm — snapping the scale to a grid](#baseline-rhythm--snapping-the-scale-to-a-grid)
 - [Scene defaults — where the scale starts](#scene-defaults--where-the-scale-starts)
 - [Fallback matching — the real fix for font-swap shift](#fallback-matching--the-real-fix-for-font-swap-shift)
+- [The font payload — format, subsetting, self-hosting](#the-font-payload--format-subsetting-self-hosting)
 - [Optical sizing](#optical-sizing)
 - [OpenType features, via the high-level properties](#opentype-features-via-the-high-level-properties)
 - [Long-form copy and the `prose` plugin](#long-form-copy-and-the-prose-plugin)
@@ -279,6 +280,84 @@ Pick the strategy to match the role:
 If the type is drawn to a canvas or measured with `measureText`, the swap also
 invalidates your measurements — `skills/canvas-typography/references/canvas-2d-typography.md`
 covers awaiting `document.fonts.ready` before sampling.
+
+## The font payload — format, subsetting, self-hosting
+
+The previous section is about how the swap *looks*. This is about how many
+bytes cross the wire, which is the other half of a webfont's cost.
+
+**Format is settled: `woff2` only.** Every browser in use supports it and it
+compresses roughly 30% better than `woff`. Shipping `ttf`, `otf`, `eot` or a
+`woff` fallback to the web is dead weight — one `src` entry, one file per face.
+
+**Variable versus static is a measurement, not a default.** One variable file
+with a `wght` axis replaces four to seven static weights and is usually the
+smaller download once you use three or more:
+
+```css
+@font-face {
+  font-family: "Sohne";
+  src: url("/fonts/sohne-var.woff2") format("woff2");
+  font-weight: 100 900;         /* the whole axis, in one file */
+  font-display: swap;
+}
+```
+
+The catch is that the entire axis range ships even if the design uses two
+weights. A site that genuinely only needs Regular and Bold can come out lighter
+with two subsetted static files. Weigh the actual two options; do not assume
+the variable font wins.
+
+**Subset to the scripts you render.** A face covering Latin, Cyrillic, Greek
+and Vietnamese is 100–300 KB of `woff2`; the Latin-only subset is often under
+50 KB. Subset with `glyphhanger` or `fonttools`, or take the CDN's subset
+parameters. `next/font` subsets to `latin` by default — widen it deliberately,
+not reflexively.
+
+**`unicode-range` makes subsets lazy.** Split one family into per-script
+`@font-face` blocks, each with a `unicode-range` descriptor; the browser
+fetches a subset only when the page actually contains a glyph in its range.
+This is how Google Fonts' served CSS is structured, and it is worth
+reproducing when self-hosting a multi-script family.
+
+```css
+@font-face {
+  font-family: "Sohne";
+  src: url("/fonts/sohne-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F;
+}
+@font-face {
+  font-family: "Sohne";
+  src: url("/fonts/sohne-cyrillic.woff2") format("woff2");
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1;
+}
+```
+
+**Self-host rather than link Google Fonts.** The hosted route costs a
+render-blocking stylesheet request and a second connection to
+`fonts.gstatic.com`, and in some jurisdictions the client-IP transfer to
+Google is a compliance question — a 2022 German court ruling made that
+concrete. `next/font/google` avoids both: it downloads the files at build time,
+serves them from your origin, and computes the metric overrides from the
+previous section for you. Self-host directly if you are not on Next.js;
+`preconnect` to a font host only when you truly cannot self-host.
+
+**Preload the one face above the fold, and no more.**
+
+```html
+<link rel="preload" href="/fonts/sohne-latin.woff2" as="font"
+      type="font/woff2" crossorigin>
+```
+
+`crossorigin` is mandatory even for a same-origin font — fonts are always
+fetched in CORS mode, and a preload without the attribute fetches the file a
+second time. Every preload competes with the LCP image for early bandwidth, so
+one or two critical faces, never the whole family.
+
+**Count the weights you actually render.** Loading Light, Regular, Medium,
+SemiBold, Bold and Black and using three of them ships half the payload for
+nothing. The audit is: list every `font-weight` and `font-style` the CSS
+produces, and delete the `@font-face` rules nothing hits.
 
 ## Optical sizing
 

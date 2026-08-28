@@ -54,6 +54,7 @@ Load only for the specific task:
 | Task | Load |
 |---|---|
 | Bottom nav, sheets, pull-to-refresh, PWA, safe areas | `references/mobile-patterns.md` |
+| Fluid grids, container queries, the 320→ultrawide validation matrix, `dvh`/`svh`/`lvh` traps, responsive images | `references/responsive-layout.md` |
 | Desktop — hover affordance, 24px pointer floor, shortcuts, multi-window, density | `references/desktop-patterns.md` |
 | Expo Router, Reanimated, NativeWind, FlatList, haptics | `references/react-native.md` |
 | next-intl routing, pluralization, RTL, locale switcher | `references/i18n.md` |

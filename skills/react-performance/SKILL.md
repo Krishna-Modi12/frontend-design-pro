@@ -48,6 +48,8 @@ Load only for the specific task:
 | App Router, RSC, Server Actions, caching, Turbopack | `references/nextjs-patterns.md` |
 | Component size, state init, import and type optimization | `references/token-optimization.md` |
 | Promise.all/allSettled, workers, streaming SSR, IO batching | `references/parallelization.md` |
+| Main-thread jank — frame budget, INP/TBT/LoAF, task-splitting, forced reflow, `content-visibility`, `will-change`, paint cost | `references/rendering-performance.md` |
+| Making the wait feel short — skeleton vs spinner vs progress, spinner timing, optimistic UI, streaming-boundary placement, speculation rules | `references/perceived-performance.md` |
 
 ## Constraints
 `PERF-01` no barrel imports · `PERF-02` no numeric `&&` in JSX · `PERF-04` no `transition: all` · `IMG-01` images declare dimensions · plus the shared baseline. Measure before optimizing — an unmeasured "optimization" is speculative complexity (P2).
