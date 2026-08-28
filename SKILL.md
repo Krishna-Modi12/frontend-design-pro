@@ -45,7 +45,7 @@ Match the request against trigger keywords. Load **one** skill. Most specific wi
 | `iconography` | `skills/iconography/SKILL.md` | icon, phosphor, lucide, svg, icon button, icon size, icon weight, avatar-icon, initials | `core/design-tokens.md` |
 | `animations` | `skills/animations/SKILL.md` | animation, motion, transition, framer, gsap, animate, scroll, parallax, view transition | `core/design-tokens.md` |
 | `testing` | `skills/testing/SKILL.md` | test, vitest, testing, testing library, playwright, axe, coverage, storybook, story | `core/component-api.md` |
-| `web-interface` | `skills/web-interface/SKILL.md` | review, audit, guidelines, wig, copywriting, microcopy, contrast-check, a11y audit, ux rules | `core/design-tokens.md` |
+| `web-interface` | `skills/web-interface/SKILL.md` | review, audit, guidelines, wig, copywriting, microcopy, contrast-check, a11y audit, ux rules, live audit, live site, in the browser, how it actually looks, computed contrast | `core/design-tokens.md` |
 | `react-performance` | `skills/react-performance/SKILL.md` | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `core/component-api.md` |
 | `platform` | `skills/platform/SKILL.md` | mobile, pwa, desktop, electron, tauri, keyboard shortcut, react native, expo, i18n, locale, rtl, right-to-left, seo, metadata, email, stripe, ai chat, streaming | `core/component-api.md` |
 | `agent-ops` | `skills/agent-ops/SKILL.md` | agent ops, token budget, context window, memory persistence, subagent, orchestration, verification loop, parallelization, continuous learning, self-check | `core/agent-behavior.md` |
