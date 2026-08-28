@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import data from "../lib/data.generated.json";
 import type { GeneratedData } from "../lib/data.types";
 import SmoothScroll from "../components/SmoothScroll";
+import WorldProvider from "../components/WorldProvider";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import SectionProblem from "../components/SectionProblem";
@@ -23,29 +24,31 @@ const payload = data as GeneratedData;
  */
 export default function Page(): ReactElement {
   return (
-    <SmoothScroll>
-      <div className="min-h-[100dvh] bg-bg-page text-text-primary antialiased">
-        <style dangerouslySetInnerHTML={{ __html: tokenStyles }} />
+    <WorldProvider>
+      <SmoothScroll>
+        <div className="min-h-[100dvh] bg-bg-page text-text-primary antialiased">
+          <style dangerouslySetInnerHTML={{ __html: tokenStyles }} />
 
-        <a
-          href="#main"
-          className={`${focusRing} sr-only rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50`}
-        >
-          Skip to content
-        </a>
+          <a
+            href="#main"
+            className={`${focusRing} sr-only rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50`}
+          >
+            Skip to content
+          </a>
 
-        <Navbar version={payload.version} />
+          <Navbar version={payload.version} />
 
-        <main id="main">
-          <Hero installHref="#install" howItWorksHref="#how-it-works" />
-          <SectionProblem figures={payload.figures} />
-          <SectionSkillCatalog skills={payload.skills} />
-          <SectionHow skills={payload.skills} figures={payload.figures} />
-          <SectionProof figures={payload.figures} />
-          <SectionShowcase />
-          <SectionInstall adapters={payload.adapters} buildYear={new Date().getFullYear()} />
-        </main>
-      </div>
-    </SmoothScroll>
+          <main id="main">
+            <Hero installHref="#install" howItWorksHref="#how-it-works" />
+            <SectionProblem figures={payload.figures} />
+            <SectionSkillCatalog skills={payload.skills} />
+            <SectionHow skills={payload.skills} figures={payload.figures} />
+            <SectionProof figures={payload.figures} />
+            <SectionShowcase />
+            <SectionInstall adapters={payload.adapters} buildYear={new Date().getFullYear()} />
+          </main>
+        </div>
+      </SmoothScroll>
+    </WorldProvider>
   );
 }

@@ -201,6 +201,109 @@ body {
   }
 }
 
+/* Hero \`mesh\` world only (\`components/backgrounds/MeshGradient.tsx\`) — a slow
+   \`background-position\` drift across the layered radial gradients, covered
+   by the global \`prefers-reduced-motion: reduce\` rule above (line ~92),
+   which clamps every animation's duration and iteration-count to a single
+   1ms frame. No separate reduced-motion branch needed in the component
+   itself for that reason — same economy as \`pulse-dot\`/\`chip-cycle\` above. */
+@keyframes mesh-drift {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 12%;
+  }
+}
+
+/*
+ * World system — a per-section "surface texture", layered on top of a
+ * section's own EXISTING, UNCHANGED background-color rather than replacing
+ * it. This is the reason full-page world variation stays tractable: the
+ * part of every section that already clears axe contrast (solid colour
+ * behind text) never moves, only a low-opacity image sits on top of it.
+ * \`[data-world]\` is set on \`<html>\` by the blocking script in
+ * \`app/layout.tsx\` (or by \`WorldProvider\`'s reroll); every section adds
+ * one \`data-section-surface\` attribute alongside its existing className —
+ * see \`home/lib/worlds.ts\` for the catalog and the verification-scope note.
+ *
+ * \`signature\` sets no override below, so \`--world-texture\` falls through
+ * to its \`none\` default and every section renders pixel-identical to
+ * today — this is also the deterministic \`?world=signature\` world every
+ * automated check and screenshot recapture uses.
+ *
+ * Both non-signature textures below are intentionally low-opacity (~4-6%):
+ * the goal is a felt texture, not a colour shift large enough to move an
+ * already-computed contrast ratio. \`mesh\`'s three radial gradients read the
+ * CURRENT \`--color-accent\` via \`color-mix()\` rather than a hardcoded
+ * colour, so it always matches whichever world set that variable — no
+ * hex, no rgba(), OKLCH throughout.
+ */
+[data-section-surface] {
+  background-image: var(--world-texture, none);
+}
+
+[data-world="mesh"] [data-section-surface] {
+  --world-texture:
+    radial-gradient(38% 42% at 15% 20%, color-mix(in oklch, var(--color-accent) 14%, transparent), transparent 70%),
+    radial-gradient(32% 36% at 88% 12%, color-mix(in oklch, var(--color-accent) 9%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 60% 92%, color-mix(in oklch, var(--color-accent) 7%, transparent), transparent 70%);
+}
+
+/* feTurbulence grain, alpha-only (feColorMatrix desaturates it first) so it
+   reads as neutral texture on any of the three light grounds rather than a
+   colour of its own — \`feFuncA\` caps it at 5% opacity. */
+[data-world="grain"] [data-section-surface] {
+  --world-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* A quiet, hue-independent dot grid — deliberately not tinted to the
+   accent, since it only ever renders under \`data-world="grid"\`, so it
+   doesn't need to react to a different world's colour. */
+[data-world="grid"] [data-section-surface] {
+  --world-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='2' cy='2' r='1.1' fill='%23000' fill-opacity='0.05'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 28px 28px;
+}
+
+/* Headline weight per world — see \`home/lib/worlds.ts\`'s \`WorldDef.headlineWeight\`.
+   Scoped to \`[data-hero-headline]\` specifically, not the shared \`[data-display]\`
+   attribute every section heading also carries, so this never touches a
+   heading outside the Hero. \`signature\` restates today's existing 500
+   weight explicitly, since the Tailwind \`font-medium\` utility class was
+   removed from the element in favour of driving it from here. */
+[data-hero-headline] {
+  font-weight: 500;
+}
+[data-world="mesh"] [data-hero-headline] {
+  font-weight: 600;
+}
+[data-world="grain"] [data-hero-headline] {
+  font-weight: 400;
+}
+[data-world="grid"] [data-hero-headline] {
+  font-weight: 600;
+}
+
+/* \`WorldProvider\`'s reroll sets this attribute on \`<html>\` for ~300ms
+   around a swap, giving the accent/texture change a soft cross-fade — four
+   properties named explicitly below, per PERF-04R's ban on the catch-all
+   shorthand — and scoped to the attribute's brief lifetime so it's never a
+   standing cost on every element. Absent entirely under reduced motion —
+   the swap applies with no transition rule active, matching every other
+   reduced-motion behaviour already in the Hero (freeze, don't mount, skip —
+   never slow down). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-world-transitioning] * {
+    transition:
+      background-color 260ms ease-out,
+      color 260ms ease-out,
+      border-color 260ms ease-out,
+      fill 260ms ease-out;
+  }
+}
+
 `;
 
 /** Horizontal rhythm shared by every section shell on the page. */
