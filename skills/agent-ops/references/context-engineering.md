@@ -1,6 +1,6 @@
 # Context Engineering — Why Loading Less Produces Better Output, Not Just Cheaper Output
 
-This pack routes one skill per request out of ~405k tokens of depth, and the
+This pack routes one skill per request out of ~415k tokens of depth, and the
 argument for that has always been budget: a monolithic pack cannot be loaded at
 all. Budget is the weaker half of the argument. The stronger half is accuracy —
 a model that receives irrelevant context does not ignore it, and the cost of

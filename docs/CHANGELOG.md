@@ -4,6 +4,67 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.12.0] — 2026-08-28
+
+**Responsive-layout and UX-performance depth on four existing skills — no new
+skill, no new core dep. Owner-directed, scoped down with the owner from a
+"responsive frontend & ultra-smooth UX engineering" brief.**
+
+### Added
+- `skills/platform/references/responsive-layout.md` (186 lines) — the layout
+  primitives that reflow without a breakpoint
+  (`repeat(auto-fit, minmax(min(100%, 16rem), 1fr))`), the container-query-vs-
+  media-query decision and `cqi`/`cqb` units, a 320px-to-ultrawide validation
+  matrix reconciling the three breakpoint lists in `platform/SKILL.md`,
+  `ux-deep-rules.md` §5 and `mobile-patterns.md`, the `dvh`/`svh`/`lvh` +
+  `visualViewport` keyboard-inset traps, an overflow-debugging method, and
+  responsive-image `srcset`/`sizes`/`<picture>` rules. Cited in `platform`'s
+  Reference Index.
+- `skills/react-performance/references/rendering-performance.md` (251 lines) — a
+  framework-agnostic main-thread/jank layer: the 16.7 ms / 8.3 ms frame budget,
+  the Long Task / LoAF / TBT / INP table, measuring with `PerformanceObserver`
+  and the DevTools Performance panel, breaking up long tasks with
+  `scheduler.yield()` / `postTask()` / `isInputPending()`, forced synchronous
+  layout, `content-visibility` and containment, high-frequency-handler
+  discipline, the `will-change` budget, Web Workers / `OffscreenCanvas` /
+  `requestIdleCallback`, DOM-size limits and paint cost. Cited in
+  `react-performance`'s Reference Index.
+- `skills/react-performance/references/perceived-performance.md` (180 lines) —
+  the decision layer for making a wait feel short: the 100 ms / 1 s / 10 s
+  perception thresholds, a skeleton-vs-spinner-vs-progress-vs-optimistic choice
+  table, spinner show-delay and minimum-visible-time, skeleton rules tied to
+  `DELAY-01`, optimistic-update choreography, stale-while-revalidate as UX,
+  Suspense-boundary placement, and the Speculation Rules API. Cited in
+  `react-performance`'s Reference Index.
+- `skills/agent-ops/references/frontend-optimization-workflow.md` (134 lines) —
+  the process half: an Inspect → Research → Brainstorm → Implement pass, a
+  metric → what-the-user-feels table, an "Impact × User Visibility ×
+  Reliability" prioritisation rule, a "never report a measurement you did not
+  take" rule (the anti-slop wall bans fabricated content, not fabricated
+  numbers — this closes that), and the eight-section audit-report format. Cited
+  in `agent-ops`'s Reference Index.
+- `skills/design-system/references/typographic-finishing.md` — a new
+  "The font payload" section: woff2-only, variable against static, subsetting
+  and `unicode-range`, self-hosting vs `next/font/google`, and
+  `<link rel="preload">` for the critical face. A section, not a fifth file.
+
+### Changed
+- `platform`, `react-performance` (×2) and `agent-ops` each gain one
+  `## Reference Index` row pointing at the new file. No Core Rule text changed.
+- `docs/MAINTENANCE.md` records the owner directive and the scope-down
+  decision, dated 2026-08-28.
+
+### Figures
+- References 112 → 116; reference depth 404,917 → 415,028 tokens; the
+  per-request budgets for `react-performance`, `platform` and `agent-ops` move
+  within their existing sort order. Registry (2,126), per-request band
+  (6,014–7,927), skills (19), constraints (61) and gates (11) unchanged. Every
+  figure re-derived from `scripts/check_figures.py --truth`.
+
+11/11 gates green · 0 figure drift.
+
+---
+
 ## [14.11.5] — 2026-08-26
 
 **`design-research` gains a Phase 0 social-and-trend pass — new depth on an

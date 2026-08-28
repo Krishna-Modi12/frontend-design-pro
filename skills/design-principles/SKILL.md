@@ -2,7 +2,7 @@
 name: design-principles
 description: UX laws and design reasoning — cognitive load, Gestalt grouping, Fitts/Hick/Miller, visual hierarchy, and extracting a visual identity into a reusable spec. Use when deciding why a layout should be one way rather than another, or justifying a critique — hierarchy, grouping, spacing rationale, nav structure, cognitive load, perceived performance — and when matching an existing visual identity. Not for rule-checking finished UI (web-interface).
 metadata:
-  version: "14.11.5"
+  version: "14.12.0"
   core-deps:
     - core/design-tokens.md
     - core/accessibility-baseline.md

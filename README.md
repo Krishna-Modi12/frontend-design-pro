@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **112** | **404,917 tokens** | **2,126 tokens** | **6,014–7,927** | **61** | **11** |
+| **19** | **116** | **415,028 tokens** | **2,126 tokens** | **6,014–7,927** | **61** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 404,917 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 415,028 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -389,9 +389,9 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | `SKILL.md` | Registry, routing table, anti-slop wall | **2,126 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,964–3,923 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **404,917 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **415,028 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 6,014–7,927 tokens, not 404,917.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,014–7,927 tokens, not 415,028.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -520,40 +520,43 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
-## What's new in v14.11.5
+## What's new in v14.12.0
 
-`design-research` learned to read a community, not just a page. A request like
-"what's trending in fintech dashboard design" or "what are people building for
-onboarding right now" routes there and runs a **Phase 0 social-and-trend pass**
-before the gallery step: it pulls an engagement-ranked signal, converts it into
-the same typed constraints a browsed page produces — an OKLCH token, an easing
-curve, a copy *tone* word, a named pattern reference — and hands off to the
-build skill.
+Four skills that already covered responsive layout and UX performance in
+outline gained the depth to back it — as `references/*.md`, not a new skill.
 
-Two optional external tools cover that pass. **`last30days`** searches Reddit,
-X, YouTube, HN, GitHub and Polymarket in parallel, scores by real engagement,
-merges one story told across several platforms into one, and returns a cited
-brief. **`agent-reach`** gives the agent read and search access to Twitter/X,
-Reddit, YouTube, GitHub, Bilibili, XiaoHongShu, RSS and semantic web search,
-with a primary-to-backup backend list per platform. **Neither is a dependency**
-of `design-research` or any skill, and neither is vendored. They are detected
-with `agent-reach doctor` / `last30days --preflight`, preferred when healthy,
-and degraded silently to plain `web_search` — no error, no "you should install
-this" — when absent. That is the posture Gate 7 already takes toward a missing
-TypeScript compiler.
+**`platform`** gets `responsive-layout.md`: the layout primitives that reflow
+without a breakpoint (`repeat(auto-fit, minmax(min(100%, 16rem), 1fr))`), the
+one decision that separates a container query from a media query, and a single
+320px-to-ultrawide validation matrix reconciling the three breakpoint lists
+that `platform`, `ux-deep-rules.md` and `mobile-patterns.md` each stated
+differently — plus the `dvh`/`svh`/`lvh` traps and the `visualViewport`
+keyboard-inset fix.
 
-Whatever the tools return is **input to a decision, never copy**: a top comment
-is a signal about what to build, not a string to paste, and
-`SLOP-01`/`SLOP-02`/`SLOP-05` plus the skill's trust-boundary rule bind research
-output exactly as they bind everything else. New
-`references/social-signal-research.md` carries the tool detail, three worked
-examples and the zero/one/both degrade matrix; `core/agent-behavior.md` gains
-one universal line preferring a configured research tool over blind `web_search`
-for time-sensitive or community-sentiment questions.
+**`react-performance`** gets two. `rendering-performance.md` is the
+main-thread/jank layer — the 16.7 ms frame budget, INP against TBT and Long
+Animation Frames, `scheduler.yield()` and task-splitting, forced synchronous
+layout, `content-visibility`, the `will-change` budget, and what actually costs
+a paint. `perceived-performance.md` is the layer on top: the
+100 ms / 1 s / 10 s thresholds, a skeleton-vs-spinner-vs-optimistic decision
+table, the ~200 ms spinner delay and minimum-visible-time that stop a loader
+flashing, where a Suspense boundary goes, and the Speculation Rules API.
 
-Reference depth now stands at 404,917 tokens over 112 references; the registry
-is 2,126 tokens and a request costs 6,014–7,927. `design-research` stays the
-heaviest skill, 73 tokens under the Gate 8a ceiling.
+**`agent-ops`** gets `frontend-optimization-workflow.md` — the process half: an
+Inspect → Research → Brainstorm → Implement pass, an
+"Impact × User Visibility × Reliability" prioritisation rule, a "never report a
+measurement you did not take" rule the anti-slop wall never covered, and the
+eight-section audit-report format.
+
+`design-system/references/typographic-finishing.md` gains a font-payload
+section — woff2-only, variable against static, subsetting, self-hosting — not a
+fifth file.
+
+Every new file was written only after auditing the ten nearest references, and
+cross-links rather than restates. Reference depth now stands at 415,028 tokens
+over 116 references; the registry is still 2,126 tokens and a request still
+costs 6,014–7,927. Nothing new is loaded unless a request routes to one of the
+four skills.
 
 11/11 gates green · 0 figure drift.
 

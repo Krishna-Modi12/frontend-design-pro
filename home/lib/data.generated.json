@@ -2,8 +2,8 @@
   "figures": {
     "skills": 19,
     "coreFiles": 8,
-    "referenceFiles": 112,
-    "referenceDepthTokens": 404917,
+    "referenceFiles": 116,
+    "referenceDepthTokens": 415028,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -41,7 +41,7 @@
         "core/agent-behavior.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6903,
+      "budget": 6956,
       "group": "Meta",
       "covers": "The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration",
       "trySaying": "\"You keep re-reading the same files. Set up a context budget.\""
@@ -397,7 +397,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6824,
+      "budget": 6863,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -453,7 +453,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6176,
+      "budget": 6265,
       "group": "Making it work well",
       "covers": "Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals",
       "trySaying": "\"This page has a 4s LCP. Find the waterfall and fix it.\""
@@ -596,5 +596,5 @@
       "label": "Zed"
     }
   ],
-  "version": "14.11.5"
+  "version": "14.12.0"
 }

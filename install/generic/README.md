@@ -8,6 +8,6 @@ The fallback card for a host with no rules-file format of its own.
 4. Ask for UI in plain language. No slash commands — the agent matches your wording against trigger keywords and loads one skill plus its declared core deps.
 5. Verify: ask which skill it loaded and what that cost. Expect one skill id, its core deps, and a figure in the 6,014–7,927 range. *"I read everything"* means it is not routing.
 
-**Degradation:** depends entirely on file access. Without an on-demand file read, lazy loading becomes retrieval, `@`-referencing or pasting, and the 112 references are out of reach unless you attach them by hand. The per-host matrix is in [docs/AGENT_COMPATIBILITY.md](../../docs/AGENT_COMPATIBILITY.md).
+**Degradation:** depends entirely on file access. Without an on-demand file read, lazy loading becomes retrieval, `@`-referencing or pasting, and the 116 references are out of reach unless you attach them by hand. The per-host matrix is in [docs/AGENT_COMPATIBILITY.md](../../docs/AGENT_COMPATIBILITY.md).
 
 Full generic setup and verification: [docs/INSTALL.md](../../docs/INSTALL.md).
