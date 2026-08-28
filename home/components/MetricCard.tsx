@@ -19,6 +19,13 @@ const fmt = new Intl.NumberFormat("en-US");
  * `textContent` directly through a ref rather than React state — a state
  * update per animation frame for 1.5s would mean ~90 re-renders for a single
  * number, and nothing else on the card depends on the intermediate value.
+ *
+ * The markup renders the real formatted value, not "0": this app is a static
+ * export, so whatever the server HTML says is what a crawler, a link unfurl,
+ * or a client whose JS never runs sees permanently. The reset to "0" happens
+ * inside `onEnter`, the instant before the tween — so a card that is never
+ * scrolled to just keeps showing its real number, and there is no frame where
+ * a hydrated client flashes the final value before the count-up.
  */
 function MetricCardImpl(
   { value, label, span = "small" }: MetricCardProps,
@@ -31,17 +38,16 @@ function MetricCardImpl(
     if (node === null) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      node.textContent = fmt.format(value);
       return;
     }
 
-    node.textContent = "0";
     const counter = { n: 0 };
     const trigger = ScrollTrigger.create({
       trigger: node,
       start: "top 90%",
       once: true,
       onEnter: () => {
+        node.textContent = "0";
         gsap.to(counter, {
           n: value,
           duration: 1.5,
@@ -65,7 +71,7 @@ function MetricCardImpl(
       }`}
     >
       <span ref={numberRef} data-metric className="text-4xl font-medium text-accent sm:text-5xl">
-        0
+        {fmt.format(value)}
       </span>
       <span className="mt-3 text-sm text-text-secondary">{label}</span>
     </div>
