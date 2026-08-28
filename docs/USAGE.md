@@ -7,7 +7,7 @@
 ```
 You:    "Build a pricing page for a developer tool"
 Agent:  matches "pricing" → loads skills/landing-pages/SKILL.md + core/design-tokens.md
-        (~6,014 tokens, not the 415,028 available)
+        (~6,034 tokens, not the 418,453 available)
 ```
 
 You never name a skill. If you *want* to force one, say its name — "use the data-tables skill" — and the agent will honour it.
@@ -33,7 +33,7 @@ You never name a skill. If you *want* to force one, say its name — "use the da
 | ai generate, prompt to ui, json to ui, generative interface, component registry, openui, tambo, morphic, llm ui | `ai-ui-generation` | Building or safely consuming AI-generated UI |
 | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `react-performance` | Making it fast, or auditing why it isn't |
 | test, vitest, testing, rtl, playwright, axe, coverage, storybook, story | `testing` | Writing or augmenting tests |
-| review, audit, guidelines, wig, copywriting, microcopy, contrast, a11y audit, ux rules | `web-interface` | Reviewing existing UI rather than building new |
+| review, audit, guidelines, wig, copywriting, microcopy, contrast, a11y audit, ux rules, live audit, in the browser, computed contrast | `web-interface` | Reviewing existing UI rather than building new — including a live rendered-DOM audit |
 | mobile, pwa, react native, expo, i18n, locale, rtl, seo, metadata, email, stripe, ai chat, streaming | `platform` | Platform-specific surfaces |
 
 **When two skills match, the more specific wins.** "form validation" → `forms`, not `react-components`.
@@ -108,7 +108,7 @@ Make a 3D product viewer with orbit controls and a loading state.  → threejs-3
 | Registry (always) | ~1,800 |
 | One skill | 848–1,878 |
 | Core deps | 2,964–3,923 |
-| **Typical request** | **~6,014–7,927** |
-| Available depth (loaded only on demand) | **415,028** |
+| **Typical request** | **~6,034–7,947** |
+| Available depth (loaded only on demand) | **418,453** |
 
 If you're on a small context window, say "keep it brief" — the agent will skip deep references and note the omission.

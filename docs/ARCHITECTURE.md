@@ -12,15 +12,15 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,126 tokens** | always |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,146 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,964, 3,095, 3,505 or 3,923 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **848–1,878 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 116 deep references | **415,028 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 117 deep references | **418,453 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```text
-landing-pages       6,014   ← lightest
+landing-pages       6,034   ← lightest
 iconography         6,017
 testing             6,069
 data-tables         6,088
@@ -38,12 +38,12 @@ design-principles   6,812
 platform            6,863
 agent-ops           6,956
 canvas-typography   7,227
-design-research     7,927   ← heaviest
+design-research     7,947   ← heaviest
 ```
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,178 tokens, while `design-research` has the largest router in the pack at 1,878 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,927 tokens against 415,028 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,947 tokens against 418,453 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. `.gitattributes` is `eol=lf`, so the index is LF on every platform, and both `build_release.py:tokens()` and `check_figures.py:tokens()` normalise CRLF→LF before counting. Gate 8a and Gate 11 therefore report the same numbers on Windows and Linux, and stay stable even when an editor has left a file you touched with CRLF endings before it is committed. The LF figure is canonical because it is what a reader who downloads the archive can reproduce.
 
@@ -99,7 +99,7 @@ dist/                    build output, gitignored
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 232/232 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 19/19 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
-| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 116 references, 19 skill routers and 8 core files | 122 files · 0 violations |
+| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 117 references, 19 skill routers and 8 core files | 122 files · 0 violations |
 | 11 | Figures | every documented count and token figure recomputed from the filesystem and compared against the prose: 9 anchored figures, stated deltas that must subtract correctly, `metadata.json` against the tree, and its changelog against `docs/CHANGELOG.md` | 74 claim surfaces · 0 drifts |
 
 Then, non-negotiable but not numbered: **path integrity** (95 skill-cited references resolve), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
@@ -112,8 +112,8 @@ A parser-regression proof runs alongside gate 4: 16 synthetic cases, each provin
 
 ### Why gate 10 exists
 
-Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 116
-references are ~415k tokens and are the part an agent actually opens for depth,
+Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 117
+references are ~418k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
 the chain that the product's central claim rests on.

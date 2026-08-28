@@ -11,7 +11,7 @@ Native format: `.cursor/rules/*.mdc`. Full guide: [docs/CURSOR_SETUP.md](../../d
    Legacy Cursor: one `.cursorrules` at the project root, same body.
 3. `@`-reference the registry the first time in Chat or Composer:
    `@frontend-design-pro/SKILL.md Build a sortable data table with loading and empty states.`
-4. Verify: ask *"which skill did you load?"* — one skill id and ~6,014–7,927
+4. Verify: ask *"which skill did you load?"* — one skill id and ~6,034–7,947
    tokens, not a claim that it read the whole pack.
 
 **What degrades here.** [The matrix](../../docs/AGENT_COMPATIBILITY.md) rates

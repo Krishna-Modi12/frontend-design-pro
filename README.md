@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **116** | **415,028 tokens** | **2,126 tokens** | **6,014–7,927** | **61** | **11** |
+| **19** | **117** | **418,453 tokens** | **2,146 tokens** | **6,034–7,947** | **61** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 415,028 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 418,453 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -364,7 +364,7 @@ One skill loads per request. You never name it — the **Try saying** column is 
 | Skill | What it covers | Try saying |
 |---|---|---|
 | [`react-performance`](skills/react-performance/SKILL.md) | Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals | *"This page has a 4s LCP. Find the waterfall and fix it."* |
-| [`web-interface`](skills/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas | *"Review this component. What's wrong with it that I'm not seeing?"* |
+| [`web-interface`](skills/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas, plus a live rendered-DOM audit of the running page | *"Review this component. What's wrong with it that I'm not seeing?"* |
 | [`testing`](skills/testing/SKILL.md) | Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy | *"Write tests for this form — including the validation errors and an axe pass."* |
 | [`platform`](skills/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
 
@@ -386,12 +386,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,126 tokens** — always loaded |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,146 tokens** — always loaded |
 | `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,964–3,923 tokens — the deps one skill declares |
 | `skills/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **415,028 tokens** — loaded only when a skill points at it |
+| `skills/{id}/references/` | Deep material | **418,453 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 6,014–7,927 tokens, not 415,028.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,034–7,947 tokens, not 418,453.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -553,9 +553,9 @@ section — woff2-only, variable against static, subsetting, self-hosting — no
 fifth file.
 
 Every new file was written only after auditing the ten nearest references, and
-cross-links rather than restates. Reference depth now stands at 415,028 tokens
-over 116 references; the registry is still 2,126 tokens and a request still
-costs 6,014–7,927. Nothing new is loaded unless a request routes to one of the
+cross-links rather than restates. Reference depth now stands at 418,453 tokens
+over 117 references; the registry is still 2,146 tokens and a request still
+costs 6,034–7,947. Nothing new is loaded unless a request routes to one of the
 four skills.
 
 11/11 gates green · 0 figure drift.
