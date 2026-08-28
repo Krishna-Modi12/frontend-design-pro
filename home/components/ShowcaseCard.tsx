@@ -39,7 +39,7 @@ export function ShowcaseCard({ name, tagline, href, image, variant, waiver }: Sh
           loading="lazy"
         />
         <span
-          className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide"
+          className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
           style={{ background: "var(--color-emphasis-bg)", color: "var(--color-emphasis)" }}
         >
           {variant === "live" ? (

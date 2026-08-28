@@ -168,7 +168,7 @@ function RouteOutput({
 function FileRow({ tag, path }: { tag: string; path: string }): ReactElement {
   return (
     <li className="flex items-center gap-2">
-      <span className="rounded border border-border px-1.5 py-0.5 text-[0.65rem] uppercase tracking-wide text-text-muted">
+      <span className="rounded border border-border px-1.5 py-0.5 text-xs uppercase tracking-wide text-text-muted">
         {tag}
       </span>
       <span data-metric className="text-text-secondary">

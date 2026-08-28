@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import type { ReactElement, UIEvent } from "react";
 import { RULES, SNIPPETS, runRules } from "../lib/checkerRules";
 import type { CheckerRule } from "../lib/checkerRules";
-import { cardShell, cardInset, focusRing, tapTarget } from "../lib/tokens";
+import { cardInset, focusRing, tapTarget } from "../lib/tokens";
 import { severityColor, severityRank } from "../lib/severity";
 import FindingRow from "./FindingRow";
 
@@ -56,7 +56,7 @@ export function CheckerPanel(): ReactElement {
   }
 
   return (
-    <div className={`${cardShell} flex flex-col`}>
+    <div className="flex flex-col overflow-hidden">
       <div className={`${cardInset} flex flex-wrap items-center gap-2 border-b border-border`}>
         {(["bad", "good"] as SnippetKey[]).map((key) => (
           <button

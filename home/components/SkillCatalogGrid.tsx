@@ -41,7 +41,7 @@ export function SkillCatalogGrid({ skills }: SkillCatalogGridProps): ReactElemen
           <div className="flex items-center gap-3">
             <SkillPreviewThumbnail group={skill.group} />
             <span
-              className="rounded-full px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-wide"
+              className="rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide"
               style={{ background: "var(--color-emphasis-bg)", color: "var(--color-emphasis)" }}
             >
               {skill.group}
