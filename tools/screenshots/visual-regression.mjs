@@ -59,7 +59,14 @@ const TARGETS = [
     id: "home",
     cwd: join(REPO, "home"),
     port: 3319,
-    route: "/",
+    // The homepage seeds one of 4 curated "worlds" per session
+    // (`home/lib/worlds.ts`) — accent hue, background treatment and
+    // headline weight all vary. Without the deterministic override this
+    // target wouldn't render deterministically at all, defeating the whole
+    // point of a pixel-diff baseline: every run (and every baseline
+    // regeneration) would land on a different random world and diff against
+    // whichever one got frozen last, regardless of any real change.
+    route: "/?world=signature",
     scheme: "light",
     waitFor: "main, h1",
   },
