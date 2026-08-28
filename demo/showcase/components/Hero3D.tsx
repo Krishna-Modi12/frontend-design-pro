@@ -10,6 +10,33 @@ export interface Hero3DProps {
   particleCount?: number;
 }
 
+/** `THREE.Color`'s constructor/`setStyle()` doesn't parse `oklch()` — it fails
+    silently and leaves the colour at its default, which is why the particle
+    field was rendering white/gray instead of the accent. A 1x1 canvas
+    `fillStyle`/`getImageData` round-trip forces the browser's own CSS colour
+    parser to do the conversion instead of hand-rolling OKLCH math: pixels
+    have no colour space to preserve, so `getImageData` always returns
+    concrete 0-255 RGBA regardless of what `fillStyle` accepted. */
+function resolveCssColor(value: string): string {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return value;
+  ctx.fillStyle = value;
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/** Reads the live `--color-accent` token rather than duplicating its value,
+    so the particle field can never drift from the accent again. */
+function readAccentColor(): THREE.Color {
+  if (typeof window === "undefined") return new THREE.Color("rgb(0, 195, 11)");
+  const value = getComputedStyle(document.documentElement).getPropertyValue("--color-accent").trim();
+  return new THREE.Color(resolveCssColor(value || "oklch(70% 0.25 145)"));
+}
+
 function ParticleField({ particleCount = 2200 }: Required<Hero3DProps>) {
   const pointsRef = useRef<THREE.Points>(null);
   const reducedMotion = useReducedMotion();
@@ -36,7 +63,7 @@ function ParticleField({ particleCount = 2200 }: Required<Hero3DProps>) {
   const material = useMemo(
     () =>
       new THREE.PointsMaterial({
-        color: new THREE.Color("oklch(70% 0.25 145)"),
+        color: readAccentColor(),
         size: 0.028,
         sizeAttenuation: true,
         transparent: true,
@@ -65,6 +92,7 @@ export function Hero3D({ particleCount = 2200 }: Hero3DProps) {
       camera={{ position: [0, 0, 9], fov: 45 }}
       gl={{ antialias: true, alpha: true }}
       className="pointer-events-none"
+      aria-hidden="true"
     >
       <ambientLight intensity={0.4} />
       <ParticleField particleCount={particleCount} />

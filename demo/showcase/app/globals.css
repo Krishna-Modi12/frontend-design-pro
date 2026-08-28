@@ -7,7 +7,7 @@
   --color-border: oklch(28% 0.014 260);
   --color-text-primary: oklch(96% 0.005 260);
   --color-text-muted: oklch(70% 0.012 260);
-  --color-text-faint: oklch(52% 0.012 260);
+  --color-text-faint: oklch(60% 0.012 260);
   --color-accent: oklch(70% 0.25 145);
   --color-accent-dim: oklch(58% 0.2 145);
   --color-accent-glow: oklch(70% 0.25 145 / 0.35);
@@ -60,6 +60,17 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes draw-sparkline {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
   }
 }
 
