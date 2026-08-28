@@ -47,9 +47,13 @@ const SITES = [
     cwd: join(REPO, "home"),
     port: 3314,
     needsInstall: true, // its own package.json; skipped with a notice if absent
-    // Renders deterministically — no seeded/WebGL content — so a recapture
-    // only moves pixels when the page actually changed, same as landing-page.
-    shots: [{ name: "home", route: "/", scheme: "light", out: "home" }],
+    // The homepage now seeds one of 4 curated "worlds" per session
+    // (`home/lib/worlds.ts`) — accent hue, background treatment and headline
+    // weight all vary. `?world=signature` is the deterministic override every
+    // world resolves through before the random pick, so a recapture still
+    // only moves pixels when the page actually changed, same as
+    // landing-page, rather than rolling a different world every run.
+    shots: [{ name: "home", route: "/?world=signature", scheme: "light", out: "home" }],
   },
   {
     id: "landing-page",
