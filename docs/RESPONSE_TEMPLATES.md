@@ -298,7 +298,7 @@ to each release are both free. There's no paid tier, no account, no telemetry in
 pack.
 
 The only thing it costs you is whatever your agent already charges for tokens, and the
-loading model is built to keep that small: ~2,000 tokens to route, ~5k for a typical
+loading model is built to keep that small: ~2,150 tokens to route, ~6k for a typical
 request rather than pulling the entire pack into context.
 ````
 

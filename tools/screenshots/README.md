@@ -134,11 +134,12 @@ critical axe violations against WCAG 2.1 AA, and horizontal overflow at 390 /
 
 `npm run live-audit:fixtures` runs `live-audit.mjs` — the deterministic,
 headless half of `web-interface`'s Layer B (`skills/web-interface/references/live-verification.md`).
-It implements the measurement primitives that workflow relies on — viewport
-sweep, real horizontal overflow, computed text contrast (including text over a
-gradient, resolved from screenshot pixels), console and network failures, dead
-scroll-reveals, heading-font resolution, one focus-restoration interaction — and
-emits the reference's findings schema.
+It implements the measurement primitives that workflow relies on — a
+320/390/768/1920 viewport sweep, real horizontal overflow, computed text
+contrast (including text over a gradient, resolved from screenshot pixels),
+console and network failures, dead scroll-reveals, heading font resolution and
+type-ramp collapse (critique), one focus-restoration interaction — and emits the
+reference's findings schema.
 
 ```bash
 npm run live-audit:fixtures                 # 5 golden fixtures, assert every *.expected.md

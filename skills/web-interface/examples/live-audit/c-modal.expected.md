@@ -4,9 +4,9 @@ One engineering finding, caught by the targeted-interaction pass (step 6):
 open the modal, close it, read `document.activeElement`.
 
 ```text
-✗ [LV-001] modal does not restore focus on close — focus lands on <body>   (HIGH · engineering · focus-order)
-  → c-modal.html:76 — after #close click, document.activeElement is BODY, not #open
-  → fix: on close, call open.focus() (or return focus to the element that opened the modal)     [FOUND]
+✗ [LV-001] overlay does not restore focus on close — focus is on BODY, not the element that opened it   (HIGH · engineering · focus-order)
+  → c-modal.html:76 — after #close click, document.activeElement is BODY; expected the trigger (#open)
+  → fix: on close, return focus to the element that opened the overlay (here: open.focus())     [FOUND]
 ```
 
 ## Assertions for the regression test
