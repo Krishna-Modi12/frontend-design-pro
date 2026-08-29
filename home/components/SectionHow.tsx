@@ -112,7 +112,7 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
     <section id="how-it-works" data-section-surface className={`${sectionSpacing} bg-bg-page`}>
       <div className={sectionShell}>
         <p data-label className="text-accent">
-          02 — How it works
+          How it works
         </p>
         <h2 data-display className="mt-4 text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold text-text-primary">
           Spec first. Constrain always. Generate once.

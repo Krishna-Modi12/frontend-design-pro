@@ -54,18 +54,25 @@ export function Navbar({ version }: NavbarProps): ReactElement {
           {PRODUCT}
         </a>
 
-        {/* v2.2: NAV grew from 4 to 6 entries (Catalog, Showcase). The full row plus
-            the version badge and GitHub button no longer fits inside a 768px
-            viewport — measured against the logo/link/badge widths below, it runs
-            ~90-190px over budget there. Collapses to the existing <details> menu at
-            lg: (1024px) instead of sm: (640px); 1024px has ~250px of headroom for
-            the same content, tablet width uses the hamburger like mobile does. */}
-        <nav aria-label="Sections" className="hidden items-center gap-1 lg:flex">
+        {/* v2.2 measured the full row (logo + 6-item nav + badge + GitHub
+            button) 90-190px over budget at 768px and moved the collapse point
+            to lg: (1024px), where it had ~250px to spare — a real fix, but one
+            that gave up the full nav across the whole 768-1023px tablet band.
+            v2.3 claws part of that back instead of just re-measuring the same
+            content at the same width: "Live check" shortened to "Checks" and
+            each link's horizontal padding trimmed (px-3 → px-2.5) cut real
+            width off the row itself, not just moved where it collapses. The
+            version badge stays lg-only — it was never part of the 768px
+            deficit since it was already hidden there. Re-verify with
+            `pages:verify`'s 768px overflow check before trusting this fits;
+            if the row still clips, the next lever is dropping the badge/GitHub
+            label at md before reaching for lg again. */}
+        <nav aria-label="Sections" className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg px-3 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none`}
+              className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg px-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none`}
             >
               {item.label}
             </a>
@@ -84,7 +91,7 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             GitHub
           </a>
 
-          <details ref={detailsRef} data-disclosure className="relative lg:hidden">
+          <details ref={detailsRef} data-disclosure className="relative md:hidden">
             <summary
               className={`${tapTarget} ${focusRing} flex items-center justify-center rounded-lg border border-border-strong text-text-primary`}
             >

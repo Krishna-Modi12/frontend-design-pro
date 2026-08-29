@@ -27,8 +27,16 @@ import { DEFAULT_WORLD_ID, WORLDS } from "../lib/worlds";
  * Resolution order, highest precedence first: `?world=<id>` URL param (the
  * deterministic override every automated check and screenshot recapture
  * uses) → `sessionStorage` seed (picked once, stable for the visit) →
- * a random pick from the catalog. Wrapped in try/catch — sessionStorage can
- * throw in a locked-down/private context, and that must never block paint.
+ * `DEFAULT_ID`. A first-run critique flagged the prior behaviour here — a
+ * uniform random pick across all four worlds on every fresh session — as a
+ * real defect, not a feature: `DESIGN.md` documents the accent as "one
+ * chromatic hue," and three of the four worlds are not that hue, so a
+ * returning visitor, a shared screenshot, or a README badge had a 75% chance
+ * of disagreeing with what the page actually showed. The catalog and the
+ * reroll mechanic below are unchanged — a visitor who wants a different world
+ * still gets one, just by choosing it, not by chance. Wrapped in try/catch —
+ * sessionStorage can throw in a locked-down/private context, and that must
+ * never block paint.
  */
 const WORLD_SCRIPT = `(function(){try{
 var WORLDS=${JSON.stringify(
@@ -47,7 +55,7 @@ if(fromUrl&&isValid(fromUrl)){id=fromUrl;}
 else{
   var stored=sessionStorage.getItem("fdp-world");
   if(stored&&isValid(stored)){id=stored;}
-  else{id=WORLDS[Math.floor(Math.random()*WORLDS.length)].id;}
+  else{id=DEFAULT_ID;}
 }
 sessionStorage.setItem("fdp-world",id);
 var world=WORLDS.filter(function(w){return w.id===id;})[0]||WORLDS.filter(function(w){return w.id===DEFAULT_ID;})[0];
