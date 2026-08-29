@@ -31,6 +31,7 @@
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
     "demos:verify": "npm --prefix tools/screenshots run verify --",
     "pages:verify": "npm --prefix tools/screenshots run verify:home --",
+  "showcase:verify": "npm --prefix tools/screenshots run verify:showcase --",
   "visual-regression": "npm --prefix tools/screenshots run visual-regression --",
   "security": "python scripts/check_security.py",
   "security:test": "python scripts/test_security_patterns.py",

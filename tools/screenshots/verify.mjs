@@ -19,6 +19,7 @@ import { readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { NPX, run, startNextServer, waitForServer } from "./lib/next-server.mjs";
+import { scanElementOverflow, scanWrappedLabels } from "./lib/overflow.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -127,6 +128,17 @@ async function checkRoute(browser, base, spec, scheme) {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     if (over > 1) overflow.push(`${vp.label} (${vp.width}px): body scrolls ${over}px sideways`);
+
+    // Page-level scrollWidth can read 0 while a single element still
+    // overflows its own box, or a nav/button label wraps mid-word onto two
+    // lines (a different shape scrollWidth can't see at all) — see
+    // lib/overflow.mjs for why both checks are needed.
+    for (const { selector, overflowPx } of await page.evaluate(scanElementOverflow)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> overflows its box by ${overflowPx}px`);
+    }
+    for (const { selector, lines } of await page.evaluate(scanWrappedLabels)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> wraps onto ${lines} lines`);
+    }
   }
   report("no horizontal overflow at 390 / 768 / 1920", overflow);
 
@@ -143,7 +155,7 @@ async function verifyMode(mode, browser) {
   // serves 500s on every route — so clear it and let this mode build its own.
   if (mode === "dev") rmSync(join(HERE, ".next"), { recursive: true, force: true });
 
-  const server = startNextServer({ cwd: HERE, port, mode: mode === "dev" ? "dev" : "start" });
+  const server = await startNextServer({ cwd: HERE, port, mode: mode === "dev" ? "dev" : "start" });
   try {
     await waitForServer(`${base}${ROUTES[0].route}`);
     for (const spec of ROUTES) {

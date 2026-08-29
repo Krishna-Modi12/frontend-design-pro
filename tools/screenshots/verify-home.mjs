@@ -24,6 +24,7 @@ import { createRequire } from "node:module";
 import { readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { NPX, run, startNextServer, waitForServer } from "./lib/next-server.mjs";
+import { scanElementOverflow, scanWrappedLabels } from "./lib/overflow.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -126,6 +127,17 @@ async function checkRender(browser, base) {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     if (over > 1) overflow.push(`${vp.label} (${vp.width}px): body scrolls ${over}px sideways`);
+
+    // Page-level scrollWidth can read 0 while a single element still
+    // overflows its own box, or a nav/button label wraps mid-word onto two
+    // lines (a different shape scrollWidth can't see at all) — see
+    // lib/overflow.mjs for why both checks are needed.
+    for (const { selector, overflowPx } of await page.evaluate(scanElementOverflow)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> overflows its box by ${overflowPx}px`);
+    }
+    for (const { selector, lines } of await page.evaluate(scanWrappedLabels)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> wraps onto ${lines} lines`);
+    }
   }
   report("no horizontal overflow at 390 / 768 / 1920", overflow);
 
@@ -154,6 +166,51 @@ async function checkReducedMotion(browser, base) {
     return stuck;
   });
   report("every revealed section is visible under prefers-reduced-motion", hidden);
+
+  await ctx.close();
+}
+
+/**
+ * The `useStaggerReveal`/`useFadeUp` fallback (`window.setTimeout(reveal,
+ * 4000)`) exists so a reveal that never sees its ScrollTrigger fire (motion
+ * library failure, no real scroll, a scroll-position calculation that
+ * doesn't line up in some environment) still ends up visible rather than
+ * stuck at `opacity: 0` forever. `checkReducedMotion` above proves the
+ * *reduced-motion* skip path; nothing before this proved the fallback
+ * itself actually fires under normal motion — it was only ever confirmed by
+ * hand, by waiting past 4s in an ad hoc script.
+ *
+ * Playwright's `page.clock` (installed before navigation, so it intercepts
+ * `setTimeout`/`requestAnimationFrame`/`performance` together from the
+ * start) jumps straight past the 4s mark instead of waiting for it in real
+ * time — and, critically, this never scrolls. A real scroll would let the
+ * ScrollTrigger path fire first, which would make this check pass for the
+ * wrong reason.
+ */
+async function checkTimeoutFallback(browser, base) {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS[2], reducedMotion: "no-preference" });
+  const page = await ctx.newPage();
+  await page.clock.install();
+  await page.goto(base, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector("main, h1", { state: "attached", timeout: 90_000 });
+
+  await page.clock.fastForward(4100);
+  // Switch back to real time so the reveal's own 0.6s GSAP tween can finish
+  // normally rather than needing the fake clock to simulate every frame.
+  await page.clock.resume();
+  await page.waitForTimeout(800);
+
+  const hidden = await page.evaluate(() => {
+    const stuck = [];
+    for (const el of document.querySelectorAll("main *")) {
+      const cs = getComputedStyle(el);
+      if (parseFloat(cs.opacity) === 0 && el.children.length === 0 && (el.textContent ?? "").trim()) {
+        stuck.push(el.tagName + "." + Array.from(el.classList).slice(0, 2).join("."));
+      }
+    }
+    return stuck;
+  });
+  report("the 4s reveal fallback fires when scroll never triggers it", hidden);
 
   await ctx.close();
 }
@@ -189,6 +246,13 @@ async function checkRTL(browser, base) {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     if (over > 1) overflow.push(`${vp.label} (${vp.width}px): body scrolls ${over}px sideways under dir="rtl"`);
+
+    for (const { selector, overflowPx } of await page.evaluate(scanElementOverflow)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> overflows its box by ${overflowPx}px under dir="rtl"`);
+    }
+    for (const { selector, lines } of await page.evaluate(scanWrappedLabels)) {
+      overflow.push(`${vp.label} (${vp.width}px): <${selector}> wraps onto ${lines} lines under dir="rtl"`);
+    }
   }
   report("no horizontal overflow at 390 / 768 / 1920 under dir=\"rtl\"", overflow);
 
@@ -266,6 +330,19 @@ async function checkInteractivity(browser, base) {
   const noneKind = await page.locator("[data-route-output]").getAttribute("data-route-kind");
   if (noneKind !== "none") problems.push(`out-of-scope request should refuse to guess (kind=${noneKind})`);
 
+  // Router: real keystrokes into [data-route-input] resolve a request too,
+  // not just the canned example chips every check above this one exercises
+  // (the default mount state, and one pre-set example button click). Typing
+  // is the router's actual, primary interaction — a live user never clicks
+  // an example chip on a real visit — and nothing before this session typed
+  // into the field at all.
+  await page.locator("[data-route-input]").fill("build a landing page for my SaaS");
+  await page.waitForTimeout(300);
+  const typedKind = await page.locator("[data-route-output]").getAttribute("data-route-kind");
+  if (typedKind !== "hit") problems.push(`typed request did not resolve to a skill (kind=${typedKind})`);
+  const typedRouteId = await page.locator("[data-route-id]").textContent().catch(() => "");
+  if (!typedRouteId) problems.push("typed request produced no [data-route-id]");
+
   // Checker: the "what agents write" snippet (default) fails several checks.
   const badCount = await page.locator("[data-check-verdict] .verdict-count").textContent().catch(() => "0");
   if (!(Number(badCount) > 0)) problems.push(`bad snippet reported ${badCount} failures, expected > 0`);
@@ -286,7 +363,11 @@ async function checkInteractivity(browser, base) {
   report("hero shader canvas mounted", problems.filter((p) => p.includes("hero shader canvas")));
   report("hero particle canvas mounted", problems.filter((p) => p.includes("hero particle canvas")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
-  report("router resolves the real registry and refuses to guess", problems.filter((p) => p.includes("route") || p.includes("skill")));
+  report(
+    "router resolves the real registry and refuses to guess",
+    problems.filter((p) => (p.includes("route") || p.includes("skill")) && !p.includes("typed request")),
+  );
+  report("router resolves a typed request, not just canned examples", problems.filter((p) => p.includes("typed request")));
   report("token countdown settles", problems.filter((p) => p.includes("token countdown")));
   report("checker fails the bad snippet and clears the good one", problems.filter((p) => p.includes("snippet")));
   report("install command actually copies", problems.filter((p) => p.includes("clipboard")));
@@ -295,8 +376,10 @@ async function checkInteractivity(browser, base) {
 }
 
 async function verifyMode(mode, browser) {
-  // 3311/3312/3313 are demos/showcase/landing-page (capture.mjs), 3321/3322 are
-  // verify.mjs's own dev/prod pair — 3315/3316 are the next free pair.
+  // 3311/3312/3313/3314 are demos/showcase/landing-page/home (capture.mjs),
+  // 3317/3318 are verify-showcase.mjs's, 3319/3320/3323 are
+  // visual-regression.mjs's, 3321/3322 are verify.mjs's own dev/prod pair —
+  // 3315/3316 are this file's.
   const port = mode === "dev" ? 3315 : 3316;
   const base = `http://localhost:${port}`;
   // Every check below navigates to the deterministic `signature` world, not
@@ -310,11 +393,12 @@ async function verifyMode(mode, browser) {
 
   if (mode === "dev") rmSync(join(HOME, ".next"), { recursive: true, force: true });
 
-  const server = startNextServer({ cwd: HOME, port, mode: mode === "dev" ? "dev" : "start" });
+  const server = await startNextServer({ cwd: HOME, port, mode: mode === "dev" ? "dev" : "start" });
   try {
     await waitForServer(base);
     await checkRender(browser, url);
     await checkReducedMotion(browser, url);
+    await checkTimeoutFallback(browser, url);
     await checkRTL(browser, url);
     await checkInteractivity(browser, url);
   } finally {
