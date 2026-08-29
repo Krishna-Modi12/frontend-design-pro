@@ -33,6 +33,15 @@ Framework-agnostic review · applies to React 19 · Tailwind v4 output
 - **Contrast check** — WCAG 2.2 AA is the gate; APCA (Lc ≥75 body) is the tiebreaker when a colour passes 4.5:1 but still reads poorly.
 - **Anti-pattern sweep** — `user-scalable=no`, blocked paste, `transition: all`, `outline:none` without replacement, `<div onClick>`, images without dimensions, `autoFocus` without justification.
 
+## Live verification (rendered-DOM audit)
+Every rule above checks source. **No gate in this pack renders anything** — a stylesheet that 404s, a 73px sideways scroll at 390px, a focus ring computing to 4.36:1, a reveal-on-scroll that died and left its text at `opacity:0` all pass a green chain. When the ask is "audit the **live site**", "check **how this actually looks**", or "does this look right **in the browser**", verify the rendered page, not just the source.
+
+- **Hard dependency: Playwright MCP.** Rendered-DOM inspection has no source-only fallback. If the `browser_*` tools are not connected, say so and stop — never emit a source-only pass and call it a live audit.
+- **Two layers, neither sufficient alone.** The 61 constraints (`scripts/test_constraints.py`) are Layer A; this rendered pass is Layer B. A page is verified only when both pass. Layer B never re-litigates what Layer A checks cleanly — it covers the render-only residue: computed contrast on arbitrary text, real overflow and overlap, dead reveals, console and network failures, focus order.
+- **Engineering vs critique — never conflate them.** Objective findings (broken layout, a11y failure, console/network error, measured contrast below AA) are reported as failures. Design critique (weak hierarchy, clutter, timid spacing) is a separate, labelled section that never fails the audit.
+
+Workflow, the confirmed tool surface, the findings schema, source-mapping, and what still cannot be measured: `references/live-verification.md`.
+
 ## Examples
 `examples/good-audited-panel.tsx` is the worked craft pass: two shadow layers, hover states that *gain* contrast, `tabular-nums` on every numeric column, the `min-w-0` + `truncate` pair, `Intl` formatting and `translate="no"` on identifiers — all four states, no faked delay. Read it when the ask is "make this feel more finished".
 
@@ -46,6 +55,7 @@ Load only for the specific task:
 | Surface craft, copywriting, typography detail, safe areas, APCA | `references/web-interface-guidelines.md` |
 | 200+ granular UX rules with Apple HIG / Material citations | `references/ux-deep-rules.md` |
 | Core UX principles, animation rules, empty/error handling | `references/ux-guidelines.md` |
+| Live-browser rendered audit — workflow, tool surface, findings schema, source-mapping | `references/live-verification.md` |
 
 ## Constraints
 Report findings, don't silently rewrite — respect surgical scope (`BEHAV-01`). Any code you do produce still meets the full baseline: OKLCH tokens, WCAG 2.2 AA, four states, `prefers-reduced-motion`, TypeScript strict.

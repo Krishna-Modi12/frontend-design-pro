@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>e-contrast — body copy at WCAG AA (VERIFIED state)</title>
+  <style>
+    /* Greyscale hex on purpose: this fixture's subject is the sRGB contrast
+       ratio, and greyscale makes the computed value checkable by hand. */
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      font: 16px/1.6 system-ui, sans-serif;
+      background: #151517;
+      color: #e8e8ea;
+      padding: 48px 24px;
+    }
+    main { max-width: 620px; margin: 0 auto; }
+    h1 { font-size: 28px; margin: 0 0 20px; }
+    /* FIX: #68686b -> #8f8f92. Same hue, lifted lightness. On #151517 this
+       computes to ~5.7:1 — over the 4.5:1 AA floor with headroom, and still a
+       muted secondary grey rather than full-strength body text. */
+    p { color: #8f8f92; margin: 0 0 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Incident report</h1>
+    <p>
+      At 14:02 UTC the primary write node stopped acknowledging replication.
+      Failover completed in 41 seconds with no data loss.
+    </p>
+    <p>
+      A configuration change had lowered the health-check timeout below the
+      p99 fsync latency under load. The threshold has been restored and a
+      lower bound added to the schema.
+    </p>
+  </main>
+</body>
+</html>

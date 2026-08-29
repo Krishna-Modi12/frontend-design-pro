@@ -79,7 +79,18 @@ export function useFadeUp(): FadeUp {
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+
+    // Safety net for a render path that never scrolls at all — a link-unfurl
+    // bot, an SEO crawler, or a print/PDF capture. A working IntersectionObserver
+    // that simply never sees a real scroll event never fires `isIntersecting`,
+    // and this is a Persuade-mode page whose whole job is to be seen and shared;
+    // this can't leave a section stranded at zero opacity for those paths.
+    const fallback = window.setTimeout(() => setVisible(true), 4000);
+
+    return () => {
+      window.clearTimeout(fallback);
+      observer.disconnect();
+    };
   }, []);
 
   return { ref, visible };

@@ -124,6 +124,40 @@ export default function Page(): ReactElement {
                 {item.label}
               </a>
             ))}
+
+            {/* Below `sm` the three links above are `hidden` outright with
+                nothing standing in for them — a native disclosure, not a
+                fourth breakpoint-hidden link, so the section anchors stay
+                reachable on a phone without any client state. */}
+            <details data-disclosure className="relative sm:hidden">
+              <summary
+                className={`${tapTarget} ${focusRing} flex list-none items-center gap-1 rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none [&::-webkit-details-marker]:hidden`}
+              >
+                Sections
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <path d="M5 7.5 10 12.5 15 7.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </summary>
+              <div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-surface-border bg-surface-raised p-1 shadow-card">
+                {NAV.map((item) => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    className={`${tapTarget} ${focusRing} flex items-center rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </details>
+
             <a
               href={REPO_URL}
               rel="noreferrer"
@@ -136,7 +170,7 @@ export default function Page(): ReactElement {
       </header>
 
       <main id="main">
-        <Hero primaryHref="#start" secondaryHref="#how-it-works" />
+        <Hero primaryHref={REPO_URL} secondaryHref="#how-it-works" />
         <MetricsStrip
           metrics={state.metrics}
           status={state.status}

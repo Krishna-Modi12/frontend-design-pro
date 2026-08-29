@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { PRICING_SELECT_EVENT, type PricingSelectDetail } from "@/lib/pricing-select";
 
 export interface PricingTier {
   id: string;
@@ -21,6 +23,15 @@ type Cadence = "monthly" | "annual";
 export function Pricing({ tiers }: PricingProps) {
   const [cadence, setCadence] = useState<Cadence>("monthly");
   const isAnnual = cadence === "annual";
+  const reducedMotion = useReducedMotion();
+
+  const chooseTier = (tierName: string): void => {
+    const detail: PricingSelectDetail = { tierName };
+    window.dispatchEvent(new CustomEvent(PRICING_SELECT_EVENT, { detail }));
+    document.getElementById("contact")?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  };
 
   return (
     <div>
@@ -92,6 +103,7 @@ export function Pricing({ tiers }: PricingProps) {
 
               <button
                 type="button"
+                onClick={() => chooseTier(tier.name)}
                 className={`mt-8 rounded-lg px-4 py-2.5 text-sm font-semibold ${
                   tier.highlighted
                     ? "bg-accent text-bg-base hover:bg-accent-dim"

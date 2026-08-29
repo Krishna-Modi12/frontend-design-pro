@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>a-overflow — flex child without min-w-0</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      font: 16px/1.5 system-ui, sans-serif;
+      background: oklch(0.16 0.006 265);
+      color: oklch(0.92 0.005 265);
+    }
+    main { padding: 24px; }
+    .row { display: flex; gap: 16px; }
+    .card {
+      flex: 1;
+      background: oklch(0.22 0.01 265);
+      border: 1px solid oklch(0.32 0.01 265);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    /* DEFECT (the `.card` rule above, line 17): the flex child has no
+       `min-width: 0` and the token below has no wrap rule, so the unbreakable
+       identifier forces `.row` — and the document — wider than a 390px
+       viewport. Fine at 1920px, broken at 390px. Nothing in the source is
+       ban-shaped: it is `display: flex` plus a child. The fix is web-interface
+       Core Rule 6: `min-width: 0` on `.card` AND `overflow-wrap: anywhere` (or
+       truncation) on `.ref`. */
+    .ref {
+      margin: 8px 0 0;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      color: oklch(0.75 0.03 265);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="row">
+      <article class="card">
+        <h2>Deployment</h2>
+        <p class="ref">build-a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6</p>
+      </article>
+      <article class="card">
+        <h2>Status</h2>
+        <p>Ready</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

@@ -8,7 +8,42 @@ export interface BentoFeature {
   description: string;
   stat?: string;
   statLabel?: string;
+  /** A cohort/retention-style curve, 0-1 values, oldest to most recent. */
+  sparkline?: number[];
   span: "wide" | "tall" | "large" | "small";
+}
+
+const SPARKLINE_WIDTH = 240;
+const SPARKLINE_HEIGHT = 72;
+
+function Sparkline({ values }: { values: number[] }) {
+  const points = values
+    .map((value, index) => {
+      const x = (index / (values.length - 1)) * SPARKLINE_WIDTH;
+      const y = SPARKLINE_HEIGHT - value * SPARKLINE_HEIGHT;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return (
+    <svg
+      viewBox={`0 0 ${SPARKLINE_WIDTH} ${SPARKLINE_HEIGHT}`}
+      className="mt-2 h-16 w-full"
+      role="img"
+      aria-label="Cohort retention curve, trending down and to the right as expected, with no unexplained cliffs."
+    >
+      <polyline
+        points={points}
+        fill="none"
+        stroke="var(--color-accent)"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        pathLength={1}
+        className="animate-[draw-sparkline_1.1s_ease-out_forwards]"
+      />
+    </svg>
+  );
 }
 
 export interface BentoGridProps {
@@ -69,6 +104,7 @@ function SpotlightCard({ feature }: { feature: BentoFeature }) {
             ) : null}
           </div>
         ) : null}
+        {feature.sparkline ? <Sparkline values={feature.sparkline} /> : null}
       </div>
     </div>
   );
