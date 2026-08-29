@@ -38,7 +38,7 @@ before relying on any of them, the same way this pack treats a missing compiler.
 | Tool | Use here |
 |---|---|
 | `browser_navigate` | load the URL / route |
-| `browser_resize` | the 390 / 768 / 1920 width sweep |
+| `browser_resize` | the 320 / 390 / 768 / 1920 width sweep |
 | `browser_snapshot` | accessibility tree; pass `boxes: true` for per-node `getBoundingClientRect` in CSS px |
 | `browser_take_screenshot` | evidence — `fullPage`, element-scoped, or `scale` |
 | `browser_evaluate` | the workhorse: computed styles, contrast math, `document.createRange()` text rects, axe injection, scrolling |
@@ -97,9 +97,11 @@ not bounding box).
    selector (`main`, `h1`), then `document.fonts.ready`, then poll
    `browser_network_requests` until nothing is pending. Never wait on
    `networkidle`.
-3. **Snapshot the width sweep.** For each of 390×844, 768×1024, 1920×1080:
-   `browser_resize` → `browser_snapshot` with `boxes: true` →
-   `browser_take_screenshot`.
+3. **Snapshot the width sweep.** For each of 320×568, 390×844, 768×1024,
+   1920×1080: `browser_resize` → `browser_snapshot` with `boxes: true` →
+   `browser_take_screenshot`. 320 is included because a real overflow bug in
+   home/ (#120) sat below the 390 floor — 320px is the narrowest phone width
+   still in meaningful use.
 4. **Structured inspection** via `browser_evaluate`:
    - computed contrast on every text node; where the background is a gradient or
      image, sample pixels from the screenshot instead

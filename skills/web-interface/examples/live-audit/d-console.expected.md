@@ -8,19 +8,25 @@ Two engineering findings — one from the console pass, one from the network pas
   → d-console.html:37 — thrown at script module scope; statements after it never run
   → fix: guard the call (typeof analytics !== 'undefined') or load the analytics script first     [FOUND]
 
-✗ [LV-002] asset request failed: ./hero-illustration.png does not load   (HIGH · engineering · network-error)
+✗ [LV-002] asset request failed: ./hero-illustration.png does not load   (MEDIUM · engineering · network-error)
   → d-console.html:26 — <img> is broken on screen; request failed (404 over HTTP, ERR_FILE_NOT_FOUND over file://)
   → fix: ship the asset, correct the path, or remove the <img>     [FOUND]
 ```
+
+A missing asset is `MEDIUM` by default: the harness upgrades only `5xx`
+responses to `HIGH` (server-side breakage), because a `4xx` on one asset can be
+a decorative image or a critical bundle and it cannot tell which. Upgrade it by
+hand when the asset is load-bearing.
 
 ## Assertions for the regression test
 
 - exactly **2** findings, both `class: engineering`
 - finding 1: `category: console-error`, `severity: BLOCKER`, evidence
   `kind: console`, message contains `analytics` and `not defined`
-- finding 2: `category: network-error`, `severity: HIGH`, evidence
-  `kind: network`, value names the failed asset `hero-illustration.png` and a
-  failure status (HTTP 404, or a `file://` load error)
+- finding 2: `category: network-error`, `severity: MEDIUM` (a `4xx`/load
+  failure; only `5xx` is auto-`HIGH`), evidence `kind: network`, value names the
+  failed asset `hero-illustration.png` and a failure status (HTTP 404, or a
+  `file://` load error)
 - `related_constraint: null` for both (neither is the render-residue of one of
   the 61)
 - both `validation_state: FOUND`

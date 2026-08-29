@@ -22,10 +22,14 @@ re-measuring the same node.
 - `related_constraint: null` — contrast on rendered text is in the
   "covered by no constraint" bucket (COL-01/03/04 are about surface and
   gradient colour, not text-to-background ratio)
-- on `e-contrast.fixed.html`: the same selector at the same viewport measures
-  **at or above 4.5**, and the finding's `validation_state` is `VERIFIED`
-- the transcript shows all three states in order: `FOUND` → `FIXED` →
-  `VERIFIED`
+- on `e-contrast.fixed.html`: re-auditing the same selector at the same viewport
+  produces **no contrast finding** — the ratio now clears 4.5. (In the MCP
+  workflow the original finding object is carried forward and its
+  `validation_state` set to `VERIFIED`; the headless `fixreverify` mode instead
+  re-runs the audit and asserts the finding is gone.)
+- the `fixreverify` transcript prints the three steps in order: `FOUND` (below
+  AA on `e-contrast.html`) → `FIXED` (the one-line colour edit) → `VERIFIED`
+  (re-audit of `e-contrast.fixed.html` reports nothing)
 
 ## Why Layer A cannot catch this
 

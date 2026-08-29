@@ -71,10 +71,17 @@ const FIXTURE_DIR =
   resolve(HERE, "..", "..", "skills", "web-interface", "examples", "live-audit");
 
 const VIEWPORTS = [
+  // 390/768/1920 is the repo-standard sweep. 320 is added because a real
+  // overflow bug (home/ #120) lived below the 390 floor — 320px is the
+  // narrowest phone width still in meaningful use.
+  { label: "320x568", width: 320, height: 568 },
   { label: "390x844", width: 390, height: 844 },
   { label: "768x1024", width: 768, height: 1024 },
   { label: "1920x1080", width: 1920, height: 1080 },
 ];
+// findings that are not viewport-specific (contrast, console, network, fonts)
+// are recorded against the widest viewport, where they are measured.
+const WIDE = VIEWPORTS[VIEWPORTS.length - 1];
 
 const IGNORED_CONSOLE = [
   /Download the React DevTools/i,
@@ -228,6 +235,27 @@ const HEADING_FONT_PROBE = `() => {
   return out;
 }`;
 
+/* The type ramp: the computed font-size step between the first rendered h1 and
+   the first rendered h2 (and h2→h3). A step below ~1.12 means the levels are
+   near-indistinguishable — scanning order collapses. Reported as CRITIQUE, so
+   it never fails a run; "is the hierarchy weak" is partly a judgement call and
+   this is only the mechanical floor of it. */
+const HEADING_RAMP_PROBE = `() => {
+  const vis = (el) => {
+    const r = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && parseFloat(cs.opacity) !== 0
+      && (el.textContent || "").trim().length > 0;
+  };
+  const first = (tag) => Array.from(document.querySelectorAll(tag)).find(vis) || null;
+  const px = (el) => el ? parseFloat(getComputedStyle(el).fontSize) : null;
+  const h1 = first("h1"), h2 = first("h2"), h3 = first("h3");
+  const pairs = [];
+  if (h1 && h2) pairs.push({ hi: "h1", lo: "h2", hiPx: px(h1), loPx: px(h2), text: (h1.textContent||"").trim().slice(0,40) });
+  if (h2 && h3) pairs.push({ hi: "h2", lo: "h3", hiPx: px(h2), loPx: px(h3), text: (h2.textContent||"").trim().slice(0,40) });
+  return pairs;
+}`;
+
 const OVERFLOW_PROBE = `() => {
   const de = document.documentElement;
   return { scrollWidth: de.scrollWidth, clientWidth: de.clientWidth, over: de.scrollWidth - de.clientWidth };
@@ -266,7 +294,7 @@ async function settle(page) {
 
 async function auditPage(browser, url, opts = {}) {
   const findings = [];
-  const ctx = await browser.newContext({ viewport: VIEWPORTS[2] });
+  const ctx = await browser.newContext({ viewport: WIDE });
   const page = await ctx.newPage();
 
   const consoleErrors = [];
@@ -313,7 +341,7 @@ async function auditPage(browser, url, opts = {}) {
       }));
     }
   }
-  await page.setViewportSize({ width: VIEWPORTS[2].width, height: VIEWPORTS[2].height });
+  await page.setViewportSize({ width: WIDE.width, height: WIDE.height });
   await page.waitForTimeout(200);
 
   // 2 — settle reveals, then contrast + dead-reveal + heading fonts
@@ -356,7 +384,7 @@ async function auditPage(browser, url, opts = {}) {
       class: c.ariaHidden ? "critique" : "engineering",
       category: "contrast",
       severity: c.ariaHidden ? "LOW" : ratio < c.floor - 1 ? "HIGH" : "MEDIUM",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: c.selector },
+      rendered: { url, viewport: WIDE.label, selector: c.selector },
       observation: `text contrast ${ratio}:1 — below WCAG AA (${c.floor}:1 for ${c.size}px${c.weight >= 700 ? " bold" : ""}) near "${c.snippet}"`,
       why: "text under the AA floor is hard to read for low-vision users; source contrast checks cannot resolve the computed cascade",
       evidence: { kind: "measurement", value: `${ratio}:1 on "${c.snippet}"${note}`, artifact: null },
@@ -371,7 +399,7 @@ async function auditPage(browser, url, opts = {}) {
     findings.push(finding({
       category: "reveal-dead",
       severity: "HIGH",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: stuck[0] },
+      rendered: { url, viewport: WIDE.label, selector: stuck[0] },
       observation: `${stuck.length} text node(s) still at opacity:0 / visibility:hidden after a full scroll pass`,
       why: "a scroll-reveal whose observer never fired leaves real content invisible with a green source chain",
       evidence: { kind: "measurement", value: stuck.join(", "), artifact: null },
@@ -386,7 +414,7 @@ async function auditPage(browser, url, opts = {}) {
       findings.push(finding({
         category: "font-load",
         severity: "MEDIUM",
-        rendered: { url, viewport: VIEWPORTS[2].label, selector: h.tag },
+        rendered: { url, viewport: WIDE.label, selector: h.tag },
         observation: `${h.tag} computed font-family resolves to a banned display face: ${h.fontFamily}`,
         why: "the anti-slop wall bans Inter/Roboto/Poppins as the display face; a declared face that 404s falls back to one silently",
         evidence: { kind: "measurement", value: `${h.tag} "${h.text}" → ${h.fontFamily}`, artifact: null },
@@ -396,12 +424,39 @@ async function auditPage(browser, url, opts = {}) {
     }
   }
 
+  // heading type-ramp collapse — CRITIQUE only, never a failure. Flags when the
+  // first rendered h1→h2 (or h2→h3) computed size step is below RAMP_MIN, i.e.
+  // the levels are close enough that scanning order reads as flat. Weight,
+  // colour and spacing can still carry hierarchy, so this is a prompt to look,
+  // not a defect.
+  const RAMP_MIN = 1.12;
+  for (const r of await evalProbe(page, HEADING_RAMP_PROBE)) {
+    if (!r.hiPx || !r.loPx || r.hiPx <= r.loPx) continue;
+    const ratio = Math.round((r.hiPx / r.loPx) * 100) / 100;
+    if (ratio >= RAMP_MIN) continue;
+    findings.push(finding({
+      class: "critique",
+      category: "hierarchy",
+      severity: "MEDIUM",
+      rendered: { url, viewport: WIDE.label, selector: `${r.hi} / ${r.lo}` },
+      observation: `${r.hi} and ${r.lo} are ${Math.round(r.hiPx - r.loPx)}px apart — the type ramp has collapsed, no visual hierarchy`,
+      why: "when adjacent heading levels render at nearly the same size the page has no scannable order; source A11Y/TYP checks pass because both are real semantic headings",
+      evidence: {
+        kind: "measurement",
+        value: `computed ${r.hi} font-size ${Math.round(r.hiPx)}px vs ${r.lo} ${Math.round(r.loPx)}px; ratio ${ratio}`,
+        artifact: null,
+      },
+      fix: `widen the type ramp (e.g. ${r.hi} ~1.5x the ${r.lo} size) so scanning order is legible`,
+      related: null,
+    }));
+  }
+
   // 3 — console / page errors
   for (const e of pageErrors) {
     findings.push(finding({
       category: "console-error",
       severity: "BLOCKER",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: null },
+      rendered: { url, viewport: WIDE.label, selector: null },
       observation: `uncaught exception: ${e}`,
       why: "an uncaught error at module/render scope stops everything after it",
       evidence: { kind: "console", value: e, artifact: null },
@@ -413,7 +468,7 @@ async function auditPage(browser, url, opts = {}) {
     findings.push(finding({
       category: "console-error",
       severity: "HIGH",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: null },
+      rendered: { url, viewport: WIDE.label, selector: null },
       observation: `console error: ${e}`,
       why: "console errors on load signal a broken code path",
       evidence: { kind: "console", value: e, artifact: null },
@@ -425,7 +480,7 @@ async function auditPage(browser, url, opts = {}) {
     findings.push(finding({
       category: "hydration",
       severity: "HIGH",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: null },
+      rendered: { url, viewport: WIDE.label, selector: null },
       observation: `hydration mismatch: ${h}`,
       why: "server/client markup divergence causes a flash and can break interactivity",
       evidence: { kind: "console", value: h, artifact: null },
@@ -443,7 +498,7 @@ async function auditPage(browser, url, opts = {}) {
     findings.push(finding({
       category: "network-error",
       severity: n.status && n.status >= 500 ? "HIGH" : "MEDIUM",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: null },
+      rendered: { url, viewport: WIDE.label, selector: null },
       observation: `request failed: ${n.url}${n.status ? ` (${n.status})` : ` (${n.reason})`}`,
       why: "a failed asset request means something the page needs did not arrive",
       evidence: { kind: "network", value: n.status ? `HTTP ${n.status}` : n.reason, artifact: null },
@@ -468,7 +523,7 @@ async function auditPage(browser, url, opts = {}) {
     findings.push(finding({
       category: "a11y-axe",
       severity: v.impact === "critical" ? "HIGH" : "MEDIUM",
-      rendered: { url, viewport: VIEWPORTS[2].label, selector: null },
+      rendered: { url, viewport: WIDE.label, selector: null },
       observation: `axe ${v.id} (${v.impact}, ${v.n}x): ${v.help}`,
       why: "axe serious/critical failures are concrete WCAG violations",
       evidence: { kind: "measurement", value: `${v.id} · ${v.n} node(s)`, artifact: null },
@@ -505,6 +560,9 @@ async function checkFocusReturn(page, probe) {
   }
   const trig = page.locator(openSel).first();
   if (!(await trig.count())) return null;
+  // Tag the trigger so we can compare by identity after close, not by a
+  // tagName/id string that a different button would also match.
+  await trig.evaluate((el) => el.setAttribute("data-lv-trigger-check", "1")).catch(() => {});
   await trig.focus().catch(() => {});
   await trig.click().catch(() => {});
   await page.waitForTimeout(300);
@@ -524,25 +582,37 @@ async function checkFocusReturn(page, probe) {
   }
   await page.locator(closeSel).first().click().catch(() => {});
   await page.waitForTimeout(300);
-  const active = await page.evaluate(() => {
+  const f = await page.evaluate(() => {
     const a = document.activeElement;
-    return a ? (a.id ? "#" + a.id : a.tagName) : "null";
+    const onTrigger = !!(a && a.hasAttribute && a.hasAttribute("data-lv-trigger-check"));
+    const toDocRoot = !a || a === document.body || a === document.documentElement;
+    const label = !a
+      ? "nothing"
+      : a.hasAttribute("data-lv-trigger-check") ? "the trigger"
+        : toDocRoot ? a.tagName
+        : a.id ? "#" + a.id
+        : (a.tagName + (a.textContent ? ` "${a.textContent.trim().slice(0, 24)}"` : "")).trim();
+    document.querySelector("[data-lv-trigger-check]")?.removeAttribute("data-lv-trigger-check");
+    return { onTrigger, toDocRoot, label };
   });
-  const triggerId = await trig.evaluate((el) => (el.id ? "#" + el.id : el.tagName)).catch(() => null);
-  if (active === "BODY" || active === "HTML" || (triggerId && active !== triggerId && active === "BODY")) {
-    return {
-      category: "focus-order",
-      severity: "HIGH",
-      rendered: { url: page.url(), viewport: VIEWPORTS[2].label, selector: closeSel },
-      observation: `overlay does not restore focus on close — document.activeElement is ${active}`,
-      why: "a keyboard user is dropped at the top of the document with no context",
-      evidence: { kind: "measurement", value: `activeElement ${active}, expected ${triggerId || "the trigger"}`, artifact: null },
-      fix: "on close, return focus to the element that opened the overlay",
-      state: "FOUND",
-      related: null,
-    };
-  }
-  return null;
+  if (f.onTrigger) return null;
+  // Focus did not return to the opener. On the "auto" path only body/html is
+  // unambiguous enough to flag headlessly — a move to another control there may
+  // be a deliberate relocation this script can't judge.
+  if (probe === "auto" && !f.toDocRoot) return null;
+  return {
+    category: "focus-order",
+    severity: f.toDocRoot ? "HIGH" : "MEDIUM",
+    rendered: { url: page.url(), viewport: WIDE.label, selector: closeSel },
+    observation: `overlay does not restore focus on close — focus is on ${f.label}, not the element that opened it`,
+    why: f.toDocRoot
+      ? "a keyboard user is dropped at the top of the document with no context"
+      : "focus jumps somewhere unrelated; a keyboard user loses their place",
+    evidence: { kind: "measurement", value: `activeElement is ${f.label}; expected the trigger`, artifact: null },
+    fix: "on close, return focus to the element that opened the overlay",
+    state: "FOUND",
+    related: null,
+  };
 }
 
 // ── fixtures mode ──────────────────────────────────────────────────────────
@@ -557,17 +627,24 @@ const EXPECT = {
       [o[0] && o[0].severity === "HIGH", "severity HIGH"],
     ];
   },
-  "b-hierarchy.html": (f) => [
-    // the type-ramp collapse is critique — this harness does not emit critique,
-    // so the assertion is that it produces NO engineering failure
-    [f.filter((x) => x.class === "engineering").length === 0, "no engineering finding (hierarchy is critique-only)"],
-  ],
+  "b-hierarchy.html": (f) => {
+    const h = f.filter((x) => x.category === "hierarchy");
+    return [
+      [f.filter((x) => x.class === "engineering").length === 0, "no engineering finding (hierarchy is critique-only)"],
+      [h.length === 1, "exactly one hierarchy finding"],
+      [h[0] && h[0].class === "critique", "class critique"],
+      [h[0] && h[0].severity === "MEDIUM", "severity MEDIUM"],
+      [h[0] && h[0].related_constraint === null, "related_constraint null"],
+      [h[0] && /\b20px\b/.test(h[0].evidence.value) && /\b18px\b/.test(h[0].evidence.value) && /ratio 1\.11\b/.test(h[0].evidence.value),
+        "evidence records both computed sizes and the ratio"],
+    ];
+  },
   "c-modal.html": (f) => {
     const fo = f.filter((x) => x.category === "focus-order");
     return [
       [fo.length === 1, "one focus-order finding"],
       [fo[0] && fo[0].severity === "HIGH", "severity HIGH"],
-      [fo[0] && /activeElement (BODY|HTML)/.test(fo[0].evidence.value), "activeElement fell to body"],
+      [fo[0] && /\bBODY\b/.test(fo[0].evidence.value), "activeElement fell to body"],
     ];
   },
   "d-console.html": (f) => {
@@ -579,6 +656,7 @@ const EXPECT = {
       [ce.some((x) => x.severity === "BLOCKER"), "console error is BLOCKER"],
       [ne.length >= 1, "network-error finding present"],
       [ne.some((x) => /hero-illustration/.test(x.observation)), "names the 404 asset"],
+      [ne.every((x) => x.severity === "MEDIUM"), "404 network-error is MEDIUM (5xx would be HIGH)"],
     ];
   },
   "e-contrast.html": (f) => {
