@@ -33,7 +33,7 @@ You never name a skill. If you *want* to force one, say its name — "use the da
 | ai generate, prompt to ui, json to ui, generative interface, component registry, openui, tambo, morphic, llm ui | `ai-ui-generation` | Building or safely consuming AI-generated UI |
 | performance, optimize, waterfall, bundle, memo, lazy, dynamic import, preload, rsc, core web vitals | `react-performance` | Making it fast, or auditing why it isn't |
 | test, vitest, testing, rtl, playwright, axe, coverage, storybook, story | `testing` | Writing or augmenting tests |
-| review, audit, guidelines, wig, copywriting, microcopy, contrast, a11y audit, ux rules, live audit, in the browser, computed contrast | `web-interface` | Reviewing existing UI rather than building new — including a live rendered-DOM audit |
+| review, audit, guidelines, wig, copywriting, microcopy, contrast-check, a11y audit, ux rules, live audit, in the browser, computed contrast | `web-interface` | Reviewing existing UI rather than building new — including a live rendered-DOM audit |
 | mobile, pwa, react native, expo, i18n, locale, rtl, seo, metadata, email, stripe, ai chat, streaming | `platform` | Platform-specific surfaces |
 
 **When two skills match, the more specific wins.** "form validation" → `forms`, not `react-components`.
