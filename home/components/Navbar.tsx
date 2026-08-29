@@ -45,11 +45,11 @@ export function Navbar({ version }: NavbarProps): ReactElement {
         scrolled ? "border-b border-border bg-bg-page/80 backdrop-blur-md" : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-5 sm:px-8 lg:px-8">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-8">
         <a
           href="#top"
           data-metric
-          className={`${tapTarget} ${focusRing} inline-flex items-center rounded text-sm font-semibold text-text-primary`}
+          className={`${tapTarget} ${focusRing} inline-flex items-center whitespace-nowrap rounded text-sm font-semibold text-text-primary`}
         >
           {PRODUCT}
         </a>
@@ -72,7 +72,7 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg px-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none`}
+              className={`${tapTarget} ${focusRing} inline-flex items-center whitespace-nowrap rounded-lg px-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none`}
             >
               {item.label}
             </a>
