@@ -91,7 +91,11 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             GitHub
           </a>
 
+<<<<<<< HEAD
           <details ref={detailsRef} data-disclosure className="relative md:hidden">
+=======
+          <details ref={detailsRef} data-disclosure className="relative sm:hidden">
+>>>>>>> fix/home-a11y-mobile-nav
             <summary
               className={`${tapTarget} ${focusRing} flex items-center justify-center rounded-lg border border-border-strong text-text-primary`}
             >
@@ -105,7 +109,11 @@ export function Navbar({ version }: NavbarProps): ReactElement {
                     key={item.id}
                     href={`#${item.id}`}
                     onClick={closeMenu}
+<<<<<<< HEAD
                     className={`${focusRing} flex min-h-11 items-center rounded-lg px-3 text-sm text-text-secondary transition-colors duration-150 ease-out hover:bg-bg-surface hover:text-text-primary motion-reduce:transition-none`}
+=======
+                    className={`${focusRing} rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:bg-bg-surface hover:text-text-primary motion-reduce:transition-none`}
+>>>>>>> fix/home-a11y-mobile-nav
                   >
                     {item.label}
                   </a>
