@@ -1,6 +1,6 @@
 {
   "name": "frontend-design-pro",
-  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. A registry that routes: one matched skill plus its declared core deps, 6,034–7,947 tokens per request against 418,453 of on-demand depth. 19 skills, 8 core files, 117 references, 55 examples, 61 machine-enforced constraints, 11 release-blocking gates.",
+  "description": "Machine-enforced frontend UI/UX skill pack for AI agents. A registry that routes: one matched skill plus its declared core deps, 6,034–7,947 tokens per request against 418,496 of on-demand depth. 19 skills, 8 core files, 117 references, 55 examples, 61 machine-enforced constraints, 11 release-blocking gates.",
   "version": "14.12.0",
   "author": {
     "name": "Krishna Modi",

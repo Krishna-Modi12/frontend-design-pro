@@ -1,6 +1,6 @@
 # Agent Compatibility
 
-One fact decides how well this pack works on a given host: can the agent decide, *mid-conversation*, to open one specific file it wasn't given up front? That is what makes the registry's loading model real — `SKILL.md` always in context, one matched `skills/{id}/SKILL.md`, its declared `core/*.md` deps, roughly 6,034–7,947 tokens per request against 418,453 tokens of reference depth (see [ARCHITECTURE.md](ARCHITECTURE.md)).
+One fact decides how well this pack works on a given host: can the agent decide, *mid-conversation*, to open one specific file it wasn't given up front? That is what makes the registry's loading model real — `SKILL.md` always in context, one matched `skills/{id}/SKILL.md`, its declared `core/*.md` deps, roughly 6,034–7,947 tokens per request against 418,496 tokens of reference depth (see [ARCHITECTURE.md](ARCHITECTURE.md)).
 
 **Claude Code is the only host with a real filesystem for that.** Everywhere else, lazy loading degrades to retrieval search, manual `@`-referencing, or pasting. Routing and the anti-slop wall survive the trip; on-demand depth does not.
 
@@ -8,7 +8,7 @@ One fact decides how well this pack works on a given host: can the agent decide,
 |---|---|---|---|---|---|---|---|---|
 | **Routing** (one skill per request) | Native | Prompted | Manual | Rule-driven | Prompted | You implement it | Prompted | Prompted |
 | **Lazy loading** (fetch on demand) | Yes | No — retrieval | No — paste | Partial — `@`-ref | No — retrieval | Only with a file-read tool | No — always-on file | Only with function calling |
-| **Reference depth** (99 files) | Full, on demand | Whatever retrieval surfaces | None | Full, if you `@`-reference it | Capped — 20 knowledge files per GPT | Full, via your tool | Only what you paste | Selected files, or full via tool |
+| **Reference depth** (117 files) | Full, on demand | Whatever retrieval surfaces | None | Full, if you `@`-reference it | Capped — 20 knowledge files per GPT | Full, via your tool | Only what you paste | Selected files, or full via tool |
 | **Anti-slop wall** | Yes | Yes | Yes | Yes, if the rule isn't summarised | Yes | Yes | Yes, if the file isn't summarised | Yes |
 | **Validation** (self-check) | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
 | **Validation** (gate scripts) | Yes — shell | No | No | No | No | Only if wired as a tool | No | Only if wired as a tool |
