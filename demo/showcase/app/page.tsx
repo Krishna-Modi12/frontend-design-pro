@@ -1,3 +1,4 @@
+import { Nav } from "@/components/Nav";
 import { Hero3D } from "@/components/Hero3D";
 import { BentoGrid, type BentoFeature } from "@/components/BentoGrid";
 import { Pricing, type PricingTier } from "@/components/Pricing";
@@ -33,6 +34,7 @@ const features: BentoFeature[] = [
     id: "retention",
     title: "Cohort retention, live",
     description: "Watch a cohort curve update as events land — not tomorrow's batch job.",
+    sparkline: [1, 0.74, 0.61, 0.53, 0.48, 0.45, 0.43, 0.415],
     span: "tall",
   },
   {
@@ -130,6 +132,7 @@ const CTA_TONE: Record<HeroCta["tone"], string> = {
 export default function HomePage() {
   return (
     <main className="min-h-[100dvh]">
+      <Nav />
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <Hero3D />
@@ -159,7 +162,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+      <section id="product" className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
         <h2 className="max-w-lg text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
           One pipeline. Every signal.
         </h2>
@@ -179,7 +182,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-border">
+      <section id="testimonials" className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <Testimonials testimonials={testimonials} />
         </div>

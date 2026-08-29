@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, type ContactFormValues } from "@/lib/validation";
+import { PRICING_SELECT_EVENT, type PricingSelectDetail } from "@/lib/pricing-select";
 
 export interface ContactFormProps {
   onSubmitted?: (values: ContactFormValues) => void;
@@ -13,11 +15,26 @@ export function ContactForm({ onSubmitted }: ContactFormProps) {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", email: "", company: "", message: "" },
   });
+
+  // A "Choose {tier}" click on the pricing table dispatches this instead of
+  // linking to a checkout flow that doesn't exist for a demo product — it
+  // prefills the one field the message is actually about and hands focus to
+  // it, so the click has a real, honest effect rather than none at all.
+  useEffect(() => {
+    const onPricingSelect = (event: Event): void => {
+      const { tierName } = (event as CustomEvent<PricingSelectDetail>).detail;
+      setValue("message", `I'm interested in the ${tierName} plan. `, { shouldValidate: false });
+      document.getElementById("contact-message")?.focus();
+    };
+    window.addEventListener(PRICING_SELECT_EVENT, onPricingSelect);
+    return () => window.removeEventListener(PRICING_SELECT_EVENT, onPricingSelect);
+  }, [setValue]);
 
   const onSubmit = handleSubmit(async (values) => {
     await new Promise((resolve) => setTimeout(resolve, 600));
