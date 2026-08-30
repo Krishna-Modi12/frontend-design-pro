@@ -1,6 +1,6 @@
 # React Bits — Animated Component Pattern Catalog
 
-Source: `DavidHDev/react-bits` — 110+ animated React components. **License: MIT + Commons Clause** (free for personal and commercial use; the Commons Clause restricts *selling the library itself*, not shipping products with it). Ports exist for Vue (`vue-bits.dev`) and Svelte (`sveltebits.xyz`).
+Source: `DavidHDev/react-bits` — 165+ animated React components (text animations, UI elements, backgrounds; growing weekly). **License: MIT + Commons Clause** (free for personal and commercial use; the Commons Clause restricts *selling the library itself*, not shipping products with it). Ports exist for Vue (`vue-bits.dev`) and Svelte (`sveltebits.xyz`).
 
 Patterns and rules only — do not copy implementations. Each component ships in four variants (JS-CSS, JS-TW, TS-CSS, TS-TW); **always take the TS-TW variant** for this stack, then rewrite colours to OKLCH tokens.
 

@@ -61,7 +61,7 @@ Load only for the specific task:
 | Metadata API, JSON-LD, sitemap, Core Web Vitals | `references/seo.md` |
 | Stripe PaymentElement, subscriptions, webhooks, portal | `references/payments.md` |
 | React Email + Resend, email-safe CSS, OTP/welcome/reset | `references/email-templates.md` |
-| useChat, streamText, tool calling, RSC streaming | `references/vercel-ai-sdk.md` |
+| useChat, streamText, tool calling, agents, structured output | `references/vercel-ai-sdk.md` |
 | Agent status, SSE, background jobs, human-in-the-loop | `references/subagent-orchestration.md` |
 | VS Code webview theming, browser extension popup/MV3 | `references/extension-ui.md` |
 | A/B testing, analytics, adaptive defaults, rollout | `references/continuous-learning.md` |

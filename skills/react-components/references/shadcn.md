@@ -1,8 +1,9 @@
 # shadcn/ui Reference — Frontend Design Pro
 > shadcn/ui — copy-paste component library over unstyled primitives + Tailwind CSS.
 > NOT a package you install as a dep — you own the code after `npx shadcn@latest add`.
-> Default registry at ui.shadcn.com. New York and Default style variants.
+> Default registry at ui.shadcn.com. **`new-york` is the only current style** — `default` is deprecated.
 > **`init` now defaults to Base UI, not Radix** — check `package.json` first; see below.
+> **Theme tokens are OKLCH exposed through `@theme inline`** (Tailwind v4) — see below.
 
 ---
 
@@ -46,8 +47,10 @@ deprecated and should not be migrated to chase the default.
 - Accessible unstyled primitives (Base UI by default now, Radix in existing
   projects) + Tailwind styling you control
 - Copy-paste into `/components/ui/` — you own every line
-- Style variants: `default` (rounded, softer) and `new-york` (sharper, tighter)
-- CSS variables for theming: `--background`, `--foreground`, `--primary`, etc.
+- One style: **`new-york`**. `default` is deprecated (the registry still serves it
+  for existing projects) and `style` cannot be changed after `init`
+- CSS variables for theming in **OKLCH** (`--background`, `--foreground`,
+  `--primary`, …), mapped to Tailwind utilities through an `@theme inline` block
 - Works with Tailwind v3 and v4
 
 **IS NOT:**
@@ -75,56 +78,80 @@ npx shadcn@latest add button card badge dialog form input label select textarea
 ```
 
 During `init` you'll be asked:
-- Style: `default` or `new-york`
-- Base color: `slate`, `gray`, `zinc`, `neutral`, `stone`
+- Base color: `neutral`, `stone`, `zinc`, `mauve`, `olive`, `mist`, `taupe`
 - CSS variables: yes (always yes)
+
+`init` no longer prompts for a style — new projects get `new-york`, and the
+choice can't be changed afterward.
 
 ---
 
 ## CSS VARIABLE THEMING
 
-shadcn uses CSS variables. Override in `globals.css`:
+Since the Tailwind v4 migration, shadcn defines every theme colour in **OKLCH**
+in `:root` / `.dark`, then exposes them to Tailwind through an **`@theme inline`**
+block — no `tailwind.config` colour section. This is the shape `npx shadcn init`
+writes into `globals.css` (values abbreviated; the real file also carries
+`--card*`, `--popover*`, `--sidebar*` and `--chart-1..5`):
 
 ```css
-@layer base {
-  :root {
-    --background: 0 0% 100%;          /* hsl values, no hsl() wrapper */
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
+@import "tailwindcss";
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    /* ... dark values */
-  }
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);      /* alpha on white, not a separate colour */
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  /* --radius is the base; the scale derives from it */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
 }
 ```
 
-**Brand override pattern** — change primary without touching components:
+`--radius-lg` is the base value; smaller and larger radii scale off `--radius`,
+so changing that one token retunes the whole radius scale.
+
+**Brand override pattern** — retint primary without touching components:
 ```css
 :root {
-  --primary: 239 84% 67%;          /* indigo-500 */
-  --primary-foreground: 0 0% 100%;
-  --ring: 239 84% 67%;             /* focus rings match brand */
-  --radius: 0.75rem;               /* rounder cards */
+  --primary: oklch(0.55 0.20 265);   /* one brand hue, OKLCH */
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.55 0.20 265);      /* focus rings match brand */
+  --radius: 0.75rem;                 /* rounder cards */
 }
 ```
 
@@ -489,22 +516,26 @@ const buttonVariants = cva(
 
 ## SHADCN + TAILWIND v4 (CSS-first config)
 
+Tailwind v4 is the current default. There is no `tailwind.config` colour section —
+the OKLCH tokens in `:root` / `.dark` are the source of truth, and `@theme inline`
+re-exports them as `--color-*` so `bg-primary`, `text-muted-foreground`, etc.
+resolve. Both blocks live in `globals.css`:
+
 ```css
 /* globals.css */
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@theme {
-  --color-primary: hsl(239 84% 67%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222 84% 5%);
-  --color-border: hsl(214 32% 91%);
-  --color-ring: hsl(239 84% 67%);
-  --radius: 0.75rem;
+:root  { --primary: oklch(0.55 0.20 265); /* … */ }
+.dark  { --primary: oklch(0.70 0.16 265); /* … */ }
+
+@theme inline {
+  --color-primary: var(--primary);
+  /* … one line per token … */
 }
 ```
 
-With Tailwind v4, shadcn variables map directly — no separate CSS variable block needed.
+Retint by editing the `:root` / `.dark` values; the `@theme inline` mapping does
+not change.
 
 ---
 

@@ -242,13 +242,39 @@ process.env.NEXT_PUBLIC_API_URL
 
 - Use `generateStaticParams` for known dynamic routes → static HTML
 - `cache()` from React to deduplicate requests in Server Components
-- `unstable_noStore()` to opt out of caching for real-time data
+- `fetch` is uncached by default (Next 15+); opt into caching per call, or use
+  `'use cache'` (Next 16 Cache Components)
 - Avoid `"use client"` at layout level — keep interactivity at leaf components
 - `<link rel="preload">` for critical fonts/images above fold via metadata
 
 ---
 
 ## Caching Deep Dive
+
+**Default changed in Next.js 15:** `fetch()` is **no longer cached by default**
+(nor are GET Route Handlers). Every `fetch` is dynamic unless you opt in with
+`cache: 'force-cache'` or `next: { revalidate }`. Code written for Next 14 that
+relied on the implicit cache now hits the network on every request.
+
+**Next.js 16 direction — Cache Components.** With `cacheComponents: true` in
+`next.config`, caching moves to the [`use cache`](https://nextjs.org/docs/app/api-reference/directives/use-cache)
+directive: mark an async function or component `'use cache'`, give it a lifetime
+with `cacheLife('hours')`, and tag it with `cacheTag('posts')` for on-demand
+revalidation. `unstable_cache` still works in the previous model; `use cache` is
+its successor and the two are not mixed in one codebase.
+
+```tsx
+import { cacheLife, cacheTag } from 'next/cache'
+
+async function BlogPosts() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('posts')
+  const posts = await fetch('https://api.example.com/posts').then(r => r.json())
+  return <PostList posts={posts} />
+}
+// Fresh-every-request data: don't cache it — wrap the component in <Suspense>.
+```
 
 ### `cache()` — Deduplicate in-request fetches (React)
 
@@ -273,7 +299,11 @@ async function ProfilePage({ params }: { params: { id: string } }) {
 }
 ```
 
-### `unstable_cache` — Persist across requests (Next.js data cache)
+### `unstable_cache` — Persist across requests (previous model)
+
+Use this when the project is **not** on Cache Components. On Next 16 with
+`cacheComponents: true`, the equivalent is a `'use cache'` function with
+`cacheLife` / `cacheTag` (see the top of this section).
 
 ```tsx
 import { unstable_cache } from 'next/cache'
@@ -289,6 +319,15 @@ export const getTopPosts = unstable_cache(
     tags: ['posts'],      // revalidate with revalidateTag('posts')
   }
 )
+
+// Next 16 / Cache Components equivalent:
+import { cacheLife, cacheTag } from 'next/cache'
+export async function getTopPosts(limit: number) {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('posts')
+  return db.post.findMany({ take: limit, orderBy: { views: 'desc' } })
+}
 ```
 
 ### `revalidatePath` vs `revalidateTag`
@@ -319,18 +358,20 @@ await fetch('/api/posts', { next: { tags: ['posts'] } })
 ### Fetch cache config cheat sheet
 
 ```tsx
-// Static (CDN-cached, never changes)
+// Dynamic — fresh on every request. THIS IS THE DEFAULT since Next 15.
+fetch(url)
+fetch(url, { cache: 'no-store' })   // explicit, same effect
+
+// Static (CDN-cached, never changes) — opt in
 fetch(url, { cache: 'force-cache' })
 
-// ISR — revalidate every N seconds
+// ISR — revalidate every N seconds — opt in
 fetch(url, { next: { revalidate: 60 } })
-
-// Dynamic — fresh on every request
-fetch(url, { cache: 'no-store' })
-// OR:
-import { unstable_noStore } from 'next/cache'
-unstable_noStore()   // call at top of Server Component function
 ```
+
+`unstable_noStore()` is legacy (still supported) — a bare `fetch` is already
+uncached, and `connection()` from `next/server` is the recommended way to force
+request-time rendering.
 
 ---
 

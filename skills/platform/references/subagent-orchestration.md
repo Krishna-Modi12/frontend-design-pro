@@ -50,38 +50,43 @@ const STEP_ORDER: PipelineStep[] = [
 ];
 
 // app/api/pipeline/route.ts
-import { createDataStreamResponse, streamText } from 'ai';
+import { createUIMessageStream, createUIMessageStreamResponse, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
 
-  return createDataStreamResponse({
-    execute: async (dataStream) => {
+  // v4's createDataStreamResponse + dataStream.writeData() is now
+  // createUIMessageStream + writer.write({ type: 'data-*' }).
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
       for (const step of STEP_ORDER) {
-        dataStream.writeData({ type: 'step-start', step });
+        writer.write({ type: 'data-step-start', data: { step }, transient: true });
 
-        const result = await streamText({
-          model: openai('gpt-4o'),
+        const result = streamText({
+          model: openai('gpt-5'),
           prompt: buildPromptForStep(step, prompt),
         });
 
         for await (const chunk of result.textStream) {
-          dataStream.writeData({ type: 'step-chunk', step, chunk });
+          writer.write({ type: 'data-step-chunk', data: { step, chunk }, transient: true });
         }
 
-        dataStream.writeData({ type: 'step-done', step });
+        writer.write({ type: 'data-step-done', data: { step }, transient: true });
       }
     },
   });
+
+  return createUIMessageStreamResponse({ stream });
 }
 ```
 
 ```tsx
 // components/PipelineProgress.tsx
 'use client';
-import { useChat } from 'ai/react';
-import { useState, useEffect } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useState } from 'react';
 import type { StepState, PipelineStep } from '@/lib/pipeline';
 
 const STEP_LABELS: Record<PipelineStep, string> = {
@@ -99,33 +104,29 @@ export function PipelineProgress({ prompt }: { prompt: string }) {
     )
   );
 
-  const { data, append, status } = useChat({ api: '/api/pipeline' });
-
-  useEffect(() => {
-    if (!data) return;
-    for (const event of data) {
-      const e = event as { type: string; step: PipelineStep; chunk?: string };
-      if (e.type === 'step-start') {
+  const { sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/pipeline' }),
+    // Transient data parts arrive here, not in message history
+    onData: (part) => {
+      if (part.type === 'data-step-start') {
+        const { step } = part.data as { step: PipelineStep };
         setSteps((prev) =>
-          prev.map((s) =>
-            s.id === e.step ? { ...s, status: 'running', startedAt: Date.now() } : s
-          )
+          prev.map((s) => (s.id === step ? { ...s, status: 'running', startedAt: Date.now() } : s))
         );
-      } else if (e.type === 'step-chunk') {
+      } else if (part.type === 'data-step-chunk') {
+        const { step, chunk } = part.data as { step: PipelineStep; chunk: string };
         setSteps((prev) =>
-          prev.map((s) =>
-            s.id === e.step ? { ...s, output: (s.output ?? '') + (e.chunk ?? '') } : s
-          )
+          prev.map((s) => (s.id === step ? { ...s, output: (s.output ?? '') + chunk } : s))
         );
-      } else if (e.type === 'step-done') {
+      } else if (part.type === 'data-step-done') {
+        const { step } = part.data as { step: PipelineStep };
         setSteps((prev) =>
-          prev.map((s) =>
-            s.id === e.step ? { ...s, status: 'done', completedAt: Date.now() } : s
-          )
+          prev.map((s) => (s.id === step ? { ...s, status: 'done', completedAt: Date.now() } : s))
         );
       }
-    }
-  }, [data]);
+    },
+  });
+  const busy = status === 'submitted' || status === 'streaming';
 
   const currentStep = steps.find((s) => s.status === 'running');
   const doneCount = steps.filter((s) => s.status === 'done').length;
@@ -136,7 +137,7 @@ export function PipelineProgress({ prompt }: { prompt: string }) {
       {/* Overall progress bar */}
       <div role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100}>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
-          <span>{currentStep?.label ?? (status === 'in_progress' ? 'Starting…' : 'Complete')}</span>
+          <span>{currentStep?.label ?? (busy ? 'Starting…' : 'Complete')}</span>
           <span>{progressPct}%</span>
         </div>
         <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
@@ -155,11 +156,11 @@ export function PipelineProgress({ prompt }: { prompt: string }) {
       </ol>
 
       <button
-        onClick={() => append({ role: 'user', content: prompt })}
-        disabled={status === 'in_progress'}
+        onClick={() => sendMessage({ text: prompt })}
+        disabled={busy}
         className="btn-primary"
       >
-        {status === 'in_progress' ? 'Running…' : 'Run Pipeline'}
+        {busy ? 'Running…' : 'Run Pipeline'}
       </button>
     </div>
   );
@@ -502,7 +503,7 @@ When running multiple agents on the same input, you need to display their output
 ```tsx
 // components/ParallelOutputs.tsx
 'use client';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import { useState } from 'react';
 
 interface AgentConfig {
@@ -912,13 +913,13 @@ When multiple agents stream simultaneously, compose their outputs into a single 
 
 ```tsx
 // app/api/compose/route.ts — server side
-import { createDataStreamResponse } from 'ai';
+import { createUIMessageStream, createUIMessageStreamResponse, type UIMessageStreamWriter } from 'ai';
 
 export async function POST(req: Request) {
   const { query } = await req.json();
 
-  return createDataStreamResponse({
-    execute: async (dataStream) => {
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
       // Fan out to two agents in parallel, annotate chunks with source
       const [streamA, streamB] = await Promise.all([
         fetchAgentStream('agent-a', query),
@@ -926,34 +927,37 @@ export async function POST(req: Request) {
       ]);
 
       await Promise.all([
-        pipeAnnotated(streamA, 'agent-a', dataStream),
-        pipeAnnotated(streamB, 'agent-b', dataStream),
+        pipeAnnotated(streamA, 'agent-a', writer),
+        pipeAnnotated(streamB, 'agent-b', writer),
       ]);
     },
   });
+
+  return createUIMessageStreamResponse({ stream });
 }
 
 async function pipeAnnotated(
   stream: ReadableStream<string>,
   agentId: string,
-  dataStream: import('ai').DataStreamWriter
+  writer: UIMessageStreamWriter
 ) {
   const reader = stream.getReader();
   while (true) {
     const { done, value } = await reader.read();
     if (done) {
-      dataStream.writeData({ type: 'done', agentId });
+      writer.write({ type: 'data-agent-done', data: { agentId }, transient: true });
       break;
     }
-    dataStream.writeData({ type: 'chunk', agentId, text: value });
+    writer.write({ type: 'data-agent-chunk', data: { agentId, text: value }, transient: true });
   }
 }
 ```
 
 ```tsx
 // hooks/useComposedStreams.ts
-import { useChat } from 'ai/react';
-import { useEffect, useRef, useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useState } from 'react';
 
 interface StreamSlice {
   agentId: string;
@@ -963,36 +967,39 @@ interface StreamSlice {
 
 export function useComposedStreams(query: string) {
   const [slices, setSlices] = useState<Record<string, StreamSlice>>({});
-  const { data, append, status } = useChat({ api: '/api/compose' });
-
-  useEffect(() => {
-    if (!data) return;
-    for (const item of data) {
-      const event = item as { type: string; agentId: string; text?: string };
-      if (event.type === 'chunk') {
+  const { sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/compose' }),
+    onData: (part) => {
+      if (part.type === 'data-agent-chunk') {
+        const { agentId, text } = part.data as { agentId: string; text: string };
         setSlices((prev) => ({
           ...prev,
-          [event.agentId]: {
-            agentId: event.agentId,
-            text: (prev[event.agentId]?.text ?? '') + (event.text ?? ''),
+          [agentId]: {
+            agentId,
+            text: (prev[agentId]?.text ?? '') + text,
             done: false,
           },
         }));
-      } else if (event.type === 'done') {
+      } else if (part.type === 'data-agent-done') {
+        const { agentId } = part.data as { agentId: string };
         setSlices((prev) => ({
           ...prev,
-          [event.agentId]: { ...prev[event.agentId], done: true },
+          [agentId]: { ...prev[agentId], done: true },
         }));
       }
-    }
-  }, [data]);
+    },
+  });
 
   function run() {
     setSlices({});
-    append({ role: 'user', content: query });
+    sendMessage({ text: query });
   }
 
-  return { slices: Object.values(slices), run, isStreaming: status === 'in_progress' };
+  return {
+    slices: Object.values(slices),
+    run,
+    isStreaming: status === 'submitted' || status === 'streaming',
+  };
 }
 ```
 
@@ -1437,7 +1444,7 @@ function AgentAnswer({ completion, isLoading }: { completion: string; isLoading:
 
 | Need | Tool / Pattern |
 |---|---|
-| Multi-step streaming | `createDataStreamResponse` + `dataStream.writeData()` (Vercel AI SDK) |
+| Multi-step streaming | `createUIMessageStream` + `writer.write({ type: 'data-*' })` (Vercel AI SDK) |
 | Live agent status | `EventSource` + `useReducer` + `aria-live="polite"` |
 | Job polling | TanStack Query `refetchInterval` with conditional return |
 | Parallel outputs | Fan-out in route handler, annotate chunks with agent ID |

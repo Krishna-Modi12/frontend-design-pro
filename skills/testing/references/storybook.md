@@ -1,17 +1,18 @@
-<!-- shortcode: [stories] | package: frontend-design-pro-v10 | version: 10.15.0 -->
+<!-- shortcode: [stories] -->
 
 # Storybook Reference
 
 Source: frontend-design-pro skill (internal)
-Version: 10.15.0
 
-Storybook 8 is the standard tool for developing, documenting, and visually testing UI components in isolation. This reference covers typed story authoring with CSF3, interaction testing via `play` functions, MDX docs, visual regression with Chromatic, and accessibility testing.
+Storybook 10 is the standard tool for developing, documenting, and visually testing UI components in isolation. This reference covers typed story authoring with CSF3, interaction testing via `play` functions, MDX docs, visual regression with Chromatic, and accessibility testing.
+
+Since Storybook 9, `addon-essentials` and `addon-interactions` no longer exist — controls, actions, viewport, backgrounds, toolbars and docs are **core**, and interaction / a11y / coverage testing is unified into the Vitest-based **Storybook Test** (`@storybook/addon-vitest`). Test utilities import from `storybook/test` (not `@storybook/test`), and framework types from `@storybook/react-vite` / `@storybook/nextjs-vite` (not `@storybook/react`).
 
 ---
 
 ## Contents
 
-- [1. Setup — Storybook 8 with Next.js or Vite](#1-setup--storybook-8-with-nextjs-or-vite)
+- [1. Setup — Storybook 10 with Next.js or Vite](#1-setup--storybook-10-with-nextjs-or-vite)
 - [2. Typed Story Authoring — CSF3](#2-typed-story-authoring--csf3)
 - [3. args + argTypes Controls](#3-args--argtypes-controls)
 - [4. Parameters](#4-parameters)
@@ -19,7 +20,7 @@ Storybook 8 is the standard tool for developing, documenting, and visually testi
 - [6. play Functions — Interaction Testing](#6-play-functions--interaction-testing)
 - [7. MDX Documentation](#7-mdx-documentation)
 - [8. autodocs Tag](#8-autodocs-tag)
-- [9. Viewport Addon + a11y Addon](#9-viewport-addon--a11y-addon)
+- [9. Viewport and a11y](#9-viewport-and-a11y)
 - [10. Chromatic Visual Regression](#10-chromatic-visual-regression)
 - [11. Worked Examples](#11-worked-examples)
 - [12. composeStories — Unit Test Integration](#12-composestories--unit-test-integration)
@@ -27,13 +28,13 @@ Storybook 8 is the standard tool for developing, documenting, and visually testi
 
 ---
 
-## 1. Setup — Storybook 8 with Next.js or Vite
+## 1. Setup — Storybook 10 with Next.js or Vite
 
 **Next.js:**
 
 ```bash
 npx storybook@latest init
-# Detects Next.js automatically — installs @storybook/nextjs
+# Detects Next.js — installs @storybook/nextjs-vite (Vite-powered)
 ```
 
 **Vite (React):**
@@ -46,23 +47,26 @@ npx storybook@latest init
 **.storybook/main.ts:**
 
 ```ts
-import type { StorybookConfig } from "@storybook/nextjs"; // or "@storybook/react-vite"
+import type { StorybookConfig } from "@storybook/nextjs-vite"; // or "@storybook/react-vite"
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(ts|tsx|mdx)"],
   addons: [
-    "@storybook/addon-essentials",   // controls, actions, backgrounds, viewport, docs
-    "@storybook/addon-a11y",         // axe-core accessibility checks
-    "@storybook/addon-interactions", // play function timeline
+    // controls, actions, viewport, backgrounds, toolbars are CORE now — no addon
+    "@storybook/addon-docs",    // autodocs + MDX (was part of addon-essentials)
+    "@storybook/addon-a11y",    // axe-core accessibility checks
+    "@storybook/addon-vitest",  // Storybook Test — runs play functions + a11y under Vitest
   ],
   framework: {
-    name: "@storybook/nextjs",       // or "@storybook/react-vite"
+    name: "@storybook/nextjs-vite",   // or "@storybook/react-vite"
     options: {},
   },
 };
 
 export default config;
 ```
+
+`@storybook/addon-essentials` and `@storybook/addon-interactions` are empty packages since v9 — remove them from `package.json`. `npx storybook@latest upgrade` runs the automigrations.
 
 ---
 
@@ -72,7 +76,7 @@ The Component Story Format 3 (CSF3) uses `Meta<typeof Component>` for metadata a
 
 ```tsx
 // src/components/Button/Button.stories.tsx
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./Button";
 
 // --- Meta ---
@@ -158,7 +162,7 @@ export const Large: Story = {
 
 ## 3. args + argTypes Controls
 
-All control types available in Storybook 8:
+All control types available in Storybook 10:
 
 ```ts
 argTypes: {
@@ -224,49 +228,47 @@ argTypes: {
 
 ## 4. Parameters
 
+Since v9, `backgrounds` and `viewport` take `options` (a keyed map) as a parameter
+and the *active* choice is a **global**, set via `initialGlobals` (or per-story `globals`).
+
 ```tsx
 // Story-level parameters override global/meta parameters
 export const FullWidth: Story = {
   parameters: {
     layout: "fullscreen",
-    // Custom backgrounds for this story
-    backgrounds: {
-      default: "dark",
-      values: [
-        { name: "light", value: "#ffffff" },
-        { name: "dark", value: "#09090b" },
-        { name: "brand", value: "#1e40af" },
-      ],
-    },
-    // Viewport addon — simulate device sizes
-    viewport: {
-      defaultViewport: "iphone14",
-    },
     // Chromatic — disable snapshot for a specific story
     chromatic: { disableSnapshot: true },
   },
+  // Which background / viewport this story opens with
+  globals: {
+    backgrounds: { value: "dark" },
+    viewport: { value: "mobile" },
+  },
 };
 
-// .storybook/preview.ts — global parameters
-import type { Preview } from "@storybook/react";
+// .storybook/preview.ts — global config
+import type { Preview } from "@storybook/react-vite";
 
 const preview: Preview = {
   parameters: {
     backgrounds: {
-      default: "light",
-      values: [
-        { name: "light", value: "#ffffff" },
-        { name: "dark", value: "#09090b" },
-      ],
+      options: {
+        light: { name: "Light", value: "#ffffff" },
+        dark:  { name: "Dark",  value: "#09090b" },
+        brand: { name: "Brand", value: "#1e40af" },
+      },
     },
     viewport: {
-      viewports: {
-        mobile: { name: "Mobile", styles: { width: "390px", height: "844px" } },
-        tablet: { name: "Tablet", styles: { width: "768px", height: "1024px" } },
+      options: {
+        mobile:  { name: "Mobile",  styles: { width: "390px",  height: "844px" } },
+        tablet:  { name: "Tablet",  styles: { width: "768px",  height: "1024px" } },
         desktop: { name: "Desktop", styles: { width: "1440px", height: "900px" } },
       },
     },
     layout: "centered",
+  },
+  initialGlobals: {
+    backgrounds: { value: "light" },
   },
 };
 
@@ -281,7 +283,7 @@ Decorators wrap every story in a given scope with context providers, routers, or
 
 ```tsx
 // .storybook/preview.ts — global decorators (applied to all stories)
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import { ThemeProvider } from "../src/components/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -321,7 +323,7 @@ export const WithRouter: Story = {
 };
 ```
 
-**Next.js router mock — `@storybook/nextjs` handles this automatically for `useRouter`, `usePathname`, etc.:**
+**Next.js router mock — `@storybook/nextjs-vite` handles this automatically for `useRouter`, `usePathname`, etc.:**
 
 ```tsx
 export const ActiveNavItem: Story = {
@@ -343,8 +345,8 @@ export const ActiveNavItem: Story = {
 `play` functions simulate user interactions after a story renders. They run in the browser (real DOM) and are visible in the Interactions panel.
 
 ```tsx
-import { within, userEvent, expect } from "@storybook/test";
-import type { Meta, StoryObj } from "@storybook/react";
+import { within, userEvent, expect } from "storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LoginForm } from "./LoginForm";
 
 const meta = {
@@ -415,7 +417,7 @@ export const KeyboardNavigation: Story = {
 };
 ```
 
-**Available `@storybook/test` utilities:**
+**Available `storybook/test` utilities** (a subpath of the `storybook` package — was `@storybook/test`, and `@storybook/jest` / `@storybook/testing-library` before that):
 
 ```ts
 import {
@@ -424,7 +426,7 @@ import {
   expect,          // Jest-compatible matchers
   waitFor,         // async polling for assertions
   fn,              // spy / mock function (replaces jest.fn())
-} from "@storybook/test";
+} from "storybook/test";
 ```
 
 ---
@@ -435,7 +437,7 @@ MDX files combine Markdown prose with live story embeds, providing rich componen
 
 ```mdx
 {/* src/components/Button/Button.mdx */}
-import { Canvas, Controls, ArgTypes, Description, Meta } from "@storybook/blocks";
+import { Canvas, Controls, ArgTypes, Description, Meta } from "@storybook/addon-docs/blocks";
 import * as ButtonStories from "./Button.stories";
 
 <Meta of={ButtonStories} />
@@ -518,34 +520,35 @@ const meta = {
 
 ---
 
-## 9. Viewport Addon + a11y Addon
+## 9. Viewport and a11y
 
-**Viewport — simulate device screen sizes:**
+**Viewport — simulate device screen sizes (built into core, no addon):**
 
 ```tsx
-// Story-level viewport
+// Story-level: pick the viewport via globals
 export const MobileView: Story = {
-  parameters: {
-    viewport: { defaultViewport: "iphone14" },
-    layout: "fullscreen",
-  },
+  parameters: { layout: "fullscreen" },
+  globals: { viewport: { value: "mobile", isRotated: false } },
 };
 
-// Global viewport toolbar provides: iphone14, ipad, samsung-s10, macbook-13, etc.
-// Define custom viewports in .storybook/preview.ts (see Section 4)
+// Built-in sets: import INITIAL_VIEWPORTS / MINIMAL_VIEWPORTS from
+// 'storybook/viewport' and spread into parameters.viewport.options (see Section 4).
 ```
 
-**a11y addon (`@storybook/addon-a11y`) — axe-core in the browser:**
+**a11y addon (`@storybook/addon-a11y`) — axe-core:**
 
-The a11y addon runs axe-core against every rendered story and reports violations in the Accessibility panel.
+The a11y addon runs axe-core against every rendered story, reports violations in the
+Accessibility panel, and — with `@storybook/addon-vitest` — fails the test run on them.
 
 ```ts
 // .storybook/preview.ts — global a11y config
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 
 const preview: Preview = {
   parameters: {
     a11y: {
+      // "todo" warn · "error" fail the run · "off" skip
+      test: "error",
       // Configure which axe rules run
       config: {
         rules: [
@@ -556,8 +559,6 @@ const preview: Preview = {
           },
         ],
       },
-      // "manual" — disable automatic axe check, run manually per story
-      manual: false,
     },
   },
 };
@@ -657,8 +658,8 @@ export const AnimatedChart: Story = {
 
 ```tsx
 // src/components/Button/Button.stories.tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { within, userEvent, expect, fn } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { within, userEvent, expect, fn } from "storybook/test";
 import { Button } from "./Button";
 
 const meta = {
@@ -729,8 +730,8 @@ export const Loading: Story = {
 
 ```tsx
 // src/components/ContactForm/ContactForm.stories.tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { within, userEvent, expect, waitFor } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { within, userEvent, expect, waitFor } from "storybook/test";
 import { ContactForm } from "./ContactForm";
 
 const meta = {
@@ -807,7 +808,7 @@ export const SuccessfulSubmit: Story = {
 ```tsx
 // src/components/Button/Button.test.tsx
 import { render, screen } from "@testing-library/react";
-import { composeStories } from "@storybook/react";
+import { composeStories } from "@storybook/react-vite";
 import * as stories from "./Button.stories";
 
 // Apply all meta defaults, args, and decorators to each story
@@ -832,21 +833,29 @@ describe("Button", () => {
 });
 ```
 
-**Vitest setup for `@storybook/test`:**
+**Storybook Test — run every story's `play` function and a11y check under Vitest.**
+`npx storybook@latest add @storybook/addon-vitest` wires this up; it writes a
+`.storybook/vitest.setup.ts` and a Vitest project that points at your stories:
 
 ```ts
-// vitest.setup.ts
-import "@testing-library/jest-dom";
-
 // vitest.config.ts
 import { defineConfig } from "vitest/config";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+
 export default defineConfig({
+  plugins: [
+    storybookTest({ configDir: ".storybook" }),
+  ],
   test: {
-    environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
+    // browser mode (Playwright) is recommended; jsdom also works
+    browser: { enabled: true, provider: "playwright", headless: true, instances: [{ browser: "chromium" }] },
+    setupFiles: [".storybook/vitest.setup.ts"],
   },
 });
 ```
+
+`composeStories` (above) is still the way to pull a single story into a hand-written
+unit test; Storybook Test is for running the whole story suite as tests.
 
 ---
 
@@ -941,4 +950,4 @@ export const AnimatedEntrance: Story = {
 
 ---
 
-> Related: `/sessions/beautiful-cool-archimedes/frontend-design-pro-v10/references/playwright.md` — end-to-end test patterns that complement Storybook interaction tests.
+> Related: `playwright.md` — end-to-end test patterns that complement Storybook interaction tests.
