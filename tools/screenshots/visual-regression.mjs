@@ -5,21 +5,37 @@
  *   node tools/screenshots/visual-regression.mjs                 # check
  *   node tools/screenshots/visual-regression.mjs --update-baselines
  *
- * Scoped to the two targets that render deterministically. `demo/showcase`
- * is deliberately excluded: its hero is a WebGL particle field seeded at
- * random, and `capture.mjs` already documents why — "every capture differs
- * from the last." A naive pixel diff against that page would show ~100%
- * drift on every run regardless of any real change, which is worse than no
- * check at all. Extending coverage to showcase means freezing its particle
- * seed behind a test-mode flag first; not attempted here, logged as a
- * follow-up in docs/CAPABILITY_MATRIX.md rather than silently worked around.
+ * Three targets, all rendering deterministically. `demo/showcase`'s hero is
+ * a WebGL particle field seeded at random by default — `capture.mjs`
+ * documents why its own showcase shot stays opt-in: "every capture differs
+ * from the last." That's still true for a real visitor. What changed:
+ * `Hero3D.tsx` now accepts an optional `seed` (read from `?particleSeed=`
+ * when not passed explicitly) that swaps `Math.random()` for a seeded PRNG
+ * and freezes the field's rotation the same way `prefers-reduced-motion`
+ * already does — the same shape of override `home/`'s `?world=signature`
+ * uses for its own seeded "world" pick, applied here. This was logged as a
+ * follow-up in docs/CAPABILITY_MATRIX.md and is now built, not worked around.
  *
  * One color scheme per target, matching how each is already exercised by
  * the rest of this toolset rather than inventing new coverage: `verify.mjs`
  * documents that `landing-page` "pins color-scheme: dark and ships no light
- * variant," and `verify-home.mjs` never exercises `home/` in dark. Testing
- * a scheme a page doesn't actually render under would just re-screenshot
- * identical pixels under a second label.
+ * variant," `verify-home.mjs` never exercises `home/` in dark, and
+ * `verify-showcase.mjs`/`capture.mjs` both already treat showcase as dark
+ * only. Testing a scheme a page doesn't actually render under would just
+ * re-screenshot identical pixels under a second label.
+ *
+ * A live glyph-rendering artifact was investigated near the homepage navbar
+ * this same session — not a pixel-diff finding, a directly-observed one —
+ * and ruled out as a layout defect (the real DOM gap was doubled via
+ * `getBoundingClientRect` and the artifact's appearance didn't change,
+ * which a genuine spacing bug cannot do; reproduced identically in Firefox,
+ * ruling out a Chromium-specific cause). It's believed to be the same
+ * font/anti-aliasing rendering-engine class the paragraph below already
+ * names for baseline provenance, just visible in a live render instead of a
+ * diff. Documented here rather than chased further; a Docker-pinned capture
+ * environment (the standard fix research turned up for this exact class of
+ * cross-platform font drift) would likely resolve both at once, but is a
+ * real infra change and stays a logged follow-up, not built this pass.
  *
  * Baseline provenance matters here: screenshot diffing is font/OS-sensitive,
  * and a baseline captured on a Windows or macOS dev machine will produce
@@ -75,6 +91,20 @@ const TARGETS = [
     cwd: join(REPO, "demo", "landing-page"),
     port: 3320,
     route: "/",
+    scheme: "dark",
+    waitFor: "main, h1",
+  },
+  {
+    id: "showcase",
+    cwd: join(REPO, "demo", "showcase"),
+    // 3311-3314 are capture.mjs's own ports, 3315-3318 are the verify*.mjs
+    // dev/prod pairs, 3319-3320 are this file's home/landing-page targets
+    // above — 3321-3322 are verify.mjs's dev/prod pair, so 3323 is next free.
+    port: 3323,
+    // Freezes Hero3D's particle field — see this file's own doc comment and
+    // demo/showcase/components/Hero3D.tsx. Without it this target wouldn't
+    // render deterministically at all.
+    route: "/?particleSeed=1",
     scheme: "dark",
     waitFor: "main, h1",
   },
@@ -184,7 +214,7 @@ async function runTarget(browser, target) {
     return;
   }
   await run(NPX, ["next", "build"], target.cwd);
-  const server = startNextServer({ cwd: target.cwd, port: target.port, mode: "start" });
+  const server = await startNextServer({ cwd: target.cwd, port: target.port, mode: "start" });
   try {
     await waitForServer(`http://localhost:${target.port}${target.route}`);
     for (const vp of VIEWPORTS) {

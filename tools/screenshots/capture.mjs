@@ -104,7 +104,7 @@ async function encodeUnderCap(input, width) {
 
 async function captureSite(site, browser, scratch) {
   const base = `http://localhost:${site.port}`;
-  const server = startNextServer({ cwd: site.cwd, port: site.port, mode: "start" });
+  const server = await startNextServer({ cwd: site.cwd, port: site.port, mode: "start" });
 
   try {
     await waitForServer(`${base}${site.shots[0].route}`);

@@ -217,9 +217,10 @@ jobs:
         run: npm test
 
   # No gate in this repository renders a page and compares it to what it
-  # rendered last time — this is that check, for the two demos that render
-  # deterministically (demo/showcase's WebGL hero is seeded at random and is
-  # deliberately excluded; see tools/screenshots/visual-regression.mjs).
+  # rendered last time — this is that check, for the three demos that render
+  # deterministically (demo/showcase's WebGL hero is otherwise seeded at
+  # random; visual-regression.mjs freezes it via ?particleSeed= for capture,
+  # same as it does the reduced-motion path for the other two).
   #
   # `continue-on-error: true` at the job level, on purpose: baselines were
   # captured once and this has not yet run clean across enough real commits
@@ -258,6 +259,10 @@ jobs:
 
       - name: Install demo/landing-page dependencies
         working-directory: demo/landing-page
+        run: npm ci
+
+      - name: Install demo/showcase dependencies
+        working-directory: demo/showcase
         run: npm ci
 
       - name: Visual regression check

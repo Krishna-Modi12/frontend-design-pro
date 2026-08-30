@@ -63,16 +63,33 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             each link's horizontal padding trimmed (px-3 → px-2.5) cut real
             width off the row itself, not just moved where it collapses. The
             version badge stays lg-only — it was never part of the 768px
-            deficit since it was already hidden there. Re-verify with
-            `pages:verify`'s 768px overflow check before trusting this fits;
-            if the row still clips, the next lever is dropping the badge/GitHub
-            label at md before reaching for lg again. */}
+            deficit since it was already hidden there.
+
+            v2.3 didn't actually close the ~55px that remained — it stayed
+            hidden as the logo link wrapping mid-word, because `whitespace`
+            was still free to break. The fix for that wrap (#126) added
+            `whitespace-nowrap` to the logo without removing `min-w-[44px]`
+            (from the shared `tapTarget` class), and an explicit min-width
+            overrides a flex item's automatic content-based minimum — so the
+            same ~55px deficit just moved from "wraps onto two lines" to "the
+            box shrinks 55px narrower than its own text and the text
+            overflows it," which `pages:verify`'s per-element overflow check
+            (not its page-level one — the row itself never grows past the
+            viewport, only this one child's box does) now catches. This pass
+            takes the lever named above: the GitHub button drops its visible
+            label at md (icon + `aria-label` only) and returns it at lg
+            (~35px), and nav item padding tightens once more, px-2.5 → px-2
+            at md, restored at lg (~24px) — together enough to close the
+            deficit without another wrap-vs-overflow trade. Re-verify with
+            `pages:verify`'s 768px checks before trusting this fits; if it
+            still clips, the version badge (already lg-only) and the logo's
+            own `min-w-[44px]` floor are the remaining levers. */}
         <nav aria-label="Sections" className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`${tapTarget} ${focusRing} inline-flex items-center whitespace-nowrap rounded-lg px-2.5 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none`}
+              className={`${tapTarget} ${focusRing} inline-flex items-center whitespace-nowrap rounded-lg px-2 text-sm text-text-secondary transition-colors duration-150 ease-out hover:text-text-primary motion-reduce:transition-none lg:px-2.5`}
             >
               {item.label}
             </a>
@@ -86,9 +103,11 @@ export function Navbar({ version }: NavbarProps): ReactElement {
           <a
             href={REPO_URL}
             rel="noreferrer"
-            className={`${tapTarget} ${focusRing} inline-flex items-center rounded-lg border border-border-strong px-4 text-sm font-medium text-text-primary transition-colors duration-150 ease-out hover:border-accent hover:text-accent motion-reduce:transition-none`}
+            aria-label="GitHub"
+            className={`${tapTarget} ${focusRing} inline-flex items-center gap-2 rounded-lg border border-border-strong px-3 text-sm font-medium text-text-primary transition-colors duration-150 ease-out hover:border-accent hover:text-accent motion-reduce:transition-none lg:px-4`}
           >
-            GitHub
+            <GitHubIcon />
+            <span className="hidden lg:inline">GitHub</span>
           </a>
 
           <details ref={detailsRef} data-disclosure className="relative md:hidden">
@@ -119,6 +138,18 @@ export function Navbar({ version }: NavbarProps): ReactElement {
         </div>
       </div>
     </header>
+  );
+}
+
+/** Icon-only mark for the GitHub link at md; the label returns at lg once
+    the row has room for it again (see the width-budget comment above). The
+    link keeps `aria-label="GitHub"` at every width, so the icon never
+    depends on the hidden text for its accessible name. */
+function GitHubIcon(): ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="currentColor">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+    </svg>
   );
 }
 
