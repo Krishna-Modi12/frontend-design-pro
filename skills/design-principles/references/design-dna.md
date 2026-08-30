@@ -34,4 +34,4 @@ Those six axes are the ones that separate "structurally correct" from "reference
 
 ## Applying in this skill
 
-Extraction target maps onto `core/design-tokens.md` (system dimension), `skills/design-system/references/` (style/brand dimension) and `skills/motion-graphics/` + `skills/threejs-3d/` (effects dimension). A supplied `DESIGN.md` is parsed by `skills/design-system/references/design-md-parser.md` — the same idea, narrower schema.
+Extraction target maps onto `core/design-tokens.md` (system dimension), `skills/design-system/references/` (style/brand dimension) and `skills/animations/` + `skills/threejs-3d/` (effects dimension). A supplied `DESIGN.md` is parsed by `skills/design-system/references/design-md-parser.md` — the same idea, narrower schema.

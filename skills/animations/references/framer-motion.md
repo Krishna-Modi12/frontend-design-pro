@@ -1,7 +1,6 @@
 # Framer Motion Reference
 
 Source: framer/motion (official docs synthesis)
-Version: 10.15.0
 
 ---
 

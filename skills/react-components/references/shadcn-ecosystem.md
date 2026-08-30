@@ -1,7 +1,6 @@
 # shadcn/ui Ecosystem Reference
 
-Source: birobirobiro/awesome-shadcn-ui (19.4k stars, 200+ resources)  
-Version: 10.12.0
+Source: birobirobiro/awesome-shadcn-ui (19.4k stars, 200+ resources)
 
 Community components, animation libraries, theme tools, and starters that extend shadcn/ui. When building with shadcn, check here before writing from scratch.
 

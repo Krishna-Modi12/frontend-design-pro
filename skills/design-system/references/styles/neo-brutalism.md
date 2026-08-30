@@ -1,7 +1,6 @@
 # Neo-Brutalism Style Reference
 
 Source: frontend-design-pro skill (internal)
-Version: 10.14.0
 
 Neo-brutalism = digital graphic design aesthetic. Heavy borders, hard shadows, cream/off-white base,
 loud accent colors, press-state buttons. Playful but structured. Feels handmade, loud, confident.

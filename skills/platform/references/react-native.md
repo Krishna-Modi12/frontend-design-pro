@@ -1,9 +1,8 @@
-<!-- shortcode: [rn] | package: frontend-design-pro-v10 | version: 10.15.0 -->
+<!-- shortcode: [rn] -->
 
 # React Native Reference
 
 Source: frontend-design-pro skill (internal)
-Version: 10.15.0
 
 React Native with Expo SDK 51+ enables production-quality iOS and Android apps from a single TypeScript codebase. This reference covers Expo Router v3 file-based routing, animation via Reanimated 3, gesture handling via RNGH v2, NativeWind Tailwind styling, and platform-specific patterns essential for shipping polished native apps.
 
@@ -1251,4 +1250,4 @@ const pan = Gesture.Pan().onEnd(() => {
 
 ---
 
-> Related: `/sessions/beautiful-cool-archimedes/frontend-design-pro-v10/references/mobile-patterns.md` — web mobile patterns (vaul, Framer Motion, PWA) for cross-platform teams.
+> Related: `mobile-patterns.md` — web mobile patterns (vaul, Framer Motion, PWA) for cross-platform teams.

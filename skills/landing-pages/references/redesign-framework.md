@@ -1,7 +1,6 @@
 # UI Redesign Audit Framework
 
-Source: taste-skill (redesign-skill) + Leonxlnx/taste-skill v2 + ui-ux-pro-max-skill  
-Version: 10.8.0
+Source: taste-skill (redesign-skill) + Leonxlnx/taste-skill v2 + ui-ux-pro-max-skill
 
 ## How to Use
 

@@ -1,7 +1,6 @@
 # Brutalist / Terminal Style
 
-Source: taste-skill (brutalist-skill) + Leonxlnx/taste-skill v2  
-Version: 10.8.0
+Source: taste-skill (brutalist-skill) + Leonxlnx/taste-skill v2
 
 ## Philosophy
 

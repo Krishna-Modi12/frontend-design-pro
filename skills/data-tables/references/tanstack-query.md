@@ -1,7 +1,6 @@
 # TanStack Query Reference
 
 Source: tanstack/query (official docs synthesis)
-Version: 10.17.0
 
 ---
 

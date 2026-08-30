@@ -1,7 +1,6 @@
 # Soft / Premium Agency Style
 
-Source: taste-skill (soft-skill) + Leonxlnx/taste-skill v2  
-Version: 10.8.0
+Source: taste-skill (soft-skill) + Leonxlnx/taste-skill v2
 
 ## Philosophy
 

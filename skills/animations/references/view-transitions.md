@@ -1,7 +1,6 @@
 # React View Transitions Reference
 
-Source: vercel-labs/agent-skills (react-view-transitions skill)  
-Version: 10.11.0
+Source: vercel-labs/agent-skills (react-view-transitions skill)
 
 React's View Transition API creates smooth, hardware-accelerated animations for DOM changes — page navigation, list reorder, shared-element morphs, Suspense reveals — without JavaScript animation libraries.
 

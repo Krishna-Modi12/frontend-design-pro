@@ -1,7 +1,6 @@
 # Auth UI Patterns Reference
 
-Source: frontend-design-pro skill (internal)  
-Version: 10.15.0
+Source: frontend-design-pro skill (internal)
 
 ---
 

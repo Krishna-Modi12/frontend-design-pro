@@ -1,5 +1,4 @@
 # Aesthetic Direction Reference
-# frontend-design-pro-v10 | v1.0.0
 # ─────────────────────────────────────────────────────────────────────────────
 # Source: Anthropic official claude-code/plugins/frontend-design + claude-cookbooks
 # Authors: Prithvi Rajasekaran, Alexander Bricken (Anthropic)

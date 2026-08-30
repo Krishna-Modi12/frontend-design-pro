@@ -1,7 +1,6 @@
 # React Hook Form Reference
 
 Source: react-hook-form/react-hook-form (official docs synthesis)
-Version: 10.17.0
 
 ---
 

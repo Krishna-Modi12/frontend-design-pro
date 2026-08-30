@@ -1,5 +1,4 @@
 # React Patterns Reference
-# frontend-design-pro-v10 | v1.0.0
 # ─────────────────────────────────────────────────────────────────────────────
 # React 19 modern patterns: compound components, hooks, performance,
 # Server Actions, concurrent features, error boundaries, and custom hook recipes.

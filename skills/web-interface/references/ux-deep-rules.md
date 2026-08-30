@@ -1,5 +1,4 @@
 # UX Deep Rules — Implementation Reference
-# frontend-design-pro-v10 | v1.0.0
 # ─────────────────────────────────────────────────────────────────────────────
 # Source: nextlevelbuilder/ui-ux-pro-max-skill (quick-reference.md)
 # 200+ implementation-level rules with Apple HIG and Material Design citations.
