@@ -6,7 +6,7 @@ This is about the agent's own working memory — the context window it reasons i
 
 A context window is not a queue that quietly overflows — it is a resource that degrades reasoning quality well before it is technically full. Irrelevant content dilutes attention, pushes load-bearing facts further from where they're used, and increases the chance a stale or contradictory fact from an early tool call still influences a decision much later. Treating context as free is the single most common way an agent talks itself into a wrong answer despite having "read everything."
 
-The registry pattern this repo uses at the meta level is the same discipline applied to files: per `docs/ARCHITECTURE.md`, a 2,146-token `SKILL.md` routes to 418,496 tokens of references, and no single request pays for material it doesn't touch. An agent reading "just in case" is doing the thing the registry exists to prevent, one level down.
+The registry pattern this repo uses at the meta level is the same discipline applied to files: per `docs/ARCHITECTURE.md`, a 2,146-token `SKILL.md` routes to 421,374 tokens of references, and no single request pays for material it doesn't touch. An agent reading "just in case" is doing the thing the registry exists to prevent, one level down.
 
 ## Eager vs. lazy: what to load and when
 
