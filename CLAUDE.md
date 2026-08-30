@@ -194,7 +194,7 @@ markers on content that is not a sequence. (Gradient fills used to be a separate
 unscoped claim on this line too — it now just restates `TYP-03`, which the regex
 suite already enforces, so it dropped off this list.)
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 421,374 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 421,475 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts
