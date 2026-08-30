@@ -1,0 +1,55 @@
+name: Regenerate visual-regression baselines (Linux)
+
+# One-off, manually-triggered helper. visual-regression.mjs's own doc comment
+# states the rule this exists to satisfy: "The baseline that ships should be
+# the one the visual-regression CI job itself produces" — a baseline
+# captured on a Windows/macOS dev machine reads as drift against every
+# target on the Linux runner from font rendering alone, independent of any
+# real visual change. This regenerates every baseline on the same
+# ubuntu-latest image the visual-regression job itself runs on, then hands
+# the PNGs back as an artifact instead of committing from inside the runner.
+on:
+  workflow_dispatch:
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      - name: Install home/ dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Install demo/landing-page dependencies
+        working-directory: demo/landing-page
+        run: npm ci
+
+      - name: Install demo/showcase dependencies
+        working-directory: demo/showcase
+        run: npm ci
+
+      - name: Regenerate baselines
+        run: node tools/screenshots/visual-regression.mjs --update-baselines
+
+      - name: Upload baselines
+        uses: actions/upload-artifact@v4
+        with:
+          name: regenerated-baselines
+          path: tools/screenshots/baselines/
+          retention-days: 7
