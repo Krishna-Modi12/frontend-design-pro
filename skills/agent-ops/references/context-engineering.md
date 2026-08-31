@@ -41,7 +41,7 @@ exceed 4,000 tokens**, and they are loaded whole when routed:
 | `design-system/references/brand-design-systems.md` | ~11,400 |
 | `forms/references/auth-patterns.md` | ~11,300 |
 | `platform/references/subagent-orchestration.md` | ~11,200 |
-| `animations/references/framer-motion.md` | ~9,300 |
+| `animations/references/motion.md` | ~10,000 |
 
 A rule stated at the midpoint of an 11,000-token reference is in the trough.
 That is the position our most detailed guidance tends to occupy, because

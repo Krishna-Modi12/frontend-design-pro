@@ -3,7 +3,7 @@
 Curated, production-ready animation patterns for React/Next.js. Each recipe is complete — copy, paste, tweak values.
 
 > **Cross-reference:** For WHEN to animate and timing rules → `references/animation-framework.md` ([anim])
-> For Framer Motion API reference → `references/framer-motion.md` ([framer])
+> For Motion (formerly Framer Motion) API reference → `references/motion.md` ([framer])
 > For GSAP scroll sequences → `references/gsap.md` ([gsap])
 
 ---

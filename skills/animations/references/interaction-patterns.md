@@ -56,7 +56,7 @@ export function useInView(
 }
 ```
 
-Deeper treatment: `framer-motion.md` covers `useInView` and `whileInView`, which
+Deeper treatment: `motion.md` covers `useInView` and `whileInView`, which
 you should prefer when Framer is already a dependency — it handles re-entry,
 margins and `once` without your own observer.
 
@@ -279,7 +279,7 @@ means the last one arrives 0.96 seconds after the first, by which point it reads
 as a slow page rather than as choreography — so the cap bites at item eight.
 
 Deeper treatment: `animation-recipes.md` § 1 Staggered List Reveal, and
-`framer-motion.md` for `staggerChildren` when Framer is present.
+`motion.md` for `staggerChildren` when Framer is present.
 
 ### Entrance — scale in
 
