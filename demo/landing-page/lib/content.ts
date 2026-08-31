@@ -282,7 +282,14 @@ export const TESTIMONIALS: Testimonial[] = [
 export const CTA_HEADLINE = "Rehearse the next one.";
 export const CTA_SUPPORT =
   "Point Bellwether at a replica. First verdict in about ten minutes.";
-export const CTA_REASSURANCE = "Reads a replica · installs nothing on the primary · no card";
+// "no card" answered the two real objections a database tool meets; it did
+// not say where the button actually goes. Bellwether has no live product
+// behind it — the button opens the pack's source — and a reader who has just
+// been persuaded by a specific, credible artifact deserves to know that
+// before they click, not after. Appended rather than replacing the original
+// two clauses, so the risk-reversal copy still does its job first.
+export const CTA_REASSURANCE =
+  "Reads a replica · installs nothing on the primary · no card · opens the pack's source, not a live demo";
 
 /**
  * The disclosure, rendered on the page rather than buried here. A page that
@@ -291,3 +298,13 @@ export const CTA_REASSURANCE = "Reads a replica · installs nothing on the prima
  */
 export const DISCLOSURE =
   "Bellwether is not a real product. This page is sample output from the frontend-design-pro skill pack — generated under the pack's own rules, then rendered and checked in a real browser.";
+
+/**
+ * The hero's own version of the same honesty `CTA_REASSURANCE` carries at
+ * the bottom of the page. The footer `DISCLOSURE` says Bellwether is not
+ * real; it does not say what "Start a rehearsal" actually does, and a
+ * reader who has just been persuaded by `RehearsalReport` and clicks
+ * expecting to begin one deserves that at the click point, not three
+ * scrolls later.
+ */
+export const HERO_CTA_NOTE = "Opens the pack's source on GitHub — Bellwether has no live product to open.";

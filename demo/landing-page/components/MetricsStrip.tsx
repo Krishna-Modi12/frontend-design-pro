@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { alertShell, fadeUp, sectionShell, skeletonBlock } from "../lib/tokens";
+import { alertShell, fadeUp, focusRing, sectionShell, skeletonBlock, tapTarget } from "../lib/tokens";
 import { useFadeUp } from "../lib/useFadeUp";
 
 export interface PlatformMetric {
@@ -14,6 +14,8 @@ export interface MetricsStripProps {
   status: "loading" | "error" | "ready";
   /** Shown in the error branch. Never a raw exception string. */
   errorMessage?: string;
+  /** Re-runs the fetch. Undefined only in contexts with nothing to retry. */
+  onRetry?: () => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export default function MetricsStrip({
   metrics,
   status,
   errorMessage,
+  onRetry,
 }: MetricsStripProps): ReactElement {
   const { ref, visible } = useFadeUp();
 
@@ -47,7 +50,7 @@ export default function MetricsStrip({
       {/* py-12 flat, with no lg step. The light version ran `py-12 lg:py-16`,
           and at 1920 the extra band read as the section having nothing to say. */}
       <div ref={ref} data-fade className={`${sectionShell} py-12 ${fadeUp(visible)}`}>
-        <MetricsBody metrics={metrics} status={status} errorMessage={errorMessage} />
+        <MetricsBody metrics={metrics} status={status} errorMessage={errorMessage} onRetry={onRetry} />
       </div>
     </section>
   );
@@ -63,6 +66,7 @@ function MetricsBody({
   metrics,
   status,
   errorMessage,
+  onRetry,
 }: MetricsStripProps): ReactElement {
   if (status === "loading") {
     return (
@@ -87,6 +91,20 @@ function MetricsBody({
           {errorMessage ??
             "The overview endpoint did not answer. Everything else on this page is unaffected."}
         </p>
+        {/* This is the second thing on the page, directly under the hero —
+            not a hypothetical edge case for a fetch this README documents
+            failing under (sub-path deploys, static export without the
+            force-static handler). Every other dead end on the page has a
+            recovery action; this one only had a full reload before. */}
+        {onRetry ? (
+          <button
+            type="button"
+            onClick={onRetry}
+            className={`${tapTarget} ${focusRing} mt-3 inline-flex items-center rounded-lg border border-surface-border-strong px-4 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-accent-text hover:text-accent-text motion-reduce:transition-none`}
+          >
+            Try again
+          </button>
+        ) : null}
       </div>
     );
   }

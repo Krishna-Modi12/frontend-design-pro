@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import CtaButton from "./CtaButton";
 import RehearsalReport from "./RehearsalReport";
 import SectionEyebrow from "./SectionEyebrow";
-import { HEADLINE, PROOF_POINTS, REPORT, SUBHEAD, TAGLINE } from "../lib/content";
+import { HEADLINE, HERO_CTA_NOTE, PROOF_POINTS, REPORT, SUBHEAD, TAGLINE } from "../lib/content";
 import { sectionShell } from "../lib/tokens";
 
 export interface HeroProps {
@@ -90,13 +90,20 @@ export default function Hero({ primaryHref, secondaryHref }: HeroProps): ReactEl
             </CtaButton>
           </div>
 
-          {/* Trust signals within 40px of the CTA they support — 32px here.
-              Capability claims rather than a logo wall: a wall of invented
-              customer logos on a page for an invented product is a fabricated
-              screenshot with extra steps. */}
+          <p className="mt-3 text-xs leading-relaxed text-ink-muted">{HERO_CTA_NOTE}</p>
+
+          {/* Trust signals within 40px of the CTA they support. That budget
+              used to be spent as a flat mt-8 straight off the button row; the
+              CTA note above now sits in between, so it's mt-4 off the note
+              instead — closer than the note's own top margin, which keeps
+              this list read as "attached to the CTA" rather than "a new
+              block that happens to follow the note." Capability claims
+              rather than a logo wall: a wall of invented customer logos on a
+              page for an invented product is a fabricated screenshot with
+              extra steps. */}
           <ul
             role="list"
-            className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-muted"
+            className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-muted"
           >
             {/* The separator LEADS each item except the first, and lives inside
                 the <li> rather than beside it. Both details are load-bearing.
