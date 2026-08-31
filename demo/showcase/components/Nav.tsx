@@ -35,6 +35,30 @@ export function Nav(): ReactElement {
   };
 
   useEffect(() => {
+    // Native <details> only closes on a link click or re-toggling the
+    // hamburger — no Escape, no outside-click, which strands a mobile user
+    // who taps elsewhere expecting the panel to dismiss like any other
+    // overlay.
+    const onPointerDown = (event: PointerEvent): void => {
+      const node = detailsRef.current;
+      if (node !== null && node.open && !node.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape" && detailsRef.current?.open) {
+        closeMenu();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
     let frame = 0;
     const onScroll = (): void => {
       if (frame !== 0) return;

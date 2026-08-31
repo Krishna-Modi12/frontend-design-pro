@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 export interface Testimonial {
   id: string;
@@ -26,6 +27,7 @@ type DocumentWithViewTransition = Document & {
 export function Testimonials({ testimonials }: TestimonialsProps) {
   const [index, setIndex] = useState(0);
   const active = testimonials[index];
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const goTo = (nextIndex: number) => {
     const doc = document as DocumentWithViewTransition;
@@ -34,6 +36,27 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
     } else {
       setIndex(nextIndex);
     }
+  };
+
+  /**
+   * `role="tablist"`/`role="tab"` commits to the ARIA tabs pattern, which
+   * means arrow-key roving selection is expected, not optional — a screen
+   * reader user who knows the pattern will try it and get nothing without
+   * this. Left/Right (and Home/End) move both focus and selection together,
+   * per the APG's "automatic activation" model, which fits a control this
+   * small better than a separate confirm step would.
+   */
+  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
+    const last = testimonials.length - 1;
+    let next: number | null = null;
+    if (event.key === "ArrowRight") next = index === last ? 0 : index + 1;
+    else if (event.key === "ArrowLeft") next = index === 0 ? last : index - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = last;
+    if (next === null) return;
+    event.preventDefault();
+    goTo(next);
+    tabRefs.current[next]?.focus();
   };
 
   if (!active) return null;
@@ -53,11 +76,16 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         {testimonials.map((testimonial, i) => (
           <button
             key={testimonial.id}
+            ref={(node) => {
+              tabRefs.current[i] = node;
+            }}
             type="button"
             role="tab"
             aria-selected={i === index}
             aria-label={`Show testimonial from ${testimonial.name}`}
+            tabIndex={i === index ? 0 : -1}
             onClick={() => goTo(i)}
+            onKeyDown={onTabKeyDown}
             className={`h-2 w-2 rounded-full ${i === index ? "bg-accent" : "bg-border"}`}
           />
         ))}
