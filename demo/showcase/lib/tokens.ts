@@ -19,8 +19,11 @@ export const colors = {
   textPrimary: "oklch(96% 0.005 260)",
   /** Secondary / muted text. */
   textMuted: "oklch(70% 0.012 260)",
-  /** Faint tertiary text (labels, captions). */
-  textFaint: "oklch(52% 0.012 260)",
+  /** Faint tertiary text (labels, captions). Mirrors `--color-text-faint`
+      in `app/globals.css`, which is the value every component actually
+      renders with — kept in step here after the two drifted (52% vs the
+      shipped 60%, itself the more accessible of the two). */
+  textFaint: "oklch(60% 0.012 260)",
   /** The single accent: acid green. Use sparingly. */
   accent: "oklch(70% 0.25 145)",
   /** Accent, dimmed for hover-adjacent states. */

@@ -52,37 +52,6 @@ body {
   color: var(--color-accent-ink);
 }
 
-/* Marquee track. Two copies of the same list sit side by side; translating
-   the pair by exactly -50% loops seamlessly because the second copy is
-   pixel-identical to the first. Duration is set per-instance from measured
-   track width at 40px/s — see \`components/Marquee.tsx\` — never a fixed
-   duration, or the loop speed drifts with content length. */
-@keyframes marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-[data-marquee-track] {
-  animation: marquee-scroll linear infinite;
-  animation-duration: var(--marquee-duration, 30s);
-}
-
-[data-marquee]:hover [data-marquee-track],
-[data-marquee][data-paused] [data-marquee-track] {
-  animation-play-state: paused;
-}
-
-/* Set by \`Marquee.tsx\`'s own IntersectionObserver — a scrolling track
-   nobody can see still costs a compositor layer, so it pauses off-viewport
-   the same way it already pauses on hover. */
-[data-marquee][data-offscreen] [data-marquee-track] {
-  animation-play-state: paused;
-}
-
 /* The belt to \`useFadeUp\`'s braces, same reasoning \`demo/landing-page\`
    documents: the hook checks the media query once at mount and reveals
    immediately when it matches, but a reader who turns the preference ON
@@ -101,21 +70,12 @@ body {
     opacity: 1 !important;
     transform: none !important;
   }
-  /* The marquee's generic 1ms override above would make it snap-loop rather
-     than stop, which reads as a flicker rather than as motion removed —
-     paused is the honest state for a decoration whose only job is scrolling. */
-  [data-marquee-track] {
-    animation-play-state: paused !important;
-  }
 }
 
 @media print {
   [data-fade] {
     opacity: 1 !important;
     transform: none !important;
-  }
-  [data-marquee-track] {
-    animation: none !important;
   }
   [data-hero-scene] {
     display: none;

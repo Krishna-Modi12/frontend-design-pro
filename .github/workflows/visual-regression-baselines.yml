@@ -38,6 +38,10 @@ jobs:
         working-directory: demo/landing-page
         run: npm ci
 
+      - name: Install demo/showcase dependencies
+        working-directory: demo/showcase
+        run: npm ci
+
       - name: Regenerate baselines
         run: npm run visual-regression -- --update-baselines
 

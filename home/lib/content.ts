@@ -2,11 +2,19 @@ export const PRODUCT = "frontend-design-pro";
 export const REPO_URL = "https://github.com/Krishna-Modi12/frontend-design-pro";
 export const INSTALL_COMMAND = "npx skills add Krishna-Modi12/frontend-design-pro";
 
+/**
+ * v2.4: dropped `checks` as a top-level link — six items chronically
+ * overran the 768px budget (see `Navbar.tsx`'s width-budget comment; v2.2
+ * and v2.3 both spent whole passes just trimming padding to keep six
+ * items fitting). `checks` (`SectionProof`) sits directly after
+ * `how-it-works` (`SectionHow`) in page order, so it stays fully reachable
+ * by anchor/scroll — this only removes it from the nav list, not the
+ * section itself.
+ */
 export const NAV = [
   { id: "problem", label: "Numbers" },
   { id: "catalog", label: "Catalog" },
   { id: "how-it-works", label: "How it works" },
-  { id: "checks", label: "Checks" },
   { id: "showcase", label: "Showcase" },
   { id: "install", label: "Install" },
 ] as const;
@@ -136,5 +144,5 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
  * see it, not just in a script comment or a nested README.
  */
 export const NEXUS_WAIVER =
-  "Nexus is a placeholder brand name this pack's own anti-slop rule bans (SLOP-05) — a known, deliberate exception, not an oversight. Renaming it touches sixteen files including a lockfile and forces a screenshot recapture through an out-of-CI browser harness, so the fix is tracked rather than silently deferred; see demo/showcase/README.md for the full reasoning.";
+  "We check every skill-pack example against SLOP-05, which bans Nexus as a placeholder brand name — this page doesn't get a silent pass just because it's ours. The rename is scoped work, not a rushed edit here: sixteen files including a lockfile, plus a screenshot recapture through an out-of-CI browser harness. See demo/showcase/README.md for the full reasoning and tracking.";
 
