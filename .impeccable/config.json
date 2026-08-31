@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "animate-bounce",
+        "createdAt": "2026-08-31T16:42:45.782Z",
+        "reason": "frontend-design-pro MOTION-02R carve-out: core/validate-checklist.md:39 and scripts/test_constraints.py:522 anchor the no-bounce rule on the easing property and explicitly exempt the animate-bounce utility; scaffold.py and references/vercel-ai-sdk.md ship the staggered thinking-dots indicator by design"
+      }
+    ]
+  }
+}
