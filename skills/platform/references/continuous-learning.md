@@ -699,7 +699,13 @@ export function InlineCorrection({ original, sourceId }: Props) {
 
 ```ts
 // app/api/chat/route.ts
-import { streamText, convertToModelMessages, type UIMessage } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+  type UIMessage,
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 export async function POST(req: Request) {
@@ -707,11 +713,14 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-5'),
-    messages: convertToModelMessages(messages),
-    system: 'You are a helpful UI assistant.',
+    messages: await convertToModelMessages(messages),   // async since AI SDK 6
+    instructions: 'You are a helpful UI assistant.',     // `system` through v6; still accepted
   })
 
-  return result.toUIMessageStreamResponse()
+  // `result.toUIMessageStreamResponse()` still works but is deprecated in v7
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream, originalMessages: messages }),
+  })
 }
 ```
 

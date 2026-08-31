@@ -1,13 +1,16 @@
 # Vercel AI SDK Reference
 # ─────────────────────────────────────────────────────────────────────────────
-# AI SDK 6 (`ai` package) + `@ai-sdk/*` providers. The hook, streaming and tool
-# surface below is unchanged in AI SDK 7 (current stable) — v7 adds agent-
-# execution features (WorkflowAgent, tool approval, telemetry) on top of it.
-# Client hooks now import from `@ai-sdk/react`; messages carry `parts`, not
-# `content`; tools take `inputSchema`; the response helper is
-# `toUIMessageStreamResponse()`.
-# Covers: useChat, useCompletion, streamText, generateText, tool calling,
-# structured output, agent loop, streaming custom data, multimodal.
+# AI SDK 7 (`ai` package, GA June 2026) + `@ai-sdk/*` providers. Current stable.
+# Needs Node 22+ and is ESM-only. Client hooks import from `@ai-sdk/react`;
+# messages carry `parts`, not `content`; tools take `inputSchema`;
+# `convertToModelMessages` is async; a route builds its response with
+# `toUIMessageStream` + `createUIMessageStreamResponse` (the old
+# `result.toUIMessageStreamResponse()` one-liner still works but is deprecated).
+# v7 renamed `onFinish`→`onEnd` and `onStepFinish`→`onStepEnd` on the generation
+# functions (the `useChat` hook keeps `onFinish`), `stepCountIs`→`isStepCount`,
+# and `system`→`instructions`.
+# Covers: useChat, useCompletion, generateText, streamText, tool calling,
+# agent loop, structured output, multimodal, RSC streaming, embeddings/RAG.
 # ─────────────────────────────────────────────────────────────────────────────
 
 ## Contents
@@ -37,7 +40,7 @@ npm install @ai-sdk/anthropic           # Anthropic provider
 npm install @ai-sdk/google              # Google Gemini provider
 ```
 
-`ai` is the core (server) package; `@ai-sdk/react` holds `useChat` / `useCompletion` (in v4 these lived in `ai/react`). Provider packages are peers of `ai`.
+`ai` is the core (server) package; `@ai-sdk/react` holds `useChat` / `useCompletion` (through v4 these lived in `ai/react`). Provider packages are peers of `ai`. AI SDK 7 requires **Node 22+** and ships **ESM-only** — no `require()`.
 
 ---
 
@@ -49,7 +52,13 @@ The primary hook for building chat UIs. Streams responses, manages history.
 
 ```tsx
 // app/api/chat/route.ts
-import { streamText, convertToModelMessages, type UIMessage } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+  type UIMessage,
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 export const maxDuration = 30   // Vercel function timeout (seconds)
@@ -59,15 +68,17 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-5'),
-    system: 'You are a helpful assistant.',
-    messages: convertToModelMessages(messages),
+    instructions: 'You are a helpful assistant.',      // `system` through v6; still accepted
+    messages: await convertToModelMessages(messages),  // async since v6
   })
 
-  return result.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  })
 }
 ```
 
-`streamText` is not awaited — it returns immediately and the result exposes streams and response helpers. The client sends `UIMessage`s (with `parts`); `convertToModelMessages` maps them to the `ModelMessage` shape the model consumes.
+`streamText` is not awaited — it returns immediately and the result exposes `result.stream` and the other accessors. The client sends `UIMessage`s (with `parts`); `await convertToModelMessages` maps them to the `ModelMessage` shape the model consumes. `result.toUIMessageStreamResponse()` is still a valid one-line shorthand for the `toUIMessageStream` + `createUIMessageStreamResponse` pair, but it prints a deprecation warning in v7.
 
 ### Client component
 
@@ -234,14 +245,14 @@ useChat({
     body:    { userId },           // extra POST body fields
     headers: { 'x-custom': 'value' },
   }),
-  onFinish: ({ message }) => {},   // stream completed
+  onFinish: ({ message, messages, isAbort, isDisconnect, isError }) => {},  // stream completed
   onError:  (err) => {},
   onData:   (dataPart) => {},      // transient custom data parts
-  experimental_throttle: 50,       // ms — throttle UI updates (perf)
+  throttle:  50,                   // ms — throttle UI updates (perf); `experimental_throttle` in v5–6
 })
 ```
 
-Transport-level config (`api`, `body`, `headers`, `credentials`) moved onto `DefaultChatTransport` in v5. The hook no longer takes `initialInput` (you own the input) or `streamProtocol` (the stream is always SSE / UI-message format).
+Transport-level config (`api`, `body`, `headers`, `credentials`) moved onto `DefaultChatTransport` in v5. The hook no longer takes `initialInput` (you own the input) or `streamProtocol` (the stream is always SSE / UI-message format). The generation functions renamed `onFinish`→`onEnd` in v7, **but the `useChat` hook keeps `onFinish`** — its callback now also carries `messages`, `isAbort`, `isDisconnect` and `isError`.
 
 ---
 
@@ -289,7 +300,7 @@ export function EmailImprover() {
 
 ```tsx
 // app/api/improve/route.ts
-import { streamText } from 'ai'
+import { streamText, toTextStream, createTextStreamResponse } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 
 export async function POST(req: Request) {
@@ -300,7 +311,8 @@ export async function POST(req: Request) {
     prompt: `Improve this email to be clearer and more professional. Keep the same meaning. Return only the improved email text.\n\n${prompt}`,
   })
 
-  return result.toTextStreamResponse()
+  // `result.toTextStreamResponse()` still works but is deprecated in v7
+  return createTextStreamResponse({ stream: toTextStream({ stream: result.stream }) })
 }
 ```
 
@@ -342,7 +354,7 @@ export async function handleTicket(formData: FormData) {
 
 ```tsx
 // app/api/summarize/route.ts
-import { streamText } from 'ai'
+import { streamText, toUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { z } from 'zod'
 
@@ -351,7 +363,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: anthropic('claude-sonnet-5'),
-    system: 'You are an expert document summarizer.',
+    instructions: 'You are an expert document summarizer.',   // `system` through v6; still accepted
     messages: [
       { role: 'user', content: `Summarize this document in 3 bullet points:\n\n${document}` }
     ],
@@ -361,13 +373,16 @@ export async function POST(req: Request) {
     onChunk: ({ chunk }) => {
       if (chunk.type === 'text-delta') process.stdout.write(chunk.text)   // was `chunk.textDelta`
     },
-    onFinish: ({ usage, finishReason }) => {
-      // usage: { inputTokens, outputTokens, totalTokens } — renamed from promptTokens/completionTokens
+    onEnd: ({ usage, finishReason }) => {   // `onFinish` through v6 on the generation functions
+      // usage: { inputTokens, outputTokens, totalTokens } (renamed from promptTokens/completionTokens),
+      // and it now sums every step — use `result.finalStep.usage` for just the last step
       console.log(`Tokens used: ${usage.totalTokens}, reason: ${finishReason}`)
     },
   })
 
-  return result.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  })
 }
 ```
 
@@ -379,7 +394,15 @@ export async function POST(req: Request) {
 
 ```tsx
 // app/api/agent/route.ts
-import { streamText, tool, stepCountIs, convertToModelMessages, type UIMessage } from 'ai'
+import {
+  streamText,
+  tool,
+  isStepCount,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+  type UIMessage,
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
 
@@ -388,7 +411,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-5'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     tools: {
       searchProducts: tool({
         description: 'Search the product catalog by query and optional category filter',
@@ -421,12 +444,16 @@ export async function POST(req: Request) {
         },
       }),
     },
-    stopWhen: stepCountIs(5),   // multi-step tool loop — `maxSteps: 5` in v4
+    stopWhen: isStepCount(5),   // multi-step tool loop — `stepCountIs` in v5–6, `maxSteps: 5` in v4
   })
 
-  return result.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream, originalMessages: messages }),
+  })
 }
 ```
+
+`originalMessages` lets `toUIMessageStream` reuse the incoming message IDs instead of minting new ones, so the client updates messages in place rather than duplicating them.
 
 ### Client: render tool calls and results
 
@@ -480,38 +507,40 @@ export function AgentChat() {
 }
 ```
 
-Tool part `state` runs `'input-streaming' → 'input-available' → 'output-available'` (or `'output-error'`). In v6 a tool with `needsApproval` adds `'approval-requested'` / `'approval-responded'` before it executes.
+Tool part `state` runs `'input-streaming' → 'input-available' → 'output-available'` (or `'output-error'`). A tool that needs human approval adds `'approval-requested'` / `'approval-responded'` before it executes — in v7 you configure that per call with `toolApproval` on `streamText` / `generateText`; the `needsApproval` option on `tool()` is gone.
 
 ### Agent loop (`ToolLoopAgent`)
 
 For a reusable agent — one model, one instruction set, one tool set, running its
-own multi-step loop — v6 ships `ToolLoopAgent` (the stable replacement for v5's
-`Experimental_Agent`):
+own multi-step loop — v6+ ships `ToolLoopAgent` in `'ai'` (the stable replacement
+for v5's `Experimental_Agent`):
 
 ```tsx
-import { ToolLoopAgent, stepCountIs } from 'ai'
+import { ToolLoopAgent, isStepCount } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 const supportAgent = new ToolLoopAgent({
   model: openai('gpt-5'),
-  instructions: 'You are a support agent. Use tools before answering.',  // was `system`
+  instructions: 'You are a support agent. Use tools before answering.',  // `system` in v5
   tools: { searchProducts, getWeather },
-  stopWhen: stepCountIs(10),   // default is stepCountIs(20)
+  stopWhen: isStepCount(10),   // default is isStepCount(20); `stepCountIs` in v5–6
 })
 
 const { text, steps } = await supportAgent.generate({ prompt: userMessage })
 ```
 
-AI SDK 7 adds `WorkflowAgent` (durable, resumable across restarts) and
-per-step / per-tool timeout controls on top of this.
+For a loop that must survive process restarts, redeploys and interruptions, v7
+adds `WorkflowAgent` in `@ai-sdk/workflow` (durable and resumable), plus
+per-step / per-tool timeout controls on both agent types.
 
 ---
 
 ## 6. Structured Output (`Output.object`)
 
-`generateObject` / `streamObject` still work but are deprecated in v6 — structured
-output is now the `output` param on `generateText` / `streamText`, so one call can
-mix free text, tool calls and a typed result.
+`generateObject` / `streamObject` still work but have been deprecated since v6 —
+structured output is now the `output` param on `generateText` / `streamText` (it
+was `experimental_output` before v7), so one call can mix free text, tool calls
+and a typed result.
 
 ```tsx
 // lib/extract.ts
@@ -546,7 +575,7 @@ export async function extractContactInfo(emailText: string) {
 
 ```tsx
 // app/api/vision/route.ts
-import { streamText } from 'ai'
+import { streamText, toUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 
 export async function POST(req: Request) {
@@ -564,9 +593,11 @@ export async function POST(req: Request) {
         role: 'user',
         content: [
           {
-            type: 'image',
-            image: base64,
-            mediaType: file.type as 'image/jpeg' | 'image/png' | 'image/webp',  // was `mimeType`
+            // through v6 this was `{ type: 'image', image, mediaType }`; v7 folds every
+            // image/audio/file part into one `file` part with `mediaType` + `data`
+            type: 'file',
+            mediaType: file.type as 'image/jpeg' | 'image/png' | 'image/webp',
+            data: base64,
           },
           {
             type: 'text',
@@ -577,7 +608,9 @@ export async function POST(req: Request) {
     ],
   })
 
-  return result.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  })
 }
 ```
 
@@ -646,11 +679,12 @@ export function ImageAnalyzer() {
 
 ## 8. RSC Streaming with `createStreamableUI`
 
-> **Status:** AI SDK RSC (`@ai-sdk/rsc`, formerly `ai/rsc`) is **experimental** and
-> the Vercel team recommends **AI SDK UI** (`useChat` + `message.parts`, section 1)
-> for production. RSC has known limitations around streaming `.done()` and
-> reference equality. Reach for it only when you specifically need server-generated
-> React on the wire; otherwise render parts on the client.
+> **Status:** AI SDK RSC (`@ai-sdk/rsc`, formerly `ai/rsc`) is still **experimental**
+> in v7 (not deprecated) and the Vercel team recommends **AI SDK UI** (`useChat` +
+> `message.parts`, section 1) for production. RSC has known limitations around
+> streaming `.done()` and reference equality. Reach for it only when you
+> specifically need server-generated React on the wire; otherwise render parts on
+> the client.
 
 For streaming React components directly from the server (Next.js App Router):
 
@@ -736,7 +770,7 @@ import { openai } from '@ai-sdk/openai'
 // Single embedding
 export async function getEmbedding(text: string) {
   const { embedding } = await embed({
-    model: openai.embedding('text-embedding-3-small'),
+    model: openai.embeddingModel('text-embedding-3-small'),   // `openai.embedding(…)` in v5
     value: text,
   })
   return embedding   // number[]
@@ -745,7 +779,7 @@ export async function getEmbedding(text: string) {
 // Batch embeddings (cheaper, fewer API calls)
 export async function getEmbeddings(texts: string[]) {
   const { embeddings } = await embedMany({
-    model: openai.embedding('text-embedding-3-small'),
+    model: openai.embeddingModel('text-embedding-3-small'),
     values: texts,
   })
   return embeddings  // number[][]
@@ -776,7 +810,13 @@ export async function findRelevantDocs(query: string, docs: { content: string; e
 
 ```tsx
 // Route handler with proper error handling
-import { streamText, convertToModelMessages, type UIMessage } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+  type UIMessage,
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 export async function POST(req: Request) {
@@ -785,19 +825,22 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: openai('gpt-5'),
-      messages: convertToModelMessages(messages),
+      messages: await convertToModelMessages(messages),
       abortSignal: req.signal,   // abort if client disconnects
     })
 
-    return result.toUIMessageStreamResponse({
-      onError: (error) => {
-        // Sanitize — never expose internal errors to the client
-        if (error instanceof Error) {
-          if (error.message.includes('rate limit')) return 'Rate limit reached. Please try again.'
-          if (error.message.includes('context length')) return 'Conversation too long. Start a new chat.'
-        }
-        return 'An error occurred. Please try again.'
-      },
+    return createUIMessageStreamResponse({
+      stream: toUIMessageStream({
+        stream: result.stream,
+        onError: (error) => {   // `onError` moved onto `toUIMessageStream` in v7
+          // Sanitize — never expose internal errors to the client
+          if (error instanceof Error) {
+            if (error.message.includes('rate limit')) return 'Rate limit reached. Please try again.'
+            if (error.message.includes('context length')) return 'Conversation too long. Start a new chat.'
+          }
+          return 'An error occurred. Please try again.'
+        },
+      }),
     })
   } catch {
     return new Response(
@@ -824,7 +867,7 @@ list (`@ai-sdk/openai`, `@ai-sdk/anthropic`) before pinning one. Current as of
 | Fast inference | `anthropic('claude-haiku-4-5')` | Lowest latency |
 | Code generation | `anthropic('claude-sonnet-5')` / `openai('gpt-5')` | Best for complex code |
 | Classification | `openai('gpt-5-mini')` | Simple tasks, low cost |
-| Embeddings | `openai.embedding('text-embedding-3-small')` | Fast, good quality |
+| Embeddings | `openai.embeddingModel('text-embedding-3-small')` | Fast, good quality |
 | Vision | `anthropic('claude-sonnet-5')` or `openai('gpt-5')` | Both handle images |
 
 ---
