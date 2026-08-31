@@ -18,7 +18,7 @@ export interface ShowcaseWaiverProps {
 export function ShowcaseWaiver({ text }: ShowcaseWaiverProps): ReactElement {
   return (
     <p className="mt-3 rounded-lg border border-border bg-bg-surface p-3 text-xs leading-relaxed text-text-secondary">
-      <strong className="text-text-primary">Known naming exception — </strong>
+      <strong className="text-text-primary">We check our own work — </strong>
       {text}
     </p>
   );

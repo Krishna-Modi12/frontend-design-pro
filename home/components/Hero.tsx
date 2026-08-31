@@ -103,13 +103,18 @@ function HeroImpl(
             applies the swap with no transition rule active at all (see that
             function's own comment) — this button needs no separate
             reduced-motion branch, it just calls the same function either
-            way. Reuses the page's existing button primitives rather than a
-            bespoke style, and sits below the primary CTAs so it never
-            competes with them for attention. */}
+            way. Icon-only, not a fourth labeled action beside the CTA pair:
+            a first-viewport decision point holds at most 1 primary + 1-2
+            secondary choices before it dilutes the primary CTA, and this
+            control is a reroll toy for a visitor who's already sold, not
+            something a first-time visitor needs to read to evaluate the
+            page. The accessible name carries the same label the visible
+            text used to. */}
         <button
           type="button"
           onClick={reroll}
-          className={`${tapTarget} ${focusRing} mx-auto mt-6 flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm text-text-muted transition-colors duration-300 ease-out hover:text-text-primary motion-reduce:transition-none`}
+          aria-label="Try another world"
+          className={`${tapTarget} ${focusRing} mx-auto mt-6 flex items-center justify-center rounded-lg text-text-muted transition-colors duration-300 ease-out hover:text-text-primary motion-reduce:transition-none`}
         >
           <svg
             className="h-4 w-4"
@@ -125,7 +130,6 @@ function HeroImpl(
               strokeLinejoin="round"
             />
           </svg>
-          Try another world
         </button>
 
         <a
