@@ -1,7 +1,6 @@
 # Landing Page Patterns
 
-Source: nextlevelbuilder/ui-ux-pro-max-skill — full 34-pattern specification  
-Version: 10.7.0
+Source: nextlevelbuilder/ui-ux-pro-max-skill — full 34-pattern specification
 
 ---
 

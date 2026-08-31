@@ -1,7 +1,6 @@
 # Impeccable Design Techniques
 
-Source: pbakaus/impeccable — 7 reference files (typography, color, spatial, motion, interaction, responsive, craft)  
-Version: 10.9.0
+Source: pbakaus/impeccable — 7 reference files (typography, color, spatial, motion, interaction, responsive, craft)
 
 Advanced techniques not covered in other reference files. Load alongside the primary file for the area in question.
 

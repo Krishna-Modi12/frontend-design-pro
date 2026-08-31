@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent } from 'storybook/test'
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -367,7 +367,7 @@ export function ContactForm({ variant = 'default', isLoading: externalLoading = 
 
 // ─── Storybook CSF3 Meta & Stories ────────────────────────────────────────────
 
-/** @type {import('@storybook/react').Meta<typeof ContactForm>} */
+/** @type {import('@storybook/react-vite').Meta<typeof ContactForm>} */
 const meta = {
   title: 'Components/ContactForm',
   component: ContactForm,

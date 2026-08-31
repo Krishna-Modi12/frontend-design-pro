@@ -1,7 +1,6 @@
 # Glassmorphism Style Reference
 
 Source: frontend-design-pro skill (internal)
-Version: 10.14.0
 
 Frosted-glass UI: translucent panels with blur, soft borders, and depth through layering.
 Works best against rich backgrounds (gradients, imagery, 3D). Fails on flat/white backgrounds.

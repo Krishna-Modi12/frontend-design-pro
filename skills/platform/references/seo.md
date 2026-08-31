@@ -1,5 +1,4 @@
 # SEO Reference for React / Next.js Apps
-# frontend-design-pro-v10 | v1.0.0
 # ─────────────────────────────────────────────────────────────────────────────
 # Source: affaan-m/everything-claude-code (skills/seo) + Next.js docs
 # Covers: technical SEO, Core Web Vitals, metadata API, structured data,

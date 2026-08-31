@@ -1,7 +1,6 @@
 # Font Pairings Reference
 
-Source: nextlevelbuilder/ui-ux-pro-max-skill (57 pairings) + taste-skill + Anthropic claude-cookbooks + pbakaus/impeccable  
-Version: 10.9.0
+Source: nextlevelbuilder/ui-ux-pro-max-skill (57 pairings) + taste-skill + Anthropic claude-cookbooks + pbakaus/impeccable
 
 ## Banned Display Fonts
 Inter, Roboto, Arial, Poppins, DM Sans, Space Grotesk, Open Sans, Lato, Nunito — too generic, signals AI-generated output. **Space Grotesk is explicitly called out by Anthropic as a "common convergent choice" to avoid.**

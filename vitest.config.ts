@@ -65,8 +65,8 @@ export default defineConfig({
       { find: 'vaul', replacement: stub('vaul.tsx') },
       { find: '@stripe/react-stripe-js', replacement: stub('stripe-react.tsx') },
       { find: '@splinetool/react-spline', replacement: stub('spline.tsx') },
-      { find: 'ai/react', replacement: stub('ai-react.ts') },
-      { find: '@storybook/testing-library', replacement: stub('storybook-testing-library.ts') },
+      { find: '@ai-sdk/react', replacement: stub('ai-react.ts') },
+      { find: 'storybook/test', replacement: stub('storybook-test.ts') },
     ],
   },
   test: {

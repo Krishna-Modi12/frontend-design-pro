@@ -1,16 +1,19 @@
 # Google Stitch Design System Generator
 
-Source: Leonxlnx/taste-skill (stitch-skill)  
-Version: 10.8.0
+Source: Leonxlnx/taste-skill (stitch-skill)
 
 ## Purpose
 
-This reference generates `DESIGN.md` files optimized for Google Stitch screen generation (labs.google.com/stitch). It converts frontend design principles into Stitch's semantic design language — descriptive, natural-language rules combined with precise values — producing premium, non-generic interfaces through the Stitch agent.
+This reference generates `DESIGN.md` files optimized for Google Stitch screen generation (`stitch.withgoogle.com`). It converts frontend design principles into Stitch's semantic design language — descriptive, natural-language rules combined with precise values — producing premium, non-generic interfaces through the Stitch agent.
 
 Use this when:
 - User asks to "export a DESIGN.md" or "generate design system for Stitch"
 - User pastes a Google Stitch URL
 - User mentions "Google Stitch" or "Stitch-compatible design"
+
+## Stitch 2.0 (March 2026)
+
+The single-screen flow is now an infinite canvas — one prompt lays out up to five connected screens, with voice and natural-language refinement through a project-level design agent. **`DESIGN.md` is a native format in 2.0**: Stitch reads it directly and can extract one from any URL, so the template below is the expected input, not a workaround. Export covers HTML/CSS, Tailwind, React, Vue, Angular, Flutter and SwiftUI. None of the DESIGN.md rules in this file change under 2.0.
 
 ---
 

@@ -2,8 +2,7 @@
 
 > Core brands + implementation templates. For remaining brand profiles load brand-extended.md.
 
-Source: VoltAgent/awesome-design-md (68 companies, 9 categories) — synthesized from public design systems  
-Version: 10.10.0
+Source: VoltAgent/awesome-design-md (68 companies, 9 categories) — synthesized from public design systems
 
 ## Contents
 

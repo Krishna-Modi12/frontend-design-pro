@@ -1,13 +1,14 @@
-# Framer Motion Reference
+# Motion (formerly Framer Motion) Reference
 
-Source: framer/motion (official docs synthesis)
-Version: 10.15.0
+Source: motion.dev (official docs synthesis)
+
+The library was renamed from **Framer Motion** to **Motion** in 2025. The npm package is `motion` and React imports come from `motion/react` (the `framer-motion` package still resolves as an alias). Motion 12 (2026) animates `oklch` / `oklab` / `lch` colors natively — relevant to this stack's OKLCH-only rule — and adds hardware-accelerated scroll animations and React 19 support. The component API below is unchanged by the rename.
 
 ---
 
 ## Contents
 
-- [1. When to Use Framer Motion vs GSAP](#1-when-to-use-framer-motion-vs-gsap)
+- [1. When to Use Motion vs GSAP](#1-when-to-use-motion-vs-gsap)
 - [2. Core motion.* Components](#2-core-motion-components)
 - [3. AnimatePresence](#3-animatepresence)
 - [4. Variants System](#4-variants-system)
@@ -23,9 +24,9 @@ Version: 10.15.0
 
 ---
 
-## 1. When to Use Framer Motion vs GSAP
+## 1. When to Use Motion vs GSAP
 
-| Criterion | Framer Motion | GSAP |
+| Criterion | Motion | GSAP |
 |---|---|---|
 | Component enter/exit transitions | ✅ First choice | Overkill |
 | Layout morphs (size/position shift) | ✅ `layout` prop handles automatically | Manual with Flip plugin |
@@ -39,7 +40,7 @@ Version: 10.15.0
 | Bundle size sensitivity | LazyMotion ~18KB | ~27KB (core) |
 | Server Components compatibility | ❌ Client-only | ❌ Client-only |
 
-**Decision rule:** If you are animating React component lifecycle (mount/unmount/reorder), reach for Framer Motion. If you are orchestrating a cinematic scroll experience or need fine-grained SVG control, reach for GSAP.
+**Decision rule:** If you are animating React component lifecycle (mount/unmount/reorder), reach for Motion. If you are orchestrating a cinematic scroll experience or need fine-grained SVG control, reach for GSAP.
 
 ---
 
@@ -848,7 +849,7 @@ export function ConstrainedDrag() {
     >
       <motion.div
         drag
-        dragConstraints={containerRef}  // pass a ref — Framer calculates bounds automatically
+        dragConstraints={containerRef}  // pass a ref — Motion calculates bounds automatically
         dragElastic={0.05}
         style={{
           position: "absolute",
@@ -971,8 +972,8 @@ export function LazyCard() {
   );
 }
 
-// --- Why Framer uses CSS transforms (no layout thrash) ---
-// Framer Motion animates transform (translateX, translateY, scale, rotate) and opacity.
+// --- Why Motion uses CSS transforms (no layout thrash) ---
+// Motion animates transform (translateX, translateY, scale, rotate) and opacity.
 // These properties run on the compositor thread — no layout recalculation, no paint.
 // Avoid animating: width, height, top, left, margin, padding — these trigger layout.
 
@@ -983,7 +984,7 @@ export function LazyCard() {
 // <m.div animate={{ width: 200, marginLeft: 50 }} />  ← avoid
 
 // --- will-change WARNING ---
-// Framer Motion automatically adds will-change: transform during animations and removes it after.
+// Motion automatically adds will-change: transform during animations and removes it after.
 // Do NOT manually add will-change: transform to static elements "just in case" —
 // it forces GPU layer promotion permanently, consuming extra VRAM and causing visual artifacts.
 // Only use it if you know an animation is about to start (e.g. on hover).

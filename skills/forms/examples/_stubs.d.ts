@@ -12,7 +12,7 @@ declare module "@hookform/resolvers/zod";
 declare module "@react-three/drei";
 declare module "@react-three/fiber";
 declare module "@splinetool/react-spline";
-declare module "@storybook/testing-library";
+declare module "storybook/test";
 declare module "@tanstack/react-query";
 declare module "@tanstack/react-table";
 declare module "@tanstack/react-virtual";

@@ -699,50 +699,60 @@ export function InlineCorrection({ original, sourceId }: Props) {
 
 ```ts
 // app/api/chat/route.ts
-import { streamText } from 'ai'
+import { streamText, convertToModelMessages, type UIMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  const { messages }: { messages: UIMessage[] } = await req.json()
 
   const result = streamText({
-    model: openai('gpt-4o'),
-    messages,
+    model: openai('gpt-5'),
+    messages: convertToModelMessages(messages),
     system: 'You are a helpful UI assistant.',
   })
 
-  return result.toDataStreamResponse()
+  return result.toUIMessageStreamResponse()
 }
 ```
 
 ```tsx
 // components/ChatAssistant.tsx
 'use client'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
+import { useState } from 'react'
 
 export function ChatAssistant() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat',
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
   })
+  const [input, setInput] = useState('')
+  const busy = status === 'submitted' || status === 'streaming'
 
   return (
     <div className="chat-assistant flex flex-col gap-2">
       <div className="chat-messages flex-1 overflow-y-auto">
         {messages.map((m) => (
           <div key={m.id} className={`chat-message chat-message--${m.role}`}>
-            <MessageContent content={m.content} isStreaming={isLoading && m.role === 'assistant'} />
+            <MessageContent
+              text={m.parts.map((p) => (p.type === 'text' ? p.text : '')).join('')}
+              isStreaming={busy && m.role === 'assistant'}
+            />
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="chat-input-row flex gap-2">
+      <form
+        onSubmit={(e) => { e.preventDefault(); if (input.trim()) { sendMessage({ text: input }); setInput('') } }}
+        className="chat-input-row flex gap-2"
+      >
         <input
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Ask anything…"
           className="flex-1 rounded border px-3 py-2 text-base"
         />
-        <button type="submit" disabled={isLoading} className="ph-chat-submit">
-          {isLoading ? 'Thinking…' : 'Send'}
+        <button type="submit" disabled={busy} className="ph-chat-submit">
+          {busy ? 'Thinking…' : 'Send'}
         </button>
       </form>
     </div>
@@ -757,7 +767,8 @@ Stream structured JSON tool calls and reveal UI panels as confidence accumulates
 ```tsx
 // components/ProgressiveInsight.tsx
 'use client'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
 import { useEffect, useState } from 'react'
 
 interface Insight {
@@ -768,19 +779,22 @@ interface Insight {
 
 export function ProgressiveInsight({ prompt }: { prompt: string }) {
   const [insights, setInsights] = useState<Insight[]>([])
-  const { messages, append, isLoading } = useChat({ api: '/api/insight' })
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/insight' }),
+  })
+  const isLoading = status === 'submitted' || status === 'streaming'
 
   useEffect(() => {
-    append({ role: 'user', content: prompt })
+    sendMessage({ text: prompt })
   }, [prompt])
 
-  // Parse streamed tool calls from the last assistant message
+  // Parse streamed tool outputs from the last assistant message
   useEffect(() => {
     const last = messages.findLast((m) => m.role === 'assistant')
-    if (!last?.toolInvocations) return
-    const parsed = last.toolInvocations
-      .filter((t) => t.state === 'result')
-      .map((t) => t.result as Insight)
+    if (!last) return
+    const parsed = last.parts
+      .filter((p) => p.type.startsWith('tool-') && p.state === 'output-available')
+      .map((p) => p.output as Insight)
     setInsights(parsed)
   }, [messages])
 

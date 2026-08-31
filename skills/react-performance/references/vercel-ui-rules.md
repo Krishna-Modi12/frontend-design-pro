@@ -1,7 +1,6 @@
 # Vercel UI + Performance Rules
 
-Source: vercel-labs/agent-skills (web-design-guidelines + react-best-practices skills)  
-Version: 10.11.0
+Source: vercel-labs/agent-skills (web-design-guidelines + react-best-practices skills)
 
 Rules not covered elsewhere in this skill. Load alongside ux-guidelines.md for full coverage.
 

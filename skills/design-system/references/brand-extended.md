@@ -2,8 +2,7 @@
 
 > Extended Brand Profiles — additional brands per archetype. Load alongside brand-core.md for full coverage.
 
-Source: VoltAgent/awesome-design-md (68 companies, 9 categories) — synthesized from public design systems  
-Version: 10.10.0
+Source: VoltAgent/awesome-design-md (68 companies, 9 categories) — synthesized from public design systems
 
 ---
 

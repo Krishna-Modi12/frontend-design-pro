@@ -1,7 +1,7 @@
 // EXAMPLE: Reference-quality AI Chat UI
 // Intent: CREATE_COMPONENT · Product: ai-assistant · Dials: DV=4 MI=4 VD=7
 // Key principles:
-//   • Simulated useChat hook (Vercel AI SDK pattern) with streaming state
+//   • Self-contained useChat-style hook (Vercel AI SDK shape) with streaming state
 //   • Stop/abort button during streaming
 //   • Example prompt quick-start buttons
 //   • Auto-scroll to latest message via useRef + scrollIntoView
@@ -12,7 +12,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap')
 
-// Simulated useChat hook — mirrors Vercel AI SDK's ai/react interface
+// Self-contained streaming-chat hook, modeled on the Vercel AI SDK `useChat` shape.
+// The real hook (`@ai-sdk/react`) returns `sendMessage` and messages whose text lives
+// in a `parts` array; this simulation keeps a flat `content` string for clarity.
 export type ChatRole = "user" | "assistant"
 export interface ChatMessage { id: string; role: ChatRole; content: string; timestamp: Date; isStreaming?: boolean; aborted?: boolean }
 

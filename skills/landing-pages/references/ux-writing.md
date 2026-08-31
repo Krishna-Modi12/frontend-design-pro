@@ -1,7 +1,6 @@
 # UX Writing
 
-Source: pbakaus/impeccable (ux-writing reference)  
-Version: 10.9.0
+Source: pbakaus/impeccable (ux-writing reference)
 
 ## Core Principle
 

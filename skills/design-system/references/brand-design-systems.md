@@ -5,8 +5,10 @@ Source: VoltAgent/awesome-design-md (MIT) — synthesized from public design sys
 added from the same upstream corpus by way of `xiaopu-ai/web-design` (MIT), which
 republishes it; their palettes were computed from the source hex into OKLCH rather
 than estimated. Profiles describe an observed design language at a point in time —
-sites redesign, so treat a palette as a starting point and re-verify contrast
-against your own surfaces.
+sites redesign, so treat every palette here as a starting point, not a spec. When
+the job is to match a **real, existing brand**, `brand-extraction.md` is the
+authority: pull the values from the live source rather than trusting a profile
+below, and re-verify contrast against your own surfaces either way.
 
 ## Contents
 
@@ -62,27 +64,28 @@ When prompting: `"Build this in Linear aesthetic"` → load this file + check Da
 
 **Atmosphere:** Focused. Dense. No decoration earns its place. Every pixel justified.
 
-**Palette (OKLCH)**
+**Palette (OKLCH)** — converted from `VoltAgent/awesome-design-md`'s Linear profile, checked 2026-08. Treat as a starting point, not a spec (see the note at the top of this file).
 ```css
---linear-bg:        oklch(10% 0.008 265);   /* Near-black with subtle blue tint */
---linear-surface:   oklch(14% 0.009 265);   /* Card/panel surface */
---linear-border:    oklch(22% 0.010 265);   /* Subtle borders */
---linear-text:      oklch(92% 0.004 265);   /* Primary text */
---linear-muted:     oklch(55% 0.006 265);   /* Secondary/muted text */
---linear-accent:    oklch(65% 0.18 280);    /* Purple accent — links, active states */
---linear-accent-glow: oklch(65% 0.18 280 / 0.15); /* Glow behind active items */
+--linear-bg:           oklch(4% 0.004 275);       /* Canvas #010102 — near-pure black */
+--linear-surface:      oklch(20% 0.003 265);      /* Panel #141516; ladder runs #0f1011 → #18191a → #191a1b */
+--linear-border:       oklch(26% 0.011 260);      /* Hairline #23252a — barely visible */
+--linear-text:         oklch(97% 0.002 250);      /* Primary ink #f7f8f8 */
+--linear-muted:        oklch(65% 0.013 255);      /* Secondary text #8a8f98 */
+--linear-accent:       oklch(56% 0.16 275);       /* Lavender-blue #5e6ad2 — brand mark, focus rings, primary CTA. Reads blue, not purple */
+--linear-accent-hover: oklch(69% 0.16 277);       /* #828fff */
+--linear-accent-glow:  oklch(56% 0.16 275 / 0.15); /* Glow behind active items */
 ```
 
 **Typography**
-- UI: System font stack (`-apple-system, BlinkMacSystemFont, "Segoe UI"`) at 13–14px
-- Headings: 500–600 weight, no tracking adjustment
-- Mono: JetBrains Mono for IDs, shortcuts, commit hashes
-- Line-height: 1.4–1.5 (dense)
+- Custom faces: **Linear Display** (headings), **Linear Text** (body), **Linear Mono** (code) — fallback `SF Pro Display, -apple-system, system-ui`
+- Weight carries the hierarchy, not size: display + headline 600, card titles + buttons 500, body 400
+- Tight negative tracking on large type — roughly −3px at 80px easing to −0.05px at 16px body; 14px and below at 0
+- Line-height 1.05–1.2 on display, 1.5 on body
 
 **Key Signals**
-- `border-radius: 6px` on cards, `4px` on inputs, `3px` on badges
+- `border-radius: 6px` on cards, `4px` on inputs — a 4pt radius scale (4 · 6 · 8 · 12 · 16px)
 - Spacing: 4pt scale, very tight — padding of 8px inside components
-- Border: `1px solid oklch(22% 0.010 265)` — barely visible
+- Border: `1px solid oklch(26% 0.011 260)` (hairline `#23252a`) — barely visible
 - No drop shadows. Elevation via border only.
 - Keyboard shortcuts visible in UI: `Cmd+K`, `G I`, etc.
 - Status dots: tiny 6px circles, not badges
@@ -90,7 +93,7 @@ When prompting: `"Build this in Linear aesthetic"` → load this file + check Da
 
 **Component Signatures**
 - Command palette: `Cmd+K` modal, full-width search bar, grouped results with keyboard navigation
-- Sidebar: 240px, icon+label, active item has left purple border `border-left: 2px solid accent`
+- Sidebar: 240px, icon+label, active item has a left accent border `border-left: 2px solid accent`
 - Table/list views: alternating barely-there row hovers, no grid lines
 - Priority indicators: emoji-free, icon-only (circle, half-circle, full circle)
 

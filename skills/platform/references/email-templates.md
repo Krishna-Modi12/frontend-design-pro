@@ -1,7 +1,6 @@
 # Email Templates Reference
 
 Source: react.email + resend.com (official patterns)
-Version: 10.15.0
 
 React Email + Resend = transactional email in Next.js. React components compile to email-safe HTML.
 Resend sends via Server Actions or API routes.
