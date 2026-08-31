@@ -121,7 +121,7 @@ function RouteOutput({
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-text-muted">What loads</h4>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">What loads</h3>
           <ul className="mt-2 space-y-1.5 text-sm">
             <FileRow tag="registry" path="SKILL.md" />
             <FileRow tag="skill" path={skill.path} />
@@ -132,7 +132,7 @@ function RouteOutput({
         </div>
 
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-text-muted">What it costs</h4>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">What it costs</h3>
           <p className="mt-2">
             <span data-metric className="text-2xl font-medium text-text-primary">
               {fmt.format(skill.budget)}
@@ -150,9 +150,9 @@ function RouteOutput({
       </div>
 
       <div className="mt-6">
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
           {hits.length === 1 ? "Matched on this trigger" : "Matched on these triggers"}
-        </h4>
+        </h3>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {hits.map((k) => (
             <span key={k} className="rounded-full border border-border px-2.5 py-0.5 text-xs text-text-secondary">

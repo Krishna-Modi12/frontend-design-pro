@@ -18,6 +18,30 @@ export function Navbar({ version }: NavbarProps): ReactElement {
   };
 
   useEffect(() => {
+    // Native <details> only closes on a link click or re-toggling the
+    // hamburger — no Escape, no outside-click, which strands a mobile user
+    // who taps elsewhere expecting the panel to dismiss like any other
+    // overlay.
+    const onPointerDown = (event: PointerEvent): void => {
+      const node = detailsRef.current;
+      if (node !== null && node.open && !node.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape" && detailsRef.current?.open) {
+        closeMenu();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
     // Coalesce a burst of scroll events into one read per frame: the listener
     // only schedules a frame, and the frame does the work. `scrolled` is a
     // boolean, so React already skips the re-render on every event but the two
@@ -83,7 +107,14 @@ export function Navbar({ version }: NavbarProps): ReactElement {
             deficit without another wrap-vs-overflow trade. Re-verify with
             `pages:verify`'s 768px checks before trusting this fits; if it
             still clips, the version badge (already lg-only) and the logo's
-            own `min-w-[44px]` floor are the remaining levers. */}
+            own `min-w-[44px]` floor are the remaining levers.
+
+            v2.4 drops the nav to 5 items (`checks` removed from `NAV` in
+            `lib/content.ts` — the section stays, only its own nav link is
+            gone), so the padding trims above are now margin rather than the
+            exact fit they were tuned for. Left as-is rather than re-widened:
+            still correct, and re-loosening them is the first thing to try if
+            a future nav item needs the room back. */}
         <nav aria-label="Sections" className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <a
