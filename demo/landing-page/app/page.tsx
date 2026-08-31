@@ -12,6 +12,7 @@ import CtaBar from "../components/CtaBar";
 import Footer from "../components/Footer";
 import { FEATURES, GALLERY_URL, PRODUCT, REPO_URL, STEPS, TESTIMONIALS } from "../lib/content";
 import { focusRing, sectionShell, tapTarget, tokenStyles } from "../lib/tokens";
+import { useActiveSection } from "../lib/useActiveSection";
 
 /**
  * A project Pages site is served from /<repo>, and Next rewrites its own asset
@@ -34,6 +35,7 @@ const NAV = [
   { id: "numbers", label: "Numbers" },
   { id: "teams", label: "Teams" },
 ];
+const NAV_IDS = NAV.map((item) => item.id);
 
 interface MetricsState {
   status: "loading" | "error" | "ready";
@@ -47,6 +49,11 @@ export default function Page(): ReactElement {
     status: "loading",
     metrics: [],
   });
+  // Bumped by the error state's "Try again" button. The effect below depends
+  // on it purely to re-run the same fetch — the number itself carries no
+  // meaning beyond "not equal to last time".
+  const [retryKey, setRetryKey] = useState(0);
+  const activeSection = useActiveSection(NAV_IDS);
 
   /**
    * A real request with a real abort. The anti-slop wall bans mount-time
@@ -56,6 +63,11 @@ export default function Page(): ReactElement {
    */
   useEffect(() => {
     const controller = new AbortController();
+    // A retry re-enters the loading state rather than sitting on the stale
+    // error while the new request is in flight — the skeleton is the honest
+    // state for "we don't know yet," and the error copy is specifically
+    // about the LAST attempt, not this one.
+    setState({ status: "loading", metrics: [] });
 
     async function load(): Promise<void> {
       try {
@@ -89,7 +101,7 @@ export default function Page(): ReactElement {
 
     void load();
     return () => controller.abort();
-  }, []);
+  }, [retryKey]);
 
   return (
     <div className="min-h-[100dvh] bg-surface-page text-ink antialiased">
@@ -119,7 +131,12 @@ export default function Page(): ReactElement {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`${tapTarget} ${focusRing} hidden items-center rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none sm:inline-flex`}
+                aria-current={item.id === activeSection ? "location" : undefined}
+                className={`${tapTarget} ${focusRing} hidden items-center rounded-lg px-3 text-sm transition-colors duration-150 ease-out motion-reduce:transition-none sm:inline-flex ${
+                  item.id === activeSection
+                    ? "text-ink"
+                    : "text-ink-secondary hover:text-ink"
+                }`}
               >
                 {item.label}
               </a>
@@ -129,7 +146,7 @@ export default function Page(): ReactElement {
                 nothing standing in for them — a native disclosure, not a
                 fourth breakpoint-hidden link, so the section anchors stay
                 reachable on a phone without any client state. */}
-            <details data-disclosure className="relative sm:hidden">
+            <details data-disclosure className="group relative sm:hidden">
               <summary
                 className={`${tapTarget} ${focusRing} flex list-none items-center gap-1 rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none [&::-webkit-details-marker]:hidden`}
               >
@@ -137,7 +154,7 @@ export default function Page(): ReactElement {
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 20 20"
-                  className="size-4"
+                  className="size-4 transition-transform duration-150 ease-out group-open:rotate-180 motion-reduce:transition-none"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.5"
@@ -150,7 +167,12 @@ export default function Page(): ReactElement {
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className={`${tapTarget} ${focusRing} flex items-center rounded-lg px-3 text-sm text-ink-secondary transition-colors duration-150 ease-out hover:text-ink motion-reduce:transition-none`}
+                    aria-current={item.id === activeSection ? "location" : undefined}
+                    className={`${tapTarget} ${focusRing} flex items-center rounded-lg px-3 text-sm transition-colors duration-150 ease-out motion-reduce:transition-none ${
+                      item.id === activeSection
+                        ? "text-ink"
+                        : "text-ink-secondary hover:text-ink"
+                    }`}
                   >
                     {item.label}
                   </a>
@@ -175,6 +197,7 @@ export default function Page(): ReactElement {
           metrics={state.metrics}
           status={state.status}
           errorMessage={state.reason}
+          onRetry={() => setRetryKey((key) => key + 1)}
         />
         <HowItWorks steps={STEPS} />
         <BentoFeatures features={FEATURES} />
