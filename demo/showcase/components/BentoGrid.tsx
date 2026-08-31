@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export interface BentoFeature {
   id: string;
@@ -16,7 +17,47 @@ export interface BentoFeature {
 const SPARKLINE_WIDTH = 240;
 const SPARKLINE_HEIGHT = 72;
 
-function Sparkline({ values }: { values: number[] }) {
+const SPARKLINE_TICK_MS = 4000;
+/** Keeps the rolling window inside the flat tail of the curve it seeds
+    from — a jitter this small can drift over a long session otherwise. */
+const SPARKLINE_JITTER = 0.015;
+const SPARKLINE_FLOOR = 0.3;
+const SPARKLINE_CEILING = 0.52;
+
+/**
+ * "Watch a cohort curve update as events land — not tomorrow's batch job"
+ * is this card's own copy, and until now nothing on the page did that: the
+ * line drew once on mount and never moved again. Every `SPARKLINE_TICK_MS`
+ * a new point lands and the oldest one rolls off, same as the initial seed
+ * values do — a real rolling window, not a fixed illustration.
+ *
+ * Reuses the exact freeze pattern `Hero3D`'s rotation already uses for
+ * `useReducedMotion`: no interval starts at all, so the curve stays exactly
+ * where its initial seed data left it. A quieter *moving* variant was
+ * considered and rejected — the point of the reduced-motion path elsewhere
+ * in this app is "stop," not "move less," and a second live-update
+ * behavior gated differently from every other animated element here would
+ * be its own inconsistency.
+ */
+function Sparkline({ values: seed }: { values: number[] }) {
+  const reducedMotion = useReducedMotion();
+  const [values, setValues] = useState(seed);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const interval = window.setInterval(() => {
+      setValues((current) => {
+        const last = current[current.length - 1] ?? SPARKLINE_FLOOR;
+        const jitter = (Math.random() - 0.5) * 2 * SPARKLINE_JITTER;
+        const next = Math.min(Math.max(last + jitter, SPARKLINE_FLOOR), SPARKLINE_CEILING);
+        return [...current.slice(1), next];
+      });
+      setTick((n) => n + 1);
+    }, SPARKLINE_TICK_MS);
+    return () => window.clearInterval(interval);
+  }, [reducedMotion]);
+
   const points = values
     .map((value, index) => {
       const x = (index / (values.length - 1)) * SPARKLINE_WIDTH;
@@ -33,6 +74,7 @@ function Sparkline({ values }: { values: number[] }) {
       aria-label="Cohort retention curve, trending down and to the right as expected, with no unexplained cliffs."
     >
       <polyline
+        key={tick}
         points={points}
         fill="none"
         stroke="var(--color-accent)"

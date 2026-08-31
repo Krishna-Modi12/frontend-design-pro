@@ -73,7 +73,7 @@ function MetricCardImpl(
       <span
         ref={numberRef}
         data-metric
-        className="text-2xl font-medium text-accent sm:text-4xl lg:text-5xl"
+        className="text-[clamp(1.5rem,3.4vw,2.5rem)] font-medium text-accent"
       >
         {fmt.format(value)}
       </span>

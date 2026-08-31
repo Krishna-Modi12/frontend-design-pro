@@ -41,12 +41,19 @@ export function Footer() {
           {columns.map((column) => (
             <div key={column.heading}>
               <h4 className="text-sm font-semibold text-text-primary">{column.heading}</h4>
+              {/* Plain text, not `<a href="#">`. Nexus has no real Docs, API
+                  reference, Security page, or Status page behind any of
+                  these — an `href="#"` reads as a real link and dead-ends on
+                  click, which is exactly the kind of gap this product's own
+                  pitch (catching what's broken before a user does) should be
+                  the last page to ship. The bottom-of-page disclosure covers
+                  the whole page being generated output; this covers the
+                  narrower, more checkable claim that these twelve items
+                  specifically go nowhere. */}
               <ul className="mt-4 space-y-3">
                 {column.links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-sm text-text-muted hover:text-text-primary">
-                      {link}
-                    </a>
+                    <span className="cursor-default text-sm text-text-faint">{link}</span>
                   </li>
                 ))}
               </ul>

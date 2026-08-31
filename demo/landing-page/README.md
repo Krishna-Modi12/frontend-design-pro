@@ -10,25 +10,32 @@ rules, with nothing on it hand-waved.
 Bellwether does not exist. The quotes on the page are invented, the operating
 figures are demo content, and the page says so on itself.
 
-## Why this page is light
+## Why this page is dark
 
 The anti-slop wall bans three AI-design defaults **unless the brief asks for
-them**. The version of this page before this one was the second of those three —
-near-black with a single acid-green accent — and it was not breaking any rule,
-because its brief asked for exactly that. It still looked like every generated
-developer-tool page on the internet, which is the outcome the wall exists to
-prevent.
+them**, and one of them is near-black with a single bright acid accent. This
+page has now been all three things: near-black with an acid accent, then light
+porcelain, now near-black with a deep cobalt. That history is the point rather
+than an embarrassment — it separates two things that look identical in a diff
+and are not the same act.
 
-So the rebuild started with the brief rather than the CSS. The new one declines
-the exemption in as many words, and the palette that replaced it avoids all three
-defaults on their own terms: a **cool** porcelain ground rather than a warm cream,
-a deep cobalt accent at L=45% rather than an acid neon high in both lightness and
-chroma, and no hairline column rules anywhere. Reasoning and every measured
-contrast ratio are in [`tokens.css`](tokens.css).
+The first version's brief asked for "near-black background, acid-green
+accent," so the wall permitted it, no rule was broken, and the result still
+looked like every generated developer-tool page on the internet — the
+exemption was used as somewhere to arrive at without deciding anything. The
+version that replaced it declined the exemption outright and went light
+instead, which was a real decision, just not the one that shipped: the current
+palette is near-black again, but for the opposite reason — a deep cobalt at
+L=55% rather than an acid neon (which lives high in lightness *and* high in
+chroma), every pair measured on three surfaces rather than eyed, one hue for
+every neutral, and density and motion carrying the page instead of a bright
+colour doing it alone. The other two defaults stay declined outright: no
+cream, no serif, no terracotta anywhere.
 
-**Taking a documented exemption is not the same as making a decision.** That is
-the whole lesson of this demo, and it is the one thing here worth carrying into
-another project.
+**Taking a documented exemption is not the same as making a decision.** That
+is the whole lesson of this demo. Reasoning and every measured contrast ratio
+are in [`tokens.css`](tokens.css) — that file, not this section, is the
+source of truth if the two ever disagree again.
 
 ## Run it
 
