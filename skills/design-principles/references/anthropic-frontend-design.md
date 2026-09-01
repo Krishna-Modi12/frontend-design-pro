@@ -14,7 +14,7 @@ The subject's own world — its materials, instruments, artifacts, vernacular �
 
 Current AI-generated design clusters around three looks:
 
-1. **Warm cream background** (near `#F4F1EA`) + high-contrast serif display + terracotta accent
+1. **Warm cream background** (near `#F4F1EA`) + high-contrast serif display + a terracotta **or sage/forest-green** accent — the green variant is the fastest-rising form of this cluster in 2026
 2. **Near-black background** + a single bright acid-green or vermilion accent
 3. **Broadsheet layout** — hairline rules, zero border-radius, dense newspaper columns
 
@@ -27,7 +27,7 @@ All three are legitimate *for some briefs*. They are **defaults rather than choi
 
 **The hero is a thesis.** Open with the most characteristic thing in the subject's world — headline, image, animation, live demo, interactive moment. *A big number with a small label, supporting stats and a gradient accent is the template answer*; use it only if it is genuinely the best option.
 
-**Typography carries the personality.** Pair display and body faces deliberately — not the families you'd reach for on any other project. Set a clear scale with intentional weights, widths and spacing. Make the type treatment a memorable part of the design, not a neutral delivery vehicle.
+**Typography carries the personality.** Pair display and body faces deliberately — not the families you'd reach for on any other project. Set a clear scale with intentional weights, widths and spacing. Make the type treatment a memorable part of the design, not a neutral delivery vehicle. The italic-serif display heading (Instrument Serif, Fraunces) has itself become a 2026 convergence tell: it still earns its place on a genuinely editorial brief, but it is no longer a neutral default — reach for it because the subject asks for it, not by reflex.
 
 **Structure is information.** Numbering, eyebrows, dividers and labels must encode something true about the content, not decorate it. Numbered markers (01 / 02 / 03) are appropriate **only if the content actually is a sequence** — a real process, a typed timeline where order carries information. Question the device before using it.
 
