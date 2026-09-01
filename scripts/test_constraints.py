@@ -550,7 +550,10 @@ CONSTRAINTS: List[Constraint] = [
         id="PERF-04R", category="Performance",
         description="[secondary to PERF-04 AST] No transition: all / transition-all",
         severity="medium",
-        check=lambda c: (_lacks(r"\btransition-all\b|transition:\s*all\b", c),
+        # _uncommented, not c: a comment explaining *why* transition: all is
+        # banned (home/lib/tokens.ts carries exactly this) would otherwise
+        # trip the rule it's describing — same reasoning as TYP-02 above.
+        check=lambda c: (_lacks(r"\btransition-all\b|transition:\s*all\b", _uncommented(c)),
                          "transition: all — list animated properties explicitly")),
     Constraint(
         id="IMG-01", category="Performance",
@@ -768,6 +771,8 @@ type Metric = { label: string; value: string }
 /** Brand invented for the sector. Not Acme, Cloudly, SmartFlow or Nexus. */
 const BRAND = 'Halloway';
 
+/** Never `transition: all` — list animated properties explicitly instead. */
+
 export default function Dashboard({ isLoading = false }: DashboardProps = {}) {
   const [error, setError] = useState(null);
 
@@ -815,7 +820,7 @@ function Widget() {
       <p>Hello John Doe (@user123), welcome to Acme. Elevate your experience!</p>
       <p>Growth: 50% Revenue: $10,000 — Pro plan $99.99/mo</p>
       <img src="/img.png" />
-      <div className="animate-spin duration-1000" />
+      <div className="animate-spin duration-1000 transition-all" />
     </div>
   );
 }

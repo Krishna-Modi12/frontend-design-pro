@@ -4,7 +4,7 @@ Source: emilkowalski/skill — distilled from Sonner, Vaul, and animation.dev
 
 > **Cross-reference:** This file covers WHEN and HOW to animate (principles, timing, easing).
 > For IMPLEMENTATION details of each library, load the dedicated files:
-> - Framer Motion → `references/framer-motion.md` ([framer] shortcode)
+> - Motion (formerly Framer Motion) → `references/motion.md` ([framer] shortcode)
 > - GSAP (ScrollTrigger, SplitText, Flip…) → `references/gsap.md` ([gsap] shortcode)
 > - CSS-only animations → patterns in this file
 
