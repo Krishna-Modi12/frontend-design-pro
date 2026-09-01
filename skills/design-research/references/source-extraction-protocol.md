@@ -73,13 +73,45 @@ Leave:
 
 See `motion-easing-catalog.md` for the values worth reusing.
 
+### Landing & section galleries — Supahero, Land-book, BentoGrids
+
+Curated captures of live marketing pages and page sections. The value is
+composition at page scale; every component in the shot is someone else's brand.
+
+Take:
+- Section order and count — which section leads, which closes, how many the page
+  spends before its primary CTA
+- Above-the-fold budget — headline-to-CTA distance, how much shows before the first scroll
+- Whitespace rhythm between sections, as a ratio to the content block rather than a pixel value
+- Bento composition (BentoGrids) — cell span logic, which tile is largest and why, reading order across the grid
+
+Leave:
+- Copy voice and headline wording — `SLOP-01/02` bind research output the same as for any page
+- Screenshot fidelity as a spec — these are marketing captures, frequently scaled or retouched
+- Gradient-mesh and aurora backdrops shown as the whole design — one showpiece per page (`TYP-03`)
+- Brand-specific type and illustration
+
+### Design-system directories — Design Systems Surf
+
+An index of shipped design systems and their component documentation. Read the
+system, not the site chrome in front of it.
+
+Take:
+- Token architecture — how many steps in the colour, space and type scales, and the naming convention each system chose
+- Component documentation order — what a component page covers and in what sequence (anatomy → states → usage → a11y is the common shape)
+- Where a system draws the primitive/component line
+
+Leave:
+- The whole vocabulary — you are extracting one structural decision, not adopting a system
+- Scale values that assume a different base unit (8pt vs 4pt) without re-deriving against ours
+
 ## Extraction Template
 
 Fill one of these per source. This is the artefact you show the user before writing code.
 
 ```markdown
 ## Source: [URL]
-**Type:** component-library | gallery | native | motion
+**Type:** component-library | gallery | native | motion | design-system
 **Viewport captured:** [width]
 **Classification:** structure | mood | interaction
 **Strictness:** starting point | close match
