@@ -11,7 +11,7 @@ column and load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
 `metadata.core-deps` named in that skill's frontmatter, plus
 `frontend-design-pro/core/accessibility-baseline.md` and
 `frontend-design-pro/core/validate-checklist.md`. Budget 8,000 tokens; a correct
-request lands near 6,034–7,947. Do not load every skill, and do not answer from
+request lands near 6,037–7,950. Do not load every skill, and do not answer from
 the registry alone.
 
 Open a `frontend-design-pro/skills/{id}/references/*.md` file only when the skill

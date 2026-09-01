@@ -3,7 +3,7 @@
     "skills": 19,
     "coreFiles": 8,
     "referenceFiles": 117,
-    "referenceDepthTokens": 422647,
+    "referenceDepthTokens": 422738,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -11,9 +11,9 @@
     "parserConstraints": 17,
     "regexConstraints": 44,
     "ciConstraints": 61,
-    "registryTokens": 2146,
-    "bandLow": 6034,
-    "bandHigh": 7947
+    "registryTokens": 2149,
+    "bandLow": 6037,
+    "bandHigh": 7950
   },
   "baseDeps": [
     "core/accessibility-baseline.md",
@@ -41,7 +41,7 @@
         "core/agent-behavior.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6976,
+      "budget": 6979,
       "group": "Meta",
       "covers": "The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration",
       "trySaying": "\"You keep re-reading the same files. Set up a context budget.\""
@@ -66,7 +66,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6143,
+      "budget": 6146,
       "group": "Meta",
       "covers": "Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships",
       "trySaying": "\"Render components from this JSON schema, and validate before it hits the DOM.\""
@@ -91,7 +91,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6450,
+      "budget": 6453,
       "group": "Making it look right",
       "covers": "Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion",
       "trySaying": "\"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion.\""
@@ -116,7 +116,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 7247,
+      "budget": 7250,
       "group": "Making it look right",
       "covers": "Type rendered as a system: particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path — with the real string always left in the DOM",
       "trySaying": "\"A hero headline that assembles from particles on mouse-over, and still reads fine with JS off.\""
@@ -140,7 +140,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6398,
+      "budget": 6401,
       "group": "Making it look right",
       "covers": "Colour computed rather than chosen: OKLCH token generation from one hue, harmonic schemes, palettes extracted from an image, light/dark/auto architecture, contrast measured before a token ships",
       "trySaying": "\"Generate a full dark theme from this brand blue, and prove the text passes AA.\""
@@ -167,7 +167,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6470,
+      "budget": 6473,
       "group": "Making it look right",
       "covers": "Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit",
       "trySaying": "\"Give me an animated headline like Aceternity's, but keyboard-accessible.\""
@@ -196,7 +196,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6108,
+      "budget": 6111,
       "group": "Building something new",
       "covers": "Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query",
       "trySaying": "\"Sortable, filterable users table with pagination and a loading skeleton.\""
@@ -222,7 +222,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6832,
+      "budget": 6835,
       "group": "Making it look right",
       "covers": "The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction",
       "trySaying": "\"Critique this layout. Why does it feel cluttered, and what's the actual fix?\""
@@ -252,7 +252,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 7947,
+      "budget": 7950,
       "group": "Making it look right",
       "covers": "Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, or run a social/trend pass over engagement-ranked community signal, and convert either into typed constraints before any code",
       "trySaying": "\"Build a hero inspired by this Dribbble shot: <url> — dark, developer tool.\"* · *\"What's trending in fintech dashboard design right now?\""
@@ -279,7 +279,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6423,
+      "budget": 6426,
       "group": "Making it look right",
       "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
       "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
@@ -309,7 +309,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6180,
+      "budget": 6183,
       "group": "Building something new",
       "covers": "Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement",
       "trySaying": "\"Multi-step checkout with Zod validation and errors wired to aria-describedby.\""
@@ -334,7 +334,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6037,
+      "budget": 6040,
       "group": "Making it look right",
       "covers": "Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration",
       "trySaying": "\"These icons look off next to the text — fix the sizing and optical alignment.\""
@@ -363,7 +363,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6034,
+      "budget": 6037,
       "group": "Building something new",
       "covers": "Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding",
       "trySaying": "\"Build a landing page for a CI tool. Dark, technical, no stock-photo energy.\""
@@ -397,7 +397,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6886,
+      "budget": 6889,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -427,7 +427,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6420,
+      "budget": 6423,
       "group": "Building something new",
       "covers": "One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, forwardRef, CVA",
       "trySaying": "\"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly.\""
@@ -453,7 +453,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6285,
+      "budget": 6288,
       "group": "Making it work well",
       "covers": "Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals",
       "trySaying": "\"This page has a 4s LCP. Find the waterfall and fix it.\""
@@ -478,7 +478,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6089,
+      "budget": 6092,
       "group": "Making it work well",
       "covers": "Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy",
       "trySaying": "\"Write tests for this form — including the validation errors and an axe pass.\""
@@ -507,7 +507,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6286,
+      "budget": 6289,
       "group": "Building something new",
       "covers": "Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes",
       "trySaying": "\"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion.\""
@@ -537,7 +537,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6581,
+      "budget": 6584,
       "group": "Making it work well",
       "covers": "Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas, plus a live rendered-DOM audit of the running page",
       "trySaying": "\"Review this component. What's wrong with it that I'm not seeing?\""

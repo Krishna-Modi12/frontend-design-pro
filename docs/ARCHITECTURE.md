@@ -12,38 +12,38 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,146 tokens** | always |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,149 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,964, 3,095, 3,505 or 3,923 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **848–1,878 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 117 deep references | **422,647 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 117 deep references | **422,738 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```text
-landing-pages       6,034   ← lightest
-iconography         6,037
-testing             6,089
-data-tables         6,108
-ai-ui-generation    6,143
-forms               6,180
-react-performance   6,285
-threejs-3d          6,286
-color-themes        6,398
-react-components    6,420
-design-system       6,423
-animations          6,452
-component-patterns  6,470
-web-interface       6,581
-design-principles   6,832
-platform            6,883
-agent-ops           6,976
-canvas-typography   7,247
-design-research     7,947   ← heaviest
+landing-pages       6,037   ← lightest
+iconography         6,040
+testing             6,092
+data-tables         6,111
+ai-ui-generation    6,146
+forms               6,183
+react-performance   6,288
+threejs-3d          6,289
+color-themes        6,401
+react-components    6,423
+design-system       6,426
+animations          6,453
+component-patterns  6,473
+web-interface       6,584
+design-principles   6,835
+platform            6,889
+agent-ops           6,979
+canvas-typography   7,250
+design-research     7,950   ← heaviest
 ```
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,178 tokens, while `design-research` has the largest router in the pack at 1,878 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,947 tokens against 422,647 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,950 tokens against 422,738 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. `.gitattributes` is `eol=lf`, so the index is LF on every platform, and both `build_release.py:tokens()` and `check_figures.py:tokens()` normalise CRLF→LF before counting. Gate 8a and Gate 11 therefore report the same numbers on Windows and Linux, and stay stable even when an editor has left a file you touched with CRLF endings before it is committed. The LF figure is canonical because it is what a reader who downloads the archive can reproduce.
 
