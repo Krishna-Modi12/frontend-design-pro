@@ -21,23 +21,23 @@ Measured per-request totals, every skill, registry + skill + declared deps:
 
 ```text
 landing-pages       6,037   ← lightest
-iconography         6,040
-testing             6,092
-data-tables         6,111
-ai-ui-generation    6,146
-forms               6,183
-react-performance   6,288
-threejs-3d          6,289
-color-themes        6,401
-react-components    6,423
-design-system       6,426
-animations          6,453
-component-patterns  6,473
-web-interface       6,584
-design-principles   6,835
-platform            6,889
-agent-ops           6,979
-canvas-typography   7,250
+iconography         6,037
+testing             6,089
+data-tables         6,108
+ai-ui-generation    6,143
+forms               6,180
+react-performance   6,285
+threejs-3d          6,286
+color-themes        6,398
+react-components    6,420
+design-system       6,423
+animations          6,452
+component-patterns  6,470
+web-interface       6,581
+design-principles   6,832
+platform            6,883
+agent-ops           6,976
+canvas-typography   7,247
 design-research     7,950   ← heaviest
 ```
 
