@@ -334,7 +334,7 @@ a file an agent already loads for that task, or was declined.
   rubber-banding at limits, grab offset, and the "one gesture owns the frame"
   rule. Route: motion that has to feel like a physical object under the user's
   finger.
-- `references/finding-motion.md`, from `find-animation-opportunities` (queued).
+- `references/finding-motion.md`, from `find-animation-opportunities`.
   The inverse of a motion budget — a structured pass over a built interface for
   state changes that happen instantly and should not, gated by four questions so
   it does not relicense the whole screen as animatable, and required to list its
@@ -425,7 +425,7 @@ figure sweep, not yet merged.
 | Source | Upstream skill | Decision | Target / reason | Status |
 |---|---|---|---|---|
 | emil | `apple-design` | NEW REF | `animations/references/native-motion-physics.md` | **shipped** |
-| emil | `find-animation-opportunities` | NEW REF | `animations/references/finding-motion.md` | queued |
+| emil | `find-animation-opportunities` | NEW REF | `animations/references/finding-motion.md` | **shipped** |
 | emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | queued |
 | emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | queued |
 | emil | `animation-vocabulary` | FOLD | `animations/references/motion-direction.md` | queued |

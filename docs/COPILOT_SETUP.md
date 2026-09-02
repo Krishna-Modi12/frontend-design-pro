@@ -64,7 +64,7 @@ Ask **"which skill file are you using, and what's in its routing table row for t
 ## Honest limitations
 
 - **Always-loaded instructions, not fetch-on-demand.** This is the biggest degradation. Instruction files are loaded whole on every matching request; Copilot cannot decide mid-conversation to go open `skills/animations/references/animation-recipes.md` the way a filesystem agent can. It is binary — a file is either always in context or never in context unless you paste it. There isn't even ChatGPT's retrieval search to soften it.
-- **The 118 reference files are effectively out of reach.** You get the registry, one skill router, and the anti-slop wall. The depth those references carry arrives only if you paste a specific one into chat by hand.
+- **The 119 reference files are effectively out of reach.** You get the registry, one skill router, and the anti-slop wall. The depth those references carry arrives only if you paste a specific one into chat by hand.
 - **No execution of the gate scripts.** Copilot Chat can suggest code but cannot run `scripts/build_release.py` or the AST/regex constraint checks against its own output. Run `npm run gates` yourself if enforcement matters.
 - **Instruction files can be summarised.** Long rules compete with the rest of the prompt. If output drifts generic, shorten the instructions file before adding to it.
 
