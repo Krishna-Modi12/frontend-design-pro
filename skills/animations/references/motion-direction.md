@@ -88,3 +88,49 @@ Motion is not a constant; it is a function of context.
 ## Quality check
 
 Before shipping any animation: can you name what it communicates · does its duration match the product's personality · does it survive `prefers-reduced-motion` · does it stop off-screen · would removing it lose information? A "no" on the last question means remove it.
+
+## Naming motion
+
+Step 1 of the decision order is "name it in a word". This is the vocabulary for
+that — enough to brief a designer, write a ticket, or route to the right
+reference, without describing the effect longhand. It is for *naming*, not
+building; the linked file is where the values live.
+
+**Reverse lookup — a description → its term:**
+
+| When someone says… | The term is | Where to build it |
+|---|---|---|
+| "it grows out of the button it opened from" | **origin-aware animation** | `animation-framework.md` § Popover Origin Awareness |
+| "one image turns into the other" (shape changes) | **morph** — not a crossfade | `animation-framework.md`; GSAP MorphSVG in `gsap.md` |
+| "the card becomes the detail page" (same element, new place) | **shared-element transition** | `view-transitions.md`; `layoutId` in `motion.md` |
+| "it just fades from one to the other" (no shape change) | **crossfade** | any library |
+| "the list re-sorts and the rows glide to their new spots" | **layout animation** (FLIP under the hood) | `motion.md` `layout`; `animation-pitfalls.md` for the measure-once trap |
+| "tabs slide left or right depending on which tab I came from" | **direction-aware transition** | `view-transitions.md` |
+| "iOS scroll resistance past the end, then snap back" | **rubber-banding** | `native-motion-physics.md` |
+| "it feels like it has weight and settles" | **perceived duration** of a spring (a spring has no set duration; it *reads* as one) | `native-motion-physics.md`; `animation-framework.md` spring scale |
+| "a tiny move backwards before it goes forward" | **anticipation** | the Disney-principles section above |
+| "the group doesn't stop all at once" | **follow-through / overlap** | choreography section above |
+| "it loops back and forth" | **yoyo / alternate** | `animation-recipes.md` |
+| "slow ambient drift in the background" | **idle animation** (variants: **float**, **pulse**, **orbit**) | `interaction-patterns.md`; budget in `motion-budget.md` |
+| "it wipes in from one edge" | **reveal** via **clip-path** | `animation-framework.md` § clip-path |
+| "discrete frames, not a smooth tween" | **stepped animation** | CSS `steps()`; typewriter recipe in `animation-recipes.md` |
+
+**The three that get confused:** a **crossfade** swaps two things by opacity and
+nothing moves; a **morph** is one element whose shape/content changes in place; a
+**shared-element transition** is one element that persists while it travels to a
+new location or route. Reaching for a crossfade when the design wants a morph is
+the most common mis-brief in this area.
+
+## Sources
+
+The decision order, property table, personality archetypes, Disney-principle
+subset, choreography and animation-smells table are adapted from
+`LottieFiles/motion-design-skill` (MIT) plus this pack's own direction rules.
+
+The **Naming motion** section was folded in on 2026-09-02 from
+`emilkowalski/skills` (the `animation-vocabulary` skill — MIT, Copyright © Emil
+Kowalski), a reverse-lookup glossary. Integration type: fold. Only the
+ambiguity-resolving subset was taken — terms already defined in-line elsewhere in
+this skill (stagger, parallax, scroll reveal, squash & stretch) are not
+re-listed, and the full ~100-term glossary is not reproduced; each entry points
+at the reference that carries the implementation.
