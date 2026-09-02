@@ -9,6 +9,7 @@ Community components, animation libraries, theme tools, and starters that extend
 ## Contents
 
 - [Component Finder (by Need)](#component-finder-by-need)
+- [Picking a Library, and Catching a Mismatch](#picking-a-library-and-catching-a-mismatch)
 - [Animation Libraries for shadcn](#animation-libraries-for-shadcn)
 - [Theme / Color Tools](#theme--color-tools)
 - [Figma Design Files](#figma-design-files)
@@ -19,6 +20,7 @@ Community components, animation libraries, theme tools, and starters that extend
 - [Design System Integration](#design-system-integration)
 - [Key Third-Party Packages (Direct npm)](#key-third-party-packages-direct-npm)
 - [Anti-Patterns with shadcn + Ecosystem](#anti-patterns-with-shadcn--ecosystem)
+- [Sources](#sources)
 
 ---
 
@@ -208,6 +210,63 @@ Community components, animation libraries, theme tools, and starters that extend
 | QR code | **creatorem/ui** | QR + stepper + tour |
 | Audio player | **audio/ui** | Accessible audio components |
 | Waveform/ElevenLabs | Build with audio/ui | Waveform visualizer |
+
+---
+
+## Picking a Library, and Catching a Mismatch
+
+The finder above answers "I need a ___". This section answers two questions it
+does not: *which primitive layer* to build on, and *when the code in front of you
+is a hand-rolled version of something that already exists*.
+
+### Selection discipline
+
+1. **Name the task, not the library the user named.** "Add a combobox" is a
+   task; "add Downshift" is a guess. Solve the task.
+2. **Read `package.json` first.** A dependency already in the tree wins over an
+   equivalent one that is not — fewer bundles, one mental model.
+3. **Recommend one, with a one-line reason.** A list of five options is the
+   caller's problem handed back to them.
+4. **Flag when you leave the curated set.** If the task genuinely is not covered
+   below or in the finder, say so rather than reaching for the first npm result.
+
+### The opinionated base layer
+
+Where the finder lists many community components for a need, these are the small
+number worth defaulting to for the primitive, state and styling layer. They are
+un-opinionated about visuals and do one thing:
+
+| Layer | Default | For |
+|---|---|---|
+| Unstyled primitives | **Base UI** | Dialog, popover, menu, select, tooltip — accessible behaviour, zero styling. `shadcn init` now scaffolds onto Base UI rather than Radix; see `radix-primitives.md` |
+| Command menu | **cmdk** | ⌘K palettes |
+| Toast | **Sonner** | Notifications — `radix-primitives.md` explains why this beats Radix Toast |
+| OTP / code input | **input-otp** | Verification-code fields |
+| Animated number | **NumberFlow** | Counters, prices, stats that change |
+| Long lists / big tables | **Virtuoso** | Virtualisation past ~1,000 rows |
+| Drag and drop | **dnd-kit** | Sortable lists, kanban, reorder |
+| Client state | **zustand** | State shared across components without a context tree |
+| className construction | **clsx** (ad-hoc conditions) · **cva** (real component variants) | Replacing template-literal ternaries |
+| Theme switching | **next-themes** | Dark mode / theme toggle |
+
+Motion is deliberately **not** a default here: a hover or a fade is a CSS
+transition, and `animations/references/animation-framework.md` § Library Decision
+Guide is where that call is made.
+
+### Mismatch detection — hand-rolled → the library that owns it
+
+When reviewing or extending existing code, these shapes mean someone rebuilt a
+solved problem. Each is a finding:
+
+| What you see in the code | Reach for | Why it is a mismatch |
+|---|---|---|
+| A toast built from a portal + `setTimeout` array, or modal-based "notifications" | **Sonner** | stacking, swipe-dismiss, timing and a11y are all solved and easy to get subtly wrong |
+| A `<div>` dropdown / dialog with hand-written focus and `keydown` handling | **Base UI** | focus trap, return focus, escape, outside-click, ARIA wiring — the part that breaks with a screen reader |
+| A number re-rendering as plain text on every change | **NumberFlow** | the digit-roll transition is the point; a text swap reads as a flicker |
+| A 1,000+ row list or table rendered directly to the DOM | **Virtuoso** | scroll jank and memory; windowing is not a nice-to-have at that size |
+| `useState` for the same value in five components, threaded through props | **zustand** | prop-drilling and desync; a store is one source |
+| Deeply nested `` `${base} ${cond ? "a" : "b"} ${…}` `` className strings | **clsx** / **cva** | unreadable, and variant logic belongs in one typed place |
+| A custom date picker, rich-text editor or phone input | the finder's community component | timezones, IME, `libphonenumber` — long tails you will not finish |
 
 ---
 
@@ -556,3 +615,21 @@ npm install @tremor/react
 | Custom-building date pickers / rich text | Use community components above |
 | Missing `prefers-reduced-motion` in animation libs | Always wrap with motion safety check |
 | Using generic themes from tweakcn without adjustment | Customize — don't ship default tweakcn theme |
+
+---
+
+## Sources
+
+The component finder, animation-library tiers, theme tools, starters and
+registries are drawn from `birobirobiro/awesome-shadcn-ui` (MIT) plus per-source
+verification recorded inline.
+
+The **Picking a Library, and Catching a Mismatch** section was folded in on
+2026-09-02 from `emilkowalski/skills` (the `pick-ui-library` skill — MIT,
+Copyright © Emil Kowalski), an opinionated curated list. Integration type: fold.
+What changed on the way in: the base layer is presented as *defaults* rather than
+absolutes, and cross-referenced to this pack's `radix-primitives.md` (which
+already tracks the shadcn → Base UI default shift) instead of restating it; the
+"avoid motion for a simple fade" rule is deferred to
+`animations/references/animation-framework.md` rather than duplicated. The
+mismatch table is emil's, restated as review findings.

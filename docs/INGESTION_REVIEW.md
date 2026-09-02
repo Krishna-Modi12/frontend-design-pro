@@ -429,7 +429,7 @@ figure sweep, not yet merged.
 | emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | **shipped** |
 | emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | **shipped** |
 | emil | `animation-vocabulary` | FOLD | `animations/references/motion-direction.md` | **shipped** |
-| emil | `pick-ui-library` | FOLD | `react-components/references/shadcn-ecosystem.md` | queued |
+| emil | `pick-ui-library` | FOLD | `react-components/references/shadcn-ecosystem.md` | **shipped** |
 | emil | `animate-expo` | FOLD | `platform/references/react-native.md` | queued |
 | emil | `animate` | DECLINE | already `animation-framework.md` | — |
 | emil | `improve-animations` | DECLINE | `web-interface` Layer B | — |

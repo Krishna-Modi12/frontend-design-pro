@@ -37,7 +37,7 @@ Desktop projects have no filesystem, so lazy loading degrades: Claude retrieves 
 
 ## Claude.ai (no project)
 
-Paste `SKILL.md` into the conversation and attach the one or two `skills/{id}/` files you need. This is the least good option: 431k tokens of references cannot be attached, so you get the routing rules and the anti-slop wall without the depth.
+Paste `SKILL.md` into the conversation and attach the one or two `skills/{id}/` files you need. This is the least good option: 432k tokens of references cannot be attached, so you get the routing rules and the anti-slop wall without the depth.
 
 ## Verifying it took
 
