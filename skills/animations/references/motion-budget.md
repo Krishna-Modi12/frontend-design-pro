@@ -112,7 +112,7 @@ one:
 **For Chinese, Japanese and Korean, reveal by line only.** Each glyph carries
 roughly the weight of a whole Latin word, so a per-character stagger across a CJK
 sentence produces dozens of independently moving units and reads as noise rather
-than as a reveal. `../design-system/references/cjk-typography.md` carries the
+than as a reveal. `design-system/references/cjk-typography.md` carries the
 related text rules.
 
 ## Budget audit
@@ -135,4 +135,4 @@ The three-tier model and the numeric ceilings are adapted from
 scale-coverage framing, the intent-driven tier table and the reduced-motion and
 CJK-granularity rules are written for this pack. The catalogue of named effects
 those tiers draw from lives in
-`../component-patterns/references/react-bits.md`.
+`component-patterns/references/react-bits.md`.

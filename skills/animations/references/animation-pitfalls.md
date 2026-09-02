@@ -166,10 +166,14 @@ growing into a detail view — is built by measuring where things are, changing 
 DOM, measuring where they landed, and animating the difference on `transform`.
 The failure is measuring **inside the loop** instead of once at each end.
 
-Every property read forces the browser to flush any pending style change so the
-number it returns is current. Interleaving reads and writes — read `rect`, set a
-style, read `rect` again — makes it flush on every line. This is layout
-thrashing, and it is invisible until the list is long or the device is slow.
+The specific hazard is a **layout-dependent read after a write**. Not every
+property access costs anything — but `getBoundingClientRect`, `offsetTop`/`Left`,
+`offsetWidth`/`Height`, `scrollTop`/`Height`, `getComputedStyle` and
+`getClientRects` all have to return a *current* number, so if a style change is
+pending the browser must flush layout before answering. Interleaving the two —
+read `rect`, set a style, read `rect` again — forces that flush on every line.
+This is layout thrashing, and it is invisible until the list is long or the
+device is slow.
 
 **Batch every read, then every write.** For a layout animation that is the FLIP
 order exactly:

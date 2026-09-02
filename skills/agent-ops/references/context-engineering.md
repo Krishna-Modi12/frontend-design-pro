@@ -1,6 +1,6 @@
 # Context Engineering — Why Loading Less Produces Better Output, Not Just Cheaper Output
 
-This pack routes one skill per request out of ~435k tokens of depth, and the
+This pack routes one skill per request out of ~436k tokens of depth, and the
 argument for that has always been budget: a monolithic pack cannot be loaded at
 all. Budget is the weaker half of the argument. The stronger half is accuracy —
 a model that receives irrelevant context does not ignore it, and the cost of
@@ -32,8 +32,8 @@ registry table (a lookup, scanned rather than recalled) in between. **No change
 warranted.** Recorded because the layout is correct by instinct and the next
 person to reorganise that file should know it is load-bearing.
 
-The references are where it bites. **Thirty of our ninety-four `references/*.md`
-exceed 4,000 tokens**, and they are loaded whole when routed:
+The references are where it bites. **40 of our 119 `references/*.md` exceed
+4,000 tokens**, and they are loaded whole when routed:
 
 | Reference | Tokens |
 |---|---|

@@ -7,7 +7,7 @@ what it rejected; it does not implement anything. Shortcode `[finding-motion]`.
 
 Every other motion file in this skill works on motion that already exists.
 `motion-budget.md` caps how much a page may move; `animation-framework.md` says
-how a given thing should move; Layer B (`../web-interface/references/live-verification.md`)
+how a given thing should move; Layer B (`web-interface/references/live-verification.md`)
 audits what shipped. This file is the one that walks a built, motionless
 interface, finds where a transition is missing — and then throws most of its own
 candidates away.
@@ -35,7 +35,12 @@ candidates away.
   propose entrance choreography on a form because the form has none.
 - **One property pair: `transform` and `opacity`.** A candidate that only works
   by animating `height`, `width` or `filter` is a FLIP or clip-path job — say so
-  and cross-reference `animation-pitfalls.md`, don't wave at it.
+  and cross-reference `animation-pitfalls.md`, don't wave at it. **The one
+  exception is disclosure** (accordion, "show more", a filter panel): the
+  container genuinely has to occupy more space, so `animation-recipes.md` § 15
+  animates a measured `height` on purpose. Name it as the exception when you
+  propose it — an agent that reads Core Rule 5 as absolute will otherwise reject
+  the pack's own recipe.
 
 ## The gate every candidate passes
 
@@ -61,8 +66,11 @@ Six places a motionless interface usually has a real gap:
 2. **Pressables with no `:active`.** `scale(0.97)` on press (0.95–0.98 by size),
    with the hover half behind `@media (hover: hover) and (pointer: fine)`.
 3. **Disclosure that jumps.** Accordions, "show more", filter panels that change
-   height in a single frame. Height + opacity, 150–250ms, off a measured height —
-   not a `max-height` guess.
+   height in a single frame. This is the layout-property exception named above,
+   so state it as one: height + opacity, 150–250ms, off a **measured** height —
+   `animation-recipes.md` § 15 for the `AnimatePresence` form, or
+   `react-components/references/impeccable-techniques.md` for the CSS
+   `grid-template-rows: 0fr → 1fr` alternative. Never a `max-height` guess.
 4. **State that changes silently.** A count going 12→13, a status pill flipping,
    a tab indicator that teleports between tabs. The value or the indicator should
    travel between states.

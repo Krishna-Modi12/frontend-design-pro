@@ -101,7 +101,7 @@ motion.
 | Reduced motion is a state, not `none` | Emulate `prefers-reduced-motion: reduce`, reload, re-run the reveal scroll: every headline, counter and image sits at its final value. A `0` counter or empty hero here is the most common motion defect there is. |
 | Interruptibility | Fire the same animation 3–4× faster than its duration (`browser_click` in a loop). It must retarget from the current position, not restart from zero or queue. |
 | Frequency-appropriate | Watch a tab switch, a toggle, a filter apply. Motion on a 100+/day action is a finding even when it looked fine in isolation. |
-| GPU-only properties | Select the animated node, record a Performance trace over one play: no `Layout` and no large `Paint` on that node — `transform` / `opacity` only. |
+| GPU-only properties | Select the animated node, record a Performance trace over one play: no `Layout`, and no large `Paint`, on that node. `transform` / `opacity` are the default. Two bounded exceptions are documented and are **not** findings on their own: a disclosure animating a measured `height` (`animations/references/animation-recipes.md` § 15) and a sub-200ms icon/label transition through a ≤4px blur (`ux-deep-rules.md` § Scroll-list & micro-state polish). Both still fail here if the trace shows the paint exceeding its frame budget — the exception is the property, not the cost. |
 | Origin correctness | A popover, dropdown or tooltip scales *from its trigger*, not from its own centre — visible at 0.25× playback. |
 | Entrance floor | Nothing pops in from `scale(0)` or full transparency; entrances start at `scale(0.9–0.97)` + opacity. |
 | Responsive easing | Entrances decelerate (ease-out); nothing important eases *in* on entry. |

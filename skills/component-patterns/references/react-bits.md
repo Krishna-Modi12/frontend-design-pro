@@ -35,14 +35,14 @@ Patterns and rules only — do not copy implementations. Each component ships in
 - **Anti-pattern:** a WebGL background on a page whose LCP element sits on top of it · animated backgrounds behind long-form reading · shipping one without a static fallback.
 
 ### Composed components (carousel, dock, stack, masonry)
-- **Use when** the structure genuinely is a set. A carousel for primary content is an anti-pattern regardless of how well it animates (see `../landing-pages/references/design-patterns.md` AP-04).
+- **Use when** the structure genuinely is a set. A carousel for primary content is an anti-pattern regardless of how well it animates (see `landing-pages/references/design-patterns.md` AP-04).
 - **Accessibility:** carousels need pause control and no auto-advance; docks and stacks need real buttons with arrow-key roving tabindex; masonry must keep DOM order equal to reading order.
 
 ## Integration with this stack
 
 - Install via the shadcn CLI (`npx shadcn@latest add @react-bits/<Component>-TS-TW`) so the source lands in the project and is editable — never as an opaque dependency.
 - **Rewrite every colour to OKLCH tokens on arrival.** These components ship raw hex; that violates `COL-04` and the anti-slop wall on contact.
-- Framer Motion for component-level effects, GSAP for scroll timelines — never both on one element (see `../animations/SKILL.md`).
+- Framer Motion for component-level effects, GSAP for scroll timelines — never both on one element (see `animations/SKILL.md`).
 - Anything with a canvas or WebGL layer routes to `../threejs-3d/` for DPR capping and disposal discipline.
 
 ## Creative tools (workflow, not code)
