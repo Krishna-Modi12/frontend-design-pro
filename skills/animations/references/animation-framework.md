@@ -15,10 +15,12 @@ Source: emilkowalski/skill — distilled from Sonner, Vaul, and animation.dev
 - [Library Decision Guide](#library-decision-guide)
 - [The Four Questions](#the-four-questions)
 - [Key Patterns](#key-patterns)
+- [clip-path for Reveals and Fills](#clip-path-for-reveals-and-fills)
 - [Performance Rules](#performance-rules)
 - [Accessibility](#accessibility)
 - [Asymmetric Enter/Exit](#asymmetric-enterexit)
 - [Quick Implementation Reference](#quick-implementation-reference)
+- [Sources](#sources)
 
 ---
 
@@ -164,6 +166,37 @@ button:active {
 }
 ```
 
+### Tooltip Warm-up
+
+The first tooltip in a group should wait before it appears — a pointer passing
+over a toolbar on its way somewhere else should not trail a string of tooltips.
+Once one *is* open, the next trigger the pointer lands on shows its tooltip
+immediately, with no delay and no transition: the user has declared intent, and
+a second warm-up now reads as lag.
+
+- **Cold:** 300–700ms hover delay before the first tooltip opens.
+- **Warm:** while any tooltip in the group is open (and for a short grace period
+  after the last one closes), sibling tooltips open at 0ms.
+- Implement with a shared group state — one open tooltip flips the group to
+  "warm" — that stamps `[data-instant]` on the content:
+
+```css
+.tooltip {
+  transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+              transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: var(--transform-origin, center);
+}
+@starting-style {
+  .tooltip { opacity: 0; transform: scale(0.97); }
+}
+.tooltip[data-instant] { transition-duration: 0ms; }
+```
+
+Radix and Base UI ship this as `Tooltip.Provider` `delayDuration` /
+`skipDelayDuration` — reach for the primitive before rebuilding the group state.
+The 150ms here is the § 4 "Tooltip show" band; the "skip delay on subsequent
+hovers" note in that table is this pattern.
+
 ### Toast Pattern (Sonner)
 ```css
 @keyframes sonner-fade-in {
@@ -253,6 +286,60 @@ is a reason. Picking `0.09` because it looked right is how the seven happened.
 
 ---
 
+## clip-path for Reveals and Fills
+
+`clip-path: inset(top right bottom left)` eats into the element from each side.
+`inset(0 100% 0 0)` clips it away entirely from the right; `inset(0 0 0 0)` shows
+all of it. Transitioning between the two is a **wipe** — the element is never
+moved or scaled, so the layout underneath is untouched and text stays crisp.
+
+| Use | From → To | Timing |
+|---|---|---|
+| Left-to-right reveal | `inset(0 100% 0 0)` → `inset(0 0 0 0)` | 200ms ease-out |
+| Scroll image reveal | `inset(0 0 100% 0)` → `inset(0 0 0 0)` on `IntersectionObserver` entry | the section band, § 3 |
+| Tab indicator | clip a **duplicate**, active-styled copy of the tab list to just the active tab; animate the clip on change | 200ms, the "on-screen movement" curve |
+| Hold-to-confirm | overlay at `inset(0 100% 0 0)`; fill on hold; snap back on release | **asymmetric — see below** |
+
+The tab-indicator trick is worth spelling out: render the tab bar twice, the
+lower copy in its resting style and the upper copy in its active style, then clip
+the upper copy to the active tab's box. Moving the clip on selection crossfades
+the label *through* the boundary — the colour change sweeps across the glyph
+instead of flipping.
+
+### Hold-to-confirm: the press/release asymmetry
+
+```css
+.confirm-fill {
+  clip-path: inset(0 100% 0 0);           /* empty */
+}
+.confirm-btn:active .confirm-fill {
+  clip-path: inset(0 0 0 0);              /* full */
+  transition: clip-path 2s linear;        /* slow: the user is deciding */
+}
+.confirm-btn:not(:active) .confirm-fill {
+  transition: clip-path 200ms cubic-bezier(0.23, 1, 0.32, 1);  /* fast: the system responds */
+}
+.confirm-btn:active { transform: scale(0.97); }
+```
+
+Slow where the user is deciding, fast where the system is responding — the same
+rule as [Asymmetric Enter/Exit](#asymmetric-enterexit), applied to a single
+property. Pair the fill with a text or icon state change at completion so the
+result is not carried by the animation alone.
+
+### Performance — the size rule
+
+`clip-path` transitions **paint**; they are not compositor-driven the way
+`transform` and `opacity` are (see [Performance Rules](#performance-rules)). That
+is fine for a small region — a tab indicator, a button fill, a thumbnail — and a
+problem at scale: a `clip-path` transition on a viewport-sized element repaints
+the viewport every frame. For a full-bleed hero reveal, move a cover layer with
+`transform: translate` or `scaleY` instead, and keep `clip-path` for the
+element-scale wipes above. This is a deliberate, size-bounded exception to
+"transform and opacity only", not a loophole in it.
+
+---
+
 ## Performance Rules
 
 | Do | Don't |
@@ -332,3 +419,25 @@ gsap.to(el, { y: -100, scrollTrigger: { trigger: el, start: 'top 80%', end: 'bot
 ```tsx
 <ViewTransition enter="slide-up" exit="fade-out"><Page /></ViewTransition>
 ```
+
+---
+
+## Sources
+
+The decision framework, the four questions, the easing table, the named spring
+scale and the asymmetric enter/exit rule were distilled from `emilkowalski/skill`
+(MIT, Copyright © Emil Kowalski) — Sonner, Vaul and animation.dev — in an earlier
+ingestion.
+
+The **Tooltip Warm-up** pattern and the **clip-path for Reveals and Fills**
+section were folded in on 2026-09-02 from the same author's `emil-design-eng`
+skill (MIT). Integration type: fold into an existing reference — only the delta
+that was not already here.
+
+**What was corrected on the way in:**
+
+| From the source | Change | Why |
+|---|---|---|
+| clip-path presented with no performance note | Added the "size rule" — `clip-path` transitions paint, so they are for element-scale wipes; full-bleed reveals move a cover layer instead | The pack's Performance Rules table is "transform and opacity only"; this is a bounded, documented exception, not a silent one |
+| Tooltip warm-up shown as hand-rolled group state | Named `Tooltip.Provider` `delayDuration` / `skipDelayDuration` first | The primitive already ships it; `react-components/references/shadcn-ecosystem.md` is the routing home for "use the library" |
+| Spring `bounce` range given as `0.1–0.3` | The existing "Keep bounce subtle (0.1–0.3)" line is left as-is; `native-motion-physics.md` carries the tighter `≤ 0.2` for controls under a finger | Two contexts, two ceilings — a celebration spring may bounce more than a drag settle |

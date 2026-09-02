@@ -340,11 +340,11 @@ a file an agent already loads for that task, or was declined.
   it does not relicense the whole screen as animatable, and required to list its
   rejected candidates.
 
-**Folded into existing references (queued):**
+**Folded into existing references** (per-row status in the decision table below):
 
 | Upstream skill | Folded into | What it adds |
 |---|---|---|
-| `emil-design-eng` | `animations/references/animation-framework.md` | clip-path as an animation primitive; hold-to-confirm with an asymmetric `inset()` press/release; tooltip warm-up delay |
+| `emil-design-eng` | `animations/references/animation-framework.md` | clip-path as an animation primitive (`inset()` wipes, tab indicator, scroll reveal); hold-to-confirm with an asymmetric `inset()` press/release; the tooltip warm-up / skip-delay pattern |
 | `review-animations` | `web-interface/references/live-verification.md` | ten motion standards as an animation-specific Layer B residue checklist |
 | `animation-vocabulary` | `animations/references/motion-direction.md` | a "naming motion" glossary appendix — shared terms for the review conversation |
 | `pick-ui-library` | `react-components/references/shadcn-ecosystem.md` | opinionated non-shadcn picks and a mismatch-detection table (hand-built toast → Sonner, hand-rolled select → a real listbox) |
@@ -426,7 +426,7 @@ figure sweep, not yet merged.
 |---|---|---|---|---|
 | emil | `apple-design` | NEW REF | `animations/references/native-motion-physics.md` | **shipped** |
 | emil | `find-animation-opportunities` | NEW REF | `animations/references/finding-motion.md` | **shipped** |
-| emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | queued |
+| emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | **shipped** |
 | emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | queued |
 | emil | `animation-vocabulary` | FOLD | `animations/references/motion-direction.md` | queued |
 | emil | `pick-ui-library` | FOLD | `react-components/references/shadcn-ecosystem.md` | queued |
