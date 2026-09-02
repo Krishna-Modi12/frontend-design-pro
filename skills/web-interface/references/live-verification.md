@@ -87,6 +87,28 @@ order and keyboard traps · console errors · failed requests and 404s · hydrat
 mismatch · dead scroll-reveals · optical alignment and rhythm (glyph position,
 not bounding box).
 
+### 3d. Motion residue — run only when the surface animates
+
+Layer A checks the *source* form of motion (`MOTION-01` / `-02` / `-02R`,
+`PERF-04`, the `animations` Core Rules). Most of those rules have a runtime
+residue that only shows when the animation actually plays. Emil Kowalski's ten
+review standards (`emilkowalski/skills`, `review-animations`, MIT) map onto this
+layer as the checks below — skip the whole pass if the surface has no non-trivial
+motion.
+
+| Standard | What to observe in the running page |
+|---|---|
+| Reduced motion is a state, not `none` | Emulate `prefers-reduced-motion: reduce`, reload, re-run the reveal scroll: every headline, counter and image sits at its final value. A `0` counter or empty hero here is the most common motion defect there is. |
+| Interruptibility | Fire the same animation 3–4× faster than its duration (`browser_click` in a loop). It must retarget from the current position, not restart from zero or queue. |
+| Frequency-appropriate | Watch a tab switch, a toggle, a filter apply. Motion on a 100+/day action is a finding even when it looked fine in isolation. |
+| GPU-only properties | Select the animated node, record a Performance trace over one play: no `Layout` and no large `Paint` on that node — `transform` / `opacity` only. |
+| Origin correctness | A popover, dropdown or tooltip scales *from its trigger*, not from its own centre — visible at 0.25× playback. |
+| Entrance floor | Nothing pops in from `scale(0)` or full transparency; entrances start at `scale(0.9–0.97)` + opacity. |
+| Responsive easing | Entrances decelerate (ease-out); nothing important eases *in* on entry. |
+| Sub-300ms UI | Time a representative UI transition frame-by-frame; over ~300ms with no reason (modal, page transition) is a finding. |
+| Asymmetric enter/exit | Dismiss what you opened — exit is perceptibly faster than enter, not symmetric. |
+| Cohesion | The motion's personality matches the rest of the product. `critique`-class — advisory, never fails the run. |
+
 ## 4. Workflow
 
 1. **Inspect.** Read `package.json` for framework and dev command. Probe for a
@@ -118,7 +140,8 @@ not bounding box).
    fire every IntersectionObserver / scroll reveal, return to top, settle, then
    re-measure: any text still at `opacity: 0` or `visibility: hidden` is a dead
    reveal. Repeat under emulated `prefers-reduced-motion: reduce` — content must
-   be visible and still.
+   be visible and still. If the surface has real motion, run the §3d checklist
+   here too.
 6. **Targeted interaction — meaningful journeys only.** The primary CTA, the
    primary nav, one modal / drawer / toggle if present. Not every clickable
    element. After each: re-check console, overflow, and that focus returned to a
@@ -143,7 +166,7 @@ crashes, or breaks in a way equivalent to a failed gate.
   "id": "LV-001",                      // sequential within a run
   "class": "engineering",              // engineering | critique  (critique is never a failure)
   "category": "responsive-overflow",   // contrast | overflow | overlap | console-error | network-error
-                                       //  | hydration | focus-order | reveal-dead | reduced-motion
+                                       //  | hydration | focus-order | reveal-dead | reduced-motion | motion
                                        //  | touch-target | font-load | hierarchy | rhythm | clutter
   "severity": "HIGH",                  // BLOCKER | HIGH | MEDIUM | LOW | POLISH
   "location": {
@@ -252,3 +275,18 @@ State these plainly in any report; never imply the audit covered them.
   metric here is an upper bound, not field data.
 - **Content behind auth** — anything past a login the audit was not given
   credentials for.
+
+## Sources
+
+Layer B — the rendered-DOM audit, the Playwright MCP workflow, the findings
+schema and the waiver model — is this pack's own design.
+
+The **§3d motion residue checklist** was folded in on 2026-09-02 from
+`emilkowalski/skills` (the `review-animations` skill — MIT, Copyright © Emil
+Kowalski), which states ten motion-review standards. Integration type: fold into
+an existing reference. Emil's skill reviews motion *source*; the fold keeps only
+the subset that has a runtime residue and restates each as an observation against
+the running page, because the source form is already Layer A's job
+(`MOTION-01` / `-02` / `-02R`, `PERF-04`, the `animations` Core Rules). The
+tiered Block/Approve verdict was not carried — this pack's severity ladder
+(`BLOCKER · HIGH · MEDIUM · LOW · POLISH`, §5) already fills that role.

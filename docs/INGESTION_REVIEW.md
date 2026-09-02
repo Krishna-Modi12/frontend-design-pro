@@ -427,7 +427,7 @@ figure sweep, not yet merged.
 | emil | `apple-design` | NEW REF | `animations/references/native-motion-physics.md` | **shipped** |
 | emil | `find-animation-opportunities` | NEW REF | `animations/references/finding-motion.md` | **shipped** |
 | emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | **shipped** |
-| emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | queued |
+| emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | **shipped** |
 | emil | `animation-vocabulary` | FOLD | `animations/references/motion-direction.md` | queued |
 | emil | `pick-ui-library` | FOLD | `react-components/references/shadcn-ecosystem.md` | queued |
 | emil | `animate-expo` | FOLD | `platform/references/react-native.md` | queued |
