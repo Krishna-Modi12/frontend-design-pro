@@ -36,7 +36,15 @@
 @theme {
   /* ── Ground ─────────────────────────────────────────────────────────────── */
   --color-bg-page: oklch(98% 0.008 80);
-  --color-bg-surface: oklch(95% 0.015 85);
+  /* Lightness held at 95% deliberately — accent-as-text on `bg-surface` is the
+     page's tightest ratio (4.50, exactly at the AA floor; see the Accent block
+     below), so `bg-surface` can gain warmth but not lose luminance. The chroma
+     bump (0.015 → 0.022) and the hue shift toward `bg-page`'s own H=80 read as
+     a deeper cream of the same family — enough, alongside the 1px section seams
+     and the `signature` grain (both in `lib/tokens.ts`), to make the below-hero
+     sections read as distinct surfaces rather than one flat field. Re-verified
+     against `pages:verify`'s axe pass, not assumed. */
+  --color-bg-surface: oklch(95% 0.022 80);
   --color-bg-elevated: oklch(100% 0.005 80);
   /* Footer only. The one dark section on the page — see `SectionInstall`. */
   --color-bg-invert: oklch(18% 0.02 270);
