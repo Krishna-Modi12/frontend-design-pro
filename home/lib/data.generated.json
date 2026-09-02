@@ -2,8 +2,8 @@
   "figures": {
     "skills": 19,
     "coreFiles": 8,
-    "referenceFiles": 117,
-    "referenceDepthTokens": 422738,
+    "referenceFiles": 119,
+    "referenceDepthTokens": 435191,
     "exampleFiles": 55,
     "antiExamples": 10,
     "testFiles": 45,
@@ -91,7 +91,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6453,
+      "budget": 6541,
       "group": "Making it look right",
       "covers": "Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion",
       "trySaying": "\"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion.\""

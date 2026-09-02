@@ -157,3 +157,82 @@ which a `␣` does. Emoji need the same check: outside a colour-emoji face many
 fall back to a grey box, so verify or ship an SVG. This is the same argument
 `design-system/references/brand-extraction.md` makes against emoji as interface
 icons, applied to text inside an animation.
+
+## The animation measures layout while it runs
+
+`motion-direction.md` sends the re-sort case here for "the measure-once trap",
+and this is it. A layout animation — rows gliding to new positions, a card
+growing into a detail view — is built by measuring where things are, changing the
+DOM, measuring where they landed, and animating the difference on `transform`.
+The failure is measuring **inside the loop** instead of once at each end.
+
+Every property read forces the browser to flush any pending style change so the
+number it returns is current. Interleaving reads and writes — read `rect`, set a
+style, read `rect` again — makes it flush on every line. This is layout
+thrashing, and it is invisible until the list is long or the device is slow.
+
+**Batch every read, then every write.** For a layout animation that is the FLIP
+order exactly:
+
+```ts
+// First — read the start and end rects for every element, nothing else
+const first = els.map((el) => el.getBoundingClientRect());
+applyDomChange();                       // reorder / add / toggle a class
+const last = els.map((el) => el.getBoundingClientRect());
+
+// Then — write. No reads past this line until the animation is running.
+els.forEach((el, i) => {
+  const dx = first[i].left - last[i].left;
+  const dy = first[i].top - last[i].top;
+  el.animate(
+    [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }],
+    { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
+  );
+});
+```
+
+Once it is running, the animation is pure `transform` and touches no layout at
+all — which is the whole point of measuring the difference rather than animating
+`width`, `top` or `height` directly. `gsap.md` § FLIP wraps this same sequence in
+the `Flip` plugin; the discipline underneath is identical.
+
+The related JS-scroll version: driving a scroll-linked animation from a `scroll`
+event handler reads `scrollY` and writes styles on the same frame, from the main
+thread, at the mercy of scroll frequency. Where the browser supports it,
+`animation-timeline: scroll()` / `view()` moves the whole thing off the main
+thread — `interaction-patterns.md` § Parallax and `scroll-experience.md` §
+CSS scroll-timeline carry the supported form and its fallback.
+
+## Animated `filter: blur()` gets expensive with radius
+
+`transform` and `opacity` are composited — the GPU moves an existing layer.
+`filter`, `box-shadow`, `background`, `color`, `clip-path` and `border-radius`
+are **painted** — the browser regenerates the pixels — and a blur repaints an
+area that grows with the radius, every frame it changes.
+
+Keep an animated blur radius small — **around 8px is the practical ceiling**;
+past it a full-screen backdrop blur transitioning open drops frames on a laptop.
+Options in order of preference: animate `opacity` on a pre-blurred layer instead
+of animating the radius; drop the radius; or, if a large blur genuinely has to
+move, give that element `will-change: filter` for the duration only and remove it
+after — `scroll-story-patterns.md` uses exactly that for its depth-of-field
+stack. Never leave `will-change` on a static element: `animation-framework.md`
+and `motion.md` both cover why it is a cost, not a hint.
+
+## Sources
+
+The catalogue above (pure-function-of-time, font-load measurement, `scale()` vs
+`zoom`, `preserve-3d` flattening, missing glyphs) is the transferable third of
+`alchaincyf/huashu-design` (MIT), as the top-of-file note records.
+
+**The measure-while-running and animated-blur sections** were folded in on
+2026-09-02 from `ibelick/ui-skills` (the `fixing-motion-performance` skill —
+MIT, © Julien Thibeaut). Integration type: fold. What changed on the way in: the
+composite / paint / layout property split is stated as a short taxonomy rather
+than a checklist; `will-change`, Scroll/View Timelines and the FLIP plugin API
+are cross-referenced to the references that already carry them
+(`animation-framework.md`, `motion.md`, `interaction-patterns.md`,
+`scroll-experience.md`, `gsap.md`) rather than restated; and the batch-reads rule
+is written as the FLIP measure order, which is the concrete case a generated
+layout animation hits. The upstream skill's `useState`-in-a-loop React example
+was not carried — this pack's parser constraints already forbid that shape.

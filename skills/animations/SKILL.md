@@ -47,10 +47,12 @@ Load only for the specific task:
 | **Motion direction — what a motion communicates, personality archetypes, choreography, Disney principles, animation smells** | **`references/motion-direction.md`** |
 | **How much this page should move at all — the L1/L2/L3 tiers, intent→tier table, per-page ceilings, reveal granularity** | **`references/motion-budget.md`** |
 | The tier's own catalogue — every move that belongs at L1, L2 or L3, framework-free | `references/interaction-patterns.md` |
+| A forward sweep for motion that is *missing* — the four-stage gate, where to hunt, the mandatory rejected list, the report format | `references/finding-motion.md` |
 | Cinematic scroll composites — constellation hero, card collapse, pinned narrative, the one WebGL moment | `references/scroll-story-patterns.md` |
 | Timing/easing decisions, which library to reach for | `references/animation-framework.md` |
 | 17 copy-paste recipes (stagger, counter, toast, marquee…) | `references/animation-recipes.md` |
 | motion.*, AnimatePresence, variants, layoutId, springs | `references/motion.md` |
+| Finger-driven motion — springs by feel, velocity handoff, momentum projection, rubber-banding, grab offset, native-feel gesture details | `references/native-motion-physics.md` |
 | All 12 GSAP plugins, useGSAP, timelines | `references/gsap.md` |
 | Scroll-driven patterns, parallax, pinning | `references/scroll-experience.md` |
 | Smooth/momentum scroll — Lenis options, RAF loop, GSAP ticker handoff, reduced-motion gating | `references/lenis-smooth-scroll.md` |

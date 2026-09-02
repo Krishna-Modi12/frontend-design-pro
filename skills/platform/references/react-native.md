@@ -14,6 +14,7 @@ React Native with Expo SDK 51+ enables production-quality iOS and Android apps f
 - [2. SafeAreaView + useSafeAreaInsets](#2-safeareaview--usesafeareainsets)
 - [3. react-native-gesture-handler](#3-react-native-gesture-handler)
 - [4. react-native-reanimated](#4-react-native-reanimated)
+- [4a. Motion decisions — the gate, worklet safety, what to test on](#4a-motion-decisions--the-gate-worklet-safety-what-to-test-on)
 - [5. Pressable vs TouchableOpacity](#5-pressable-vs-touchableopacity)
 - [6. FlatList + SectionList](#6-flatlist--sectionlist)
 - [7. Platform-Specific Code](#7-platform-specific-code)
@@ -25,6 +26,7 @@ React Native with Expo SDK 51+ enables production-quality iOS and Android apps f
 - [13. Deep Links with Expo Router](#13-deep-links-with-expo-router)
 - [14. 44pt Touch Targets](#14-44pt-touch-targets)
 - [15. Anti-Patterns](#15-anti-patterns)
+- [Sources](#sources)
 
 ---
 
@@ -473,6 +475,105 @@ const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, 
   onEnd: () => { translateX.value = withSpring(0); },
 });
 ```
+
+---
+
+## 4a. Motion decisions — the gate, worklet safety, what to test on
+
+The code above is *how*. This section is *whether*, *safely*, and *how you know
+it works* — the parts that do not show up in a diff.
+
+### The gate — same frequencies as web, one extra rule
+
+`animations/references/animation-framework.md` § The Four Questions is the full
+procedure; on native the frequency bands are:
+
+| Frequency | Decision |
+|---|---|
+| 100+/day — tabs, keyboard, scroll, toggles | Platform default or nothing. **Never build it.** |
+| Tens/day — press, navigation, selection | Under ~150ms, or nothing |
+| Occasional — sheets, modals, toasts, onboarding | Standard timing |
+| Rare / first-run — success, celebration | The delight budget |
+
+**Tab switches never animate.** Tabs are peers, not a hierarchy — a slide
+implies a depth relationship that is not there. And the same "name it in one
+word or don't build it" purpose gate applies (feedback · spatial consistency ·
+state indication · preventing a jarring change · explanation · first-run delight).
+
+### Worklet safety — the rules that throw or desync on device
+
+- **`transform` and `opacity` are free; everything else is a layout pass.** Same
+  rule as §15's anti-pattern, stated positively — a worklet driving `width`,
+  `top` or `height` runs work on the JS thread every frame.
+- **Never read or write a shared value during render.** `translateY.get()` in
+  JSX is a snapshot that never updates; a write fires mid-reconciliation.
+- **Prefer `.get()` / `.set()` over `.value`.** On Reanimated 3.16+ with the
+  React Compiler, `.value` access is invisible to the compiler's introspection;
+  `.get()` / `.set()` are the supported form and `.set()` takes a functional
+  update: `sv.set((v) => v + 1)`. Existing `.value` code in this file still
+  works — this is the direction for new code.
+- **A function called from a worklet needs `'worklet'` as its first line**, or it
+  throws at runtime on device (not in the simulator's JS fallback).
+- **Never `setState` — or `runOnJS` — inside `onUpdate` or a scroll handler.**
+  One React render per frame is the biggest single cause of jank. Bridge to JS
+  only at the ends (`onEnd`) or at thresholds via `useAnimatedReaction`, never
+  per frame.
+
+### Haptics fire on the causal frame
+
+`expo-haptics` (§10). The rule §10 does not state: fire the haptic **at the
+moment that caused it** — the detent catching, the drag committing — not when the
+animation settles. A haptic that lags its animation reads as a glitch, not
+feedback.
+
+| Interaction | Call |
+|---|---|
+| Value ticks past a step (picker, slider, segmented control) | `Haptics.selectionAsync()` |
+| Snap, detent catch, drag commit | `Haptics.impactAsync(ImpactFeedbackStyle.Light)` |
+| Heavy landing, destructive action | `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` |
+| Success / failure outcome | `Haptics.notificationAsync(NotificationFeedbackType.Success / Error)` |
+
+One per user action — never on scroll, per frame, or on entrance. Never the only
+feedback channel: haptics are off system-wide for many users and silent on most
+Android hardware.
+
+### ProMotion — the flag without which 120fps is capped to 60
+
+Third-party animations are capped at 60fps on ProMotion iPhones unless this is
+set. With it, the frame budget drops from 16ms to 8ms — which is exactly why the
+UI-thread rules above stop being optional.
+
+```json
+{ "expo": { "ios": { "infoPlist": { "CADisableMinimumFrameDurationOnPhone": true } } } }
+```
+
+### What "verified" means for motion
+
+Feel is judged on a **release build, on the slowest device you support.** Nothing
+else counts:
+
+- Expo Go and dev builds run a slow JS thread that hides the jank you are looking
+  for — and dev mode on a flagship phone hides the jank that only appears on a
+  three-year-old Android.
+- Gesture feel, velocity hand-off and haptic timing cannot be read from the code
+  — they are a release-build, real-device check or they are unverified.
+
+### Tool selection
+
+| Need | Reach for |
+|---|---|
+| State change, no gesture (press, toggle, colour, value flip) | Reanimated CSS transition |
+| Loop / multi-stage / play-on-mount, no state change | Reanimated CSS animation (keyframes) |
+| Mount, unmount, or list reflow | Layout animations — `entering` / `exiting` / `itemLayoutAnimation` |
+| Finger touch or scroll-derived | `useSharedValue` + `Gesture` + `useAnimatedStyle` |
+| Screen to screen | Native stack options (Expo Router) — do not hand-roll |
+| Bottom sheet that owns its screen | `presentation: 'formSheet'` (real `UISheetPresentationController`) |
+| Tab bar | `NativeTabs` from `expo-router/unstable-native-tabs` |
+| Vector illustration, celebration, empty state | Lottie — illustration only, never UI state |
+| Huge animated scene, freeform drawing | `@shopify/react-native-skia` |
+
+**Never core `Animated` for anything a finger touches** — Reanimated only;
+`PanResponder` → `Gesture.Pan()`.
 
 ---
 
@@ -1247,6 +1348,26 @@ const pan = Gesture.Pan().onEnd(() => {
   runOnJS(goToSuccess)();
 });
 ```
+
+---
+
+## Sources
+
+Sections 1–15 are frontend-design-pro's own React Native reference.
+
+**§ 4a. Motion decisions** was folded in on 2026-09-02 from `emilkowalski/skills`
+(the `animate-expo` skill — MIT, Copyright © Emil Kowalski). Integration type:
+fold. What changed on the way in: the frequency bands are stated here but the
+full decision procedure is deferred to
+`animations/references/animation-framework.md` § The Four Questions rather than
+duplicated; the haptic type-mapping cross-references § 10 instead of restating
+`expo-haptics` setup; emil's spring-config and easing-bezier tables were **not**
+imported — § 4's existing `withSpring` / `withTiming` guidance already covers
+that ground. The `.get()` / `.set()` worklet rule is presented as the direction
+for new code with a note that this file's existing `.value` examples still work,
+rather than rewriting all fifteen sections. The "verified means a release build
+on the slowest device" rule and the `CADisableMinimumFrameDurationOnPhone` flag
+are emil's, restated in this reference's voice.
 
 ---
 
