@@ -389,16 +389,18 @@ numbered interface lessons. The skills are framed as "the model already knows
 UI, here is the taste it is missing"; most of that taste this pack already
 carries at more depth and with machine-checked examples.
 
-**Taken — two folds (queued):**
+**Taken — two folds** (per-row status in the decision table below):
 
 | Upstream | Folded into | What it adds |
 |---|---|---|
-| `fixing-motion-performance` | `animations/references/animation-pitfalls.md` | blur radius capped near 8px in animated filters; a solid scrim behind a modal rather than a live `backdrop-filter`; FLIP measures once; prefer Scroll/View Timeline over a scroll listener |
-| `playbook.md` (≈6 of 47) | `web-interface/references/ux-deep-rules.md` | scroll-edge mask fade; peek-the-next-item 16–32px; inset full-width buttons off the viewport edge; icon-state crossfade instead of swap; blur during a label morph; tooltip warm-up |
+| `fixing-motion-performance` | `animations/references/animation-pitfalls.md` | animated `filter: blur()` radius capped near 8px; the composite / paint / layout property split; batch layout reads before writes, stated as the FLIP measure order; prefer a Scroll/View Timeline over a scroll-event listener |
+| `playbook.md` (5 of 47) | `web-interface/references/ux-deep-rules.md` | scroll-edge mask fade; peek-the-next-item 16–32px; inset full-width buttons off the viewport edge; icon-state crossfade instead of swap; blur during a label morph |
 
-The other playbook items were already covered by `interaction-patterns.md`,
-`ux-deep-rules.md`, `motion-budget.md` or the anti-slop wall, or were too
-situational to state as a rule.
+The tooltip warm-up / skip-delay pattern was the sixth playbook candidate; it
+folded into `animations/references/animation-framework.md` instead, alongside the
+`emil-design-eng` material. The other playbook items were already covered by
+`interaction-patterns.md`, `ux-deep-rules.md`, `motion-budget.md` or the
+anti-slop wall, or were too situational to state as a rule.
 
 **Declined — all KEEP OURS:**
 
@@ -436,7 +438,7 @@ figure sweep, not yet merged.
 | emil | `write-swift` | DECLINE | out of scope | — |
 | emil | `prototype` | DECLINE | working style, not UI knowledge | — |
 | emil | `ask-sonner` | DECLINE | too narrow | — |
-| ibelick | `fixing-motion-performance` | FOLD | `animations/references/animation-pitfalls.md` | queued |
+| ibelick | `fixing-motion-performance` | FOLD | `animations/references/animation-pitfalls.md` | **shipped** |
 | ibelick | `playbook.md` (≈6 items) | FOLD | `web-interface/references/ux-deep-rules.md` | queued |
 | ibelick | `baseline-ui` | DECLINE | `design-principles` + anti-slop wall | — |
 | ibelick | `improve-ui` | DECLINE | `design-principles` + `component-patterns` | — |
