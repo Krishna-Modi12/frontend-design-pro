@@ -20,6 +20,8 @@
 - [10. Charts & Data (LOW → HIGH for data products)](#10-charts--data-low--high-for-data-products)
 - [Cross-Cutting Rules](#cross-cutting-rules)
 - [Vercel additions (web-interface-guidelines)](#vercel-additions-web-interface-guidelines)
+- [Scroll-list & micro-state polish (ibelick playbook)](#scroll-list--micro-state-polish-ibelick-playbook)
+- [Sources](#sources)
 
 ---
 
@@ -329,3 +331,41 @@ Never exceed               → 500ms
 | `form-no-paste-block` | Never `onPaste` + `preventDefault` — breaks password managers and 2FA codes |
 | `img-explicit-dimensions` | `<img>` needs explicit `width`/`height` (or `fill`) — prevents CLS |
 | `img-loading-priority` | Below fold `loading="lazy"`; above-fold critical `priority` / `fetchpriority="high"` |
+
+---
+
+## Scroll-list & micro-state polish (ibelick playbook)
+
+Small rules that a generated UI almost always gets flat-footed. Each is a
+transition or an edge treatment, not a layout decision.
+
+| Rule | Spec |
+|---|---|
+| `scroll-edge-fade` | Where a scroll container clips its content, fade the clipped edge with a `mask-image` linear-gradient (≈24–40px) rather than a hard cut — signals "more here" without depending on a visible scrollbar |
+| `peek-next-item` | Horizontal carousels and snap rows leave **16–32px** of the next item visible at the container edge, so it reads as scrollable at rest |
+| `full-width-button-inset` | "Full-width" buttons stop at the page margin (container padding / `px-4`), never flush to the viewport edge — edge-to-edge reads as a system bar, not a control |
+| `icon-state-crossfade` | Icon swaps (menu↔close, play↔pause, chevron flip) crossfade on `opacity` with a small `scale` and an optional ≤4px `blur` over ≈150ms — never an instant swap. A specific case of `fade-crossfade` |
+| `label-change-blur` | Text that changes in place (a live count, a status word) transitions through a brief blur (≈120ms, ≤4px) so it registers as a change rather than a flicker. Respects `prefers-reduced-motion` — snap instead |
+
+The two blur rules stay inside the animated-blur ceiling in
+`animations/references/animation-pitfalls.md` (≤8px, radius held constant or the
+element pre-blurred) and are motion, not the decorative blur `blur-purpose`
+forbids.
+
+## Sources
+
+Sections 1–10, Cross-Cutting Rules and the Priority Matrix are from
+`nextlevelbuilder/ui-ux-pro-max-skill` (`quick-reference.md`), as the
+top-of-file note records; the Vercel additions are from
+`vercel/web-interface-guidelines`.
+
+**Scroll-list & micro-state polish** was folded in on 2026-09-02 from
+`ibelick/ui-skills` (`playbook.md` — MIT, © Julien Thibeaut), five of its ~47
+numbered lessons. Integration type: fold. What changed on the way in: each
+lesson is compressed to this file's one-line rule form with a stable rule id;
+the two blur lessons are tied to the animated-blur ceiling in
+`animation-pitfalls.md` and given a reduced-motion fallback the source does not
+state; the sixth candidate (tooltip warm-up) folded into
+`animations/references/animation-framework.md` instead. Playbook items already
+covered by `interaction-patterns.md`, `motion-budget.md` or the anti-slop wall
+were not carried.

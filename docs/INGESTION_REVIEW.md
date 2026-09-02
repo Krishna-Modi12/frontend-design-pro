@@ -421,8 +421,9 @@ anti-slop wall, or were too situational to state as a rule.
 ## The emil / ibelick decision table
 
 Every upstream skill, its disposition, and where it stands. `shipped` means the
-file is on `main`; `queued` means it is a Phase 4 change with its own branch and
-figure sweep, not yet merged.
+change is authored, gate-clean and committed on its branch, each carrying its own
+figure sweep. All nine land together in one ingestion PR off updated
+`origin/main`; none is on `main` until that merges.
 
 | Source | Upstream skill | Decision | Target / reason | Status |
 |---|---|---|---|---|
@@ -439,7 +440,7 @@ figure sweep, not yet merged.
 | emil | `prototype` | DECLINE | working style, not UI knowledge | — |
 | emil | `ask-sonner` | DECLINE | too narrow | — |
 | ibelick | `fixing-motion-performance` | FOLD | `animations/references/animation-pitfalls.md` | **shipped** |
-| ibelick | `playbook.md` (≈6 items) | FOLD | `web-interface/references/ux-deep-rules.md` | queued |
+| ibelick | `playbook.md` (5 items) | FOLD | `web-interface/references/ux-deep-rules.md` | **shipped** |
 | ibelick | `baseline-ui` | DECLINE | `design-principles` + anti-slop wall | — |
 | ibelick | `improve-ui` | DECLINE | `design-principles` + `component-patterns` | — |
 | ibelick | `create-design-md` | DECLINE | `design-md-template.md` | — |
@@ -447,9 +448,9 @@ figure sweep, not yet merged.
 | ibelick | `fixing-metadata` | DECLINE | `platform/references/seo.md` | — |
 | ibelick | routing root + `topics.ts` | DECLINE | this pack has its own registry | — |
 
-Net: **0 new skills, 2 new references, 7 folds, 12 declines.** The queued rows
-are the Phase 4 build order; each lands as its own gate-clean PR off updated
-`origin/main` with the figure sweep in the same commit.
+Net: **0 new skills, 2 new references, 7 folds, 11 declines.** The order above is
+the build order; each is a gate-clean commit off updated `origin/main` carrying
+its own figure sweep, and all nine ship as one ingestion PR.
 
 ---
 
