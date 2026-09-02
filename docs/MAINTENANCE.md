@@ -31,7 +31,7 @@ Outcome: **0 new skills**, **2 new `references/*.md`** in `animations` (`native-
 
 **Why this isn't the failure pattern this file warns about:** single session, staged as independent branches each held to `npm run gates` before merge, every moved figure re-derived from `scripts/check_figures.py --truth` in the same PR's sweep commit rather than hand-asserted. No new skill, constraint or gate, and nothing new in the always-loaded root `SKILL.md`; the two new Reference-Index rows land in `skills/animations/SKILL.md`, which is loaded only when a request routes to animations.
 
-**What this costs, stated plainly:** two references land across the pass; the on-demand depth grows by a fraction of a percent, none of it loaded unless a request routes to `animations`, and the first new reference adds roughly 46 tokens to that skill's request budget (Gate 8a), which stays far under its ceiling. The folds add prose to files an agent already loads for those tasks.
+**What this costs, stated plainly:** two references and seven folds land across the pass. On-demand depth is now 435,191 tokens — about 3% above `origin/main`, all of it lazy, none loaded unless a request routes to the skill that owns the reference. The two new Reference-Index rows in `skills/animations/SKILL.md` add roughly 90 tokens to that skill's request budget, which stays far under its Gate 8a ceiling. The folds add prose to files an agent already loads for those tasks.
 
 **Tracked by:** [`INGESTION_REVIEW.md`](INGESTION_REVIEW.md) (per-source decisions and their reasons) and this file's changelog cross-reference at the top of [CHANGELOG.md](CHANGELOG.md) once each PR merges.
 
