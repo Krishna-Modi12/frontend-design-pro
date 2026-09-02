@@ -51,6 +51,7 @@ Load only for the specific task:
 | Timing/easing decisions, which library to reach for | `references/animation-framework.md` |
 | 17 copy-paste recipes (stagger, counter, toast, marquee…) | `references/animation-recipes.md` |
 | motion.*, AnimatePresence, variants, layoutId, springs | `references/motion.md` |
+| Finger-driven motion — springs by feel, velocity handoff, momentum projection, rubber-banding, grab offset, native-feel gesture details | `references/native-motion-physics.md` |
 | All 12 GSAP plugins, useGSAP, timelines | `references/gsap.md` |
 | Scroll-driven patterns, parallax, pinning | `references/scroll-experience.md` |
 | Smooth/momentum scroll — Lenis options, RAF loop, GSAP ticker handoff, reduced-motion gating | `references/lenis-smooth-scroll.md` |

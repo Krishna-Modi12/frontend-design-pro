@@ -15,9 +15,25 @@ The freeze machinery below is retained deliberately. It is what the project retu
 
 Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway. See the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped last.
 
-The pack is 19 skills, 117 references, 422,738 tokens of on-demand depth, 61 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 19 skills, 118 references, 425,658 tokens of on-demand depth, 61 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
+
+## 2026-09-02 — Owner-directed emilkowalski/ibelick skill-pack ingestion
+
+Same disclosure obligation as the entries below. "New skill, reference, example, constraint or gate: requires owner approval" is the standing rule, and this adds two references plus prose folds over a short window — the pattern this file asks readers to be suspicious of.
+
+**Directive date:** 2026-09-02.
+
+**Directive:** Owner-supplied, explicit. Read `emilkowalski/skills` (twelve flat markdown skills, MIT) and the skill content of `ibelick/ui-skills` (seven task-scoped skills plus a 47-item playbook, MIT — the Astro app, CLI and Cloudflare infra explicitly out of scope) against this pack's existing registry, and extend it with the genuinely-new UI/animation/design-engineering knowledge those sources hold. Scoped down with the owner to *no new skill*. emil's decision framework was **already ingested** — `skills/animations/references/animation-framework.md` opens "Source: emilkowalski/skill" — so the emil half is a delta pass, not a first ingest.
+
+Outcome: **0 new skills**, **2 new `references/*.md`** in `animations` (`native-motion-physics.md` from `apple-design`; `finding-motion.md` from `find-animation-opportunities`), **7 folds** into existing references (`animation-framework.md`, `motion-direction.md`, `animation-pitfalls.md`, `live-verification.md`, `shadcn-ecosystem.md`, `react-native.md`, `ux-deep-rules.md`), and a set of declines. Full taken/rejected reasoning per source in [`INGESTION_REVIEW.md`](INGESTION_REVIEW.md).
+
+**Why this isn't the failure pattern this file warns about:** single session, staged as independent branches each held to `npm run gates` before merge, every moved figure re-derived from `scripts/check_figures.py --truth` in the same PR's sweep commit rather than hand-asserted. No new skill, constraint or gate, and nothing new in the always-loaded root `SKILL.md`; the two new Reference-Index rows land in `skills/animations/SKILL.md`, which is loaded only when a request routes to animations.
+
+**What this costs, stated plainly:** two references land across the pass; the on-demand depth grows by a fraction of a percent, none of it loaded unless a request routes to `animations`, and the first new reference adds roughly 46 tokens to that skill's request budget (Gate 8a), which stays far under its ceiling. The folds add prose to files an agent already loads for those tasks.
+
+**Tracked by:** [`INGESTION_REVIEW.md`](INGESTION_REVIEW.md) (per-source decisions and their reasons) and this file's changelog cross-reference at the top of [CHANGELOG.md](CHANGELOG.md) once each PR merges.
 
 ## 2026-08-28 — Owner-directed responsive & UX-performance depth
 

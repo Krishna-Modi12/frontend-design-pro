@@ -1,9 +1,10 @@
 # Source ingestion review
 
-Six upstream repositories were read against this pack: a theme catalogue, a
-primitive library, seven typography projects, and Anthropic's own skill-authoring
-skill. This is what each one turned out to be, what was taken, what was rejected
-and why, and what is still open.
+Eight upstream repositories have been read against this pack: a theme catalogue, a
+primitive library, seven typography projects, Anthropic's own skill-authoring
+skill, and two packs of interface-motion skills (emil, ibelick). This is what each
+one turned out to be, what was taken, what was rejected and why, and what is still
+open.
 
 It is written down because the rejections are the expensive part to re-derive. A
 future reader who finds `theme-factory-addon` and wonders why a hundred ready-made
@@ -17,8 +18,11 @@ themes are not in here deserves the reasoning, not a second week of reading.
 - [patrickkrebs/theme-factory-addon](#patrickkrebstheme-factory-addon)
 - [The seven typography repositories](#the-seven-typography-repositories)
 - [anthropics/skills — skill-creator](#anthropicsskills--skill-creator)
+- [emilkowalski/skills](#emilkowalskiskills)
+- [ibelick/ui-skills](#ibelickui-skills)
+- [The emil / ibelick decision table](#the-emil--ibelick-decision-table)
 - [What is still open](#what-is-still-open)
-- [Things that are true of all six](#things-that-are-true-of-all-six)
+- [Things that are true across every read](#things-that-are-true-across-every-read)
 
 ---
 
@@ -302,6 +306,151 @@ prose.
 
 ---
 
+## emilkowalski/skills
+
+MIT, © Emil Kowalski. Twelve flat markdown skills — no app, no build — carrying
+one author's taste for interface motion. **Already a cited source here:**
+`skills/animations/references/animation-framework.md` opens
+"Source: emilkowalski/skill", ingested in an earlier pass. So this was a delta
+read, not a first ingest, and the question for each of the twelve was narrower:
+is there a technique in here that this pack's animation depth does not already
+carry?
+
+**The decision axis that did most of the work.** emil's skills split cleanly
+into *taste* — what good motion feels like, which durations, when not to animate —
+and *technique*, the code that produces one specific feel. The taste is largely
+already here, restated across `animation-framework.md`, `motion-budget.md` and
+`motion-direction.md`. The technique that is not here concentrates in two skills:
+`apple-design` (gesture physics — velocity handoff, momentum projection,
+rubber-banding) and `find-animation-opportunities` (a forward sweep for motion
+that is *missing*). Those two became new references. Everything else folded into
+a file an agent already loads for that task, or was declined.
+
+**Taken — two new references in `animations`:**
+
+- `references/native-motion-physics.md`, from `apple-design`. Springs
+  parameterised by feel rather than by raw stiffness and damping, velocity
+  handoff from a gesture into a spring, momentum projection to a snap point,
+  rubber-banding at limits, grab offset, and the "one gesture owns the frame"
+  rule. Route: motion that has to feel like a physical object under the user's
+  finger.
+- `references/finding-motion.md`, from `find-animation-opportunities` (queued).
+  The inverse of a motion budget — a structured pass over a built interface for
+  state changes that happen instantly and should not, gated by four questions so
+  it does not relicense the whole screen as animatable, and required to list its
+  rejected candidates.
+
+**Folded into existing references (queued):**
+
+| Upstream skill | Folded into | What it adds |
+|---|---|---|
+| `emil-design-eng` | `animations/references/animation-framework.md` | clip-path as an animation primitive; hold-to-confirm with an asymmetric `inset()` press/release; tooltip warm-up delay |
+| `review-animations` | `web-interface/references/live-verification.md` | ten motion standards as an animation-specific Layer B residue checklist |
+| `animation-vocabulary` | `animations/references/motion-direction.md` | a "naming motion" glossary appendix — shared terms for the review conversation |
+| `pick-ui-library` | `react-components/references/shadcn-ecosystem.md` | opinionated non-shadcn picks and a mismatch-detection table (hand-built toast → Sonner, hand-rolled select → a real listbox) |
+| `animate-expo` | `platform/references/react-native.md` | RN motion decision gate; `.get()`/`.set()` worklet safety; same-frame haptics; ProMotion `CADisableMinimumFrameDurationOnPhone`; tool selection |
+
+**Declined:**
+
+- `animate` — its decision framework *is* `animation-framework.md`'s subject;
+  this is the file already credited to emil.
+- `improve-animations` — a review loop over existing motion. `web-interface`'s
+  Layer B (rendered-DOM audit) already owns "audit what shipped", and
+  `review-animations`' checklist folds into it.
+- `write-swift` — native Swift authoring, outside a frontend design pack.
+- `prototype` — a working style (build the smallest thing that answers the
+  question) rather than transferable UI knowledge.
+- `ask-sonner` — one library's API surface, narrow enough that
+  `shadcn-ecosystem.md`'s Sonner coverage plus the `pick-ui-library` fold covers
+  it.
+
+**What was corrected on the way in.** `apple-design` asserts that Framer Motion's
+`x`/`y` are not hardware-accelerated and must be swapped for `transform`. That
+was true of an old Framer version and is contradicted by this pack's own
+`motion.md` §10 and Motion 12's compositor handling — `native-motion-physics.md`
+records the omission in its "What was corrected" table rather than carrying the
+claim. It also did not carry `apple-design`'s `bounce: 0.8` spring (MOTION-02R
+territory, and too loose for the "physical object" feel the file is about), and
+converted the colour examples to OKLCH.
+
+---
+
+## ibelick/ui-skills
+
+MIT, © Julien Thibeaut. An Astro app that serves a set of UI-fixing skills plus
+a long playbook of interface lessons. **Per the brief, only the skill content
+was read** — `astro.config.mjs`, `wrangler.*`, `bin/`, `src/` and `package.json`
+were out of scope, and nothing routing- or infra-shaped was taken.
+
+**What it is.** Seven task-scoped skills (`fixing-motion-performance`,
+`fixing-accessibility`, `fixing-metadata`, `baseline-ui`, `improve-ui`,
+`create-design-md`, and the routing root) plus `playbook.md` — roughly 47 short
+numbered interface lessons. The skills are framed as "the model already knows
+UI, here is the taste it is missing"; most of that taste this pack already
+carries at more depth and with machine-checked examples.
+
+**Taken — two folds (queued):**
+
+| Upstream | Folded into | What it adds |
+|---|---|---|
+| `fixing-motion-performance` | `animations/references/animation-pitfalls.md` | blur radius capped near 8px in animated filters; a solid scrim behind a modal rather than a live `backdrop-filter`; FLIP measures once; prefer Scroll/View Timeline over a scroll listener |
+| `playbook.md` (≈6 of 47) | `web-interface/references/ux-deep-rules.md` | scroll-edge mask fade; peek-the-next-item 16–32px; inset full-width buttons off the viewport edge; icon-state crossfade instead of swap; blur during a label morph; tooltip warm-up |
+
+The other playbook items were already covered by `interaction-patterns.md`,
+`ux-deep-rules.md`, `motion-budget.md` or the anti-slop wall, or were too
+situational to state as a rule.
+
+**Declined — all KEEP OURS:**
+
+- `baseline-ui` / `improve-ui` — "make a generic UI good" is `design-principles`
+  plus the anti-slop wall plus `component-patterns`, at more depth.
+- `create-design-md` — `design-research/references/design-md-template.md` and
+  `design-md-checklist.md` (ingested from xiaopu-ai) already own this, with a
+  worked `DESIGN.example.md`.
+- `fixing-accessibility` — covered by `forms`, `web-interface`'s Layer B, and the
+  A11Y constraints in the gate suite.
+- `fixing-metadata` — `platform/references/seo.md` already covers Open Graph,
+  Twitter cards, canonical URLs and the favicon set.
+- the routing root and `topics.ts` — this pack has its own registry; a second
+  router is exactly what the brief said not to import.
+
+---
+
+## The emil / ibelick decision table
+
+Every upstream skill, its disposition, and where it stands. `shipped` means the
+file is on `main`; `queued` means it is a Phase 4 change with its own branch and
+figure sweep, not yet merged.
+
+| Source | Upstream skill | Decision | Target / reason | Status |
+|---|---|---|---|---|
+| emil | `apple-design` | NEW REF | `animations/references/native-motion-physics.md` | **shipped** |
+| emil | `find-animation-opportunities` | NEW REF | `animations/references/finding-motion.md` | queued |
+| emil | `emil-design-eng` | FOLD | `animations/references/animation-framework.md` | queued |
+| emil | `review-animations` | FOLD | `web-interface/references/live-verification.md` | queued |
+| emil | `animation-vocabulary` | FOLD | `animations/references/motion-direction.md` | queued |
+| emil | `pick-ui-library` | FOLD | `react-components/references/shadcn-ecosystem.md` | queued |
+| emil | `animate-expo` | FOLD | `platform/references/react-native.md` | queued |
+| emil | `animate` | DECLINE | already `animation-framework.md` | — |
+| emil | `improve-animations` | DECLINE | `web-interface` Layer B | — |
+| emil | `write-swift` | DECLINE | out of scope | — |
+| emil | `prototype` | DECLINE | working style, not UI knowledge | — |
+| emil | `ask-sonner` | DECLINE | too narrow | — |
+| ibelick | `fixing-motion-performance` | FOLD | `animations/references/animation-pitfalls.md` | queued |
+| ibelick | `playbook.md` (≈6 items) | FOLD | `web-interface/references/ux-deep-rules.md` | queued |
+| ibelick | `baseline-ui` | DECLINE | `design-principles` + anti-slop wall | — |
+| ibelick | `improve-ui` | DECLINE | `design-principles` + `component-patterns` | — |
+| ibelick | `create-design-md` | DECLINE | `design-md-template.md` | — |
+| ibelick | `fixing-accessibility` | DECLINE | `forms` / Layer B / A11Y gates | — |
+| ibelick | `fixing-metadata` | DECLINE | `platform/references/seo.md` | — |
+| ibelick | routing root + `topics.ts` | DECLINE | this pack has its own registry | — |
+
+Net: **0 new skills, 2 new references, 7 folds, 12 declines.** The queued rows
+are the Phase 4 build order; each lands as its own gate-clean PR off updated
+`origin/main` with the figure sweep in the same commit.
+
+---
+
 ## What is still open
 
 Ranked by value over cost. Nothing here is committed work; it is the queue.
@@ -329,7 +478,7 @@ subagents in CI.
 
 ---
 
-## Things that are true of all six
+## Things that are true across every read
 
 **Reading beats matching topics.** Every correction in this document — seven
 shipping defects, two wrong Radix claims, one wrong Tailwind claim, one
