@@ -187,20 +187,47 @@ body {
  * one \`data-section-surface\` attribute alongside its existing className —
  * see \`home/lib/worlds.ts\` for the catalog and the verification-scope note.
  *
- * \`signature\` sets no override below, so \`--world-texture\` falls through
- * to its \`none\` default and every section renders pixel-identical to
- * today — this is also the deterministic \`?world=signature\` world every
- * automated check and screenshot recapture uses.
+ * \`signature\` — the default and the deterministic \`?world=signature\` world
+ * every automated check and screenshot recapture uses — carries a static
+ * grain texture of its own (below). It is the quietest of the four: a
+ * desaturated \`feTurbulence\` at 3.5% alpha, no colour, no motion. Paired
+ * with the 1px section seams (also below) and the deeper \`bg-surface\` cream
+ * (\`../tokens.css\`), it gives the ~7,000px below-hero region a felt surface
+ * and legible section boundaries without a gradient, a shadow, or a second
+ * hue. Re-verified against \`pages:verify\`'s axe pass.
  *
- * Both non-signature textures below are intentionally low-opacity (~4-6%):
- * the goal is a felt texture, not a colour shift large enough to move an
- * already-computed contrast ratio. \`mesh\`'s three radial gradients read the
- * CURRENT \`--color-accent\` via \`color-mix()\` rather than a hardcoded
- * colour, so it always matches whichever world set that variable — no
- * hex, no rgba(), OKLCH throughout.
+ * All four textures are intentionally low-opacity (~3.5-6%): the goal is a
+ * felt texture, not a colour shift large enough to move an already-computed
+ * contrast ratio. \`mesh\`'s three radial gradients read the CURRENT
+ * \`--color-accent\` via \`color-mix()\` rather than a hardcoded colour, so it
+ * always matches whichever world set that variable — no hex, no rgba(),
+ * OKLCH throughout.
  */
 [data-section-surface] {
   background-image: var(--world-texture, none);
+}
+
+/* Section seams — a single 1px hairline between each pair of consecutive
+   below-hero sections. Not on the first one (\`#problem\` follows the Hero,
+   which carries no \`data-section-surface\`, so its soft glow bottom blends
+   into the section below it untouched). \`--color-border\` carries no WCAG
+   floor — it is the decorative-divider treatment \`DESIGN.md\` §6 already
+   names. Horizontal only; a vertical rule here would read as the anti-slop
+   wall's "broadsheet hairline columns". */
+[data-section-surface] + [data-section-surface] {
+  border-top: 1px solid var(--color-border);
+}
+
+/* \`signature\`'s own grain — same alpha-only desaturated \`feTurbulence\`
+   technique as \`grain\` below, tuned down to 3.5% because this one is a
+   permanent default rather than an opt-in world, and it is paired with the
+   \`bg-surface\` warmth and the seams above. Painted through the same
+   \`--world-texture\` channel every other world uses. Applies to the dark
+   \`#install\` footer too (as \`grain\` already does) — 3.5% neutral noise
+   over an L=18% ground is a barely-there lift. */
+[data-world="signature"] [data-section-surface] {
+  --world-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.035'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }
 
 [data-world="mesh"] [data-section-surface] {

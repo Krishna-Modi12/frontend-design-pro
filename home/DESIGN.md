@@ -7,7 +7,7 @@
 **Style**: Verified editorial — a technical report with one accent and real motion, not a generic dark dev-tool landing page.
 **Keywords**: warm, restrained, evidentiary, technical, unhurried, precise, quietly confident, machine-checked.
 **Tone**: calm and evidentiary — proves claims live instead of asserting them — NOT hype-driven, NOT loud, NOT generic-SaaS-dark.
-**Feel**: reading a well-typeset technical report that occasionally moves under your cursor.
+**Feel**: reading a well-typeset technical report — paper with a faint tooth, ruled between sections — that occasionally moves under your cursor.
 
 **Interaction tier**: L2 fluid interaction (scroll-linked reveals, on-load stagger, live client-computed demos — no scroll-jacking, no full-viewport pinned scenes).
 **Dependencies**: `gsap@3.12.7` (+ `ScrollTrigger`) for tweens and scroll triggers, `lenis@1.1.20` for the smooth-scroll driver, `geist@1.3.1` self-hosted via `next/font` for type (zero external font requests — stronger than even a Google Fonts `@import`, which section 3 below departs from the upstream template for).
@@ -18,7 +18,7 @@
 @theme {
   /* Ground */
   --color-bg-page: oklch(98% 0.008 80);
-  --color-bg-surface: oklch(95% 0.015 85);
+  --color-bg-surface: oklch(95% 0.022 80);      /* deeper cream, same L=95% — see note */
   --color-bg-elevated: oklch(100% 0.005 80);
   --color-bg-invert: oklch(18% 0.02 270);       /* footer only */
 
@@ -53,7 +53,8 @@
 - Every colour is referenced through a custom property; no literal hex in components (`COL-04`).
 - `--color-accent` is the page's **only** chromatic hue — it already appears in more than one place (hero glow, CTA fills, metric numbers, eyebrow labels, step-card motifs) and that is correct: restraint means *no second accent hue exists anywhere on the page*, not that the accent appears exactly once. (This corrects an imprecise reading from earlier planning — the root README's screenshot alt text describes the hero specifically, captured above-the-fold per `SCREENSHOT_CONTRIBUTION.md`, and even there the accent already does double duty as the glow *and* the CTA fill. The claim was never "one occurrence"; it's "one hue.")
 - **New components (`ShowcaseCard` badges, `SectionSkillCatalog` card emphasis) use `--color-emphasis`/`--color-emphasis-bg`, never `--color-accent`.** This is a distinct, narrower rule: accent-level color is reserved for primary calls-to-action and the page's own live-metric numbers, so a badge on a screenshot card never competes with an actual "Get the skill pack" button for visual priority. `--color-emphasis`'s exact contrast ratios (text-on-bg, and against `--color-emphasis-bg`) are stated here as measured-in-spirit but must be re-verified against `pages:verify`'s axe pass once built — flagged explicitly in the plan as a Phase 2 risk, not silently assumed.
-- One ground family, one accent hue, one emphasis-neutral family. No gradient except the existing hero radial glow (`--color-accent-glow` fading to transparent) — no purple→pink→blue AI-gradient shape anywhere (`COL-03`).
+- One ground family, one accent hue, one emphasis-neutral family. No gradient except the existing hero radial glow (`--color-accent-glow` fading to transparent) — no purple→pink→blue AI-gradient shape anywhere (`COL-03`). The `signature` grain texture (§6) is not a gradient and not a colour: it is an alpha-only desaturated noise, so it adds tooth without adding a hue.
+- **`--color-bg-surface` is a deeper cream at the same lightness (`oklch(95% 0.022 80)`), not a darker grey.** Lightness is pinned at 95% because accent-as-text on `bg-surface` is the page's tightest ratio (4.50, exactly at the AA floor); the surface can gain chroma and shift toward `bg-page`'s own H=80, but it cannot lose luminance. The warmth plus the §6 seams and grain are what separate the below-hero sections — a lightness step is not available here.
 
 ## 3. Typography Rules
 
@@ -232,10 +233,14 @@ import { GeistMono } from "geist/font/mono";
 
 ## 6. Depth & Elevation
 
+Depth on this page is built from ground, tooth, and hairlines — never shadow.
+
 | Level | Treatment | Used for |
 |---|---|---|
-| Flat | `border: 1px solid var(--color-border)`, no shadow | Section backgrounds, decorative dividers |
-| Subtle | `border: 1px solid var(--color-border)` + `bg-bg-elevated` | Default card state (existing `cardShell`), Showcase/Catalog cards at rest |
+| Ground texture | `signature` world only: a static desaturated `feTurbulence` grain at 3.5% alpha, painted through the `[data-section-surface]` / `--world-texture` channel in `lib/tokens.ts`. No colour, no motion. | Every below-hero section (incl. the `#install` footer) — gives the ~7,000px scroll a felt surface so it doesn't read as one flat field |
+| Section seam | `[data-section-surface] + [data-section-surface] { border-top: 1px solid var(--color-border) }` — a 1px hairline between each pair of consecutive below-hero sections, horizontal only | Making one section legibly end and the next begin, without a lightness step big enough to threaten the accent-on-`bg-surface` ratio |
+| Flat | `border: 1px solid var(--color-border)`, no shadow | Card outlines, other decorative dividers |
+| Subtle | `border: 1px solid var(--color-border)` + `bg-bg-elevated` | Default card state (existing `cardShell`), Showcase/Catalog cards at rest — the grain sits on the ground, not the card, so an untextured card reads as cleanly lifted from a textured ground |
 | Elevated | `border-color: var(--color-border-strong)` on hover, no box-shadow anywhere on the page (deliberate — shadows read as the generic-SaaS default this pack argues against) | Card hover states, focus-within |
 
 ## 7. Animation & Interaction
