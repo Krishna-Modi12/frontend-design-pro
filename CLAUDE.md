@@ -125,7 +125,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `skills/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `skills/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 6,037–7,950 tokens against ~435k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 6,037–7,950 tokens against ~436k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 
@@ -141,6 +141,18 @@ Six requirements, each enforced by a different gate. Missing any one fails the b
 4. **Every `good-*.tsx` needs a 1:1 `good-*.test.tsx`** (Gate 7), and both must compile strict.
 5. **Every `references/*.md` must be cited** in that skill's Reference Index, or path integrity warns about an orphan — a reference nothing routes to can never be loaded, so it ships as dead weight.
 6. **Every `references/*.md` over 300 lines needs a `## Contents` index**, and every anchor in it must resolve (Stage 3). Anthropic's skill-creator asks for this and the reason is progressive disclosure: an agent that loads a 1,400-line file with no index has to read all of it to find one section. `markdown_links()` skips `#` targets, so a Contents entry left pointing at a renamed heading is invisible to every other check.
+
+**Paths written in prose are addressed from the pack root, not from the file
+they sit in.** A reference pointing at another skill writes
+`animations/references/motion.md`, and at a shared file `core/agent-behavior.md`
+or `docs/ARCHITECTURE.md` — which is the same way `SKILL.md`'s loading protocol
+addresses `skills/{id}/SKILL.md`. Same-directory siblings are written bare
+(`motion-budget.md`). **Do not "fix" these to `../../`**: nothing resolves them
+against the file's own directory, an agent reads them from the unzipped pack
+root, and a reviewer who assumes filesystem-relative will report every one of
+them as broken. No gate reads them either — Stage 3 checks the markdown-link
+form `[text](path)` and the backticked `references/*.md` inside
+`skills/*/SKILL.md`, and prose paths are neither.
 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
@@ -194,7 +206,7 @@ markers on content that is not a sequence. (Gradient fills used to be a separate
 unscoped claim on this line too — it now just restates `TYP-03`, which the regex
 suite already enforces, so it dropped off this list.)
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 435,191 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 436,006 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts

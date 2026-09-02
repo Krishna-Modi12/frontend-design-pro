@@ -1,10 +1,11 @@
 # Source ingestion review
 
-Eight upstream repositories have been read against this pack: a theme catalogue, a
-primitive library, seven typography projects, Anthropic's own skill-authoring
-skill, and two packs of interface-motion skills (emil, ibelick). This is what each
-one turned out to be, what was taken, what was rejected and why, and what is still
-open.
+Thirteen upstream repositories have been read against this pack, in the seven
+passes this document is sectioned by: a Chinese-language web-design skill, a
+primitive library, a theme catalogue, a seven-repository typography survey,
+Anthropic's own skill-authoring skill, and two packs of interface-motion skills
+(emil, ibelick). This is what each one turned out to be, what was taken, what was
+rejected and why, and what is still open.
 
 It is written down because the rejections are the expensive part to re-derive. A
 future reader who finds `theme-factory-addon` and wonders why a hundred ready-made
@@ -311,7 +312,7 @@ prose.
 MIT, © Emil Kowalski. Twelve flat markdown skills — no app, no build — carrying
 one author's taste for interface motion. **Already a cited source here:**
 `skills/animations/references/animation-framework.md` opens
-"Source: emilkowalski/skill", ingested in an earlier pass. So this was a delta
+"Source: emilkowalski/skills", ingested in an earlier pass. So this was a delta
 read, not a first ingest, and the question for each of the twelve was narrower:
 is there a technique in here that this pack's animation depth does not already
 carry?

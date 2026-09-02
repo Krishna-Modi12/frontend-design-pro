@@ -1,6 +1,6 @@
 # Animation Decision Framework (Emil Kowalski)
 
-Source: emilkowalski/skill — distilled from Sonner, Vaul, and animation.dev
+Source: emilkowalski/skills — distilled from Sonner, Vaul, and animation.dev
 
 > **Cross-reference:** This file covers WHEN and HOW to animate (principles, timing, easing).
 > For IMPLEMENTATION details of each library, load the dedicated files:
@@ -178,7 +178,7 @@ a second warm-up now reads as lag.
 - **Warm:** while any tooltip in the group is open (and for a short grace period
   after the last one closes), sibling tooltips open at 0ms.
 - Implement with a shared group state — one open tooltip flips the group to
-  "warm" — that stamps `[data-instant]` on the content:
+  "warm" — that marks the content as instant:
 
 ```css
 .tooltip {
@@ -189,13 +189,26 @@ a second warm-up now reads as lag.
 @starting-style {
   .tooltip { opacity: 0; transform: scale(0.97); }
 }
-.tooltip[data-instant] { transition-duration: 0ms; }
+/* Base UI stamps [data-instant]; Radix stamps [data-state="instant-open"].
+   Match both so the rule survives a primitive swap. */
+.tooltip[data-instant],
+.tooltip[data-state="instant-open"] { transition-duration: 0ms; }
 ```
 
-Radix and Base UI ship this as `Tooltip.Provider` `delayDuration` /
-`skipDelayDuration` — reach for the primitive before rebuilding the group state.
-The 150ms here is the § 4 "Tooltip show" band; the "skip delay on subsequent
-hovers" note in that table is this pattern.
+**Reach for the primitive before rebuilding the group state — but the two APIs
+are not interchangeable, so read which one you are on:**
+
+| | Radix `Tooltip.Provider` | Base UI `Tooltip.Provider` |
+|---|---|---|
+| Cold delay | `delayDuration` (default 700ms) | `delay` |
+| Warm window | `skipDelayDuration` (default 300ms) | `timeout` (default 400ms) |
+| Close delay | — (per-tooltip) | `closeDelay` |
+| Instant marker on content | `data-state="instant-open"` | `data-instant` |
+
+`react-components/references/radix-primitives.md` tracks the shadcn → Base
+UI default shift, which is what decides the column for a new project. The 150ms here
+is the § 4 "Tooltip show" band; the "skip delay on subsequent hovers" note in that
+table is this pattern.
 
 ### Toast Pattern (Sonner)
 ```css
@@ -425,7 +438,7 @@ gsap.to(el, { y: -100, scrollTrigger: { trigger: el, start: 'top 80%', end: 'bot
 ## Sources
 
 The decision framework, the four questions, the easing table, the named spring
-scale and the asymmetric enter/exit rule were distilled from `emilkowalski/skill`
+scale and the asymmetric enter/exit rule were distilled from `emilkowalski/skills`
 (MIT, Copyright © Emil Kowalski) — Sonner, Vaul and animation.dev — in an earlier
 ingestion.
 

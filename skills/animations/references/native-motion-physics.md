@@ -169,19 +169,27 @@ than a flat scrim when the hierarchy is the message.
 ```
 
 Set the blur once when the sheet mounts — never transition it. Animated
-`backdrop-filter` repaints the whole region every frame; `../react-performance/SKILL.md`
-covers the paint cost. `component-patterns/SKILL.md` Core Rule 6 carries the
-contrast check for content sitting on a translucent layer.
+`backdrop-filter` repaints the whole region every frame;
+`react-performance/SKILL.md` covers the paint cost.
+`component-patterns/SKILL.md` Core Rule 6 carries the contrast check for
+content sitting on a translucent layer.
 
 ## Reduced motion, transparency, contrast
 
 Three OS preferences change this file's output, and only the first is usually
 handled:
 
-- **`prefers-reduced-motion: reduce`** — replace every translate / scale / spring
-  with an opacity crossfade under ~180ms. The content still arrives at its
-  destination state; `motion-budget.md` § *Reduced motion is not tier zero* is
-  the rule. A dismissed sheet still closes — it fades rather than slides.
+- **`prefers-reduced-motion: reduce`** — for motion the system plays *at* the
+  user, replace the translate / scale / spring with an opacity crossfade under
+  ~180ms. A dismissed sheet still closes; it fades rather than slides.
+  `motion-budget.md` § *Reduced motion is not tier zero* is the rule.
+  **This file's subject is the exception worth stating.** While a finger is down,
+  keep the 1:1 position transform — a sheet that stops tracking the drag is
+  broken, not calmed, and direct manipulation is not the vestibular trigger the
+  preference exists for. What you drop is everything the *system* adds on top:
+  overshoot, the settle spring, momentum projection and rubber-band travel.
+  Under reduced motion a released drag lands on its resolved snap point
+  immediately (or with a short linear fade), rather than flying there.
 - **`prefers-reduced-transparency: reduce`** — drop the `backdrop-filter` for a
   solid `var(--color-surface)`. The blur is a render cost and a legibility
   burden for the users who set this.
@@ -204,7 +212,7 @@ handled:
 
 Haptics, where the surface is native: fire the tap **on the same frame** as the
 visual change, never after — a delayed haptic reads as a second, unrelated event.
-`../../platform/references/react-native.md` § 10 has the `expo-haptics` mapping;
+`platform/references/react-native.md` § 10 has the `expo-haptics` mapping;
 the web `navigator.vibrate` equivalent is unsupported on iOS Safari and must
 never be the only feedback channel.
 

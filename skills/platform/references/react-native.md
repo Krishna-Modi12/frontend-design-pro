@@ -502,9 +502,13 @@ state indication · preventing a jarring change · explanation · first-run deli
 
 ### Worklet safety — the rules that throw or desync on device
 
-- **`transform` and `opacity` are free; everything else is a layout pass.** Same
-  rule as §15's anti-pattern, stated positively — a worklet driving `width`,
-  `top` or `height` runs work on the JS thread every frame.
+- **Prefer `transform` and `opacity`; a layout property costs a relayout every
+  frame.** Same ground as §15's anti-pattern, stated as the preference it is. The
+  worklet itself still runs on the UI thread — this is not a thread-safety rule —
+  but `width`, `top` and `height` force Yoga to re-measure and re-lay-out the
+  subtree on every frame, which `transform` and `opacity` skip entirely. Other
+  non-layout properties (`backgroundColor`, `borderRadius`) sit in between: no
+  relayout, but a repaint.
 - **Never read or write a shared value during render.** `translateY.get()` in
   JSX is a snapshot that never updates; a write fires mid-reconciliation.
 - **Prefer `.get()` / `.set()` over `.value`.** On Reanimated 3.16+ with the
@@ -560,17 +564,23 @@ else counts:
 
 ### Tool selection
 
-| Need | Reach for |
-|---|---|
-| State change, no gesture (press, toggle, colour, value flip) | Reanimated CSS transition |
-| Loop / multi-stage / play-on-mount, no state change | Reanimated CSS animation (keyframes) |
-| Mount, unmount, or list reflow | Layout animations — `entering` / `exiting` / `itemLayoutAnimation` |
-| Finger touch or scroll-derived | `useSharedValue` + `Gesture` + `useAnimatedStyle` |
-| Screen to screen | Native stack options (Expo Router) — do not hand-roll |
-| Bottom sheet that owns its screen | `presentation: 'formSheet'` (real `UISheetPresentationController`) |
-| Tab bar | `NativeTabs` from `expo-router/unstable-native-tabs` |
-| Vector illustration, celebration, empty state | Lottie — illustration only, never UI state |
-| Huge animated scene, freeform drawing | `@shopify/react-native-skia` |
+**Check your Reanimated major before reading the first two rows.** The CSS
+transition and keyframe APIs are **Reanimated 4.x only, and 4.x requires the New
+Architecture** — they do not exist on the Reanimated 3 this file's §4 examples
+are written against. On 3.x use the `withTiming` / `withSpring` + `useAnimatedStyle`
+form from §4 for both, and `withRepeat` for the loop case.
+
+| Need | Reach for | Needs |
+|---|---|---|
+| State change, no gesture (press, toggle, colour, value flip) | Reanimated CSS transition | **4.x + New Arch** — else `withTiming` (§4) |
+| Loop / multi-stage / play-on-mount, no state change | Reanimated CSS animation (keyframes) | **4.x + New Arch** — else `withRepeat` (§4) |
+| Mount, unmount, or list reflow | Layout animations — `entering` / `exiting` / `itemLayoutAnimation` | 3.x+ |
+| Finger touch or scroll-derived | `useSharedValue` + `Gesture` + `useAnimatedStyle` | 3.x+ |
+| Screen to screen | Native stack options (Expo Router) — do not hand-roll | — |
+| Bottom sheet that owns its screen | `presentation: 'formSheet'` (real `UISheetPresentationController`) | iOS 15+ |
+| Tab bar | `NativeTabs` from `expo-router/unstable-native-tabs` | Expo SDK 54+ |
+| Vector illustration, celebration, empty state | Lottie — illustration only, never UI state | — |
+| Huge animated scene, freeform drawing | `@shopify/react-native-skia` | — |
 
 **Never core `Animated` for anything a finger touches** — Reanimated only;
 `PanResponder` → `Gesture.Pan()`.
