@@ -244,6 +244,59 @@ function catalogIds() {
   return ids;
 }
 
+/**
+ * One entry per `skills/*&#47;references/**&#47;*.md`, sorted — the hero's geometry.
+ *
+ * `home/components/HeroDepthScene.tsx` builds one stratum per entry, thickness
+ * proportional to `tokens`. The slab is therefore the reference tree itself
+ * rather than a decorative stack of a round number of slices, which is the
+ * whole reason the hero can't be lifted onto another product.
+ *
+ * The enumeration and the measure both mirror `check_figures.py` exactly —
+ * `rglob("*.md")` under every `skills/*&#47;references` directory, and
+ * LF-normalised bytes ÷ 4. They are then asserted against that file's own
+ * `--truth` output below, as a set relationship rather than a second count,
+ * per this generator's standing rule: two numbers derived independently from
+ * the same tree will eventually disagree, and the one nobody checks is the one
+ * that goes wrong.
+ */
+function references() {
+  const root = join(REPO, "skills");
+  const out = [];
+
+  for (const skill of readdirSync(root, { withFileTypes: true })) {
+    if (!skill.isDirectory()) continue;
+    const dir = join(root, skill.name, "references");
+    if (!existsSync(dir)) continue;
+
+    const walk = (abs, rel) => {
+      for (const entry of readdirSync(abs, { withFileTypes: true })) {
+        const next = join(abs, entry.name);
+        if (entry.isDirectory()) {
+          walk(next, `${rel}${entry.name}/`);
+        } else if (entry.name.endsWith(".md")) {
+          // Identical body to `check_figures.py:tokens()` — a file an editor
+          // has rewritten to CRLF must not read high here and low there.
+          const bytes = readFileSync(next);
+          out.push({
+            skill: skill.name,
+            name: `${rel}${entry.name}`,
+            tokens: Math.floor(
+              bytes.toString("binary").split("\r\n").join("\n").length / 4,
+            ),
+          });
+        }
+      }
+    };
+    walk(dir, "");
+  }
+
+  if (!out.length) throw new Error("skills/*/references holds no markdown");
+  return out.sort((a, b) =>
+    a.skill === b.skill ? a.name.localeCompare(b.name) : a.skill.localeCompare(b.skill),
+  );
+}
+
 /** The release this payload was generated from — the navbar's version badge. */
 function packVersion() {
   const meta = JSON.parse(readFileSync(join(REPO, "metadata.json"), "utf8"));
@@ -333,6 +386,34 @@ function render() {
     if (!existsSync(join(REPO, s.path))) throw new Error(`${s.id}: ${s.path} does not resolve`);
   }
 
+  // The hero's geometry, held to the same truth table every figure is held to.
+  // Asserted rather than trusted: the slab draws one stratum per reference and
+  // scales it by that reference's tokens, so a divergence here would render a
+  // hero that quietly disagrees with the figure printed beside it.
+  const refs = references();
+  if (refs.length !== figures.reference_files) {
+    throw new Error(
+      `walked ${refs.length} reference files but the truth table counts ` +
+        `${figures.reference_files} — the enumeration here and ` +
+        "check_figures.py:169 have diverged",
+    );
+  }
+  const refTokens = refs.reduce((sum, r) => sum + r.tokens, 0);
+  if (refTokens !== figures.reference_depth_tokens) {
+    throw new Error(
+      `reference tokens sum to ${refTokens} but the truth table says ` +
+        `${figures.reference_depth_tokens} — the token measure here and ` +
+        "check_figures.py:tokens() have diverged",
+    );
+  }
+  const refSkills = [...new Set(refs.map((r) => r.skill))].sort();
+  const orphans = refSkills.filter((id) => !ids.includes(id));
+  if (orphans.length) {
+    throw new Error(
+      `references live under directories that are not registry skills: ${orphans.join(", ")}`,
+    );
+  }
+
   // Only the figures the page actually states or draws. Re-exporting the whole
   // truth table would put figures in front of a reader that no sentence on the
   // page is responsible for, and Gate 11 cannot see a number the prose never
@@ -356,6 +437,7 @@ function render() {
     },
     baseDeps: BASE_DEPS,
     skills,
+    references: refs,
     adapters: adapters(),
     version: packVersion(),
   };

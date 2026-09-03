@@ -543,6 +543,603 @@
       "trySaying": "\"Review this component. What's wrong with it that I'm not seeing?\""
     }
   ],
+  "references": [
+    {
+      "skill": "agent-ops",
+      "name": "context-engineering.md",
+      "tokens": 1656
+    },
+    {
+      "skill": "agent-ops",
+      "name": "continuous-learning.md",
+      "tokens": 1580
+    },
+    {
+      "skill": "agent-ops",
+      "name": "frontend-optimization-workflow.md",
+      "tokens": 1680
+    },
+    {
+      "skill": "agent-ops",
+      "name": "memory-persistence.md",
+      "tokens": 2325
+    },
+    {
+      "skill": "agent-ops",
+      "name": "parallelization.md",
+      "tokens": 1683
+    },
+    {
+      "skill": "agent-ops",
+      "name": "skill-packaging.md",
+      "tokens": 1274
+    },
+    {
+      "skill": "agent-ops",
+      "name": "subagent-orchestration.md",
+      "tokens": 2489
+    },
+    {
+      "skill": "agent-ops",
+      "name": "token-optimization.md",
+      "tokens": 1939
+    },
+    {
+      "skill": "agent-ops",
+      "name": "toon-format.md",
+      "tokens": 869
+    },
+    {
+      "skill": "agent-ops",
+      "name": "verification-loops.md",
+      "tokens": 1829
+    },
+    {
+      "skill": "ai-ui-generation",
+      "name": "generation-patterns.md",
+      "tokens": 992
+    },
+    {
+      "skill": "ai-ui-generation",
+      "name": "generative-ui-runtimes.md",
+      "tokens": 1634
+    },
+    {
+      "skill": "animations",
+      "name": "animation-framework.md",
+      "tokens": 4641
+    },
+    {
+      "skill": "animations",
+      "name": "animation-pitfalls.md",
+      "tokens": 2777
+    },
+    {
+      "skill": "animations",
+      "name": "animation-recipes.md",
+      "tokens": 5552
+    },
+    {
+      "skill": "animations",
+      "name": "finding-motion.md",
+      "tokens": 2311
+    },
+    {
+      "skill": "animations",
+      "name": "gsap.md",
+      "tokens": 4174
+    },
+    {
+      "skill": "animations",
+      "name": "interaction-patterns.md",
+      "tokens": 7587
+    },
+    {
+      "skill": "animations",
+      "name": "lenis-smooth-scroll.md",
+      "tokens": 1323
+    },
+    {
+      "skill": "animations",
+      "name": "motion-budget.md",
+      "tokens": 1927
+    },
+    {
+      "skill": "animations",
+      "name": "motion-direction.md",
+      "tokens": 2253
+    },
+    {
+      "skill": "animations",
+      "name": "motion.md",
+      "tokens": 9997
+    },
+    {
+      "skill": "animations",
+      "name": "native-motion-physics.md",
+      "tokens": 3049
+    },
+    {
+      "skill": "animations",
+      "name": "scroll-experience.md",
+      "tokens": 2385
+    },
+    {
+      "skill": "animations",
+      "name": "scroll-story-patterns.md",
+      "tokens": 5531
+    },
+    {
+      "skill": "animations",
+      "name": "view-transitions.md",
+      "tokens": 3958
+    },
+    {
+      "skill": "canvas-typography",
+      "name": "canvas-2d-typography.md",
+      "tokens": 1635
+    },
+    {
+      "skill": "canvas-typography",
+      "name": "particle-text-systems.md",
+      "tokens": 1480
+    },
+    {
+      "skill": "canvas-typography",
+      "name": "text-on-path-scramble.md",
+      "tokens": 1707
+    },
+    {
+      "skill": "canvas-typography",
+      "name": "variable-font-animation.md",
+      "tokens": 1345
+    },
+    {
+      "skill": "color-themes",
+      "name": "accessibility-aware-schemes.md",
+      "tokens": 1432
+    },
+    {
+      "skill": "color-themes",
+      "name": "dark-light-auto-architecture.md",
+      "tokens": 1445
+    },
+    {
+      "skill": "color-themes",
+      "name": "image-palette-extraction.md",
+      "tokens": 1538
+    },
+    {
+      "skill": "color-themes",
+      "name": "oklch-theme-engine.md",
+      "tokens": 1920
+    },
+    {
+      "skill": "component-patterns",
+      "name": "componentry.md",
+      "tokens": 1090
+    },
+    {
+      "skill": "component-patterns",
+      "name": "react-bits.md",
+      "tokens": 1283
+    },
+    {
+      "skill": "data-tables",
+      "name": "chart-types.md",
+      "tokens": 3850
+    },
+    {
+      "skill": "data-tables",
+      "name": "memory-persistence.md",
+      "tokens": 5388
+    },
+    {
+      "skill": "data-tables",
+      "name": "tanstack-query.md",
+      "tokens": 7142
+    },
+    {
+      "skill": "design-principles",
+      "name": "anthropic-frontend-design.md",
+      "tokens": 1897
+    },
+    {
+      "skill": "design-principles",
+      "name": "design-dna.md",
+      "tokens": 614
+    },
+    {
+      "skill": "design-principles",
+      "name": "designer-workflow.md",
+      "tokens": 1267
+    },
+    {
+      "skill": "design-principles",
+      "name": "laws-of-ux.md",
+      "tokens": 1734
+    },
+    {
+      "skill": "design-principles",
+      "name": "visual-hierarchy.md",
+      "tokens": 1547
+    },
+    {
+      "skill": "design-research",
+      "name": "dribbble-adaptation.md",
+      "tokens": 1178
+    },
+    {
+      "skill": "design-research",
+      "name": "mcp-integration.md",
+      "tokens": 1105
+    },
+    {
+      "skill": "design-research",
+      "name": "mobbin-web-mapping.md",
+      "tokens": 1205
+    },
+    {
+      "skill": "design-research",
+      "name": "motion-easing-catalog.md",
+      "tokens": 1137
+    },
+    {
+      "skill": "design-research",
+      "name": "social-signal-research.md",
+      "tokens": 2325
+    },
+    {
+      "skill": "design-research",
+      "name": "source-extraction-protocol.md",
+      "tokens": 1833
+    },
+    {
+      "skill": "design-system",
+      "name": "aesthetic-direction.md",
+      "tokens": 5944
+    },
+    {
+      "skill": "design-system",
+      "name": "brand-core.md",
+      "tokens": 6471
+    },
+    {
+      "skill": "design-system",
+      "name": "brand-design-systems.md",
+      "tokens": 16369
+    },
+    {
+      "skill": "design-system",
+      "name": "brand-extended.md",
+      "tokens": 5731
+    },
+    {
+      "skill": "design-system",
+      "name": "brand-extraction.md",
+      "tokens": 2355
+    },
+    {
+      "skill": "design-system",
+      "name": "cjk-typography.md",
+      "tokens": 1746
+    },
+    {
+      "skill": "design-system",
+      "name": "color-palettes.md",
+      "tokens": 2933
+    },
+    {
+      "skill": "design-system",
+      "name": "dark-mode.md",
+      "tokens": 3315
+    },
+    {
+      "skill": "design-system",
+      "name": "design-md-checklist.md",
+      "tokens": 1185
+    },
+    {
+      "skill": "design-system",
+      "name": "design-md-parser.md",
+      "tokens": 4643
+    },
+    {
+      "skill": "design-system",
+      "name": "design-md-template.md",
+      "tokens": 1928
+    },
+    {
+      "skill": "design-system",
+      "name": "figma-to-code.md",
+      "tokens": 3433
+    },
+    {
+      "skill": "design-system",
+      "name": "font-pairings.md",
+      "tokens": 2696
+    },
+    {
+      "skill": "design-system",
+      "name": "style-seeds.md",
+      "tokens": 3988
+    },
+    {
+      "skill": "design-system",
+      "name": "styles/brutalist.md",
+      "tokens": 1444
+    },
+    {
+      "skill": "design-system",
+      "name": "styles/glassmorphism.md",
+      "tokens": 2627
+    },
+    {
+      "skill": "design-system",
+      "name": "styles/minimalist.md",
+      "tokens": 1378
+    },
+    {
+      "skill": "design-system",
+      "name": "styles/neo-brutalism.md",
+      "tokens": 3713
+    },
+    {
+      "skill": "design-system",
+      "name": "styles/soft.md",
+      "tokens": 2335
+    },
+    {
+      "skill": "design-system",
+      "name": "token-interop.md",
+      "tokens": 1369
+    },
+    {
+      "skill": "design-system",
+      "name": "typographic-finishing.md",
+      "tokens": 7182
+    },
+    {
+      "skill": "forms",
+      "name": "auth-patterns.md",
+      "tokens": 11442
+    },
+    {
+      "skill": "forms",
+      "name": "react-hook-form.md",
+      "tokens": 11814
+    },
+    {
+      "skill": "forms",
+      "name": "verification-loops.md",
+      "tokens": 5239
+    },
+    {
+      "skill": "iconography",
+      "name": "icon-systems.md",
+      "tokens": 775
+    },
+    {
+      "skill": "iconography",
+      "name": "icons-avatars.md",
+      "tokens": 3160
+    },
+    {
+      "skill": "iconography",
+      "name": "lucide-index.md",
+      "tokens": 1682
+    },
+    {
+      "skill": "iconography",
+      "name": "phosphor.md",
+      "tokens": 1558
+    },
+    {
+      "skill": "landing-pages",
+      "name": "design-patterns.md",
+      "tokens": 5107
+    },
+    {
+      "skill": "landing-pages",
+      "name": "industry-rules.md",
+      "tokens": 4766
+    },
+    {
+      "skill": "landing-pages",
+      "name": "landing-patterns.md",
+      "tokens": 7736
+    },
+    {
+      "skill": "landing-pages",
+      "name": "redesign-framework.md",
+      "tokens": 3423
+    },
+    {
+      "skill": "landing-pages",
+      "name": "stitch-design.md",
+      "tokens": 2449
+    },
+    {
+      "skill": "landing-pages",
+      "name": "ux-writing.md",
+      "tokens": 1773
+    },
+    {
+      "skill": "platform",
+      "name": "continuous-learning.md",
+      "tokens": 8208
+    },
+    {
+      "skill": "platform",
+      "name": "desktop-patterns.md",
+      "tokens": 1811
+    },
+    {
+      "skill": "platform",
+      "name": "email-templates.md",
+      "tokens": 4203
+    },
+    {
+      "skill": "platform",
+      "name": "extension-ui.md",
+      "tokens": 1388
+    },
+    {
+      "skill": "platform",
+      "name": "i18n.md",
+      "tokens": 8228
+    },
+    {
+      "skill": "platform",
+      "name": "mobile-patterns.md",
+      "tokens": 8024
+    },
+    {
+      "skill": "platform",
+      "name": "payments.md",
+      "tokens": 5962
+    },
+    {
+      "skill": "platform",
+      "name": "react-native.md",
+      "tokens": 10106
+    },
+    {
+      "skill": "platform",
+      "name": "responsive-layout.md",
+      "tokens": 2344
+    },
+    {
+      "skill": "platform",
+      "name": "seo.md",
+      "tokens": 3827
+    },
+    {
+      "skill": "platform",
+      "name": "subagent-orchestration.md",
+      "tokens": 11503
+    },
+    {
+      "skill": "platform",
+      "name": "vercel-ai-sdk.md",
+      "tokens": 8149
+    },
+    {
+      "skill": "react-components",
+      "name": "impeccable-techniques.md",
+      "tokens": 4280
+    },
+    {
+      "skill": "react-components",
+      "name": "radix-primitives.md",
+      "tokens": 4510
+    },
+    {
+      "skill": "react-components",
+      "name": "react-patterns.md",
+      "tokens": 8173
+    },
+    {
+      "skill": "react-components",
+      "name": "shadcn-ecosystem.md",
+      "tokens": 6295
+    },
+    {
+      "skill": "react-components",
+      "name": "shadcn.md",
+      "tokens": 4325
+    },
+    {
+      "skill": "react-performance",
+      "name": "nextjs-patterns.md",
+      "tokens": 5031
+    },
+    {
+      "skill": "react-performance",
+      "name": "parallelization.md",
+      "tokens": 6862
+    },
+    {
+      "skill": "react-performance",
+      "name": "perceived-performance.md",
+      "tokens": 2148
+    },
+    {
+      "skill": "react-performance",
+      "name": "react-performance.md",
+      "tokens": 1393
+    },
+    {
+      "skill": "react-performance",
+      "name": "rendering-performance.md",
+      "tokens": 3065
+    },
+    {
+      "skill": "react-performance",
+      "name": "token-optimization.md",
+      "tokens": 4755
+    },
+    {
+      "skill": "react-performance",
+      "name": "vercel-ui-rules.md",
+      "tokens": 3504
+    },
+    {
+      "skill": "testing",
+      "name": "playwright.md",
+      "tokens": 5020
+    },
+    {
+      "skill": "testing",
+      "name": "storybook.md",
+      "tokens": 6568
+    },
+    {
+      "skill": "testing",
+      "name": "testing.md",
+      "tokens": 1127
+    },
+    {
+      "skill": "threejs-3d",
+      "name": "spline.md",
+      "tokens": 3139
+    },
+    {
+      "skill": "threejs-3d",
+      "name": "threejs-advanced.md",
+      "tokens": 3345
+    },
+    {
+      "skill": "threejs-3d",
+      "name": "threejs-fundamentals.md",
+      "tokens": 3565
+    },
+    {
+      "skill": "threejs-3d",
+      "name": "threejs-interaction.md",
+      "tokens": 1652
+    },
+    {
+      "skill": "web-interface",
+      "name": "live-verification.md",
+      "tokens": 4312
+    },
+    {
+      "skill": "web-interface",
+      "name": "ux-deep-rules.md",
+      "tokens": 6120
+    },
+    {
+      "skill": "web-interface",
+      "name": "ux-guidelines.md",
+      "tokens": 3484
+    },
+    {
+      "skill": "web-interface",
+      "name": "web-interface-guidelines.md",
+      "tokens": 1392
+    }
+  ],
   "adapters": [
     {
       "dir": "agents",

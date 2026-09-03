@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
+import data from "../lib/data.generated.json";
+import type { GeneratedData } from "../lib/data.types";
 import { DEFAULT_WORLD_ID, WORLDS } from "../lib/worlds";
 
 /**
@@ -11,9 +13,9 @@ import { DEFAULT_WORLD_ID, WORLDS } from "../lib/worlds";
  * `NEXT_OUTPUT_EXPORT=1`, which the Pages deploy sets), so there is no server
  * at request time to read a cookie or a query param and render the right
  * world server-side. A post-hydration swap would flash the default world
- * first, which is worse here than typical dark-mode theming: the Hero's
- * shader (`HeroShaderCanvas.tsx`) reads its colours once at construction, so
- * a late swap would need an extra imperative push just to take effect.
+ * first, which is worse here than typical dark-mode theming: the hero's scene
+ * (`HeroDepthScene.tsx`) reads `--color-accent` once at construction, so a
+ * late swap would need an extra imperative push just to take effect.
  *
  * This is the same technique `next-themes` uses to avoid a dark-mode flash:
  * a plain, synchronous `<script>` — not a module, not `next/script` — runs
@@ -74,10 +76,25 @@ root.style.setProperty("--color-accent-glow",world.accentGlow);
  * thing that can fail for reasons unrelated to the page. `demo/landing-page`
  * made the same call for the same reason.
  */
+/**
+ * Composed from `data.generated.json` rather than typed out. Gate 11's `SCAN`
+ * covers `home/components/*.tsx` and `home/lib/*.ts` but not `home/app/*.tsx`,
+ * so a figure hand-written here is checked by nothing — and one was wrong:
+ * this description claimed the output was held to 60 machine-checked
+ * constraints against a real figure of 61, and shipped that way because the
+ * only thing that could have caught it does not read this file. Building the
+ * sentence from the payload removes the second copy of the number instead of
+ * correcting it and waiting for the next drift.
+ */
+const { skills, ciConstraints, releaseGates } = (data as GeneratedData).figures;
+
 export const metadata: Metadata = {
   title: "frontend-design-pro — the design rules an AI agent actually follows",
   description:
-    "A skill pack an AI coding agent loads while it writes frontend code. It routes one of 19 skills per request, holds the output to 60 machine-checked constraints, and ships only when all 11 gates pass. Route a request and run the checks in your browser.",
+    `A skill pack an AI coding agent loads while it writes frontend code. It routes ` +
+    `one of ${skills} skills per request, holds the output to ${ciConstraints} ` +
+    `machine-checked constraints, and ships only when all ${releaseGates} gates pass. ` +
+    `Route a request and run the checks in your browser.`,
 };
 
 export interface RootLayoutProps {

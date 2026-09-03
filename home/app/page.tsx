@@ -39,7 +39,12 @@ export default function Page(): ReactElement {
           <Navbar version={payload.version} />
 
           <main id="main">
-            <Hero installHref="#install" howItWorksHref="#how-it-works" />
+            <Hero
+              installHref="#install"
+              howItWorksHref="#how-it-works"
+              figures={payload.figures}
+              references={payload.references}
+            />
             <SectionProblem figures={payload.figures} />
             <SectionSkillCatalog skills={payload.skills} />
             <SectionHow skills={payload.skills} figures={payload.figures} />
