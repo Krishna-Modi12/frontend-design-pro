@@ -13,6 +13,7 @@ Usage:
 
 Exit 0 only if every gate passed (and, unless --dry-run, an archive was built and smoke-tested).
 """
+import functools
 import json
 import os
 import re
@@ -907,24 +908,56 @@ def _blank_fences(text: str) -> str:
     return _FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
 
 
+@functools.lru_cache(maxsize=None)
+def _dir_entries(d: str) -> frozenset:
+    try:
+        return frozenset(e.name for e in Path(d).iterdir())
+    except OSError:
+        return frozenset()
+
+
+def _exists_cased(p: Path) -> bool:
+    """`Path.exists()` on the author's machine is not the test that matters.
+
+    Windows and macOS match filenames case-insensitively; the archive is read on
+    Linux, and CI runs there. So `docs/install.md` for `docs/INSTALL.md` resolves
+    on the machine that writes it and 404s for the reader — which is exactly how
+    it reached `social-signal-research.md` and survived a green local run. Every
+    segment below ROOT is compared against the real directory entry, so the check
+    answers the same on every platform.
+    """
+    try:
+        if not p.exists():
+            return False
+        # normpath, not resolve(): `Path.resolve()` rewrites each segment to the
+        # casing on disk, which is precisely the evidence being tested for. This
+        # collapses `..` textually and leaves the author's spelling intact.
+        rel = Path(os.path.normpath(str(p))).relative_to(ROOT)
+    except (OSError, ValueError):                            # outside ROOT, or illegal
+        return False
+    cur = ROOT
+    for part in rel.parts:
+        if part not in _dir_entries(str(cur)):
+            return False
+        cur = cur / part
+    return True
+
+
 def _resolve_prose_path(p: str, f: Path) -> str | None:
     """The six forms the pack uses. Returns the form's name, or None if dead."""
     if p in _PROSE_PLACEHOLDERS:
         return "placeholder"
     if p in _ARCHIVE_MOVES:                                  # `_meta/CHANGELOG.md`
-        return "archive" if (ROOT / _ARCHIVE_MOVES[p]).exists() else None
+        return "archive" if _exists_cased(ROOT / _ARCHIVE_MOVES[p]) else None
     bare = p[len(_PACK_DIR):] if p.startswith(_PACK_DIR) else p
-    if (ROOT / bare).exists():                               # `core/x.md`, `docs/x.md`
+    if _exists_cased(ROOT / bare):                           # `core/x.md`, `docs/x.md`
         return "pack-rooted" if bare == p else "install-rooted"
-    if (ROOT / "skills" / bare).exists():                     # `animations/references/x.md`
+    if _exists_cased(ROOT / "skills" / bare):                # `animations/references/x.md`
         return "skill-rooted"
-    try:
-        if (f.parent / p).resolve().exists():                # `../../x/references/y.md`
-            return "relative"
-        if (f.parent.parent / p).resolve().exists():         # `references/x.md` from a sibling
-            return "skill-dir"
-    except (OSError, ValueError):                            # illegal path on this platform
-        pass
+    if _exists_cased(f.parent / p):                          # `../../x/references/y.md`
+        return "relative"
+    if _exists_cased(f.parent.parent / p):                   # `references/x.md` from a sibling
+        return "skill-dir"
     return None
 
 

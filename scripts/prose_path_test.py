@@ -98,6 +98,11 @@ CASES = [
      False, "right filename, wrong skill named — the INGESTION_REVIEW.md bug"),
     ("docs/ARCHITECTURE.md", "frontend-design-pro/core/gone.md",
      False, "install-rooted at a file the archive will not contain"),
+    ("skills/animations/references/motion.md", "docs/architecture.md",
+     False, "wrong case — resolves on Windows/macOS, 404s on the Linux that "
+            "reads the archive; `docs/install.md` shipped exactly this way"),
+    ("skills/animations/references/motion.md", "animations/References/motion.md",
+     False, "wrong case in a middle segment, not just the filename"),
 
     # ── load-bearing negatives: things that must NOT be judged ──────────────
     ("skills/animations/references/motion.md", "motion-budget.md",
