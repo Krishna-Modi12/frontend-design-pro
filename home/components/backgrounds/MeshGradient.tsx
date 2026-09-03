@@ -1,10 +1,11 @@
 import type { ReactElement } from "react";
 
 /**
- * Hero's `mesh` world background — layered `color-mix(in oklch, …)` radial
- * gradients, no canvas at all, so unlike `HeroShaderCanvas` (gated behind a
- * 640px `matchMedia`, see `HeroBackground.tsx`) this renders at every
- * viewport width — a real coverage improvement, not just variety. Reads the
+ * Hero's `mesh` world ground — layered `color-mix(in oklch, …)` radial
+ * gradients, no canvas at all, so unlike the hero's object (gated behind a
+ * 640px `matchMedia`, see `HeroObject.tsx`) this renders at every viewport
+ * width. It is the ground the object stands on, not a hero of its own — that
+ * split is what lets all four worlds share one object. Reads the
  * CURRENT `--color-accent` live, so it always matches whichever world set
  * that variable; no hardcoded hex or rgba anywhere in this file. Drift is a
  * single `background-position` keyframe (`mesh-drift`, in `lib/tokens.ts`).

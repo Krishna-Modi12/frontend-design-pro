@@ -77,11 +77,16 @@ body {
     opacity: 1 !important;
     transform: none !important;
   }
-  [data-hero-scene] {
+  [data-hero-scene],
+  [data-hero-scene-canvas],
+  [data-hero-fallback] {
     display: none;
   }
-  [data-particle-canvas] {
-    display: none;
+  /* The pinned hero sequence never runs on paper, so the caption its
+     ScrollTrigger would otherwise reveal has to be visible unconditionally —
+     it carries the only prose naming what the object shows. */
+  [data-hero-caption] {
+    opacity: 1 !important;
   }
 }
 

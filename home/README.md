@@ -13,11 +13,12 @@ Next 15 app instead, for the same reason `demo/landing-page` and `demo/showcase`
 are: the panels are React state now, not DOM queries, and the page can use the
 same component conventions the rest of this repo's examples are held to.
 
-## Why this palette, why a shader mesh
+## Why this palette, why one lit object
 
 The design brief this page was rebuilt from asked for a warm-editorial ground
-and a terracotta accent; the v2.1 polish pass replaced the original canvas
-particle-typography hero with a Three.js shader-mesh background. Both are
+and a terracotta accent. The hero has been through three shapes: a canvas
+particle-typography hero, then a Three.js shader-mesh background, and now a
+single lit object built from the pack's own reference tree. All of it is
 checked against this pack's own rules before shipping, not just against a
 brief:
 
@@ -27,27 +28,53 @@ brief:
   `ink-invert` pair; `border` needed a second, darker `border-strong` for
   control boundaries, since the decorative border alone clears nothing at
   WCAG 1.4.11's 3:1).
-- The gradient plane in
-  [`components/HeroShaderCanvas.tsx`](components/HeroShaderCanvas.tsx) is
-  raw `three`, a deliberate, measured exception to
-  `skills/threejs-3d/SKILL.md`'s default ("write R3F, not raw Three.js"): an
-  React Three Fiber build of this exact one-mesh scene shipped a lazy chunk
-  that gzipped to ~174KB (R3F's reconciler needs a generic catalog covering
-  most of THREE's export surface to support arbitrary JSX tags, which
-  defeats tree-shaking even here) — more than 3x this pass's own ">50KB, find
-  a lighter alternative" ceiling. The manual scene touches only the eight
-  THREE classes it needs and still follows that skill's constraint ids by
-  hand: dpr capped at 2 (3D-01), geometry/material built once and disposed on
-  unmount (3D-03), an OKLCH token read into `THREE.Color` rather than a raw
-  hex literal (3D-05), a delta from `THREE.Clock` rather than a frame counter
-  (3D-06). [`components/HeroBackground.tsx`](components/HeroBackground.tsx)
-  owns the policy around it: the canvas is still behind a dynamic import
-  (`ssr: false`) so `three` never blocks the server-rendered headline, never
-  mounts at all below 640px per
-  `skills/animations/references/motion-budget.md`'s heavy-background rule,
-  and freezes (one static frame, no further `requestAnimationFrame`) rather
-  than unmounting under `prefers-reduced-motion` — the scene still renders,
-  it just never moves on its own.
+- The object in [`components/HeroDepthScene.tsx`](components/HeroDepthScene.tsx)
+  is the pack's reference corpus: one stratum per
+  `skills/*/references/*.md`, thickness proportional to that file's real token
+  count, all of it a single `InstancedMesh` drawn in one call. The geometry
+  comes from `lib/data.generated.json`, whose generator asserts both the
+  reference count and their token sum against `scripts/check_figures.py
+  --truth` before writing — so the object cannot disagree with the figures
+  printed beside it.
+- It is raw `three`, a deliberate, measured exception to
+  `skills/threejs-3d/SKILL.md`'s default ("write R3F, not raw Three.js"): a
+  React Three Fiber build of a one-mesh scene shipped a lazy chunk that
+  gzipped to ~174KB (R3F's reconciler needs a generic catalog covering most of
+  THREE's export surface to support arbitrary JSX tags, which defeats
+  tree-shaking even here) — more than 3x this pass's own ">50KB, find a
+  lighter alternative" ceiling. Worth stating plainly, since this file
+  previously cited that ceiling without ever measuring against it: **`three`
+  itself lands in a ~73KB gzipped vendor chunk**, over the same ceiling. That
+  is the cost of WebGL at all here, it is byte-identical before and after this
+  rebuild, and it is why the chunk is lazy and gated rather than why it is
+  small. The scene follows that skill's constraint ids by hand: dpr capped at
+  2 (3D-01), geometry and material built once and disposed on unmount (3D-03),
+  OKLCH tokens read into `THREE.Color` rather than hex literals (3D-05), a
+  delta from `THREE.Clock` rather than a frame counter (3D-06).
+- **It renders on demand.** The loop only calls `renderer.render` when
+  something moved — the entrance, a pointer move, or the pinned range
+  scrubbing. An earlier build redrew every frame to carry a slow idle
+  rotation and measured, on a production build under a 4x CPU throttle, a
+  median frame time of 29.9ms against a 16.7ms baseline for the same page
+  with the scene absent: two thirds of the budget spent animating a drift no
+  reader would notice. With the drift removed the scene measures **+0.0ms
+  median against that baseline, at rest and while the pin is scrubbing alike,
+  with a p95 that lands at or under the baseline's** — the run-to-run spread on
+  the p95 is wider than the scene's own cost, which is the honest way to read
+  it. `npm run hero:verify` is what holds that, and it asserts the delta rather
+  than an absolute frame time on purpose: at rest this scene draws nothing at
+  all and still measured a p95 of 41.6ms when the gate was written against an
+  absolute ceiling. That number was the machine, not the scene.
+- [`components/HeroObject.tsx`](components/HeroObject.tsx) owns the policy
+  around it: the canvas is behind a dynamic import (`ssr: false`) so `three`
+  never blocks the server-rendered headline; it never mounts at all below
+  640px per `skills/animations/references/motion-budget.md`'s heavy-background
+  rule; and it freezes to one static frame rather than unmounting under
+  `prefers-reduced-motion`. Underneath it,
+  [`components/HeroDepthFallback.tsx`](components/HeroDepthFallback.tsx) is
+  server-rendered and never unmounts — the same object coarsened to one band
+  per skill, which is what a phone, a denied WebGL context and a reader with
+  JavaScript off all get.
 
 ## Run it
 

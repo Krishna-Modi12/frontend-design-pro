@@ -35,6 +35,20 @@ export interface SkillRecord {
   trySaying: string;
 }
 
+/**
+ * One `skills/<skill>/references/<name>` file. The hero draws one stratum per
+ * record, thickness scaled by `tokens` — see `components/HeroDepthScene.tsx`.
+ * `tokens` is the repo's canonical measure (LF-normalised bytes ÷ 4), and the
+ * generator asserts both the count and the sum against
+ * `check_figures.py --truth` before writing, so these cannot drift from the
+ * `referenceFiles` / `referenceDepthTokens` figures above.
+ */
+export interface ReferenceRecord {
+  skill: string;
+  name: string;
+  tokens: number;
+}
+
 export interface Adapter {
   dir: string;
   label: string;
@@ -44,6 +58,7 @@ export interface GeneratedData {
   figures: Figures;
   baseDeps: string[];
   skills: SkillRecord[];
+  references: ReferenceRecord[];
   adapters: Adapter[];
   version: string;
 }

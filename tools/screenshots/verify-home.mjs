@@ -284,20 +284,18 @@ async function checkInteractivity(browser, base) {
   // wait rather than a duration tuned to whichever one was running when it
   // was picked.
   const heroCanvasCount = await page
-    .waitForSelector("[data-hero-scene] canvas", { timeout: 15_000 })
+    .waitForSelector("[data-hero-scene-canvas] canvas", { timeout: 15_000 })
     .then(() => 1)
     .catch(() => 0);
-  if (heroCanvasCount === 0) problems.push("hero shader canvas did not mount at desktop width");
+  if (heroCanvasCount === 0) problems.push("hero depth scene did not mount at desktop width");
 
-  // Hero: the particle-typography layer (samples the real headline, waits on
-  // document.fonts.ready before drawing) also mounted — a second, independent
-  // canvas the shader check above does not cover. Not a dynamic import, but
-  // polled the same way for consistency and to tolerate font-load timing.
-  const particleCanvasCount = await page
-    .waitForSelector("[data-particle-canvas]", { timeout: 15_000 })
-    .then(() => 1)
-    .catch(() => 0);
-  if (particleCanvasCount === 0) problems.push("hero particle canvas did not mount at desktop width");
+  // Hero: the static object is in the server-rendered HTML and never
+  // unmounts, so it is the paint before the `three` chunk arrives, the only
+  // one below 640px, and the floor for a failed WebGL context. A scene that
+  // mounted while this had been dropped would look fine in a screenshot and
+  // leave every one of those paths blank, so it is asserted separately.
+  const heroFallbackCount = await page.locator("[data-hero-fallback]").count();
+  if (heroFallbackCount === 0) problems.push("hero static object fallback is not in the DOM");
 
   // Showcase: all four project cards render (v2.2 — replaced the mock UI
   // gallery this same assertion used to check; see home/README.md's showcase
@@ -360,8 +358,13 @@ async function checkInteractivity(browser, base) {
   const clip = await page.evaluate(() => navigator.clipboard.readText()).catch(() => "");
   if (!clip.includes("npx skills add")) problems.push("install copy button did not write the command to the clipboard");
 
-  report("hero shader canvas mounted", problems.filter((p) => p.includes("hero shader canvas")));
-  report("hero particle canvas mounted", problems.filter((p) => p.includes("hero particle canvas")));
+  // These two filters must quote the problem strings pushed above verbatim.
+  // They previously matched "hero shader canvas" and "hero particle canvas"
+  // against messages that had been reworded, so both lines printed a tick no
+  // matter what the page did — a green line that proved nothing, which is a
+  // worse failure than a red one.
+  report("hero depth scene mounted", problems.filter((p) => p.includes("hero depth scene")));
+  report("hero static object fallback present", problems.filter((p) => p.includes("hero static object")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report(
     "router resolves the real registry and refuses to guess",

@@ -21,12 +21,17 @@
  * (see `tokens.css`'s Accent comment) — none of the four is used for small
  * text on the footer.
  *
- * `signature`'s accent is deliberately unchanged from today's value. The
- * Hero shader's contrast/cooling math (`HeroShaderCanvas.tsx`) was hand-tuned
- * against exactly this accent/bg-page pair, including a prior real bug fix —
- * letting the same shader take an arbitrary hue would put that tuning at
- * risk per-hue. Only `signature` renders through the shader; `mesh`/`grain`/
- * `grid` are pure CSS/SVG, so their accents carry no such risk.
+ * `signature`'s accent is deliberately unchanged from today's value.
+ *
+ * **All four worlds now render the hero's object.** They did not use to: the
+ * shader this replaced carried contrast and cooling maths hand-tuned against
+ * the `signature` accent/bg-page pair specifically, so letting it take an
+ * arbitrary hue would have put that tuning at risk per-hue, and only
+ * `signature` reached WebGL at all. `HeroDepthScene` has no per-hue tuning —
+ * it reads `--color-accent` at mount and lights one object with it, over the
+ * page's own ink — so a world is now a ground texture and a hue rather than a
+ * different hero. The four accents below are still what makes each world
+ * legible, and the ratios above are still what makes each one legal.
  *
  * Verification, stated per `CLAUDE.md`'s own "state the gap plainly"
  * convention: full `pages:verify` (hydration, axe, overflow) runs in
