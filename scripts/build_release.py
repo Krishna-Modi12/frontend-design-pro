@@ -747,7 +747,13 @@ _DOCTRINE = re.compile(r"^//\s*Source doctrine:\s*(.+)$", re.M)
 # case-literal pattern does not flag it, it fails to see it at all, and an
 # unseen citation is exactly the dead pointer this check exists to catch.
 # Matching it here lets `_exists_cased` reject it with a message.
-_DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?[Rr]eferences/[\w./-]+\.md")
+#
+# `(?i:...)`, not `[Rr]eferences`. The character-class form was the first
+# attempt and it only ever covered the leading letter, so it made this comment
+# a promise the pattern did not keep: `ReFeReNcEs/x.md` still went unseen. The
+# flag is scoped to this one component deliberately — the rest of the path is
+# the author's own spelling and `_exists_cased` has to receive it verbatim.
+_DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?(?i:references)/[\w./-]+\.md")
 
 
 def example_doctrine() -> bool:

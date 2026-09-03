@@ -20,6 +20,7 @@
     "figures": "python scripts/check_figures.py",
     "figures:test": "python scripts/figure_pattern_test.py",
     "paths:test": "python scripts/prose_path_test.py",
+    "hooks:test": "bash scripts/hook_status_test.sh",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
     "banner": "node tools/readme-router/generate.mjs",

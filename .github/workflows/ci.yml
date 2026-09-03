@@ -39,6 +39,16 @@ jobs:
       # second time and reporting nothing new. `if: failure() && ...` inverts
       # that. Green runs skip them entirely; red runs get the per-gate breakdown
       # they were always meant to provide.
+      # Not a gate — `.githooks/pre-commit` is a per-clone developer guard and
+      # never runs in CI. It is checked here because nothing else would: its
+      # dirty-path listing shipped seeing 3 of the 11 porcelain states, and that
+      # was found by a reviewer reading the regex rather than by any check.
+      # `!cancelled()` rather than plain ordering, so a red chain still reports
+      # this too instead of skipping it.
+      - name: Guard fixtures — pre-commit dirty-path listing
+        if: ${{ !cancelled() }}
+        run: bash scripts/hook_status_test.sh
+
       - name: Gate 3 — TypeScript strict compile
         if: failure() && steps.chain.outcome == 'failure'
         run: python3 scripts/typecheck_golds.py
