@@ -79,7 +79,12 @@ fi
 # because a partial commit is ordinary and a guard that blocks ordinary work gets
 # turned off. If any listed path is not yours, the remedy is a worktree —
 # `git worktree add <dir> origin/main` — not a careful `git add`.
-LEFT="$(git status --porcelain 2>/dev/null | grep -E '^( M|\?\?|( )D)' | sed 's/^...//' || true)"
+#
+# The rule is `guard_dirty_outside_commit` in session-guard.sh: a non-blank
+# worktree column. Notably that INCLUDES a file staged and then edited again,
+# which is the most misleading state of all — `git status` shows it green and
+# the commit carries only the older half.
+LEFT="$(guard_dirty_outside_commit)"
 N_LEFT="$(printf '%s\n' "$LEFT" | grep -c . || true)"
 if [ "${N_LEFT:-0}" -gt 0 ]; then
   {

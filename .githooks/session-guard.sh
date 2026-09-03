@@ -54,3 +54,20 @@ guard_write_lock() {
 }
 
 guard_read() { sed -n "s/^$1=//p" "$LOCKFILE" 2>/dev/null | head -1; }
+
+# Every path this tree is dirty in that the pending commit does NOT fully
+# capture. The rule is one column wide: in `git status --porcelain` X is the
+# index and Y is the working tree, so a non-blank Y means the file on disk still
+# differs from what is about to be committed. `M ` (staged, tree clean) is
+# excluded by that rule and `MM` (staged, then edited again) is not — and `MM`
+# is the whole point, because it reads as committed and is not.
+#
+# It lives here rather than inline in pre-commit so the hook and
+# `scripts/hook_status_test.sh` read one definition. The first version was
+# written inline as `^( M|\?\?|( )D)` and saw 3 of the 11 dirty states: `MM`,
+# `AM`, `RM`, `MD`, `AD`, ` T`, `MT` and `UU` all passed it silently, including
+# ` T` (an unstaged typechange), which is not even a partially-staged case.
+# Match the column, never a list of spellings.
+guard_dirty_outside_commit() {
+  git status --porcelain 2>/dev/null | grep -E '^.[^ ]' | sed 's/^...//' || true
+}

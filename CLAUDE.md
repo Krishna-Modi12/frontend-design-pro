@@ -19,6 +19,7 @@ npm run typecheck    # Gate 3 only — tsc --noEmit strict over every example
 npm run constraints  # Gate 5 only — 44 regex constraints over skills/
 npm run figures      # Gate 11 only — every documented count/token figure vs the filesystem
 npm run figures:test # proof that Gate 11's patterns read the prose forms people write
+npm run hooks:test   # proof that the pre-commit guard sees every dirty porcelain state
 npm run evals        # 22 eval cases, self-test
 npm run regression   # 16 synthetic parser-vs-regex divergence cases
 npm test             # Gate 7's runtime half — 45 files, 232 tests, ~35s
@@ -250,7 +251,13 @@ Two concurrent agent sessions against this working directory caused three bad re
 
 - **Never `git add -A`.** Stage explicit paths.
 - `.githooks/pre-commit` blocks any commit adding **5+ new files** and prints the list, so you cannot sweep another writer's work in by accident. It fires for the lock owner too — that is the point. Override with `FDP_ALLOW_CONCURRENT=1 git commit …` only after confirming every listed path is yours. Install with `git config core.hooksPath .githooks` (per-clone, cannot be committed).
-- The same hook also prints, without blocking, every dirty path **not** in the commit you are making. That is the half the added-file threshold misses: the last collision was 13 modified files and 3 new ones, so nothing would have tripped and `git add -A` would have taken all sixteen.
+- The same hook also prints, without blocking, every dirty path **not** in the commit you are making. That is the half the added-file threshold misses: the last collision was 13 modified files and 3 new ones, so nothing would have tripped and `git add -A` would have taken all sixteen. The rule is one
+  column wide — a non-blank *worktree* column in `git status --porcelain` — so it
+  covers a file staged and then **edited again** (`MM`), which is the most
+  misleading state there is: green in `git status`, and the commit carries only
+  the older half. Written as a list of spellings it saw 3 of the 11 dirty states.
+  `guard_dirty_outside_commit` in `.githooks/session-guard.sh` is the one
+  definition; `npm run hooks:test` holds its fixtures, both directions.
 - **If another session is live in this tree, stop staging and branch the work out:** `git worktree add <dir> origin/main`, copy in only the files you wrote, and re-run the figure sweep and the generators *there*. A shared tree also corrupts what the gates tell you — Stage 3 will report the other session's broken links as yours, and an untracked `docs/RELEASE_NOTES-*` inflates Gate 11's claim-surface count by one. `docs/MAINTENANCE.md` § "Unattended writers" has the full account.
 - `git fetch` and check `git log --oneline -1` before every commit, tag and push.
 
