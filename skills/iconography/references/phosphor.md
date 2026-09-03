@@ -10,7 +10,7 @@ the figures here come from the package, not the site.
 Phosphor for one reason: it ships **six weights** of the same glyph, so weight
 becomes something you can design with rather than something you inherit. Two
 style directions already override to it —
-`design-system/references/styles/minimalist.md` and `styles/soft.md` — and when a
+`design-system/references/styles/minimalist.md` and `design-system/references/styles/soft.md` — and when a
 style file is in play it wins.
 
 Generic sizing, colour, accessible-name and optical-alignment rules live in

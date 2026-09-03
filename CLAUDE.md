@@ -142,17 +142,31 @@ Six requirements, each enforced by a different gate. Missing any one fails the b
 5. **Every `references/*.md` must be cited** in that skill's Reference Index, or path integrity warns about an orphan — a reference nothing routes to can never be loaded, so it ships as dead weight.
 6. **Every `references/*.md` over 300 lines needs a `## Contents` index**, and every anchor in it must resolve (Stage 3). Anthropic's skill-creator asks for this and the reason is progressive disclosure: an agent that loads a 1,400-line file with no index has to read all of it to find one section. `markdown_links()` skips `#` targets, so a Contents entry left pointing at a renamed heading is invisible to every other check.
 
-**Paths written in prose are addressed from the pack root, not from the file
-they sit in.** A reference pointing at another skill writes
-`animations/references/motion.md`, and at a shared file `core/agent-behavior.md`
-or `docs/ARCHITECTURE.md` — which is the same way `SKILL.md`'s loading protocol
-addresses `skills/{id}/SKILL.md`. Same-directory siblings are written bare
-(`motion-budget.md`). **Do not "fix" these to `../../`**: nothing resolves them
-against the file's own directory, an agent reads them from the unzipped pack
-root, and a reviewer who assumes filesystem-relative will report every one of
-them as broken. No gate reads them either — Stage 3 checks the markdown-link
-form `[text](path)` and the backticked `references/*.md` inside
-`skills/*/SKILL.md`, and prose paths are neither.
+**Paths written in prose are addressed from a root, not from the file they sit
+in.** Which root depends on what is being cited, and both forms are correct:
+
+| Citing | Write | Example |
+|---|---|---|
+| Another skill's reference | skill id first, `skills/` implied | `animations/references/motion.md` |
+| A shared or top-level file | from the pack root | `core/agent-behavior.md`, `docs/ARCHITECTURE.md` |
+| This skill's own reference | `references/` first | `references/{name}.md` |
+| A same-directory sibling | bare | `motion-budget.md` |
+
+The skill-id form is the same shape `SKILL.md`'s loading protocol uses for
+`skills/{id}/SKILL.md`, minus the prefix the reader is already inside.
+
+**Do not "fix" these to `../../`.** Nothing resolves them against the file's own
+directory; an agent reads them from the unzipped pack. A reviewer who assumes
+filesystem-relative will report every one as broken — that has happened, and the
+"fix" was applied in the wrong direction before being caught.
+
+`prose_paths()` in Stage 3 now checks every one of them, so a dead citation
+fails the build. It understands the four forms above plus `frontend-design-pro/…`
+(the unzipped archive) and `_meta/CHANGELOG.md` (where `build_release.py`
+relocates the changelog). It deliberately ignores bare filenames — `motion.md`
+is shorthand for "the reference named motion", not a path — and `docs/CHANGELOG.md`,
+which quotes paths that were true when written. `npm run paths:test` holds its
+fixtures.
 
 Copy `_stubs.d.ts` and `_r3f-jsx.d.ts` into a new `examples/` directory from any existing skill.
 
@@ -206,7 +220,7 @@ markers on content that is not a sequence. (Gradient fills used to be a separate
 unscoped claim on this line too — it now just restates `TYP-03`, which the regex
 suite already enforces, so it dropped off this list.)
 **Before widening a rule to a reference file, note that the suites read
-`.tsx/.ts/.js/.jsx/.html` only** — 436,006 tokens of markdown depth is outside
+`.tsx/.ts/.js/.jsx/.html` only** — 436,039 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.
 
 ## Examples are gate-bearing artifacts

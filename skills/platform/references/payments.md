@@ -3,9 +3,9 @@
 Source: stripe.com/docs, stripe.com/elements, @stripe/stripe-js, @stripe/react-stripe-js
 
 > **Cross-reference:** This file covers Stripe UI patterns, Elements integration, and checkout flows.
-> For authentication flows → `references/auth-patterns.md`
-> For form validation patterns → `references/react-hook-form.md`
-> For server actions / API routes → `references/nextjs-patterns.md`
+> For authentication flows → `forms/references/auth-patterns.md`
+> For form validation patterns → `forms/references/react-hook-form.md`
+> For server actions / API routes → `react-performance/references/nextjs-patterns.md`
 
 ---
 

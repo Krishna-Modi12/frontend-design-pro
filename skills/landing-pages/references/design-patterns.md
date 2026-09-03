@@ -196,7 +196,7 @@ PDP         = Gallery(sticky desktop) + Info-panel(title+price+variant+CTA+trust
 - CTA: single "Add to cart" primary; feedback = P-18 toast + cart count `aria-live` update.
 
 **P-20 · View transition patterns** — `[vt]`
-- Full API, CSS recipes, gotchas: `references/view-transitions.md`.
+- Full API, CSS recipes, gotchas: `animations/references/view-transitions.md`.
 - Choose by relationship: shared element (`name`) for list→detail continuity · Suspense reveal for "data arrived" · list identity (`key`) for reorder · `enter`/`exit` for appearance · layout-level for route change.
 - Directional slides only for hierarchical or ordered navigation; lateral tab switches fade or don't animate.
 - `default="none"` on every VT, then opt in per trigger — otherwise background revalidations animate too.
