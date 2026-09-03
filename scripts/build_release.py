@@ -35,6 +35,48 @@ for _stream in (sys.stdout, sys.stderr):
 
 ROOT = Path(__file__).resolve().parent.parent          # repo root (v13)
 REPO = ROOT
+
+
+@functools.lru_cache(maxsize=None)
+def _dir_entries(d: str) -> frozenset:
+    try:
+        return frozenset(e.name for e in Path(d).iterdir())
+    except OSError:
+        return frozenset()
+
+
+def _exists_cased(p: Path) -> bool:
+    """`Path.exists()` on the author's machine is not the test that matters.
+
+    Windows and macOS match filenames case-insensitively; the archive is read on
+    Linux, and CI runs there. So `docs/install.md` for `docs/INSTALL.md` resolves
+    on the machine that writes it and 404s for the reader — which is exactly how
+    it reached `social-signal-research.md` and survived a green local run. Every
+    segment below ROOT is compared against the real directory entry, so the check
+    answers the same on every platform.
+    """
+    try:
+        if not p.exists():
+            return False
+        # normpath, not resolve(): `Path.resolve()` rewrites each segment to the
+        # casing on disk, which is precisely the evidence being tested for. This
+        # collapses `..` textually and leaves the author's spelling intact.
+        rel = Path(os.path.normpath(str(p))).relative_to(ROOT)
+    except OSError:
+        return False
+    except ValueError:
+        # Outside ROOT — there is nothing to compare segments against, and the
+        # repo's own casing is not this path's problem. Fall back to plain
+        # existence so this helper only ever tightens the in-repo answer, never
+        # narrows what callers used to accept.
+        return True
+    cur = ROOT
+    for part in rel.parts:
+        if part not in _dir_entries(str(cur)):
+            return False
+        cur = cur / part
+    return True
+
 SKILL_MD = REPO / "SKILL.md" if (REPO / "SKILL.md").exists() else ROOT / "SKILL.md"
 CHANGELOG = (REPO / "docs/CHANGELOG.md") if (REPO / "docs/CHANGELOG.md").exists() else (ROOT / "_meta/CHANGELOG.md")
 README = REPO / "README.md"
@@ -370,7 +412,7 @@ def gate_frontmatter():
         if not isinstance(deps, list) or not deps:
             bad(f"{sk.parent.name}: metadata.core-deps is empty"); ok = False
         for dep in deps:
-            if not (ROOT / dep).exists(): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
+            if not _exists_cased(ROOT / dep): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
     for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
         desc = _description(sk.read_text(encoding="utf-8"))
         if desc and not _ACTIVATION.search(desc):
@@ -414,8 +456,8 @@ def gate_registry():
     rows = _re.findall(r"\| `([\w-]+)` \| `(skills/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", s)
     if not rows: bad("no registry rows parsed from SKILL.md"); return False
     for sid, path, dep in rows:
-        if not (ROOT / path).exists(): bad(f"{sid}: registry path missing {path}"); ok = False
-        if not (ROOT / dep).exists(): bad(f"{sid}: core dep missing {dep}"); ok = False
+        if not _exists_cased(ROOT / path): bad(f"{sid}: registry path missing {path}"); ok = False
+        if not _exists_cased(ROOT / dep): bad(f"{sid}: core dep missing {dep}"); ok = False
         exs = list((ROOT / "skills" / sid / "examples").glob("*.tsx"))
         if not exs: bad(f"{sid}: no examples"); ok = False
     dirs = {p.name for p in (ROOT / "skills").iterdir() if p.is_dir()}
@@ -646,8 +688,8 @@ def path_integrity() -> bool:
     reg = SKILL_MD.read_text(encoding="utf-8")
     rows = re.findall(r"\| `([\w-]+)` \| `(skills/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", reg)
     for sid, path, dep in rows:
-        if not (ROOT / path).exists(): bad(f"registry path missing: {path}"); ok = False
-        if not (ROOT / dep).exists(): bad(f"core dep missing: {dep}"); ok = False
+        if not _exists_cased(ROOT / path): bad(f"registry path missing: {path}"); ok = False
+        if not _exists_cased(ROOT / dep): bad(f"core dep missing: {dep}"); ok = False
     if ok: ok_(f"all {len(rows)} registry rows resolve")
     # every reference cited inside a skill file exists
     cited = missing = 0
@@ -655,8 +697,8 @@ def path_integrity() -> bool:
         txt = sk.read_text(encoding="utf-8")
         for rel in re.findall(r"`((?:\.\./[\w-]+/)?references/[\w./-]+\.md)`", txt):
             cited += 1
-            target = (sk.parent / rel).resolve()
-            if not target.exists(): bad(f"{sk.parent.name}: cited reference missing {rel}"); missing += 1; ok = False
+            target = sk.parent / rel
+            if not _exists_cased(target): bad(f"{sk.parent.name}: cited reference missing {rel}"); missing += 1; ok = False
     if not missing: ok_(f"all {cited} skill-cited references resolve")
     # orphan references (present on disk, never cited)
     for sk in sorted(ROOT.glob("skills/*/references")):
@@ -700,7 +742,12 @@ def path_integrity() -> bool:
 # above: a twelfth gate moves a figure published in ~30 documents, and this is
 # squarely path integrity, which is what Stage 3 already is.
 _DOCTRINE = re.compile(r"^//\s*Source doctrine:\s*(.+)$", re.M)
-_DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?references/[\w./-]+\.md")
+# `references/` is matched case-INSENSITIVELY on purpose. A doctrine comment
+# written `References/x.md` is wrong — the directory is lowercase — but a
+# case-literal pattern does not flag it, it fails to see it at all, and an
+# unseen citation is exactly the dead pointer this check exists to catch.
+# Matching it here lets `_exists_cased` reject it with a message.
+_DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?[Rr]eferences/[\w./-]+\.md")
 
 
 def example_doctrine() -> bool:
@@ -709,7 +756,7 @@ def example_doctrine() -> bool:
         for line in _DOCTRINE.findall(ex.read_text(encoding="utf-8")):
             for rel in _DOCTRINE_REF.findall(line):
                 cited += 1
-                if not (ex.parent.parent / rel).resolve().exists():
+                if not _exists_cased(ex.parent.parent / rel):
                     bad(f"{ex.parent.parent.name}: {ex.name} cites missing doctrine {rel}")
                     missing += 1; ok = False
     if not missing: ok_(f"all {cited} example doctrine references resolve")
@@ -843,7 +890,7 @@ def markdown_links() -> bool:
             path = target.split("#", 1)[0]
             if not path:
                 continue
-            if not (p.parent / path).resolve().exists():
+            if not _exists_cased(p.parent / path):
                 broken.append(f"{rel}:{stripped[:m.start()].count(chr(10)) + 1} → {target}")
     if broken:
         for b in broken[:25]:
@@ -906,41 +953,6 @@ def _blank_fences(text: str) -> str:
     fence on the wrong line. Same helper now feeds both.
     """
     return _FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
-
-
-@functools.lru_cache(maxsize=None)
-def _dir_entries(d: str) -> frozenset:
-    try:
-        return frozenset(e.name for e in Path(d).iterdir())
-    except OSError:
-        return frozenset()
-
-
-def _exists_cased(p: Path) -> bool:
-    """`Path.exists()` on the author's machine is not the test that matters.
-
-    Windows and macOS match filenames case-insensitively; the archive is read on
-    Linux, and CI runs there. So `docs/install.md` for `docs/INSTALL.md` resolves
-    on the machine that writes it and 404s for the reader — which is exactly how
-    it reached `social-signal-research.md` and survived a green local run. Every
-    segment below ROOT is compared against the real directory entry, so the check
-    answers the same on every platform.
-    """
-    try:
-        if not p.exists():
-            return False
-        # normpath, not resolve(): `Path.resolve()` rewrites each segment to the
-        # casing on disk, which is precisely the evidence being tested for. This
-        # collapses `..` textually and leaves the author's spelling intact.
-        rel = Path(os.path.normpath(str(p))).relative_to(ROOT)
-    except (OSError, ValueError):                            # outside ROOT, or illegal
-        return False
-    cur = ROOT
-    for part in rel.parts:
-        if part not in _dir_entries(str(cur)):
-            return False
-        cur = cur / part
-    return True
 
 
 def _resolve_prose_path(p: str, f: Path) -> str | None:
