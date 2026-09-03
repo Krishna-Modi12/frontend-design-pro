@@ -161,6 +161,43 @@ A freeze is a policy, and a policy only binds the actors who read it. Across the
 4. **Read every file you are about to commit.** If a `git status` line is a file you did not write, read it or unstage it. Publishing unread content is publishing content you cannot vouch for.
 5. **Prune agent worktree branches.** Three `worktree-agent-*` branches survived their deleted worktrees; they held no unique commits and were removed. `.claude/` is gitignored so the worktrees themselves cannot be committed again.
 
+### The modified-file shape, and why a worktree is the real answer
+
+Both incidents above were **untracked files** being swept in, which is what the
+bulk-capture check counts. On 2026-09-03 the same collision took a different
+shape and would have slipped past it: a second session was rebuilding `home/`
+in this working directory, and its work was **13 modified tracked files and 3
+new ones**. Three added paths is under the five-file threshold, and modified
+files are deliberately not gated — so `git add -A` would have swept all sixteen
+with no warning at all.
+
+Nothing caught it. What caught it was reading `git status` and noticing files
+nobody in that session had written, then checking mtimes: one landed 51 seconds
+into a gate run that was already in flight. There was no lock, because the lock
+is claimed at *commit* time and neither session had committed yet.
+
+Three things were learned, and each is now mechanized or written down:
+
+- **A shared tree poisons your gate run, not just your commit.** Stage 3 reported
+  a dead link in `home/README.md` that belonged entirely to the other session's
+  in-flight file deletion. Ten minutes went into a failure that was never mine.
+- **It poisons your figures too.** Gate 11's claim-surface count was 152 in the
+  shared tree and 151 in a clean checkout, because an untracked
+  `docs/RELEASE_NOTES-*` file was being scanned. The wrong number was one edit
+  away from being published as the gated truth.
+- **The remedy is `git worktree`, not care.** Build in
+  `git worktree add <dir> origin/main`, copy in only the files you authored, and
+  re-run the sweep and the generators *there* so derived artifacts carry your
+  delta and nothing else. `npm ci` in the worktree for the full chain. Clean up
+  afterwards by reverting only your own explicit paths — never `git checkout .`.
+  Note that scratch helper scripts often hardcode the main repo path; check
+  before pointing one at a worktree.
+
+The pre-commit hook now prints every dirty path that is **not** in the commit
+being made, capped at twelve. It never blocks — a partial commit is ordinary,
+and a guard that blocks ordinary work gets turned off — but it makes committing
+in ignorance of a second writer a deliberate act rather than an easy one.
+
 ### The guard that enforces rule 1
 
 Rules are advice. `.githooks/pre-commit` is the part that actually blocks:

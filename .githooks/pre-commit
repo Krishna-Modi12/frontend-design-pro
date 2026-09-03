@@ -66,6 +66,30 @@ MSG
   exit 1
 fi
 
+# ── What you are LEAVING BEHIND ──────────────────────────────────────────────
+# The bulk-capture check above counts only newly-ADDED paths, for the good reason
+# written there: gating modified files would fire on every ordinary commit. That
+# leaves a real gap, and it is the one that showed up on 2026-09-03 — a second
+# session's work in this tree was 13 MODIFIED files and 3 added, so nothing above
+# it would have tripped, and `git add -A` would have swept all sixteen.
+#
+# This cannot tell whose files those are (git records no authorship for a
+# working-tree change — see the note above). What it can do is refuse to let a
+# commit be made in ignorance of them. Informational by design: it never blocks,
+# because a partial commit is ordinary and a guard that blocks ordinary work gets
+# turned off. If any listed path is not yours, the remedy is a worktree —
+# `git worktree add <dir> origin/main` — not a careful `git add`.
+LEFT="$(git status --porcelain 2>/dev/null | grep -E '^( M|\?\?|( )D)' | sed 's/^...//' || true)"
+N_LEFT="$(printf '%s\n' "$LEFT" | grep -c . || true)"
+if [ "${N_LEFT:-0}" -gt 0 ]; then
+  {
+    printf '\n  session-guard: %s path(s) dirty in this tree and NOT in this commit:\n' "$N_LEFT"
+    printf '%s\n' "$LEFT" | head -12 | sed 's/^/      /'
+    [ "${N_LEFT:-0}" -gt 12 ] && printf '      … and %s more\n' "$((N_LEFT - 12))"
+    printf '  If any of those are another session'"'"'s, do not stage them. Not a block.\n\n'
+  } >&2
+fi
+
 ME="$(guard_identity)"
 
 # No lock: the first committer claims it. Self-claiming is what makes this

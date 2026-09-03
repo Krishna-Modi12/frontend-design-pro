@@ -82,9 +82,16 @@ jobs:
             --esModuleInterop --skipLibCheck --types react,react-dom \
             skills/*/examples/*.test.tsx skills/*/examples/*.d.ts
 
+      # `basic` was REMOVED in Vitest 4 (this repo is on ^4.1.10), so this step
+      # errored instead of printing anything — the diagnostic that exists to
+      # explain a failure produced no output on exactly the runs that needed it.
+      # `verbose` is the closest replacement that is settable from the CLI:
+      # reporter options like `default`+`summary:false` (the documented `basic`
+      # equivalent) can only be set in vitest.config.ts, and verbose prints every
+      # test as it finishes, which is what a post-mortem step wants anyway.
       - name: Gate 7c — Test suite execution
         if: failure() && steps.chain.outcome == 'failure'
-        run: npx vitest run --reporter=basic
+        run: npx vitest run --reporter=verbose
 
       # Broken out even though Gate 10 is not, because a figure failure is only
       # actionable as a list. The chain tail-truncates its output, and "64

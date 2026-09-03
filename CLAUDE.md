@@ -250,6 +250,8 @@ Two concurrent agent sessions against this working directory caused three bad re
 
 - **Never `git add -A`.** Stage explicit paths.
 - `.githooks/pre-commit` blocks any commit adding **5+ new files** and prints the list, so you cannot sweep another writer's work in by accident. It fires for the lock owner too — that is the point. Override with `FDP_ALLOW_CONCURRENT=1 git commit …` only after confirming every listed path is yours. Install with `git config core.hooksPath .githooks` (per-clone, cannot be committed).
+- The same hook also prints, without blocking, every dirty path **not** in the commit you are making. That is the half the added-file threshold misses: the last collision was 13 modified files and 3 new ones, so nothing would have tripped and `git add -A` would have taken all sixteen.
+- **If another session is live in this tree, stop staging and branch the work out:** `git worktree add <dir> origin/main`, copy in only the files you wrote, and re-run the figure sweep and the generators *there*. A shared tree also corrupts what the gates tell you — Stage 3 will report the other session's broken links as yours, and an untracked `docs/RELEASE_NOTES-*` inflates Gate 11's claim-surface count by one. `docs/MAINTENANCE.md` § "Unattended writers" has the full account.
 - `git fetch` and check `git log --oneline -1` before every commit, tag and push.
 
 Releases: tag must be annotated (`git tag -a`). Pushing a `v*` tag fires `.github/workflows/release.yml`, which re-runs all 11 gates on a clean runner and publishes a public GitHub Release with the archive attached — so the tag push is the irreversible step, not the commit.
