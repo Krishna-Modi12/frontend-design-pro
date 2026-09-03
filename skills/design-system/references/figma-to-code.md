@@ -2,8 +2,8 @@
 
 Best practices for translating Figma designs into production React/Next.js components — with or without the Figma MCP.
 
-> **Cross-reference:** For design token conventions → `references/impeccable-techniques.md`
-> For component patterns → `references/react-patterns.md`
+> **Cross-reference:** For design token conventions → `react-components/references/impeccable-techniques.md`
+> For component patterns → `react-components/references/react-patterns.md`
 > For design system foundations → `references/color-palettes.md` + `references/font-pairings.md`
 
 ---

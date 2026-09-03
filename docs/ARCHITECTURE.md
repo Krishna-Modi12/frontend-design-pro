@@ -15,35 +15,39 @@ So the pack is not a document. It is a **registry that routes**.
 | `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,149 tokens** | always |
 | `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,964, 3,095, 3,505 or 3,923 tokens** | the 3–4 a matched skill declares |
 | `skills/{id}/SKILL.md` | One skill router | **848–1,878 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 119 deep references | **436,006 tokens** | only when a skill file points at one for the task at hand |
+| `skills/{id}/references/*.md` | 119 deep references | **436,039 tokens** | only when a skill file points at one for the task at hand |
 
-Measured per-request totals, every skill, registry + skill + declared deps:
+Measured per-request totals, every skill, registry + skill + declared deps.
+Gate 11 reads prose, not fenced blocks, so this table is outside it: regenerate
+it from `python scripts/check_figures.py --truth` rather than editing a row by
+hand. Seventeen of its nineteen rows had drifted by three tokens each before
+that was written down — the registry grew, every row moved, and nothing said so.
 
 ```text
 landing-pages       6,037   ← lightest
-iconography         6,037
-testing             6,089
-data-tables         6,108
-ai-ui-generation    6,143
-forms               6,180
-react-performance   6,285
-threejs-3d          6,286
-color-themes        6,398
-react-components    6,420
-design-system       6,423
-animations          6,452
-component-patterns  6,470
-web-interface       6,581
-design-principles   6,832
-platform            6,883
-agent-ops           6,976
-canvas-typography   7,247
+iconography         6,040
+testing             6,092
+data-tables         6,111
+ai-ui-generation    6,146
+forms               6,183
+react-performance   6,288
+threejs-3d          6,289
+color-themes        6,401
+react-components    6,423
+design-system       6,426
+component-patterns  6,473
+animations          6,541
+web-interface       6,584
+design-principles   6,835
+platform            6,889
+agent-ops           6,979
+canvas-typography   7,250
 design-research     7,950   ← heaviest
 ```
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,178 tokens, while `design-research` has the largest router in the pack at 1,878 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,950 tokens against 436,006 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,950 tokens against 436,039 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. `.gitattributes` is `eol=lf`, so the index is LF on every platform, and both `build_release.py:tokens()` and `check_figures.py:tokens()` normalise CRLF→LF before counting. Gate 8a and Gate 11 therefore report the same numbers on Windows and Linux, and stay stable even when an editor has left a file you touched with CRLF endings before it is committed. The LF figure is canonical because it is what a reader who downloads the archive can reproduce.
 
@@ -90,19 +94,27 @@ dist/                    build output, gitignored
 
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
-| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | 2,018 tokens; version consistent; no leaks |
+| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | registry at 2,149 tokens; version consistent; no leaks |
 | 2 | Frontmatter | all 20 files pass Anthropic's `quick_validate.py` schema (no top-level key outside its six); every skill declares `metadata.version`/`metadata.core-deps`; version matches `metadata.json`; every declared dep exists on disk | 20/20 |
-| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 17/17 demo files |
-| 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 62/62 files × 17/17 |
+| 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 20/20 demo files |
+| 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 65/65 files × 17/17 |
 | 5 | Syntactic | 44 regex constraints; golds must be clean **and** anti-examples must fail; stub-typed demos judged per-project | 45/45 · 3/3 demo projects |
 | 6 | Pipeline | `AGENT_SYSTEM_PROMPT.md`: 6 stage markers · 5 architecture checks · every cited path resolves, no pre-registry prefixes, no bare reference filenames; the documented `[json]` envelope and the schema's own examples validate against `rules/v12-envelope.schema.json` | 16/16 |
 | 7 | Evals + coverage | 22 eval cases self-test; every gold has a 1:1 `.test.tsx`; every test file compiles strict; **the suite runs and passes** | 22/22 · 45/45 files · 232/232 tests |
 | 8 | Budget + registry | every skill ≤3,000 alone and ≤8,000 with deps; every registry row resolves and has examples | 19/19 |
 | 9 | Showcase build | `demo/showcase/` — a real, installed Next.js 15 app, deliberately outside the stub-typed convention above — builds clean under `next build` against its actual vendor typings | clean |
-| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 119 references, 19 skill routers and 8 core files | 122 files · 0 violations |
-| 11 | Figures | every documented count and token figure recomputed from the filesystem and compared against the prose: 9 anchored figures, stated deltas that must subtract correctly, `metadata.json` against the tree, and its changelog against `docs/CHANGELOG.md` | 74 claim surfaces · 0 drifts |
+| 10 | References | the 19 ban-shaped constraints, run over every fenced `tsx`/`jsx`/`ts`/`js`/`html` block in all 119 references, 19 skill routers, 8 core files and the 7 markdown files under `examples/` | 153 files · 0 violations |
+| 11 | Figures | every documented count and token figure recomputed from the filesystem and compared against the prose: 17 anchored figures, stated deltas that must subtract correctly, `metadata.json` against the tree, and its changelog against `docs/CHANGELOG.md` | 151 claim surfaces · 0 drifts |
 
-Then, non-negotiable but not numbered: **path integrity** (95 skill-cited references resolve), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+Then, non-negotiable but not numbered: **path integrity** (126 skill-cited references resolve, and every backticked file citation in prose), **reference-depth audit**, a **release source guard**, **archive build reproducible per-platform** (CI produces a byte-identical archive for its own environment; a local build differs by ~400 bytes because `.gitattributes` normalises line endings to LF in the repo while Windows checkouts hold CRLF), and a **post-build smoke test** that unzips the archive and re-runs gates 3 and 4 against the extracted copy — deleting the archive if either fails.
+
+The **Current result** column is a recorded run, not a gated figure: it reports
+what the chain printed, and no check re-derives it. Four of its cells were wrong
+before this was written down — Gate 3 claimed 17 demo files against 20, Gate 4
+claimed 62 of 65, Gate 10 claimed 122 files against 153, and path integrity
+claimed 95 skill-cited references against 126. Re-read the column off a green
+`npm run gates` when you change what the gates cover, the same way the block
+above is regenerated from `--truth`.
 
 The source guard fetches `origin` and refuses to build an archive unless `HEAD` is exactly `origin/main` with a clean working tree. It exists because a green chain does not prove the *source* was current: v14.4.2 was tagged from a commit that was never main's head, so the archive was a faithful product of stale source and passed every gate including the smoke test. The smoke test cannot catch that by construction — it verifies the archive against itself, and the archive was not the thing that was wrong. Only a real release build runs the guard; `--dry-run` is the CI contract and runs on branches where being behind main is normal.
 

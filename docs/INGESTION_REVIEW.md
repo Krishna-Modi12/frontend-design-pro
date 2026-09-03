@@ -329,13 +329,13 @@ a file an agent already loads for that task, or was declined.
 
 **Taken — two new references in `animations`:**
 
-- `references/native-motion-physics.md`, from `apple-design`. Springs
+- `animations/references/native-motion-physics.md`, from `apple-design`. Springs
   parameterised by feel rather than by raw stiffness and damping, velocity
   handoff from a gesture into a spring, momentum projection to a snap point,
   rubber-banding at limits, grab offset, and the "one gesture owns the frame"
   rule. Route: motion that has to feel like a physical object under the user's
   finger.
-- `references/finding-motion.md`, from `find-animation-opportunities`.
+- `animations/references/finding-motion.md`, from `find-animation-opportunities`.
   The inverse of a motion budget — a structured pass over a built interface for
   state changes that happen instantly and should not, gated by four questions so
   it does not relicense the whole screen as animatable, and required to list its
@@ -407,7 +407,7 @@ anti-slop wall, or were too situational to state as a rule.
 
 - `baseline-ui` / `improve-ui` — "make a generic UI good" is `design-principles`
   plus the anti-slop wall plus `component-patterns`, at more depth.
-- `create-design-md` — `design-research/references/design-md-template.md` and
+- `create-design-md` — `design-system/references/design-md-template.md` and
   `design-md-checklist.md` (ingested from xiaopu-ai) already own this, with a
   worked `DESIGN.example.md`.
 - `fixing-accessibility` — covered by `forms`, `web-interface`'s Layer B, and the

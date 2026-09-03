@@ -28,7 +28,7 @@ Auto-loaded when a `DESIGN.md` file is present in the project root. No explicit 
 
 ## Purpose
 
-This reference tells the skill HOW to parse a user-provided `DESIGN.md` file and inject its design tokens into the generated component. The `DESIGN.md` format follows Google Stitch's semantic design language — a mix of descriptive natural-language intent and precise numeric values. See `references/stitch-design.md` for the full Stitch format specification.
+This reference tells the skill HOW to parse a user-provided `DESIGN.md` file and inject its design tokens into the generated component. The `DESIGN.md` format follows Google Stitch's semantic design language — a mix of descriptive natural-language intent and precise numeric values. See `landing-pages/references/stitch-design.md` for the full Stitch format specification.
 
 When a `DESIGN.md` is present, every token it defines takes precedence over the skill's built-in defaults. The parser is responsible for:
 

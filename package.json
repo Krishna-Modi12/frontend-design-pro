@@ -19,6 +19,7 @@
     "references": "python scripts/check_references.py",
     "figures": "python scripts/check_figures.py",
     "figures:test": "python scripts/figure_pattern_test.py",
+    "paths:test": "python scripts/prose_path_test.py",
     "evals": "python scripts/run_evals.py --self-test --no-semantic",
     "regression": "node scripts/parser_regression_test.js",
     "banner": "node tools/readme-router/generate.mjs",
@@ -31,12 +32,12 @@
     "demos:typecheck": "npm --prefix tools/screenshots exec -- tsc --noEmit -p tools/screenshots/tsconfig.json",
     "demos:verify": "npm --prefix tools/screenshots run verify --",
     "pages:verify": "npm --prefix tools/screenshots run verify:home --",
-  "showcase:verify": "npm --prefix tools/screenshots run verify:showcase --",
-  "visual-regression": "npm --prefix tools/screenshots run visual-regression --",
-  "security": "python scripts/check_security.py",
-  "security:test": "python scripts/test_security_patterns.py",
-  "token-report": "node tools/token-report/token-report.mjs",
-  "token-report:test": "node tools/token-report/token-report.test.mjs"
+    "showcase:verify": "npm --prefix tools/screenshots run verify:showcase --",
+    "visual-regression": "npm --prefix tools/screenshots run visual-regression --",
+    "security": "python scripts/check_security.py",
+    "security:test": "python scripts/test_security_patterns.py",
+    "token-report": "node tools/token-report/token-report.mjs",
+    "token-report:test": "node tools/token-report/token-report.test.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",

@@ -5,10 +5,14 @@ Frontend Design Pro — Reference Constraint Gate (Gate 10)
 The blind spot this closes
 --------------------------
 `test_constraints.py` globs `*.jsx *.tsx *.html *.js *.ts`. Markdown is not in
-that list, so until this gate existed the 94 reference files — ~333k tokens, the
-overwhelming majority of the pack by volume, and the part an agent actually
-loads for depth — were read by no gate at all. The 59 constraints ran over the
-example files, which are 2% of the corpus.
+that list, so until this gate existed the reference files — the overwhelming
+majority of the pack by volume, and the part an agent actually loads for depth —
+were read by no gate at all. The constraints ran over the example files, which
+are a low single-digit percentage of the corpus.
+
+(Counts are deliberately not stated here. This docstring is not one of Gate 11's
+claim surfaces, so a figure written into it goes stale silently — which is what
+happened to the two that used to be in this paragraph.)
 
 That is backwards. An example is a demonstration; a reference is an instruction.
 When `glassmorphism.md` prescribed `min-h-screen bg-gradient-to-br

@@ -64,7 +64,7 @@ benchmarked against doubao.com/about, keeping the dark editorial skeleton)
 **Dependencies**: GSAP 3 + ScrollTrigger + Lenis + **Three.js** (the WebGL
 signature moment) + OGL (aurora background) + CSS `@property` + CSS 3D transforms
 
-**Scroll-story coverage** (against `references/scroll-story-patterns.md`):
+**Scroll-story coverage** (against `animations/references/scroll-story-patterns.md`):
 
 - **Pattern 1, card constellation hero** → twelve DESIGN.md sample cards floating in 3D
 - **Pattern 2, card collapse transition** → hero cards converge into a single card entering the Why section

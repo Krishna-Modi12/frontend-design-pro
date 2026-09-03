@@ -13,6 +13,7 @@ Usage:
 
 Exit 0 only if every gate passed (and, unless --dry-run, an archive was built and smoke-tested).
 """
+import functools
 import json
 import os
 import re
@@ -666,6 +667,19 @@ def path_integrity() -> bool:
     if not example_doctrine(): ok = False
     # every relative markdown link in the repo resolves
     if not markdown_links(): ok = False
+    # every backticked file citation in prose resolves — and the resolver that
+    # decides that keeps its own fixtures, because its failure mode is silence:
+    # a form it stops recognising is a form it stops checking, and the run stays
+    # green either way. Same reason `figure_pattern_test.py` exists for Gate 11.
+    if not prose_paths(): ok = False
+    r = run([sys.executable, str(SCRIPTS / "prose_path_test.py")])
+    if r.returncode != 0:
+        bad("prose-path fixtures failed — the resolver no longer reads the "
+            "forms it claims to"); print(r.stdout); ok = False
+    else:
+        pf = re.search(r"(\d+) citation fixtures", r.stdout)
+        ok_(f"prose-path resolver holds {pf.group(1) if pf else '?'} fixtures, "
+            f"all six forms and every shorthand")
     # every oversized reference carries a Contents index whose anchors resolve
     if not reference_contents(): ok = False
     return ok
@@ -820,7 +834,7 @@ def markdown_links() -> bool:
         if any(rel.startswith(x) for x in _LINK_EXEMPT):
             continue
         text = p.read_text(encoding="utf-8", errors="replace")
-        stripped = _INLINE_CODE.sub(" ", _FENCE.sub(" ", text))
+        stripped = _INLINE_CODE.sub(" ", _blank_fences(text))
         for m in _MD_LINK.finditer(stripped):
             target = m.group(1)
             if target.startswith(("http://", "https://", "mailto:", "#", "<")):
@@ -838,6 +852,136 @@ def markdown_links() -> bool:
             bad(f"… and {len(broken) - 25} more")
         return False
     ok_(f"all {checked} relative markdown links resolve across {len(files)} files")
+    return True
+
+
+# `markdown_links()` above strips inline code spans on purpose, so that prose
+# QUOTING a bad link is not read as making one. The cost of that rule is a blind
+# spot the size of the corpus: the pack cites its own files in backticks far more
+# often than in link form, and not one of those pointers was read by anything.
+#
+# They rot the same way links do. Four dead ones shipped in `motion-budget.md`
+# and `react-bits.md` until a human happened to read them, and `payments.md` has
+# pointed at three references in another skill's directory since it was written.
+#
+# The hard part is not finding them, it is not crying wolf. A citation resolves
+# under any of six forms the pack genuinely uses, and only a path-SHAPED string
+# is judged at all — a bare `motion.md` is shorthand for "the reference named
+# motion", resolved by the reader against the skill's own Reference Index, and
+# demanding a directory on it would flag ~250 correct sentences.
+#
+# Verified to FAIL before it was trusted, the same standard Gate 6 and
+# `example_doctrine()` were held to: it names all fourteen dead pointers present
+# when it was written, and `scripts/prose_path_test.py` re-proves both directions
+# on fixtures so a later refactor cannot quietly neuter it.
+#
+# Stage 3 and not Gate 12, following `markdown_links()`, `example_doctrine()` and
+# `reference_contents()` for the reason they give: a twelfth gate moves a figure
+# published across ~30 documents, and this is squarely path integrity.
+_PACK_DIR = "frontend-design-pro/"          # the archive's root folder name
+_ARCHIVE_MOVES = {"_meta/CHANGELOG.md": "docs/CHANGELOG.md"}  # see RELOCATED
+
+# Illustrative paths in documentation ABOUT the layout. Each names a file that
+# is not supposed to exist — a schema slot, not a citation.
+_PROSE_PLACEHOLDERS = {
+    "skills/id/SKILL.md", "skills/new-skill/SKILL.md", "skills/a/b/c/SKILL.md",
+    "core/one-dep.md", "references/_index.md", "references/foo.md",
+}
+
+# Path-shaped: a directory separator, ending `.md`, optionally `../`-prefixed.
+# The leading-`../` alternation is load-bearing — without it the 16 surviving
+# `../../x/references/y.md` citations are not matched at all, which is the
+# quietest way for a check like this to be wrong. A `{...}` template such as
+# `skills/{id}/SKILL.md` deliberately does not match: braces mean it is a schema
+# slot, and no path with one in it is ever meant to resolve.
+_PROSE_PATH = re.compile(
+    r"`((?:\.\./)*[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_.-]+\.md)`")
+
+
+def _blank_fences(text: str) -> str:
+    """Strip fenced blocks but keep the line count, so reported lines are real.
+
+    `markdown_links()` collapsed each fence to a single space and then counted
+    newlines to report a line number, which put every finding below the first
+    fence on the wrong line. Same helper now feeds both.
+    """
+    return _FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+
+
+@functools.lru_cache(maxsize=None)
+def _dir_entries(d: str) -> frozenset:
+    try:
+        return frozenset(e.name for e in Path(d).iterdir())
+    except OSError:
+        return frozenset()
+
+
+def _exists_cased(p: Path) -> bool:
+    """`Path.exists()` on the author's machine is not the test that matters.
+
+    Windows and macOS match filenames case-insensitively; the archive is read on
+    Linux, and CI runs there. So `docs/install.md` for `docs/INSTALL.md` resolves
+    on the machine that writes it and 404s for the reader — which is exactly how
+    it reached `social-signal-research.md` and survived a green local run. Every
+    segment below ROOT is compared against the real directory entry, so the check
+    answers the same on every platform.
+    """
+    try:
+        if not p.exists():
+            return False
+        # normpath, not resolve(): `Path.resolve()` rewrites each segment to the
+        # casing on disk, which is precisely the evidence being tested for. This
+        # collapses `..` textually and leaves the author's spelling intact.
+        rel = Path(os.path.normpath(str(p))).relative_to(ROOT)
+    except (OSError, ValueError):                            # outside ROOT, or illegal
+        return False
+    cur = ROOT
+    for part in rel.parts:
+        if part not in _dir_entries(str(cur)):
+            return False
+        cur = cur / part
+    return True
+
+
+def _resolve_prose_path(p: str, f: Path) -> str | None:
+    """The six forms the pack uses. Returns the form's name, or None if dead."""
+    if p in _PROSE_PLACEHOLDERS:
+        return "placeholder"
+    if p in _ARCHIVE_MOVES:                                  # `_meta/CHANGELOG.md`
+        return "archive" if _exists_cased(ROOT / _ARCHIVE_MOVES[p]) else None
+    bare = p[len(_PACK_DIR):] if p.startswith(_PACK_DIR) else p
+    if _exists_cased(ROOT / bare):                           # `core/x.md`, `docs/x.md`
+        return "pack-rooted" if bare == p else "install-rooted"
+    if _exists_cased(ROOT / "skills" / bare):                # `animations/references/x.md`
+        return "skill-rooted"
+    if _exists_cased(f.parent / p):                          # `../../x/references/y.md`
+        return "relative"
+    if _exists_cased(f.parent.parent / p):                   # `references/x.md` from a sibling
+        return "skill-dir"
+    return None
+
+
+def prose_paths() -> bool:
+    files = [p for p in ROOT.rglob("*.md")
+             if not (_LINK_SKIP_DIRS & set(p.parts))]
+    broken: list[str] = []
+    checked = 0
+    for p in files:
+        rel = p.relative_to(ROOT).as_posix()
+        if any(rel.startswith(x) for x in _LINK_EXEMPT):     # the historical record
+            continue
+        text = _blank_fences(p.read_text(encoding="utf-8", errors="replace"))
+        for m in _PROSE_PATH.finditer(text):
+            checked += 1
+            if _resolve_prose_path(m.group(1), p) is None:
+                broken.append(f"{rel}:{text[:m.start()].count(chr(10)) + 1} → {m.group(1)}")
+    if broken:
+        for b in broken[:25]:
+            bad(f"dead citation: {b}")
+        if len(broken) > 25:
+            bad(f"… and {len(broken) - 25} more")
+        return False
+    ok_(f"all {checked} backticked file citations resolve across {len(files)} files")
     return True
 
 

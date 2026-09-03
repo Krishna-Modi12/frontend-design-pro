@@ -19,7 +19,7 @@ Gives an agent read and search access to Twitter/X, Reddit, YouTube, GitHub,
 Bilibili, XiaoHongShu, RSS, and semantic web search (Exa over MCP), each with an
 ordered primary→backup backend list so one broken path falls through to the next.
 
-- **Install**: per the repo's own `docs/install.md` — it is agent-driven. Not
+- **Install**: per the repo's own `docs/INSTALL.md` — it is agent-driven. Not
   reproduced here.
 - **`agent-reach doctor`** — reports each channel's status: which backend is live,
   whether its config is complete, and a repair hint if it is not. A channel it
