@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { ReactElement, ReactNode } from "react";
+import type { ReactElement } from "react";
 import type { StaticImageData } from "next/image";
 import { cardShell, focusRing } from "../lib/tokens";
 
@@ -9,9 +9,6 @@ export interface ShowcaseCardProps {
   href: string;
   image: StaticImageData;
   variant: "live" | "static";
-  /** `ShowcaseWaiver`, when this card carries one — kept generic here so this
-      component stays agnostic to which project needs a disclosure. */
-  waiver?: ReactNode;
 }
 
 /**
@@ -21,8 +18,12 @@ export interface ShowcaseCardProps {
  * `<div onClick>`) — its accessible name is `name` + `tagline` + the trailing
  * CTA text, which already differs card to card, so the two "Live" cards
  * don't collapse to identical link names despite sharing a CTA label.
+ *
+ * The `waiver` slot this used to expose is gone: the one disclosure that used
+ * it now renders under the carousel rather than inside a slide, so the prop
+ * had no caller left and a documented-but-unused slot is worse than none.
  */
-export function ShowcaseCard({ name, tagline, href, image, variant, waiver }: ShowcaseCardProps): ReactElement {
+export function ShowcaseCard({ name, tagline, href, image, variant }: ShowcaseCardProps): ReactElement {
   return (
     <a
       href={href}
@@ -54,7 +55,6 @@ export function ShowcaseCard({ name, tagline, href, image, variant, waiver }: Sh
           {name}
         </h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-text-secondary">{tagline}</p>
-        {waiver}
         <span className="mt-4 text-sm font-medium text-accent">
           {variant === "live" ? "Open live →" : "Open full capture →"}
         </span>
