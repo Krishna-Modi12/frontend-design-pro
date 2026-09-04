@@ -6,6 +6,21 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege for the whole file, which had no `permissions:` block at all
+# and therefore inherited whatever the repository default happens to be. Nothing
+# in this workflow needs more: every job checks out, installs, and runs a check.
+# There is no `gh`, no `GITHUB_TOKEN` reference, and no push; the one artifact
+# upload authenticates with the runtime's own token rather than this one.
+#
+# `pages.yml` and `release.yml` already scope themselves this way. This file was
+# the outlier, which is the useful half of the review finding that prompted it —
+# `persist-credentials: false` on each of the six checkouts is the other half,
+# and is left off deliberately: with the token already read-only, a persisted
+# read-only credential in `.git/config` buys little for six lines of noise. If
+# any job here ever needs write access, raise it on that job, not here.
+permissions:
+  contents: read
+
 jobs:
   gates:
     runs-on: ubuntu-latest
