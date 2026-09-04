@@ -5,7 +5,10 @@ import type { ReactElement } from "react";
  * via the 21st.dev `search_logo` tool from svgl.app, inlined as markup so the
  * page has no runtime dependency on that host), each in a light/white or
  * full-colour variant chosen for `SectionInstall`'s one dark (`bg-invert`)
- * section. `aider`, `cline`, `continue` and `roo` have no catalogued mark —
+ * section — except `OpenAIIcon`, which is monochrome and draws in
+ * `currentColor`, so `AdapterIcon` pins that colour for it. See the note
+ * there: it is the reason two of these tiles once rendered at 1.000:1.
+ * `aider`, `cline`, `continue` and `roo` have no catalogued mark —
  * `MonogramIcon` covers those plus the two non-brands (`agents`, `generic`)
  * rather than fabricating a logo for any of them.
  */
@@ -112,11 +115,28 @@ export interface AdapterIconProps {
   label: string;
 }
 
-/** Decorative — the adapter's visible text label is the accessible name. */
+/**
+ * Decorative — the adapter's visible text label is the accessible name.
+ *
+ * **The wrapper sets `text-ink-invert`, and that is load-bearing.** A mark
+ * drawn in `currentColor` inherits from whatever encloses it, and the only
+ * place these render is `SectionInstall`'s inverted section — where the
+ * inherited ink is `--color-text-primary`, the page's near-black. `OpenAIIcon`
+ * shipped that way and measured **1.000:1** against the section ground:
+ * rgb(2,1,1) on rgb(1,1,3), an exactly invisible logo on two of the fourteen
+ * tiles, since that one component serves both `chatgpt` and `codex`. Nothing
+ * could catch it — no gate renders, and axe has no contrast rule for a
+ * decorative `aria-hidden` graphic. Pinning the colour here rather than on the
+ * one mark that was wrong means the next monochrome logo added to `ICONS`
+ * cannot reintroduce it.
+ */
 export function AdapterIcon({ dir, label }: AdapterIconProps): ReactElement {
   const Icon = ICONS[dir];
   return (
-    <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center [&>svg]:h-full [&>svg]:w-full">
+    <span
+      aria-hidden="true"
+      className="flex h-6 w-6 items-center justify-center text-ink-invert [&>svg]:h-full [&>svg]:w-full"
+    >
       {Icon ? <Icon /> : <MonogramIcon label={label} />}
     </span>
   );

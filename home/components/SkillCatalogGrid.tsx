@@ -38,7 +38,12 @@ export function SkillCatalogGrid({ skills }: SkillCatalogGridProps): ReactElemen
           rel="noreferrer"
           className={`${cardShell} ${cardInset} ${focusRing} flex flex-col transition-colors duration-150 ease-out hover:border-border-strong motion-reduce:transition-none`}
         >
-          <div className="flex items-center gap-3">
+          {/* `min-h-10` so the four cards agree. Three of the four group
+              labels wrap to two lines in a `lg:grid-cols-4` track and one
+              ("Meta") does not, which left that card's name sitting 4px
+              above its neighbours' — small, but these are four instances
+              of one object and the eye reads the row, not the card. */}
+          <div className="flex min-h-10 items-center gap-3">
             <SkillPreviewThumbnail group={skill.group} />
             <span
               className="rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide"
