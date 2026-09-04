@@ -520,6 +520,42 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
+## What's new in v14.13.0
+
+Two release-blocking checks that were not actually checking, and a landing page
+rebuilt around the one thing it had never shown.
+
+**`prose_paths()` reads the paths this pack writes in prose**, and fails the
+build on a dead one. The four addressing forms this repo uses were understood by
+nothing before it; the first run found 15 dead pointers, some shipped for eleven
+releases. The pre-commit guard, meanwhile, matched a list of porcelain spellings
+and so saw 3 of the 11 dirty states git can report — including a file staged and
+then edited again, which is green in `git status` while the commit carries only
+the older half. Both now have fixture suites asserting them in both directions.
+
+**`home/` has renderer checks in CI.** The `home-renderer` job runs
+`pages:verify`, so the landing page's axe, hydration, overflow and
+reduced-motion coverage is blocking rather than something someone remembers to
+run. It earned itself immediately: it caught a 12-violation contrast regression
+in the new showcase carousel before it shipped.
+
+**The hero draws the corpus instead of extruding it.** The WebGL object that
+stood here rendered as an anonymous grey brick and nothing about it was legible
+*as* the corpus. Same data, drawn flat: one mark per reference, width
+proportional to that file's real token count, wrapping like a page of set type,
+with one mark lit — the single reference a request like yours would load. It
+took `three`, a 388-line harness describing deleted features, and the page's
+only documented exception to its own interaction tier out with it.
+
+**The accent is a measured marine**, chosen on an OKLab ΔE matrix rather than on
+taste: contrast cannot discriminate between viable accents here, because two
+opposing WCAG floors leave a lightness window about four points wide at every
+hue.
+
+Full detail, including the two shipped defects that no gate could see — one of
+them two adapter logos rendering at exactly 1.000:1 — is in
+[`docs/CHANGELOG.md`](docs/CHANGELOG.md).
+
 ## What's new in v14.12.0
 
 Four skills that already covered responsive layout and UX performance in

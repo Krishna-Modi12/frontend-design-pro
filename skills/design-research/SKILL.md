@@ -2,7 +2,7 @@
 name: design-research
 description: Live web research protocol — browse component libraries, design galleries and motion sites, extract palettes, spacing, easing and interaction models, and convert them into typed constraints before any code is written. Use when the user points outward — "inspired by", "like this site", a mood board, a pasted URL, or a named source (Dribbble, Mobbin, Aceternity, 21st). Turns a reference into constraints; hand off to component-patterns to build it.
 metadata:
-  version: "14.12.0"
+  version: "14.13.0"
   core-deps:
     - core/design-tokens.md
     - core/component-api.md
