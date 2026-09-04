@@ -222,14 +222,23 @@ import { GeistMono } from "geist/font/mono";
   .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
 }
 
-/* SectionShowcase — 4 cards, 2 live + 2 static, same responsive breakpoints */
-.showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+/* SectionShowcase — 4 cards, 2 live + 2 static. Not a grid: a coverflow
+   carousel on a native scroll-snap track, one slide wide at every breakpoint,
+   with the neighbours rotated away in 3D. See `ShowcaseCoverflow`. */
+.showcase-track {
+  display: flex;
   gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  perspective: 1200px;
+  /* so the first and last card can still reach the centre */
+  padding-inline: max(1.25rem, calc(50% - var(--slide) / 2));
 }
-@media (min-width: 640px) {
-  .showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.showcase-track > * {
+  --slide: min(78vw, 21rem);
+  width: var(--slide);
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 ```
 
@@ -328,10 +337,14 @@ exists, and a harness whose docblock describes a deleted feature is worse than
 no harness.
 
 ### Special effects
-No custom cursor (`SLOP-06`), no page transition, no parallax. The one
-scroll-linked effect on the page is `RouteStroke` in `#how-it-works`: a routing
-path whose drawn length tracks the section's scroll, three plateaus stepping
-down through the three cards it labels. It replaced a flat 1px rule whose width
+No custom cursor (`SLOP-06`), no page transition, no parallax. Two
+scroll-linked effects, and they are linked to different scrollers.
+`RouteStroke` in `#how-it-works` tracks the *page* scroll: a routing path
+whose drawn length follows the section, three plateaus stepping down through
+the three cards it labels. `ShowcaseCoverflow` tracks its *own container's*
+horizontal scroll, ramping each slide's `rotateY`/`translateZ`/`scale` by its
+distance from the centre — so it moves only when the reader drags it, and
+never while the page itself is scrolling past. It replaced a flat 1px rule whose width
 was scrubbed the same way — the mechanic was already right and had no shape —
 and it runs on that section's existing ScrollTrigger rather than bringing a
 second animation runtime along for one stroke. Everything the hero once

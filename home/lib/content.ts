@@ -144,5 +144,10 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
  * see it, not just in a script comment or a nested README.
  */
 export const NEXUS_WAIVER =
-  "We check every skill-pack example against SLOP-05, which bans Nexus as a placeholder brand name — this page doesn't get a silent pass just because it's ours. The rename is scoped work, not a rushed edit here: sixteen files including a lockfile, plus a screenshot recapture through an out-of-CI browser harness. See demo/showcase/README.md for the full reasoning and tracking.";
+  "We check every skill-pack example against SLOP-05, which bans Nexus as a placeholder brand name — this page doesn't get a silent pass just because it's ours. The rename is scoped work, not a rushed edit here: sixteen files including a lockfile, plus a screenshot recapture through an out-of-CI browser harness.";
+
+/** Cited by `ShowcaseWaiver` as a real link. Split out of `NEXUS_WAIVER`
+    rather than left in the sentence so the component is not doing string
+    surgery on prose to find where the anchor starts. */
+export const NEXUS_WAIVER_SOURCE = "demo/showcase/README.md";
 
