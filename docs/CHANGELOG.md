@@ -4,6 +4,95 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.13.0] — 2026-09-04
+
+**Two gates that were not gating, and a landing page rebuilt around the one
+thing it had never actually shown. Nothing in the pack's content changed shape:
+19 skills, 8 core files, 119 references, 61 constraints, 11 release-blocking
+gates.**
+
+### Gates that were decorative, and are not now
+
+`prose_paths()` (Stage 3) reads every backticked path the pack writes in prose
+and fails the build on a dead one. The four addressing forms this repo actually
+uses were understood by nothing before it; the first run found 15 dead pointers,
+some of which had shipped for eleven releases. `npm run paths:test` holds its
+fixtures. The gate table in `docs/ARCHITECTURE.md` was unfrozen in the same
+pass, and 7 figures plus 17 of its 19 rows were wrong and are corrected.
+
+The pre-commit guard matched a list of porcelain spellings and so saw 3 of the
+11 dirty states git can report — including `MM`, a file staged and then edited
+again, which is green in `git status` while the commit carries only the older
+half. It matches the worktree column now (`^.[^ ]`), and `npm run hooks:test`
+asserts all 11 in both directions.
+
+Every authored-path check was case-sensitive where it meant to be
+case-insensitive (`[Rr]eferences` is not a case-insensitive match), and Gate 7c
+was repaired. `SLOP-04`'s bypass is closed.
+
+**`home/` now has renderer checks in CI.** The `home-renderer` job runs
+`pages:verify`, so the landing page's axe, hydration, overflow, reduced-motion
+and hero assertions are blocking rather than a thing someone remembers to run.
+`demo/` still has no rendered coverage in CI beyond the informational
+screenshot diff.
+
+### The landing page
+
+The accent moved off terracotta to a measured marine (`oklch(50.5% 0.088 225)`).
+Contrast does not discriminate between viable accents here — two opposing WCAG
+floors leave a lightness window about four points wide at every hue, so every
+candidate lands near the same ratios. Hue separation is the axis that decides,
+and the choice was made on an OKLab ΔE matrix against the pack's own status
+colours rather than on taste. Cream-plus-terracotta is also one of the AI-design
+clusters this pack's own wall names.
+
+The hero was a WebGL object extruded from the reference corpus. It rendered as
+an anonymous grey brick, its strata shimmered sub-pixel, and nothing about it
+was legible *as* the corpus. The concept was right and the medium was wrong, so
+the same data is drawn flat: one mark per reference, width proportional to that
+file's real token count, wrapping like a page of set type. One mark is lit — the
+single reference a request like the reader's would load — and pointing at any
+other lights it instead and prices it. It is one image to a screen reader rather
+than 119 tab stops, and it is server-rendered, which the old one could not be.
+
+Three things went with it: `three` and `@types/three`; a 388-line hero harness
+whose docblock described deleted features, replaced by assertions in
+`verify-home.mjs` that count marks against `data.generated.json` rather than a
+literal; and **the page's only documented exception to its own interaction
+tier**. The hero pin existed to drive a scroll progress the object read. Nothing
+on the page pins now.
+
+The showcase is a coverflow carousel on a native scroll-snap track — platform
+drag and momentum, no Swiper, no second animation runtime, and a plain
+horizontal scroller when JavaScript does not run.
+
+### Two defects that no gate could see
+
+Both were found by walking the rendered page, and both had shipped.
+
+Two of the fourteen adapter marks rendered at **1.000:1** on the install
+section — not low contrast, the same colour: `rgb(2,1,1)` on `rgb(1,1,3)`. One
+icon component drew in `currentColor` and so inherited the page's near-black ink
+onto the one inverted surface, and it serves two adapters. Axe has no contrast
+rule for a decorative `aria-hidden` graphic, correctly, so the chain was green
+throughout. Fixed on the wrapper so the next monochrome logo cannot rearm it.
+
+The carousel's first draft faded its off-centre slides, which looked right and
+cost 12 serious contrast failures — fading a card fades its text and its
+background together. Caught by `pages:verify` before it shipped, which is the
+new CI job earning itself on its first release.
+
+### Also
+
+References moved 117 → 119 (`emilkowalski/skills` and `ibelick/ui-skills`
+ingested: 2 new references, 7 folds into existing files, 11 declines). A
+reference freshness pass corrected 8 perishable claims, retargeted the Vercel
+AI SDK reference to AI SDK 7, and renamed `framer-motion.md` to `motion.md`.
+`design-research` gained 4 sources. The anti-slop wall names the sage-green
+cream-serif variant and hedges its italic-serif display claim.
+
+---
+
 ## [14.12.0] — 2026-08-28
 
 **Responsive-layout and UX-performance depth on four existing skills — no new
