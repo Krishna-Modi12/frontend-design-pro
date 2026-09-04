@@ -144,6 +144,28 @@ async function checkRender(browser, base) {
   await ctx.close();
 }
 
+/**
+ * Elements holding real text at `opacity: 0` — the shape a reveal that never
+ * fired leaves behind. Leaf nodes only, so a parent caught mid-tween does not
+ * report its entire subtree as stuck.
+ *
+ * Declared once and handed to `page.evaluate` by both callers rather than
+ * inlined twice: the two checks assert the same property about two different
+ * paths (the reduced-motion skip and the 4s timeout fallback), and a predicate
+ * that drifts between them would let one of the paths quietly stop being
+ * checked.
+ */
+const collectStuckAtZero = () => {
+  const stuck = [];
+  for (const el of document.querySelectorAll("main *")) {
+    const cs = getComputedStyle(el);
+    if (parseFloat(cs.opacity) === 0 && el.children.length === 0 && (el.textContent ?? "").trim()) {
+      stuck.push(el.tagName + "." + Array.from(el.classList).slice(0, 2).join("."));
+    }
+  }
+  return stuck;
+};
+
 /** Every `[data-fade]`-equivalent (GSAP `.opacity-0` targets, `.reveal`
     sections) must be visible immediately under reduced motion. */
 async function checkReducedMotion(browser, base) {
@@ -155,16 +177,7 @@ async function checkReducedMotion(browser, base) {
   await settle(page);
   await page.waitForTimeout(300);
 
-  const hidden = await page.evaluate(() => {
-    const stuck = [];
-    for (const el of document.querySelectorAll("main *")) {
-      const cs = getComputedStyle(el);
-      if (parseFloat(cs.opacity) === 0 && el.children.length === 0 && (el.textContent ?? "").trim()) {
-        stuck.push(el.tagName + "." + Array.from(el.classList).slice(0, 2).join("."));
-      }
-    }
-    return stuck;
-  });
+  const hidden = await page.evaluate(collectStuckAtZero);
   report("every revealed section is visible under prefers-reduced-motion", hidden);
 
   await ctx.close();
@@ -198,18 +211,28 @@ async function checkTimeoutFallback(browser, base) {
   // Switch back to real time so the reveal's own 0.6s GSAP tween can finish
   // normally rather than needing the fake clock to simulate every frame.
   await page.clock.resume();
-  await page.waitForTimeout(800);
 
-  const hidden = await page.evaluate(() => {
-    const stuck = [];
-    for (const el of document.querySelectorAll("main *")) {
-      const cs = getComputedStyle(el);
-      if (parseFloat(cs.opacity) === 0 && el.children.length === 0 && (el.textContent ?? "").trim()) {
-        stuck.push(el.tagName + "." + Array.from(el.classList).slice(0, 2).join("."));
-      }
-    }
-    return stuck;
-  });
+  // Poll rather than wait a fixed 800ms. The fixed wait was a race, and CI
+  // caught it the first time this harness ran on a hosted runner: a headline
+  // word span reported stuck at opacity 0 on the dev pass while the production
+  // pass in the same run was clean. Nothing about the page was wrong. The
+  // hero's load sequence is a `gsap.from({ opacity: 0 })` whose last staggered
+  // word settles ~0.86s after the tween starts, and on a cold dev server
+  // hydration can land AFTER `clock.resume()` — so the whole animation ran
+  // inside a window sized only for its tail, and the check sampled it midway.
+  //
+  // Polling leaves the assertion exactly as strong: a reveal that genuinely
+  // never fires is still stuck when the deadline passes, and still reported
+  // with the element that failed. What it removes is the dependency on how
+  // fast the machine happened to hydrate, which is not something this check
+  // has any business measuring.
+  let hidden = [];
+  const deadline = Date.now() + 5_000;
+  for (;;) {
+    hidden = await page.evaluate(collectStuckAtZero);
+    if (hidden.length === 0 || Date.now() >= deadline) break;
+    await page.waitForTimeout(100);
+  }
   report("the 4s reveal fallback fires when scroll never triggers it", hidden);
 
   await ctx.close();
