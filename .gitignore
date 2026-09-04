@@ -39,3 +39,10 @@ tsconfig.golds.*.json
 
 # Agent scratch worktrees
 .claude/
+
+# Output from the local `impeccable` design-critique skill. Not part of the pack
+# and never committed. It was showing as untracked in three worktrees at once,
+# and persistent untracked noise in `git status` is the exact condition that
+# produced commit 30d7a90 — 22 files swept in from a second session by a
+# `git add -A`. Cheaper to stop generating the noise than to guard it.
+.impeccable/

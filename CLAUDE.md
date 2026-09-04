@@ -51,8 +51,12 @@ npm run banner:check && npm run pages:data:check   # what CI will assert
 
 Renderer-level checks, for when you touch anything under `demo/` or `home/`.
 These need a browser and real vendor libraries, so they live in
-`tools/screenshots/` (its own package.json, absent from the archive manifest) and
-are **not** in CI:
+`tools/screenshots/` (its own package.json, absent from the archive manifest).
+**One of them now runs in CI and the rest still do not** — the `home-renderer`
+job runs `pages:verify`, so `home/`'s axe, hydration, overflow, reduced-motion
+and hero coverage is blocking. **`demos:verify`, `demos:typecheck` and
+`screenshots` are the manual ones**, so `demo/` still has no rendered coverage
+in CI beyond the informational screenshot diff:
 
 ```bash
 npm run demos:verify     # page errors · console errors · hydration · axe WCAG 2.1 AA
@@ -216,10 +220,15 @@ Nexus — and no constraint read them, so two gold examples shipped "Acme Inc." 
 worked example built to be copied. `SLOP-05` reads them now; `SLOP-01` picked up
 `user123` and `$99.99`, which the wall names in the same breath as John Doe.
 Still unenforced from that same line, and worth a manual look: equal-height card
-grids, custom cursors, `<div>`-built fake screenshots, and numbered `01/02/03`
-markers on content that is not a sequence. (Gradient fills used to be a separate,
-unscoped claim on this line too — it now just restates `TYP-03`, which the regex
-suite already enforces, so it dropped off this list.)
+grids, `<div>`-built fake screenshots, and numbered `01/02/03` markers on content
+that is not a sequence. (Gradient fills used to be a separate, unscoped claim on
+this line too — it now just restates `TYP-03`, which the regex suite already
+enforces, so it dropped off this list.) **Custom cursors were on this list until
+now and should not have been:** `SLOP-06` has banned `cursor-none` and
+`cursor: url(...)` for a release, and the file every session is told to read
+first was sending readers to check by hand something the suite already fails.
+This list is hand-maintained and no gate reads it — re-derive it from
+`CONSTRAINTS` before trusting it, the same way you would any figure here.
 **Before widening a rule to a reference file, note that the suites read
 `.tsx/.ts/.js/.jsx/.html` only** — 436,039 tokens of markdown depth is outside
 every content check except Gate 10's 19 ban-shaped fragments.

@@ -142,8 +142,21 @@ JSON is.
 
 ```bash
 npm run pages:verify     # from the repo root — home/'s own dev AND prod servers,
-                         # axe, overflow, reduced motion, the router, the checker
+                         # axe, overflow, reduced motion, the router, the checker,
+                         # and the hero's three corpus assertions
 ```
+
+It is a repo-root script, not a `home/` one — the `cd home` under "Run it" above
+does not apply here, and running it from inside `home/` fails with a missing
+script.
+
+**It runs in CI now**, in the blocking `home-renderer` job. Until that job
+existed this harness had no caller at all: `home/`'s entire CI footprint was the
+vitest router suite and the informational screenshot diff, so everything this
+checks — hydration, axe on the rendered DOM, overflow at three widths in LTR and
+RTL — was green by never being asked. Run it locally anyway before pushing
+anything that touches this app; it is a good deal faster than waiting for the
+runner.
 
 ## Recapture
 

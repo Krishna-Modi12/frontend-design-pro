@@ -6,6 +6,21 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege for the whole file, which had no `permissions:` block at all
+# and therefore inherited whatever the repository default happens to be. Nothing
+# in this workflow needs more: every job checks out, installs, and runs a check.
+# There is no `gh`, no `GITHUB_TOKEN` reference, and no push; the one artifact
+# upload authenticates with the runtime's own token rather than this one.
+#
+# `pages.yml` and `release.yml` already scope themselves this way. This file was
+# the outlier, which is the useful half of the review finding that prompted it —
+# `persist-credentials: false` on each of the six checkouts is the other half,
+# and is left off deliberately: with the token already read-only, a persisted
+# read-only credential in `.git/config` buys little for six lines of noise. If
+# any job here ever needs write access, raise it on that job, not here.
+permissions:
+  contents: read
+
 jobs:
   gates:
     runs-on: ubuntu-latest
@@ -232,6 +247,55 @@ jobs:
       - name: Router tests
         working-directory: home
         run: npm test
+
+  # The renderer checks for home/. Until now they existed, passed, and ran
+  # nowhere — `pages:verify` was a real, working harness with no caller, so
+  # home/'s entire CI footprint was the router suite above and the informational
+  # screenshot diff below. A check nobody runs is worth what an unrun check is
+  # worth, which is why this job exists.
+  #
+  # What it adds that no other job can see: axe WCAG 2.1 AA on the rendered DOM,
+  # React hydration mismatches, horizontal overflow at 390/768/1920 in both LTR
+  # and RTL, the reduced-motion paths, whether the router and the checker do what
+  # the copy beside them says, and the three hero assertions — one mark per
+  # reference counted against `data.generated.json`, exactly one lit at rest, all
+  # of it in the server-rendered HTML. Every one of those is invisible to a
+  # source-reading gate; `CLAUDE.md`'s "No gate renders anything" section lists
+  # what that blindness has already cost, and every item on that list was found
+  # by a human looking at a page rather than by the green chain.
+  #
+  # Blocking, deliberately, unlike visual-regression below: these are assertions
+  # about the DOM, not a pixel diff against a baseline, so there is no threshold
+  # to tune and no font drift to absorb.
+  home-renderer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # tools/screenshots ships without react/react-dom of its own and resolves
+      # them by walking up to this install — root first, or the servers it
+      # starts have no React at all. Same ordering as visual-regression below.
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      - name: Install home/ dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Renderer checks — hydration, axe AA, overflow, hero (dev and prod)
+        run: npm run pages:verify
 
   # No gate in this repository renders a page and compares it to what it
   # rendered last time — this is that check, for the three demos that render
