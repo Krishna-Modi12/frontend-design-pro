@@ -483,7 +483,7 @@ npm run dev   # http://localhost:3000
 ### See it in action
 
 <div align="center">
-<a href="https://krishna-modi12.github.io/frontend-design-pro/"><img src="home/screenshot.png" alt="frontend-design-pro's own homepage — warm off-white ground, a Three.js shader-mesh glow behind a canvas particle field tracing the real headline 'Change what your agent reaches for.', and the same terracotta accent carried through every call to action on the page" width="80%"></a>
+<a href="https://krishna-modi12.github.io/frontend-design-pro/"><img src="home/screenshot.png" alt="frontend-design-pro's own homepage — warm off-white ground, a single WebGL-lit object of stacked strata turning behind the real headline 'Change what your agent reaches for.', and the same marine-blue accent carried through every call to action on the page" width="80%"></a>
 <br><sub><a href="https://krishna-modi12.github.io/frontend-design-pro/">Open it live</a> · <a href="home/">source</a> · <a href="home/screenshot-full.png">full page</a> — a curated skill catalog, the router, the checker and four real shipped projects are further down, all running the real thing.</sub>
 </div>
 
