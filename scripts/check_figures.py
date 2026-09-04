@@ -633,6 +633,7 @@ SCAN: Sequence[str] = (
     # wholesale. Its prose `description` is a live claim and is audited by
     # `check_metadata` instead, field by field.
     ".claude-plugin/*.json",
+    ".claude-plugin/*.md",
     # The issue template asks a reporter which gate should have caught their bug
     # and then lists the gates; the workflows describe what they run. Both were
     # two gates behind — the template could not express "Gate 11 missed it"

@@ -17,12 +17,12 @@ means the opposite of theirs.
 | | Behind their `./skills/` | Behind our `./skills/` |
 |---|---|---|
 | What is there | The skills they want registered | The 19 skills the router hides |
-| Correct outcome | 40 skills registered | **1** skill registered — the router |
+| Correct outcome | all 40 of theirs registered | **1** skill registered — the router |
 
 Our `SKILL.md` sits at the **repo root**, beside `core/` and `skills/`. It is the
 registry, it is the only file always read, and it is what does the routing. A
 pointer at `./skills/` would hand a host the nineteen it is meant to route
-between, turning a 2,088-token registry into nineteen skills competing to match
+between, turning a 2,149-token registry into nineteen skills competing to match
 each request — the same inversion `docs/INSTALL.md` tells people never to trigger
 with `--full-depth`, arriving by a different door.
 
