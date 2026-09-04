@@ -34,7 +34,7 @@
  * always so. Two heroes ago a shader carried contrast and cooling maths
  * hand-tuned against the `signature` accent/bg-page pair specifically, so
  * letting it take an arbitrary hue put that tuning at risk per-hue, and only
- * `signature` reached WebGL at all. `HeroCorpus` draws the corpus in flat
+ * `signature` reached WebGL at all. `HeroCorpusRing` draws the corpus in flat
  * marks of `--color-accent` and `--color-text-primary` with no per-hue
  * maths of any kind, so every world renders the same hero correctly by
  * construction rather than by tuning. The four accents below are still what

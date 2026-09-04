@@ -321,6 +321,49 @@ async function checkInteractivity(browser, base) {
   const litCount = await page.locator("[data-corpus-mark][data-lit]").count();
   if (litCount !== 1) problems.push(`hero corpus lit ${litCount} marks at rest, expected 1`);
 
+  // ...AND IT IS ACTUALLY ON SCREEN. This is the assertion the three above
+  // could not make, and the one that mattered: the marks were present,
+  // counted correctly and exactly one was lit while ALL 119 SAT AT OPACITY 0
+  // AND NEVER MOVED. `Hero.tsx` ran a `gsap.from()` over them while
+  // `HeroCorpus` set the same property from React and transitioned it in CSS;
+  // the tween wrote its start state and stalled. Measured on the shipped
+  // production build: 0 of 119 visible at 500ms, still 0 at 8s. Every reader
+  // with motion enabled met an empty half-hero.
+  //
+  // Three things hid it. The checks above count nodes, not pixels. Axe has no
+  // opinion about a decorative figure being invisible. And the reveal-fallback
+  // sweep only looks at elements holding TEXT, which a `<line>` never does.
+  //
+  // Default motion specifically: under `prefers-reduced-motion` the hero's
+  // effect returns before it touches the corpus, so the broken path was the
+  // one nothing ran. A tolerance rather than `> 0` because a tick mid-
+  // transition is fine and a tick that never arrives is not; 1.2s is well past
+  // the 200ms the marks transition over and the 1.6s head sweep does not touch
+  // opacity.
+  const motionCtx = await browser.newContext({
+    viewport: VIEWPORTS[2],
+    reducedMotion: "no-preference",
+  });
+  const motionPage = await motionCtx.newPage();
+  await motionPage.goto(base, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await motionPage.waitForSelector("[data-corpus-mark]", { state: "attached", timeout: 90_000 });
+  await motionPage.waitForTimeout(1200);
+  const invisibleMarks = await motionPage.evaluate(() => {
+    let hidden = 0;
+    for (const el of document.querySelectorAll("[data-corpus-mark]")) {
+      const cs = getComputedStyle(el);
+      const alpha = parseFloat(cs.opacity) * parseFloat(cs.strokeOpacity || "1");
+      if (!(alpha > 0.02)) hidden += 1;
+    }
+    return hidden;
+  });
+  await motionCtx.close();
+  if (invisibleMarks > 0) {
+    problems.push(
+      `hero corpus invisible: ${invisibleMarks} mark(s) at opacity 0 under default motion`,
+    );
+  }
+
   // The corpus is server-rendered: it is the paint before any JS runs, and
   // what a reader with JavaScript disabled sees. `next/dynamic` with
   // `ssr: false` used to hold the old hero out of this HTML entirely.
@@ -397,6 +440,7 @@ async function checkInteractivity(browser, base) {
   // worse failure than a red one.
   report("hero corpus draws one mark per reference", problems.filter((p) => p.includes("hero corpus drew")));
   report("hero corpus lights exactly one at rest", problems.filter((p) => p.includes("hero corpus lit")));
+  report("hero corpus is visible under default motion", problems.filter((p) => p.includes("hero corpus invisible")));
   report("hero corpus is server-rendered", problems.filter((p) => p.includes("hero corpus server-rendered")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report(

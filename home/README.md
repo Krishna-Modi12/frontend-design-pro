@@ -20,11 +20,12 @@ and a terracotta accent. The ground stayed; the accent did not, and
 [`tokens.css`](tokens.css) carries the three measurements that retired it — it
 was out of the sRGB gamut, it was ΔE 0.085 from the page's own danger colour,
 and it was most of a palette this pack's wall tells agents not to reach for.
-It is a marine blue now. The hero has been through four shapes: a canvas
+It is a marine blue now. The hero has been through five shapes: a canvas
 particle-typography hero, a Three.js shader-mesh background, a single WebGL
-object extruded from the pack's own reference tree, and now that same corpus
-drawn flat. All of it is checked against this pack's own rules before shipping,
-not just against a brief:
+object extruded from the pack's own reference tree, that same corpus drawn flat
+as a block of set type, and now that block closed into a ring. All of it is
+checked against this pack's own rules before shipping, not just against a
+brief:
 
 - Every token in [`tokens.css`](tokens.css) is measured, not eyed — four pairs
   in the original brief's values failed WCAG AA and were corrected (`text-muted`
@@ -32,17 +33,45 @@ not just against a brief:
   `ink-invert` pair; `border` needed a second, darker `border-strong` for
   control boundaries, since the decorative border alone clears nothing at
   WCAG 1.4.11's 3:1).
-- **The hero is the reference corpus, drawn to scale.**
-  [`components/HeroCorpus.tsx`](components/HeroCorpus.tsx) draws one mark per
-  `skills/*/references/*.md`, width proportional to that file's real token
-  count, flowing and wrapping like a page of set type with a wider gap between
-  skills so the 19 groups read as paragraphs. The data comes from
+- **The hero is the reference corpus, drawn to scale, closed into a ring.**
+  [`components/HeroCorpusRing.tsx`](components/HeroCorpusRing.tsx) draws one
+  tick per real file under a skill's `references/` directory, tick length
+  scaled by that file's real token count, with a wider angular gap at each of
+  the 19 skill boundaries so the groups read as groups. The data comes from
   `lib/data.generated.json`, whose generator asserts both the reference count
   and their token sum against `scripts/check_figures.py --truth` before
   writing — so the drawing cannot disagree with the figures printed beside it.
-  One mark is lit: the single reference this pack would load to build a page
-  like this one. Point at any other and it lights instead, and the caption
-  prices it — which is the architecture demonstrated rather than asserted.
+  One tick is lit and breaks the ring's outer edge: the single reference this
+  pack would load to build a page like this one. Point at any other and the
+  read head travels to it and prices it — which is the architecture
+  demonstrated rather than asserted.
+
+  **Why a ring rather than the block it replaces.** The sentence beside it
+  states a *ratio* — one skill loads, the rest stay on disk — and a ratio is a
+  part against a whole. A closed loop shows a whole without printing a scale
+  under it; a flush-left block has a beginning and an end and shows neither.
+  The ticks hang inward from a fixed outer edge rather than growing outward
+  from an inner one, which is the difference between a defined body and a
+  sunburst: grown outward, 119 files ranging from 614 to 16,369 tokens draw a
+  spiky asterisk with no boundary.
+
+  **The loop is traversed once, not spun.** A read head circles the ring on
+  load and comes to rest on the lit tick, which is what a request does to this
+  corpus. It is one CSS transition on one `stroke-dashoffset`, so the page
+  schedules no work once it lands — this app has already measured what a
+  perpetual idle rotation costs, and nothing here animates at rest.
+
+  **The bug this rebuild exists to fix, recorded because the gates all passed
+  through it.** `Hero.tsx` ran `gsap.from(marks, { opacity: 0, ... })` over all
+  119 marks while the component set the same property from React and
+  transitioned it in CSS. Two systems owned one property and the tween lost:
+  measured on the shipped production build, **0 of 119 marks were visible at
+  500ms and still 0 at 8s**. Every reader with motion enabled met an empty
+  half-hero beside a caption describing marks that were not there. Under
+  `prefers-reduced-motion` the hero's effect returns before it reaches the
+  corpus, so the path that worked was the one nothing exercised. The rule now
+  is **one owner per property**: no animation library touches a tick, and
+  `pages:verify` asserts the marks are on screen rather than merely present.
 - **The WebGL object it replaced is gone, and so is `three`.** That object had
   the same data and the same idea, and it did not survive contact with a
   reader: it rendered as an anonymous grey brick with no material and no
@@ -143,7 +172,7 @@ JSON is.
 ```bash
 npm run pages:verify     # from the repo root — home/'s own dev AND prod servers,
                          # axe, overflow, reduced motion, the router, the checker,
-                         # and the hero's three corpus assertions
+                         # and the hero's four corpus assertions
 ```
 
 It is a repo-root script, not a `home/` one — the `cd home` under "Run it" above
