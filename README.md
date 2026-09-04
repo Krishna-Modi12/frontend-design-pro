@@ -520,6 +520,47 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
+## What's new in v14.14.0
+
+**The demo that broke this pack's own rule stopped breaking it — and the claim
+that replaced its waiver is itself checked.**
+
+`demo/showcase` was called *Nexus*, one of the four placeholder brand names the
+anti-slop wall bans and `SLOP-05` matches. It is **Wavelet** now: a wavelet
+transform is how you localise an anomaly in a time series, which is what the
+fictional product does, so the name is sector-true rather than decorative.
+
+The `GRANDFATHERED` waiver that let it ship is deleted, and what replaced it is
+the more useful half. Three documents state that the suite runs with nothing
+waived — including this one and the public homepage — so `grandfathered_check()`
+runs on every invocation of the constraint suite and fails if a waiver returns
+while those documents still say otherwise. Adding one back stays allowed and is
+sometimes the honest move; it is deliberately a four-file act, because the pages
+advertising the emptiness have to stop in the same commit. The sequence is the
+recommended one for any rule you cannot satisfy the day you write it: ship the
+rule, waive the instance, print the waiver, close it.
+
+**`demo/` has renderer checks in CI.** Both deployed demos are compiled by the
+chain and neither was ever rendered by it — Gate 9 proves the showcase
+type-checks against real vendor typings and proves nothing about what a browser
+does with it. The new blocking `demo-renderer` job runs `demos:verify` and then
+`showcase:verify`; two commands, because the first mounts the stub-typed demos
+inside the screenshot harness and never touches the showcase, so running only it
+skips the WebGL hero and the only real interactive flow in `demo/`. Every
+rendered surface this project publishes is now checked, and both renderer jobs
+block.
+
+The same pass found `A11Y-04` failing on a deployed page: the showcase had no
+skip link, so a keyboard reader walked the whole nav before reaching the
+headline. `demo/` now passes 4/4 projects at 44/44 with nothing waived.
+
+**Gate 11 could not see the plugin manifest's own README.** `SCAN` carried
+`.claude-plugin/*.json` and not `.claude-plugin/*.md`, so the file explaining why
+`"skills": ["./"]` is the right pointer was never read — and the registry size it
+quoted had been stale for releases while the gate reported no drift at all. That
+is the failure this project treats as worse than a wrong figure, because a green
+run reads as proof. Now 0 drifts over 153 claim surfaces.
+
 ## What's new in v14.13.0
 
 Two release-blocking checks that were not actually checking, and a landing page
