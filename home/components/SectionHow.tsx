@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import type { ReactElement } from "react";
-import { gsap, ScrollTrigger } from "../lib/gsapClient";
+import RouteStroke from "./RouteStroke";
 import RouterPanel from "./RouterPanel";
 import BrowserChrome from "./BrowserChrome";
 import ChevronIcon from "./ChevronIcon";
@@ -72,41 +71,19 @@ export interface SectionHowProps {
 }
 
 /**
- * Three asymmetric cards (35/30/35, per the brief) with a connecting line
- * that fills in as the section scrolls — a GSAP ScrollTrigger `scrub`, not a
- * moving dot on an SVG path as the brief sketches, which is a defensible
- * simplification of the same idea (progress made visible through scroll) at
- * a fraction of the implementation cost. Below the cards sits the section's
- * actual demonstration: the live router, not a fourth static card — see the
- * plan note on why the two existing interactive panels were relocated here
- * rather than dropped.
+ * Three asymmetric cards (35/30/35, per the brief) over a routing path that
+ * draws itself as the section scrolls — see `RouteStroke`, which owns the
+ * geometry and the scrub. This started life as the brief's "moving dot on an
+ * SVG path", was cut down to a 1px rule whose width was scrubbed 0→100% on
+ * cost grounds, and is now the path again: three plateaus stepping down
+ * through the three cards, because narrowing is what the section describes
+ * and a straight rule cannot say it. The cost that justified the cut turned
+ * out to be one `getTotalLength()` and a dash offset on the trigger that was
+ * already there. Below the cards sits the section's actual demonstration:
+ * the live router, not a fourth static card.
  */
 export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
   const { ref: cardsRef } = useStaggerReveal();
-  const lineRef = useRef<HTMLDivElement | null>(null);
-  const fillRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const line = lineRef.current;
-    const fill = fillRef.current;
-    if (line === null || fill === null) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      fill.style.width = "100%";
-      return;
-    }
-
-    gsap.set(fill, { width: "0%" });
-    const trigger = ScrollTrigger.create({
-      trigger: line,
-      start: "top 75%",
-      end: "bottom 60%",
-      scrub: 1,
-      onUpdate: (self) => {
-        fill.style.width = `${Math.round(self.progress * 100)}%`;
-      },
-    });
-    return () => trigger.kill();
-  }, []);
 
   return (
     <section id="how-it-works" data-section-surface className={`${sectionSpacing} bg-bg-page`}>
@@ -118,9 +95,11 @@ export function SectionHow({ skills, figures }: SectionHowProps): ReactElement {
           Spec first. Constrain always. Generate once.
         </h2>
 
-        <div ref={lineRef} className="relative mt-12 hidden h-px bg-border lg:block">
-          <div ref={fillRef} className="absolute inset-y-0 left-0 h-px bg-accent" />
-        </div>
+        {/* Desktop only, and deliberately: the path runs left-to-right
+            through three side-by-side cards, and below `lg:` those cards
+            stack, so the geometry would be describing a layout that is not
+            on screen. */}
+        <RouteStroke className="mt-12 hidden lg:block" />
 
         {/* v2.2: cards tightened (gap-8→gap-6, cardInset→p-5) and the router
             panel below given a visual lead-in + soft accent-glow frame, so the

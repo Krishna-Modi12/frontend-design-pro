@@ -30,15 +30,16 @@
  * set: the four accents now sit at H 120 / 225 / 270 / 310 instead of
  * stranding one of them down at H 45, between the two status hues.
  *
- * **All four worlds now render the hero's object.** They did not use to: the
- * shader this replaced carried contrast and cooling maths hand-tuned against
- * the `signature` accent/bg-page pair specifically, so letting it take an
- * arbitrary hue would have put that tuning at risk per-hue, and only
- * `signature` reached WebGL at all. `HeroDepthScene` has no per-hue tuning —
- * it reads `--color-accent` at mount and lights one object with it, over the
- * page's own ink — so a world is now a ground texture and a hue rather than a
- * different hero. The four accents below are still what makes each world
- * legible, and the ratios above are still what makes each one legal.
+ * **A world is a ground texture and a hue, not a different hero.** It was not
+ * always so. Two heroes ago a shader carried contrast and cooling maths
+ * hand-tuned against the `signature` accent/bg-page pair specifically, so
+ * letting it take an arbitrary hue put that tuning at risk per-hue, and only
+ * `signature` reached WebGL at all. `HeroCorpus` draws the corpus in flat
+ * marks of `--color-accent` and `--color-text-primary` with no per-hue
+ * maths of any kind, so every world renders the same hero correctly by
+ * construction rather than by tuning. The four accents below are still what
+ * makes each world legible, and the ratios above are still what makes each
+ * one legal.
  *
  * Verification, stated per `CLAUDE.md`'s own "state the gap plainly"
  * convention: full `pages:verify` (hydration, axe, overflow) runs in

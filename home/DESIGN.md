@@ -9,7 +9,7 @@
 **Tone**: calm and evidentiary — proves claims live instead of asserting them — NOT hype-driven, NOT loud, NOT generic-SaaS-dark.
 **Feel**: reading a well-typeset technical report — paper with a faint tooth, ruled between sections — that occasionally moves under your cursor.
 
-**Interaction tier**: L2 fluid interaction (scroll-linked reveals, on-load stagger, live client-computed demos — no scroll-jacking), **with exactly one documented exception: the hero's pinned sequence** (§7). Nothing else on the page pins, and the exception is bounded — see §7 for what it is allowed to do and what it is measured against.
+**Interaction tier**: L2 fluid interaction (scroll-linked reveals, on-load stagger, live client-computed demos — no scroll-jacking), **with no exceptions**. There was one, for the hero's pinned sequence, for as long as the hero was a WebGL object that needed a scroll-driven progress value; §7 records why it went when the object did. **Nothing on this page pins.**
 **Dependencies**: `gsap@3.12.7` (+ `ScrollTrigger`) for tweens and scroll triggers, `lenis@1.1.20` for the smooth-scroll driver, `geist@1.3.1` self-hosted via `next/font` for type (zero external font requests — stronger than even a Google Fonts `@import`, which section 3 below departs from the upstream template for).
 
 ## 2. Color Palette & Roles
@@ -55,7 +55,7 @@
 - **New components (`ShowcaseCard` badges, `SectionSkillCatalog` card emphasis) use `--color-emphasis`/`--color-emphasis-bg`, never `--color-accent`.** This is a distinct, narrower rule: accent-level color is reserved for primary calls-to-action and the page's own live-metric numbers, so a badge on a screenshot card never competes with an actual "Get the skill pack" button for visual priority. `--color-emphasis`'s exact contrast ratios (text-on-bg, and against `--color-emphasis-bg`) are stated here as measured-in-spirit but must be re-verified against `pages:verify`'s axe pass once built — flagged explicitly in the plan as a Phase 2 risk, not silently assumed.
 - One ground family, one accent hue, one emphasis-neutral family. Every gradient on the page is a soft single-hue accent wash fading to transparent, never a purple→pink→blue AI-gradient shape (`COL-03`). **The hero rebuild narrowed this sanction rather than widening it**: the hero's radial accent glow and the radial `bg-page` scrim that used to sit over it are both gone, so the only gradient left anywhere is the optional, non-default `mesh` world's three positioned `radial-gradient` washes of `color-mix(in oklch, var(--color-accent) …, transparent)` (`lib/tokens.ts`). The default `signature` world, the hero, and the base page now carry **no gradient at all**; `signature`'s grain texture (§6) is an alpha-only desaturated noise — not a gradient and not a colour — so it adds tooth without adding a hue.
 - **The accent is a marine blue, and it was chosen by measurement.** It replaced a terracotta that had shipped since the page was built, for three reasons that are all recorded in full in [`tokens.css`](tokens.css)'s Accent comment: the old value was outside the sRGB gamut (blue channel −0.0153, clipped by every browser, so the authored colour was never the rendered one); it sat at OKLab ΔE 0.085 from **both** `--color-danger` and `--color-warning`, putting the page's primary call-to-action almost exactly on top of its own critical-severity marker; and cream-plus-terracotta is two thirds of a cluster this pack's own always-loaded wall names as an AI-design default. Marine's worst separation from any other chromatic token is 0.167 — about double — and it is in gamut. The cost, stated because it is real: chroma drops from 0.157 to 0.088, so the accent carries visibly less force than it did. On a page whose keywords are *warm, restrained, evidentiary* that reads as consistent, but it is a genuine change in temperature and it was checked in a browser, not assumed.
-- **The hero's object introduces no colour.** `HeroDepthScene` lights the slab with two tokens read at runtime — `--color-text-primary` and `--color-bg-page`, mixed to a warm taupe body — and spends `--color-accent` only on the silhouette rim, the stratum under the pointer, and the one that ignites. The accent is deliberately *not* mixed into the body: an early pass did, and the object read as a brick in the accent hue, which is the same restraint failure as a second accent hue wearing the first one's clothes.
+- **The hero introduces no colour beyond the accent, and spends it on exactly one mark.** `HeroCorpus` draws all 119 references in `--color-text-primary` at 22% and lights a single one in `--color-accent`. That ratio is the restraint rule made literal: the accent marks the one thing a request actually reaches for, and the other 118 are the page's ink. The WebGL object this replaced had to argue the same point harder — it kept the accent off its body and onto the silhouette rim only, because an early pass mixed it in and the object read as a brick in the accent hue. A flat drawing gets there by construction instead of by tuning.
 - **`--color-bg-surface` is a deeper cream at the same lightness (`oklch(95% 0.022 80)`), not a darker grey.** Lightness is pinned at 95% because accent-as-text on `bg-surface` is the page's tightest ratio (4.94); the surface can gain chroma and shift toward `bg-page`'s own H=80, but it cannot lose luminance. Under the terracotta this replaced that ratio was 4.50 — exactly the AA floor, no headroom at all. The pin stays anyway: the constraint is structural, not a property of whichever accent is current. The warmth plus the §6 seams and grain are what separate the below-hero sections — a lightness step is not available here.
 
 ## 3. Typography Rules
@@ -295,36 +295,50 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
    parity is required, per the existing <details data-disclosure> precedent). */
 ```
 
-### The hero's pinned sequence — the one exception to the tier
+### The hero: no pin, and no exception left
+This page used to carry exactly one documented exception to its stated L2
+interaction tier — a full-viewport `ScrollTrigger` pin on the hero, bounded to
+one viewport of travel. **It is gone.** The pin existed to drive a single
+number: a 0→1 progress that the WebGL hero object read to reveal its strata as
+you scrolled. `HeroCorpus` shows the whole corpus at first paint instead,
+because the point was never that the corpus is large *in instalments* — it is
+that it is large and mostly untouched, which is a fact about a still image.
+With the object gone the pin had nothing left to drive, so it went with it and
+the page now honours its own interaction tier with no exception at all.
 
-The hero is the only element on this page that pins, and it is bounded: a
-single `ScrollTrigger` with `start: "top top"`, `end: "+=100%"`, `pin: true`.
-One viewport of travel, then it releases into `#problem`. It does not
-scroll-jack — the reader's scroll always moves at the reader's own speed, and
-the pin ends whether or not they engage with it.
+What the hero does instead, all of it on load and none of it scroll-linked:
+the headline's words stagger up, the blocks beneath follow, and the corpus sets
+itself line by line before the one reference this pack would load ignites.
+One authored moment, then still.
 
-What it drives, all on one object (`HeroDepthScene`): the camera travels
-through Z into the slab, one stratum ignites and lifts out of the stack, and
-the caption naming that stratum fades up. Progress is written to a ref, never
-to state — a `setState` on every scroll frame is what `ANI-04` exists to stop.
+**Under `prefers-reduced-motion: reduce` no timeline is registered at all** and
+every element is already in its final state — the corpus is server-rendered
+markup at full opacity, not a hidden thing waiting to be revealed, so a reader
+with motion off or JavaScript disabled gets the finished hero rather than
+nothing.
 
-**Under `prefers-reduced-motion: reduce` no trigger is registered at all.** Not
-a shortened pin, not an instant one: a pinned scene under reduced motion is a
-scroll trap, so the section renders at its natural height and the reader
-scrolls past it. The caption the pin would otherwise reveal starts visible in
-that mode — `motion-safe:opacity-0` carries the hiding, so the destination
-state is the default.
-
-**Standing requirement:** `npm run hero:verify` asserts that the pin releases,
-that reduced motion registers no pin, that no canvas mounts below 640px, that
-a denied WebGL context still leaves a complete hero, and that the scene stays
-inside its frame budget. Run it on any hero change, alongside `pages:verify`.
+**Standing requirement:** `npm run pages:verify` asserts that the corpus draws
+one mark per reference file (counted against `data.generated.json`, not a
+literal), that exactly one is lit at rest, and that all of it is in the
+server-rendered HTML. Run it on any hero change. The separate `hero:verify`
+harness is retired: the three things it existed to prove — that the pin
+released, that no canvas mounted below 640px, and that a denied WebGL context
+still left a complete hero — are all statements about a hero that no longer
+exists, and a harness whose docblock describes a deleted feature is worse than
+no harness.
 
 ### Special effects
-None beyond the pinned sequence above. No custom cursor (`SLOP-06`), no page
-transition, no parallax. The hero's canvas particle field is **gone** — it was
-a second canvas and a second `requestAnimationFrame` loop behind the first,
-which is the stacked-effects pattern this page's direction argues against.
+No custom cursor (`SLOP-06`), no page transition, no parallax. The one
+scroll-linked effect on the page is `RouteStroke` in `#how-it-works`: a routing
+path whose drawn length tracks the section's scroll, three plateaus stepping
+down through the three cards it labels. It replaced a flat 1px rule whose width
+was scrubbed the same way — the mechanic was already right and had no shape —
+and it runs on that section's existing ScrollTrigger rather than bringing a
+second animation runtime along for one stroke. Everything the hero once
+stacked here is gone: the canvas particle field, then the shader-mesh
+background, then the WebGL object, each of them a second canvas and a second
+`requestAnimationFrame` loop behind the first, which is the stacked-effects
+pattern this page's direction argues against.
 
 ### Reduced motion
 ```css

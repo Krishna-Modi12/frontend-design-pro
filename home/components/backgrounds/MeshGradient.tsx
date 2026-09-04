@@ -3,7 +3,8 @@ import type { ReactElement } from "react";
 /**
  * Hero's `mesh` world ground — layered `color-mix(in oklch, …)` radial
  * gradients, no canvas at all, so unlike the hero's object (gated behind a
- * 640px `matchMedia`, see `HeroObject.tsx`) this renders at every viewport
+ * 640px `matchMedia`, which the WebGL hero object used to carry) this
+ * renders at every viewport
  * width. It is the ground the object stands on, not a hero of its own — that
  * split is what lets all four worlds share one object. Reads the
  * CURRENT `--color-accent` live, so it always matches whichever world set
