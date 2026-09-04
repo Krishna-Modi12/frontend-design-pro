@@ -5,7 +5,7 @@ name: Deploy showcase to Pages
 # nobody until this workflow existed.
 #
 # Both are samples of what the pack produces, for fictional products —
-# demo/showcase is "Nexus" and demo/landing-page is "Bellwether". Neither is the
+# demo/showcase is "Wavelet" and demo/landing-page is "Bellwether". Neither is the
 # pack's own homepage, so neither has a claim on the root.
 #
 # Which is what this arrangement finally acts on. This file already said

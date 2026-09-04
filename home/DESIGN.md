@@ -186,7 +186,7 @@ import { GeistMono } from "geist/font/mono";
 ### Tags and badges
 ```css
 /* NEW — Showcase "Live"/"Static preview" badges, SkillCatalog group tags,
-   ShowcaseWaiver's disclosure marker. Subordinate emphasis token, never accent. */
+   ShowcaseSelfCheck's lead-in marker. Subordinate emphasis token, never accent. */
 .badge {
   display: inline-flex; align-items: center; gap: 0.375rem;
   border-radius: 9999px;

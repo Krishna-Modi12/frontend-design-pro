@@ -671,29 +671,52 @@ PAGE_SCOPED = {
 
 # Known, declared violations — carried openly rather than quietly excluded.
 #
-# `demo/showcase` is named "Nexus", which SLOP-05 bans, and it has been for its
-# whole life. The violation is already written down in `demo/showcase/README.md`
-# with the reason the rename is deferred (sixteen files including
-# `package-lock.json`, plus a committed screenshot that only the out-of-CI
-# browser harness can regenerate). This entry is that same disclosure in a form
-# the suite can read, so the rule can ship *now* and catch the next instance
-# instead of waiting on a rename to catch none.
+# This dict is EMPTY, and `grandfathered_check()` below fails the suite if it
+# stops being empty without the two prose surfaces that say so being rewritten.
 #
-# The cost is stated on every run — an exemption nobody is reminded of is an
-# exemption that becomes permanent. Delete this entry with the rename; the
-# constraint is what makes deleting it possible to verify.
-GRANDFATHERED = {
-    "demo/showcase": {
-        "SLOP-05": "named Nexus since before the rule existed — see "
-                   "demo/showcase/README.md 'Known violation — the name'",
-    },
-    "home/lib/content.ts": {
-        "SLOP-05": "surfaces the same pre-existing Nexus name in the homepage's "
-                   "showcase section, with the waiver restated on the page itself "
-                   "(see NEXUS_WAIVER) — see demo/showcase/README.md 'Known "
-                   "violation — the name'",
-    },
-}
+# It was not always empty. `demo/showcase` was named "Nexus", which SLOP-05
+# bans, and it was named that from before the rule existed. Rather than hold the
+# rule back until nothing violated it — which would have caught nothing in the
+# meantime — the rule shipped and the instance was waived here, with the reason
+# attached and printed on every single run. The demo is renamed now and the
+# entries are deleted.
+#
+# That sequence is the recommended one for any rule you cannot satisfy the day
+# you write it: ship the rule, waive the instance, print the waiver, close it.
+# A waiver nobody is reminded of is a waiver that becomes permanent, so if you
+# add one back, keep the reason in it — and read `grandfathered_check()` first.
+GRANDFATHERED: dict = {}
+
+
+# Three documents now claim this suite runs with nothing waived:
+#   demo/showcase/README.md   "Closed finding — the name"
+#   home/lib/content.ts       SHOWCASE_SELF_CHECK, rendered on the homepage
+#   README.md                 the anti-slop wall's own section
+# The middle one is the load-bearing one: it is a marketing claim on a public page,
+# and the pack's whole argument is that its claims are checked rather than
+# asserted. So the claim is checked. Adding a waiver is still allowed — it is
+# the honest move when a rule outruns the code — but it is deliberately a
+# three-file act, because the page has to stop saying otherwise in the same
+# commit. Runs on every invocation, not under `--self-test`: the self-test is
+# not in the release chain (see CLAUDE.md), and a check that only runs when
+# asked is the kind of check `SLOP-04` already taught this repo not to trust.
+CLAIMS_NO_WAIVERS = ("demo/showcase/README.md", "home/lib/content.ts", "README.md")
+
+
+def grandfathered_check() -> bool:
+    """True when GRANDFATHERED agrees with the documents that describe it."""
+    if not GRANDFATHERED:
+        return True
+    print()
+    print("✗ GRANDFATHERED is not empty, but these still claim it is:")
+    for doc in CLAIMS_NO_WAIVERS:
+        print(f"    {doc}")
+    for prefix, waivers in sorted(GRANDFATHERED.items()):
+        for cid, why in sorted(waivers.items()):
+            print(f"      {prefix}: {cid} waived — {why}")
+    print("  → a waiver is fine; a page that says there are none is not.")
+    print("    Rewrite them in the same commit, then relax this check.")
+    return False
 
 
 def _grandfathered_for(path: str) -> dict:
@@ -1053,6 +1076,8 @@ def main():
     if "--self-test" not in sys.argv and not compile_check():
         sys.exit(1)
     if not roster_check():
+        sys.exit(1)
+    if not grandfathered_check():
         sys.exit(1)
     args = sys.argv[1:]
 

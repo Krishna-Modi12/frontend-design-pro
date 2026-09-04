@@ -40,7 +40,7 @@ const features: BentoFeature[] = [
   {
     id: "alerts",
     title: "6,842 alerts routed last quarter",
-    description: "Slack, PagerDuty, or a webhook — Nexus decides who needs to know, not everyone.",
+    description: "Slack, PagerDuty, or a webhook — Wavelet decides who needs to know, not everyone.",
     stat: "6,842",
     statLabel: "alerts routed, Q2",
     span: "small",
@@ -98,7 +98,7 @@ const testimonials: Testimonial[] = [
   },
   {
     id: "declan",
-    quote: "Nexus is the first analytics tool our on-call engineers actually open unprompted.",
+    quote: "Wavelet is the first analytics tool our on-call engineers actually open unprompted.",
     name: "Declan Osei",
     role: "Staff SRE, Loom Freight",
     metric: "68% fewer false-positive pages",
@@ -132,8 +132,20 @@ const CTA_TONE: Record<HeroCta["tone"], string> = {
 export default function HomePage() {
   return (
     <main className="min-h-[100dvh]">
+      {/* First tabstop on the page. Anything with a <nav> needs one, or a
+          keyboard reader walks all six nav links plus the CTA before reaching
+          the headline. `sr-only` until focused, then a real, visible target —
+          a skip link that stays invisible when focused is worse than none,
+          because it silently moves the caret somewhere the user cannot see. */}
+      <a
+        href="#main-content"
+        className="sr-only rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-bg-base outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center"
+      >
+        Skip to content
+      </a>
+
       <Nav />
-      <section className="relative overflow-hidden border-b border-border">
+      <section id="main-content" className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <Hero3D />
         </div>
@@ -145,7 +157,7 @@ export default function HomePage() {
             Analytics that finds the signal before your dashboard loads
           </h1>
           <p className="mt-6 max-w-xl text-lg text-text-muted">
-            Nexus ingests every event your product emits and surfaces the anomalies that actually
+            Wavelet ingests every event your product emits and surfaces the anomalies that actually
             matter — ranked, explained, and routed to the right engineer.
           </p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -194,7 +206,7 @@ export default function HomePage() {
             Get a walkthrough of your own data
           </h2>
           <p className="mt-3 text-text-muted">
-            Tell us what you're tracking today and we'll show you what Nexus surfaces from it.
+            Tell us what you're tracking today and we'll show you what Wavelet surfaces from it.
           </p>
           <div className="mt-10">
             <ContactForm />

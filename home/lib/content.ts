@@ -95,7 +95,7 @@ export const SHOWCASE_COPY = {
 } as const;
 
 export interface ShowcaseProject {
-  id: "bellwether" | "nexus" | "ledgerline" | "arclight";
+  id: "bellwether" | "wavelet" | "ledgerline" | "arclight";
   name: string;
   tagline: string;
   variant: "live" | "static";
@@ -113,8 +113,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     href: "https://krishna-modi12.github.io/frontend-design-pro/landing-page/",
   },
   {
-    id: "nexus",
-    name: "Nexus",
+    id: "wavelet",
+    name: "Wavelet",
     tagline: "A dark analytics-SaaS page with a WebGL hero — a real, installed Next.js + React Three Fiber app, deployed.",
     variant: "live",
     href: "https://krishna-modi12.github.io/frontend-design-pro/showcase/",
@@ -136,18 +136,22 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
 ];
 
 /**
- * SLOP-05 bans Nexus as a placeholder brand name. `demo/showcase` predates
- * the rule and carries a `GRANDFATHERED` waiver in `scripts/test_constraints.py`
- * for exactly that reason, stated in its own README rather than silently
- * omitted. Surfacing it here means restating that waiver on the page itself —
- * the same transparency call, made in the same place a reader can actually
- * see it, not just in a script comment or a nested README.
+ * The showcase demo was called "Nexus" for most of its life — one of the four
+ * placeholder brand names `SLOP-05` bans. It shipped as a declared
+ * `GRANDFATHERED` waiver in `scripts/test_constraints.py`, printed with its
+ * reason on every run of the suite, and this paragraph restated that waiver on
+ * the page rather than leaving it in a script comment nobody reads.
+ *
+ * It is renamed now and the waiver is deleted, so the paragraph makes the
+ * stronger claim instead: the examples on this page pass the checks with
+ * nothing waived. That is a claim a reader can verify, which is why it cites
+ * the suite rather than the README — `GRANDFATHERED` is the empty dict, and
+ * `grandfathered_check()` fails the suite if an entry returns.
  */
-export const NEXUS_WAIVER =
-  "We check every skill-pack example against SLOP-05, which bans Nexus as a placeholder brand name — this page doesn't get a silent pass just because it's ours. The rename is scoped work, not a rushed edit here: sixteen files including a lockfile, plus a screenshot recapture through an out-of-CI browser harness.";
+export const SHOWCASE_SELF_CHECK =
+  "Every example above is checked against the same constraints this pack hands your agent — including SLOP-05, which bans placeholder brand names. The showcase itself used to fail that one, and rather than quietly skip our own repository we shipped the violation as a declared waiver that printed on every run. It is renamed, the waiver is gone, and a test fails the suite if one comes back.";
 
-/** Cited by `ShowcaseWaiver` as a real link. Split out of `NEXUS_WAIVER`
-    rather than left in the sentence so the component is not doing string
-    surgery on prose to find where the anchor starts. */
-export const NEXUS_WAIVER_SOURCE = "demo/showcase/README.md";
-
+/** Cited by `ShowcaseSelfCheck` as a real link. Split out of the prose rather
+    than left in the sentence so the component is not doing string surgery to
+    find where the anchor starts. */
+export const SHOWCASE_SELF_CHECK_SOURCE = "scripts/test_constraints.py";

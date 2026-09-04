@@ -297,6 +297,60 @@ jobs:
       - name: Renderer checks — hydration, axe AA, overflow, hero (dev and prod)
         run: npm run pages:verify
 
+  # The same argument as `home-renderer` above, applied to the other two public
+  # surfaces. `demo/landing-page` and `demo/showcase` are both deployed to Pages
+  # and are the first thing a visitor sees; until now the only thing CI did with
+  # either was compile it. Gate 9 runs `next build` over showcase, which proves
+  # it type-checks against real vendor typings and proves nothing about what
+  # renders.
+  #
+  # Two commands because the harness is deliberately split. `demos:verify`'s
+  # ROUTES array mounts the three stub-typed demos inside the tools/screenshots
+  # Next app and does not touch showcase; showcase is a standalone app with its
+  # own package.json and install, so `showcase:verify` starts its servers
+  # separately. Running only the first silently skips the demo with the WebGL
+  # hero and the only real interactive flow in demo/ — which is precisely the
+  # code most likely to break at runtime and least likely to break at compile
+  # time.
+  #
+  # Blocking, like home-renderer and unlike visual-regression: these are DOM
+  # assertions, not a pixel diff, so there is no threshold to tune and no font
+  # drift to absorb.
+  demo-renderer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # tools/screenshots ships without react/react-dom of its own and resolves
+      # them by walking up to this install — root first, or the servers it
+      # starts have no React at all. Same ordering as the two jobs around it.
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      # Only showcase needs its own install: the other three demos are routes
+      # inside the harness app above.
+      - name: Install demo/showcase dependencies
+        working-directory: demo/showcase
+        run: npm ci
+
+      - name: Stub-typed demos — hydration, axe AA, overflow (dev and prod)
+        run: npm run demos:verify
+
+      - name: showcase — the same, plus the pricing-to-contact flow end to end
+        run: npm run showcase:verify
+
   # No gate in this repository renders a page and compares it to what it
   # rendered last time — this is that check, for the three demos that render
   # deterministically (demo/showcase's WebGL hero is otherwise seeded at
