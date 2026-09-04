@@ -1,21 +1,21 @@
 import type { ReactElement } from "react";
 import type { StaticImageData } from "next/image";
 import bellwether from "../public/showcase/bellwether.png";
-import nexus from "../public/showcase/nexus.png";
+import wavelet from "../public/showcase/wavelet.png";
 import ledgerline from "../public/showcase/ledgerline.png";
 import ledgerlineFull from "../public/showcase/ledgerline-full.png";
 import arclight from "../public/showcase/arclight.png";
 import arclightFull from "../public/showcase/arclight-full.png";
 import ShowcaseCoverflow from "./ShowcaseCoverflow";
 import type { ShowcaseSlide } from "./ShowcaseCoverflow";
-import ShowcaseWaiver from "./ShowcaseWaiver";
-import { SHOWCASE_COPY, SHOWCASE_PROJECTS, NEXUS_WAIVER } from "../lib/content";
+import ShowcaseSelfCheck from "./ShowcaseSelfCheck";
+import { SHOWCASE_COPY, SHOWCASE_PROJECTS, SHOWCASE_SELF_CHECK } from "../lib/content";
 import type { ShowcaseProject } from "../lib/content";
 import { sectionShell, sectionSpacing } from "../lib/tokens";
 
 type ShowcaseId = ShowcaseProject["id"];
 
-const THUMBNAILS: Record<ShowcaseId, StaticImageData> = { bellwether, nexus, ledgerline, arclight };
+const THUMBNAILS: Record<ShowcaseId, StaticImageData> = { bellwether, wavelet, ledgerline, arclight };
 
 /** Only the two static cards need a resolved target — the live cards already
     carry a real URL in `SHOWCASE_PROJECTS`. Reading `.src` off a statically
@@ -46,11 +46,11 @@ const SLIDES: ShowcaseSlide[] = SHOWCASE_PROJECTS.map((project) => ({
  * rather than its Swiper/Framer Motion stack — the reasoning is in that
  * component's docblock.
  *
- * **The Nexus disclosure moved out of the card and under the carousel.** Two
+ * **The SLOP-05 note moved out of the card and under the carousel.** Two
  * reasons, and the second is the one that matters. Coverflow wants uniform
- * slide heights, and a five-line waiver on one of four cards breaks that. But
- * a disclosure a reader has to *drag sideways to discover* is a worse
- * disclosure than one sitting in the open under the section — so it is now
+ * slide heights, and a five-line note on one of four cards breaks that. But
+ * a claim a reader has to *drag sideways to discover* is a worse
+ * claim than one sitting in the open under the section — so it is now
  * visible without any interaction at all, and, no longer nested inside
  * `ShowcaseCard`'s single large `<a>`, it can finally link to the README it
  * cites instead of naming it in plain text.
@@ -75,7 +75,7 @@ export function SectionShowcase(): ReactElement {
 
       <div className={sectionShell}>
         <div className="mt-4 max-w-2xl">
-          <ShowcaseWaiver text={NEXUS_WAIVER} />
+          <ShowcaseSelfCheck text={SHOWCASE_SELF_CHECK} />
         </div>
       </div>
     </section>

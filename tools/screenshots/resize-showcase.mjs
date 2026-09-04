@@ -25,7 +25,7 @@ const FULL_WIDTH = 1440;
 /** [demo source (relative to repo root), output basename, target width] */
 const JOBS = [
   ["demo/landing-page/screenshot.png", "bellwether.png", THUMB_WIDTH],
-  ["demo/showcase/screenshot.png", "nexus.png", THUMB_WIDTH],
+  ["demo/showcase/screenshot.png", "wavelet.png", THUMB_WIDTH],
   ["demo/dashboard/screenshot.png", "ledgerline.png", THUMB_WIDTH],
   ["demo/dashboard/screenshot-full.png", "ledgerline-full.png", FULL_WIDTH],
   ["demo/auth-form/screenshot.png", "arclight.png", THUMB_WIDTH],

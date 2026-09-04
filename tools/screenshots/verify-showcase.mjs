@@ -1,5 +1,5 @@
 /**
- * Renders `demo/showcase` (Nexus) in a real browser and asserts the things
+ * Renders `demo/showcase` (Wavelet) in a real browser and asserts the things
  * no gate can see. The sibling of `verify.mjs` and `verify-home.mjs`,
  * pointed at showcase's own dev/prod servers rather than the stub-typed
  * multi-route harness `verify.mjs` uses: showcase is a real, standalone

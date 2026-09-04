@@ -1,4 +1,4 @@
-# Nexus — showcase
+# Wavelet — showcase
 
 This is one of two examples in `demo/` that are not stub-typed reference files — the other
 is `landing-page/`, which markets the pack itself. `dashboard/` and `auth-form/` are `.tsx`
@@ -8,17 +8,22 @@ React 19 + TypeScript + Tailwind v4 project, with its own `package.json`, real i
 dependencies, and a dev server that actually boots. It exists to prove the skill pack
 produces a working application, not just type-checked snippets.
 
-It's a cinematic dark-mode SaaS landing page for a fictional AI analytics product, "Nexus."
+It's a cinematic dark-mode SaaS landing page for a fictional AI analytics product, "Wavelet."
 
-> **Known violation — the name.** The anti-slop wall bans placeholder brand names
-> and lists Nexus among them. This demo predates that ban and is a real instance
-> of it. The rename is deliberately not bundled with the rule: it touches sixteen
-> files including `package-lock.json`, and it invalidates the committed
-> `screenshot.png`, which can only be regenerated through the browser harness in
-> `tools/screenshots/` (deliberately outside CI — see
-> `.github/SCREENSHOT_CONTRIBUTION.md`). Stated here rather than quietly omitted
-> from the wall, because a pack that bans what it ships and does not say so is
-> carrying the context-clash defect described in
+> **Closed finding — the name.** This demo was called *Nexus* for most of its
+> life, which is one of the four placeholder brand names the anti-slop wall bans
+> and `SLOP-05` matches. The rule shipped before the rename could be done, so the
+> violation was carried as a declared waiver in `GRANDFATHERED` — printed with its
+> reason on every single run of the suite, so that nobody could stop noticing it.
+> It is renamed now and that waiver is deleted; `GRANDFATHERED` is empty, and
+> `grandfathered_check()` in `scripts/test_constraints.py` fails the suite if an
+> entry comes back while this paragraph still says it will not.
+>
+> The sequence is the point, and it is the one this pack recommends for any rule
+> you cannot satisfy the day you write it: **ship the rule, waive the instance,
+> print the waiver, then close it.** A rule held back until nothing violates it
+> catches nothing in the meantime, and a rule that silently skips its own
+> repository is the context-clash defect described in
 > `skills/agent-ops/references/context-engineering.md`.
 
 ## Running it
@@ -73,7 +78,7 @@ This is the natural-language brief you could paste into an AI coding agent using
 skill pack to produce this exact demo:
 
 > Build a cinematic dark-mode SaaS landing page for a fictional AI analytics platform
-> called "Nexus." Use a near-black background defined as real OKLCH tokens (e.g.
+> called "Wavelet." Use a near-black background defined as real OKLCH tokens (e.g.
 > `oklch(12% 0.01 260)`) — no pure `#000` or `bg-black` literals, and no ad hoc hex
 > anywhere in components. Use a single accent color, acid green
 > (`oklch(70% 0.25 145)`), sparingly — CTAs and key highlights only, never washed across

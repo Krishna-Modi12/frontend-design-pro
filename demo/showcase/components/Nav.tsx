@@ -22,7 +22,7 @@ const LINK =
  * (`#pricing`, `#contact`) were the only way to move around, and once a
  * visitor scrolled past them there was nothing to jump back with. This is
  * `home/`'s and Bellwether's shared pattern (sticky header, `md:` full nav,
- * `<details>` disclosure below it) rebuilt against Nexus's own dark tokens
+ * `<details>` disclosure below it) rebuilt against Wavelet's own dark tokens
  * rather than a shared component, since the three apps don't share a
  * component layer.
  */
@@ -86,7 +86,7 @@ export function Nav(): ReactElement {
           href="#"
           className="rounded font-mono text-lg font-semibold tracking-tight text-text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
         >
-          nexus
+          wavelet
         </a>
 
         <nav aria-label="Sections" className="hidden items-center gap-1 md:flex">

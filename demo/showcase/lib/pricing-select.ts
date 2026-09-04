@@ -1,4 +1,4 @@
-export const PRICING_SELECT_EVENT = "nexus:pricing-select";
+export const PRICING_SELECT_EVENT = "wavelet:pricing-select";
 
 export interface PricingSelectDetail {
   tierName: string;

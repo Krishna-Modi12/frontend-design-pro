@@ -15,9 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus — Analytics that finds the signal first",
+  title: "Wavelet — Analytics that finds the signal first",
   description:
-    "Nexus ingests every event your product emits and surfaces the three anomalies that actually matter before your dashboard even loads.",
+    "Wavelet ingests every event your product emits and surfaces the three anomalies that actually matter before your dashboard even loads.",
 };
 
 export interface RootLayoutProps {

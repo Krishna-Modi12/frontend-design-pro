@@ -1,5 +1,5 @@
 /**
- * Nexus design tokens.
+ * Wavelet design tokens.
  *
  * All colors are OKLCH. No raw hex is permitted in component files —
  * components must reference these tokens (or the CSS variables they
