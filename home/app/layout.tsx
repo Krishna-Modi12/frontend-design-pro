@@ -14,7 +14,8 @@ import { DEFAULT_WORLD_ID, WORLDS } from "../lib/worlds";
  * at request time to read a cookie or a query param and render the right
  * world server-side. A post-hydration swap would flash the default world
  * first, which is worse here than typical dark-mode theming: the hero's scene
- * (`HeroDepthScene.tsx`) reads `--color-accent` once at construction, so a
+ * (the WebGL hero object this replaced) read `--color-accent` once at
+ * construction, so a
  * late swap would need an extra imperative push just to take effect.
  *
  * This is the same technique `next-themes` uses to avoid a dark-mode flash:

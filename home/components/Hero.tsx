@@ -1,11 +1,11 @@
 "use client";
 
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useRef, useState, useEffect } from "react";
 import type { ReactElement } from "react";
-import { gsap, ScrollTrigger } from "../lib/gsapClient";
+import { gsap } from "../lib/gsapClient";
 import type { Figures, ReferenceRecord } from "../lib/data.types";
 import HeroBackground from "./HeroBackground";
-import HeroObject from "./HeroObject";
+import HeroCorpus from "./HeroCorpus";
 import { useWorld } from "./WorldProvider";
 import { focusRing, tapTarget } from "../lib/tokens";
 
@@ -18,26 +18,41 @@ export interface HeroProps {
 
 const HEADLINE = "Change what your agent reaches for.";
 
+/** The reference this pack loads to build a page like this one. */
+const LIT_SKILL = "landing-pages";
+const LIT_NAME = "landing-patterns.md";
+
 /**
- * The hero: one object, one column of type, one bounded pinned sequence.
+ * The hero: one column of type, and the corpus it is talking about.
  *
- * **Composition.** Type left, object right. Every section below this one is
- * left-aligned editorial with hard seams and real artefacts; the hero used to
- * be the only centred, symmetric, soft-focus block on the page, which is what
- * made it read as belonging to a different site. It now shares the page's own
- * axis.
+ * **Composition.** Type left, corpus right, on the page's own axis. Every
+ * section below is left-aligned editorial with hard seams and real artefacts;
+ * the hero was once the only centred, symmetric, soft-focus block on the page,
+ * which is what made it read as belonging to a different site.
+ *
+ * **There is no pinned sequence any more, and that is a simplification worth
+ * naming.** `home/DESIGN.md` §7 used to record a full-viewport pin as the
+ * single documented exception to this page's stated L2 interaction tier. The
+ * pin existed to drive one number — a 0→1 progress the WebGL hero object read
+ * to reveal its strata as you scrolled. `HeroCorpus` shows the whole corpus at
+ * first paint instead, because the point was never that the corpus is large in
+ * instalments; it is that it is large and mostly untouched, which is a fact
+ * about a still image. With the object gone the pin had nothing left to drive,
+ * so the page now honours its own interaction tier with no exception at all.
  *
  * **The headline is split into words in JSX rather than by a library.** GSAP
  * staggers the spans natively, so `SplitType` would be a dependency earning
- * nothing. (It would also once have been a conflict: the canvas that used to
- * sample this headline walked a `Range` over the `<h1>`'s single text node,
- * and wrapping the words in elements would have broken it. That canvas is
- * gone — the conflict is noted because the reasoning survives the component.)
+ * nothing.
  *
  * **Motion is a layer, never a gate.** Every element is in the server-rendered
  * HTML and visible at first paint; `gsap.from()` animates down from a hidden
  * state rather than a CSS class holding content hidden until JS runs, so a
  * reader whose JS never executes sees the finished hero rather than nothing.
+ *
+ * **No eyebrow above the headline.** There was one — "AI frontend skill pack",
+ * set as a tracked uppercase label. It said nothing the headline and the
+ * sentence under it do not, and a kicker over a heading is the most reliable
+ * tell of a template. The headline carries itself.
  */
 function HeroImpl(
   { installHref, howItWorksHref, figures, references }: HeroProps,
@@ -45,12 +60,17 @@ function HeroImpl(
 ): ReactElement {
   const sectionRef = useRef<HTMLElement | null>(null);
   const staggerRef = useRef<HTMLDivElement | null>(null);
-  const captionRef = useRef<HTMLParagraphElement | null>(null);
-  /** 0 → 1 across the pinned range. A ref rather than state on purpose: this
-      updates on every scroll frame, and a `setState` there is exactly what
-      `ANI-04` exists to stop. The scene reads it inside its own rAF loop. */
-  const progressRef = useRef(0);
   const { reroll } = useWorld();
+
+  /** Which reference the reader is pointing at, or null for the default. */
+  const [probed, setProbed] = useState<ReferenceRecord | null>(null);
+
+  // A plain `useState` setter, but memoised so `HeroCorpus` is not handed a
+  // new callback identity on every render. This fires on pointer movement
+  // between marks, never on scroll — `ANI-04` is about the scroll frame.
+  const onHoverChange = useCallback((record: ReferenceRecord | null) => {
+    setProbed(record);
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -74,33 +94,28 @@ function HeroImpl(
       }
 
       if (section !== null) {
-        // The one pinned scene on this site, bounded at a single viewport and
-        // then released — `home/DESIGN.md` §7 records it as the single
-        // documented exception to the L2 "no full-viewport pinned scenes"
-        // rule. It never traps the scroll: the pin ends after one viewport of
-        // travel whether or not the reader engages with it, and it is not
-        // registered at all under reduced motion.
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top top",
-          end: "+=100%",
-          pin: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            progressRef.current = self.progress;
-            const caption = captionRef.current;
-            if (caption !== null) {
-              caption.style.opacity = String(
-                Math.min(Math.max((self.progress - 0.45) / 0.25, 0), 1),
-              );
-            }
-          },
+        // The one authored moment: the corpus sets itself, line by line, the
+        // way a page of type would be composed — then the single reference
+        // this pack would load for a request like the reader's ignites. It
+        // runs once, on load, and never again; there is no scroll trigger on
+        // this section at all.
+        const marks = section.querySelectorAll("[data-corpus-mark]");
+        gsap.from(marks, {
+          opacity: 0,
+          scaleX: 0,
+          transformOrigin: "left center",
+          duration: 0.5,
+          stagger: { each: 0.004, from: "start" },
+          delay: 0.3,
+          ease: "power3.out",
         });
       }
     }, section ?? undefined);
 
     return () => context.revert();
   }, []);
+
+  const activeName = probed === null ? `${LIT_SKILL}/${LIT_NAME}` : `${probed.skill}/${probed.name}`;
 
   return (
     <section
@@ -114,16 +129,12 @@ function HeroImpl(
     >
       <HeroBackground className="pointer-events-none absolute inset-0 z-0" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]">
         <div ref={staggerRef}>
-          <p data-hero-block data-label className="text-text-muted">
-            AI frontend skill pack
-          </p>
-
           <h1
             data-display
             data-hero-headline
-            className="mt-6 text-[clamp(2.5rem,5.4vw,4.25rem)] leading-[1.03] text-text-primary"
+            className="text-[clamp(2.5rem,5.4vw,4.25rem)] leading-[1.03] text-text-primary"
           >
             {HEADLINE.split(" ").map((word, index) => (
               <span
@@ -140,16 +151,12 @@ function HeroImpl(
             ))}
           </h1>
 
-          {/* Says the one thing the object shows, and nothing the sections
-              below repeat. The old subhead stated all three of their
-              arguments at once — one-of-19 belongs to `#problem`, the check
-              count to `#checks`, registry-routed to `#how-it-works` — which
-              left the hero asserting summaries the reader was about to be
-              shown properly. The ratio is the claim only this object makes.
-              Both figures are rendered from `data.generated.json`, never
-              typed: the sentence this replaced said "60 checks" against a
-              real figure of {figures.ciConstraints}, and no gate could see it
-              because a bare "N checks" is deliberately unclaimed. */}
+          {/* Says the one thing the corpus shows, and nothing the sections
+              below repeat. Both figures are rendered from
+              `data.generated.json`, never typed: the sentence this replaced
+              said "60 checks" against a real figure of {figures.ciConstraints},
+              and no gate could see it because a bare "N checks" is
+              deliberately unclaimed. */}
           <p
             data-hero-block
             className="mt-6 max-w-lg text-lg leading-relaxed text-text-secondary text-pretty"
@@ -179,9 +186,7 @@ function HeroImpl(
                 than a third labelled action: a first-viewport decision point
                 holds one primary and one or two secondary choices before it
                 dilutes the primary CTA, and this is a toy for a reader who is
-                already sold. `reroll()` applies the swap with no transition
-                rule active under reduced motion, so it needs no separate
-                branch here. */}
+                already sold. */}
             <button
               type="button"
               onClick={reroll}
@@ -205,25 +210,45 @@ function HeroImpl(
             </button>
           </div>
 
-          {/* The payoff of the pinned sequence, in words. Starts at zero
-              opacity and is written by the ScrollTrigger above; under reduced
-              motion no trigger is registered, so the inline style below is
-              what the reader gets — visible, immediately, with no motion. */}
+          {/* Names whichever mark is lit, and prices it. Visible at first
+              paint rather than revealed by scroll — the sentence is the
+              graphic's label, and a label that arrives later is not one.
+              `aria-live` is deliberately absent: the figure is pointer-only
+              and already carries the same facts in its own text alternative,
+              so announcing every mark a mouse crosses would be noise. */}
           <p
-            ref={captionRef}
+            data-hero-block
             data-hero-caption
-            className="mt-8 max-w-md font-mono text-xs leading-relaxed text-text-muted motion-safe:opacity-0"
+            className="mt-8 max-w-md font-mono text-xs leading-relaxed text-text-muted"
           >
-            The lit stratum is{" "}
-            <span className="text-text-secondary">landing-pages/landing-patterns.md</span> — the
-            reference this pack loads to build a page like this one. The rest stays on disk.
+            {probed === null ? (
+              <>
+                The lit mark is <span className="text-text-secondary">{activeName}</span> — the
+                reference this pack loads to build a page like this one. The other{" "}
+                {(figures.referenceFiles - 1).toLocaleString("en-US")} stay on disk.
+              </>
+            ) : (
+              <>
+                <span className="text-text-secondary">{activeName}</span> —{" "}
+                <span data-metric>{probed.tokens.toLocaleString("en-US")}</span> tokens, loaded
+                only when {probed.skill} routes to it.
+              </>
+            )}
           </p>
         </div>
 
-        {/* The object, in its own track. Below `lg:` the grid collapses and it
+        {/* The corpus, in its own track. Below `lg:` the grid collapses and it
             sits under the copy rather than behind it — the whole reason the
             text needs no scrim at any width. */}
-        <HeroObject references={references} progressRef={progressRef} />
+        <div className="w-full">
+          <HeroCorpus
+            references={references}
+            litSkill={LIT_SKILL}
+            litName={LIT_NAME}
+            onHoverChange={onHoverChange}
+            className="h-auto w-full"
+          />
+        </div>
       </div>
     </section>
   );

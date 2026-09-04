@@ -275,27 +275,36 @@ async function checkInteractivity(browser, base) {
   // is the one thing nothing else here would catch — a silent shader-compile
   // failure that resolves without throwing still leaves the layer empty.
   //
-  // The layer is a dynamically-imported chunk (`next/dynamic`, `ssr: false`)
-  // that mounts after a `matchMedia` check in a `useEffect`. In production
-  // the chunk is pre-built and this resolves almost immediately; in dev it
-  // compiles on first request, which can take several seconds — `networkidle`
-  // fires well before that compile finishes. Poll for the element instead of
-  // a fixed sleep, so dev and prod are both correctly handled by the same
-  // wait rather than a duration tuned to whichever one was running when it
-  // was picked.
-  const heroCanvasCount = await page
-    .waitForSelector("[data-hero-scene-canvas] canvas", { timeout: 15_000 })
-    .then(() => 1)
-    .catch(() => 0);
-  if (heroCanvasCount === 0) problems.push("hero depth scene did not mount at desktop width");
+  // Hero: one mark per reference file, drawn from `data.generated.json`.
+  // This is the assertion the previous hero could not have: its 119 strata
+  // were vertices inside a WebGL buffer, so nothing outside the shader could
+  // count them and a scene that silently dropped half the corpus rendered
+  // as a slightly shorter brick. They are DOM nodes now, so the drawing is
+  // checkable against the same figure the sentence beside it prints. The
+  // count comes from the generated data rather than a literal, so a corpus
+  // that grows moves both together or fails here.
+  const expectedMarks = JSON.parse(
+    readFileSync(join(HOME, "lib", "data.generated.json"), "utf8"),
+  ).references.length;
+  const markCount = await page.locator("[data-corpus-mark]").count();
+  if (markCount !== expectedMarks) {
+    problems.push(`hero corpus drew ${markCount} marks, expected ${expectedMarks}`);
+  }
 
-  // Hero: the static object is in the server-rendered HTML and never
-  // unmounts, so it is the paint before the `three` chunk arrives, the only
-  // one below 640px, and the floor for a failed WebGL context. A scene that
-  // mounted while this had been dropped would look fine in a screenshot and
-  // leave every one of those paths blank, so it is asserted separately.
-  const heroFallbackCount = await page.locator("[data-hero-fallback]").count();
-  if (heroFallbackCount === 0) problems.push("hero static object fallback is not in the DOM");
+  // Exactly one mark is lit at rest. Two would mean the default and a
+  // stuck hover state are both applied; none would mean the named reference
+  // no longer resolves, which is silent — the caption would still name a
+  // file that is no longer in the corpus.
+  const litCount = await page.locator("[data-corpus-mark][data-lit]").count();
+  if (litCount !== 1) problems.push(`hero corpus lit ${litCount} marks at rest, expected 1`);
+
+  // The corpus is server-rendered: it is the paint before any JS runs, and
+  // what a reader with JavaScript disabled sees. `next/dynamic` with
+  // `ssr: false` used to hold the old hero out of this HTML entirely.
+  const ssrMarks = (await page.content()).split("data-corpus-mark").length - 1;
+  if (ssrMarks !== expectedMarks) {
+    problems.push(`hero corpus server-rendered ${ssrMarks} marks, expected ${expectedMarks}`);
+  }
 
   // Showcase: all four project cards render (v2.2 — replaced the mock UI
   // gallery this same assertion used to check; see home/README.md's showcase
@@ -363,8 +372,9 @@ async function checkInteractivity(browser, base) {
   // against messages that had been reworded, so both lines printed a tick no
   // matter what the page did — a green line that proved nothing, which is a
   // worse failure than a red one.
-  report("hero depth scene mounted", problems.filter((p) => p.includes("hero depth scene")));
-  report("hero static object fallback present", problems.filter((p) => p.includes("hero static object")));
+  report("hero corpus draws one mark per reference", problems.filter((p) => p.includes("hero corpus drew")));
+  report("hero corpus lights exactly one at rest", problems.filter((p) => p.includes("hero corpus lit")));
+  report("hero corpus is server-rendered", problems.filter((p) => p.includes("hero corpus server-rendered")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report(
     "router resolves the real registry and refuses to guess",

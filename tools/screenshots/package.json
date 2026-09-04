@@ -11,7 +11,6 @@
     "start": "next start -p 3311",
     "verify": "node verify.mjs",
     "verify:home": "node verify-home.mjs",
-    "verify:hero": "node verify-hero.mjs",
     "verify:showcase": "node verify-showcase.mjs",
     "visual-regression": "node visual-regression.mjs",
     "live-audit": "node live-audit.mjs",
