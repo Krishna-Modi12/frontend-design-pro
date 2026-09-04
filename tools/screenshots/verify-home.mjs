@@ -180,6 +180,22 @@ async function checkReducedMotion(browser, base) {
   const hidden = await page.evaluate(collectStuckAtZero);
   report("every revealed section is visible under prefers-reduced-motion", hidden);
 
+  // The other half of the same rule, and the half that is easy to ship broken:
+  // the corpus ring's scroll listener must never be ATTACHED under reduce, not
+  // merely shortened. `MOTION-01` fails a component whose reduced-motion
+  // handling is only mentioned in a comment, and a scroll binding is exactly
+  // the shape that passes a source read while still moving on the page.
+  const headBefore = await page.getAttribute("[data-corpus-head]", "stroke-dashoffset");
+  await page.evaluate(() => window.scrollTo(0, 2000));
+  await page.waitForTimeout(600);
+  const headAfter = await page.getAttribute("[data-corpus-head]", "stroke-dashoffset");
+  report(
+    "the corpus read head does not follow scroll under prefers-reduced-motion",
+    headBefore === headAfter
+      ? []
+      : [`read head moved ${headBefore} → ${headAfter} with reduced motion requested`],
+  );
+
   await ctx.close();
 }
 
@@ -357,7 +373,48 @@ async function checkInteractivity(browser, base) {
     }
     return hidden;
   });
+
+  // The read head is bound to scroll past its resting tick — one further turn
+  // across the hero's exit. Nothing else on this page asserts a scroll-linked
+  // value, and the last time this hero shipped an unasserted motion path it
+  // rendered 0 of 119 marks for a full release, so this is measured rather
+  // than trusted.
+  //
+  // The offset is read off the attribute rather than computed style because
+  // React writes it as an SVG presentation attribute and the transition is
+  // deliberately OFF while scroll drives it — so the attribute IS the rendered
+  // value, and the whole chain (scroll → rAF → state → attribute) is under
+  // test. Polled rather than waited on a fixed timeout: Lenis lerps the real
+  // scroll position at 0.1, so the value is still moving for some hundreds of
+  // milliseconds after the wheel stops.
+  const headRest = Number(
+    await motionPage.getAttribute("[data-corpus-head]", "stroke-dashoffset"),
+  );
+  // Well past a full traversal (READ_SPAN is 0.6 of the viewport measured from
+  // the ring's own top, which starts a few hundred px down), so the value is
+  // clamped at 1 and the assertion is not a race with the exact scroll offset.
+  await motionPage.evaluate(() => window.scrollTo(0, 2000));
+  let headScrolled = headRest;
+  const headDeadline = Date.now() + 5_000;
+  for (;;) {
+    await motionPage.waitForTimeout(120);
+    const next = Number(
+      await motionPage.getAttribute("[data-corpus-head]", "stroke-dashoffset"),
+    );
+    if (next === headScrolled || Date.now() >= headDeadline) {
+      headScrolled = next;
+      break;
+    }
+    headScrolled = next;
+  }
+  const headDelta = headScrolled - headRest;
   await motionCtx.close();
+  if (!(headDelta > 0.9)) {
+    problems.push(
+      `hero read head did not follow scroll: offset moved ${headDelta.toFixed(3)} turns ` +
+        `over a full traversal (${headRest} → ${headScrolled}), expected ~1`,
+    );
+  }
   if (invisibleMarks > 0) {
     problems.push(
       `hero corpus invisible: ${invisibleMarks} mark(s) at opacity 0 under default motion`,
@@ -442,6 +499,7 @@ async function checkInteractivity(browser, base) {
   report("hero corpus lights exactly one at rest", problems.filter((p) => p.includes("hero corpus lit")));
   report("hero corpus is visible under default motion", problems.filter((p) => p.includes("hero corpus invisible")));
   report("hero corpus is server-rendered", problems.filter((p) => p.includes("hero corpus server-rendered")));
+  report("hero read head follows scroll", problems.filter((p) => p.includes("hero read head")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report(
     "router resolves the real registry and refuses to guess",

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { useWorld } from "./WorldProvider";
+import HeroBeams from "./backgrounds/HeroBeams";
 import MeshGradient from "./backgrounds/MeshGradient";
 import GrainOverlay from "./backgrounds/GrainOverlay";
 import DotGrid from "./backgrounds/DotGrid";
@@ -12,7 +13,7 @@ export interface HeroBackgroundProps {
 }
 
 /**
- * The hero's ground — the world's texture, and nothing else.
+ * The hero's ground — one light, and the world's texture over it.
  *
  * **What this no longer does.** The version this replaces also painted a
  * full-bleed `linear-gradient` accent wash and, over it, a large radial scrim
@@ -37,9 +38,17 @@ export interface HeroBackgroundProps {
  * `world.id` directly would make the hydration pass disagree with the
  * server-rendered HTML whenever the resolved world isn't `signature`.
  *
- * `signature` renders no ground at all here: its grain is a below-hero
- * surface treatment (`lib/tokens.ts`'s `--world-texture` channel), and the
- * hero's own ground is the bare page.
+ * `signature` renders no *texture* here: its grain is a below-hero surface
+ * treatment (`lib/tokens.ts`'s `--world-texture` channel). What it does render
+ * is `HeroBeams`, which every world renders — the beams are the hero's own
+ * light rather than a property of a world, which is why they sit outside the
+ * switch. That keeps the stated model intact: a world is a ground texture and
+ * a hue, not a different hero.
+ *
+ * The one gradient this component owns is therefore back, deliberately and
+ * differently: masked off the type entirely and absent below `lg:`, rather
+ * than full-bleed behind the headline with a scrim over it. `home/DESIGN.md`
+ * §2 records the sanction and why this shape is not the shape that failed.
  */
 export function HeroBackground({ className }: HeroBackgroundProps): ReactElement {
   const { world } = useWorld();
@@ -51,6 +60,15 @@ export function HeroBackground({ className }: HeroBackgroundProps): ReactElement
 
   return (
     <div aria-hidden="true" data-hero-scene className={className}>
+      {/* The light, under every world's texture rather than beside it. It
+          needs no `mounted` gate and must not have one: it branches on nothing
+          in JS, and the only thing that varies per world is `--color-accent`,
+          which the blocking script in `app/layout.tsx` has already set on
+          `<html>` before hydration. Server and client emit identical markup,
+          so it is correct at first paint in a way the three textures below it
+          cannot be. */}
+      <HeroBeams />
+
       {mounted && world.id === "mesh" ? <MeshGradient /> : null}
       {mounted && world.id === "grain" ? <GrainOverlay /> : null}
       {mounted && world.id === "grid" ? <DotGrid /> : null}
