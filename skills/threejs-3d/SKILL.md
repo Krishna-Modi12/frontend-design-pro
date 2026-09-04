@@ -2,7 +2,7 @@
 name: threejs-3d
 description: 3D web experiences with React Three Fiber — scenes, geometry, materials, lighting, shaders, post-processing, model loading, raycasting. Use when anything is 3D in the browser — scenes, GLTF/GLB models, shaders, WebGL, post-processing, orbit and camera controls, raycasting and object selection, Spline embeds, particle systems, 3D heroes.
 metadata:
-  version: "14.13.0"
+  version: "14.14.0"
   core-deps:
     - core/component-api.md
     - core/accessibility-baseline.md

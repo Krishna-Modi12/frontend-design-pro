@@ -4,6 +4,81 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.14.0] — 2026-09-05
+
+**A demo that broke the pack's own rule stopped breaking it, and the claim that
+replaced the waiver is itself checked. Nothing in the pack's content changed
+shape: 19 skills, 8 core files, 119 references, 61 constraints, 11
+release-blocking gates.**
+
+### The showcase demo is renamed, and the waiver is deleted
+
+`demo/showcase` was called **Nexus** — one of the four placeholder brand names
+the anti-slop wall bans and `SLOP-05` matches. It failed the pack's own rule for
+its whole life, and rather than quietly exempt itself the failure shipped as a
+declared `GRANDFATHERED` waiver, printed with its reason on every single run.
+
+It is **Wavelet** now. A wavelet transform is how you localise an anomaly in a
+time series, which is what the fictional product does — the name is sector-true
+rather than decorative, it is not an `-ly` construction or a Cloud/Smart/Flow
+compound, and it is not an existing product in dev tooling the way Kestrel (the
+ASP.NET server), Sigma or Fathom (real analytics companies) would have been.
+
+What replaced the waiver is the more useful half. Three documents now state that
+the suite runs with nothing waived — `demo/showcase/README.md`,
+`home/lib/content.ts` (rendered on the public homepage) and `README.md` — so
+`grandfathered_check()` runs on **every** invocation, beside `roster_check()`
+rather than under `--self-test`, and fails if an entry returns while those three
+still say otherwise. Adding a waiver back stays allowed and is sometimes the
+honest move; it is deliberately a four-file act, because the pages advertising
+the emptiness have to stop in the same commit.
+
+The sequence is the recommended one for any rule you cannot satisfy the day you
+write it: **ship the rule, waive the instance, print the waiver, close it.** A
+rule held back until nothing violates it catches nothing in the meantime.
+
+### A skip link that had been missing on a deployed page
+
+The same scan surfaced `A11Y-04` failing on `demo/showcase`: a full page with a
+`<nav>` and no skip link, so a keyboard reader walked every nav link and the CTA
+before reaching the headline. `demo/` now passes **4/4 projects at 44/44 with
+nothing waived**, up from 3/4 with a waiver.
+
+### `demo/` has renderer checks in CI
+
+`demo/landing-page` and `demo/showcase` are both deployed to Pages, and until now
+the only thing CI did with either was compile it — Gate 9 proves showcase
+type-checks against real vendor typings and proves nothing about what renders.
+The new blocking `demo-renderer` job runs `demos:verify` and then
+`showcase:verify`. Two commands, because the harness is deliberately split:
+`demos:verify`'s `ROUTES` mounts the three stub-typed demos inside the
+`tools/screenshots` app and never touches showcase, so running only the first
+silently skips the demo with the WebGL hero and the only real interactive flow
+in `demo/`. Every rendered surface this repo publishes is now checked, and both
+renderer jobs block.
+
+### Gate 11 could not see the plugin manifest's own README
+
+`SCAN` carried `.claude-plugin/*.json` and not `.claude-plugin/*.md`, so the file
+that explains why `"skills": ["./"]` is the right pointer was never read. It
+claimed a 2,088-token registry against a real 2,149 while the gate reported no
+drift at all — the failure mode this repo considers worse than a wrong figure,
+because a green run reads as proof. Now 0 drifts over 153 claim surfaces.
+
+One figure in that file is foreign and had to stay foreign: the table contrasting
+this layout with `microsoft/agent-skills` reads "40 skills registered" in the
+column describing *their* pointer, and the `SKILLS` anchor claimed it as ours.
+That cell is reworded rather than blanket-exempted, which would have un-gated the
+correct "19 skills" claim one row above it.
+
+### The hero corpus is a ring
+
+`home/`'s hero was rebuilt again: the corpus marks are drawn as a ring that can
+actually be read as the corpus, replacing a layout that was legible only as an
+abstract block. Baselines refreshed to match.
+
+---
+
 ## [14.13.0] — 2026-09-04
 
 **Two gates that were not gating, and a landing page rebuilt around the one
