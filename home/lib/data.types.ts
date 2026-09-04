@@ -37,7 +37,7 @@ export interface SkillRecord {
 
 /**
  * One `skills/<skill>/references/<name>` file. The hero draws one mark per
- * record, width scaled by `tokens` — see `components/HeroCorpus.tsx`.
+ * record, tick length scaled by `tokens` — see `components/HeroCorpusRing.tsx`.
  * `tokens` is the repo's canonical measure (LF-normalised bytes ÷ 4), and the
  * generator asserts both the count and the sum against
  * `check_figures.py --truth` before writing, so these cannot drift from the

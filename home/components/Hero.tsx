@@ -5,7 +5,7 @@ import type { ReactElement } from "react";
 import { gsap } from "../lib/gsapClient";
 import type { Figures, ReferenceRecord } from "../lib/data.types";
 import HeroBackground from "./HeroBackground";
-import HeroCorpus from "./HeroCorpus";
+import HeroCorpusRing from "./HeroCorpusRing";
 import { useWorld } from "./WorldProvider";
 import { focusRing, tapTarget } from "../lib/tokens";
 
@@ -34,7 +34,7 @@ const LIT_NAME = "landing-patterns.md";
  * naming.** `home/DESIGN.md` §7 used to record a full-viewport pin as the
  * single documented exception to this page's stated L2 interaction tier. The
  * pin existed to drive one number — a 0→1 progress the WebGL hero object read
- * to reveal its strata as you scrolled. `HeroCorpus` shows the whole corpus at
+ * to reveal its strata as you scrolled. `HeroCorpusRing` shows the whole corpus at
  * first paint instead, because the point was never that the corpus is large in
  * instalments; it is that it is large and mostly untouched, which is a fact
  * about a still image. With the object gone the pin had nothing left to drive,
@@ -65,7 +65,7 @@ function HeroImpl(
   /** Which reference the reader is pointing at, or null for the default. */
   const [probed, setProbed] = useState<ReferenceRecord | null>(null);
 
-  // A plain `useState` setter, but memoised so `HeroCorpus` is not handed a
+  // A plain `useState` setter, but memoised so `HeroCorpusRing` is not handed a
   // new callback identity on every render. This fires on pointer movement
   // between marks, never on scroll — `ANI-04` is about the scroll frame.
   const onHoverChange = useCallback((record: ReferenceRecord | null) => {
@@ -93,23 +93,22 @@ function HeroImpl(
         });
       }
 
-      if (section !== null) {
-        // The one authored moment: the corpus sets itself, line by line, the
-        // way a page of type would be composed — then the single reference
-        // this pack would load for a request like the reader's ignites. It
-        // runs once, on load, and never again; there is no scroll trigger on
-        // this section at all.
-        const marks = section.querySelectorAll("[data-corpus-mark]");
-        gsap.from(marks, {
-          opacity: 0,
-          scaleX: 0,
-          transformOrigin: "left center",
-          duration: 0.5,
-          stagger: { each: 0.004, from: "start" },
-          delay: 0.3,
-          ease: "power3.out",
-        });
-      }
+      // NOTHING HERE TOUCHES THE CORPUS, AND THAT IS THE POINT.
+      //
+      // This block used to run `gsap.from(marks, { opacity: 0, scaleX: 0,
+      // delay: 0.3 })` over all 119 ticks while `HeroCorpusRing` set each
+      // tick's own opacity and transitioned it in CSS. Two systems owned one
+      // property, and the tween lost: measured against the shipped production
+      // build, 0 of 119 marks were visible at 500ms and still 0 at 8s. The
+      // `from` state was written and never advanced, so a reader with motion
+      // enabled met an empty half-hero. Under `prefers-reduced-motion` the
+      // effect returned at the top of this hook, never touched the marks, and
+      // the hero rendered correctly — which is why every gate passed.
+      //
+      // The corpus animates itself now, with a CSS transition on a property
+      // no one else writes. If a future pass wants the ring choreographed
+      // with the type, drive it from a prop this component owns; do not reach
+      // into that subtree from here.
     }, section ?? undefined);
 
     return () => context.revert();
@@ -125,7 +124,14 @@ function HeroImpl(
         else if (ref !== null) ref.current = node;
       }}
       id="top"
-      className="relative flex min-h-[100dvh] items-center overflow-hidden bg-bg-page"
+      /* 86dvh, not 100. A full-viewport opener guarantees that the first
+         frame a reader — or a link preview, or a thumbnail — gets contains
+         nothing but the hero, and then needs a scroll cue bolted on to admit
+         there is more. Letting the next section's seam sit just above the fold
+         IS the cue, it costs no element, and it cannot be mistaken for a
+         control. There is deliberately no arrow here, and adding one would be
+         a regression, not an addition. */
+      className="relative flex min-h-[86dvh] items-center overflow-hidden bg-bg-page"
     >
       <HeroBackground className="pointer-events-none absolute inset-0 z-0" />
 
@@ -237,16 +243,18 @@ function HeroImpl(
           </p>
         </div>
 
-        {/* The corpus, in its own track. Below `lg:` the grid collapses and it
-            sits under the copy rather than behind it — the whole reason the
-            text needs no scrim at any width. */}
-        <div className="w-full">
-          <HeroCorpus
+        {/* The corpus, in its own track. Below `lg:` the grid collapses and
+            it sits under the copy rather than behind it — the whole reason the
+            text needs no scrim at any width. Capped rather than full-bleed: a
+            ring reads as a figure at a size the eye can take in whole, and at
+            1440px an uncapped one would be taller than the headline. */}
+        <div className="flex w-full justify-center lg:justify-end">
+          <HeroCorpusRing
             references={references}
             litSkill={LIT_SKILL}
             litName={LIT_NAME}
             onHoverChange={onHoverChange}
-            className="h-auto w-full"
+            className="h-auto w-full max-w-[26rem]"
           />
         </div>
       </div>

@@ -55,7 +55,7 @@
 - **New components (`ShowcaseCard` badges, `SectionSkillCatalog` card emphasis) use `--color-emphasis`/`--color-emphasis-bg`, never `--color-accent`.** This is a distinct, narrower rule: accent-level color is reserved for primary calls-to-action and the page's own live-metric numbers, so a badge on a screenshot card never competes with an actual "Get the skill pack" button for visual priority. `--color-emphasis`'s exact contrast ratios (text-on-bg, and against `--color-emphasis-bg`) are stated here as measured-in-spirit but must be re-verified against `pages:verify`'s axe pass once built — flagged explicitly in the plan as a Phase 2 risk, not silently assumed.
 - One ground family, one accent hue, one emphasis-neutral family. Every gradient on the page is a soft single-hue accent wash fading to transparent, never a purple→pink→blue AI-gradient shape (`COL-03`). **The hero rebuild narrowed this sanction rather than widening it**: the hero's radial accent glow and the radial `bg-page` scrim that used to sit over it are both gone, so the only gradient left anywhere is the optional, non-default `mesh` world's three positioned `radial-gradient` washes of `color-mix(in oklch, var(--color-accent) …, transparent)` (`lib/tokens.ts`). The default `signature` world, the hero, and the base page now carry **no gradient at all**; `signature`'s grain texture (§6) is an alpha-only desaturated noise — not a gradient and not a colour — so it adds tooth without adding a hue.
 - **The accent is a marine blue, and it was chosen by measurement.** It replaced a terracotta that had shipped since the page was built, for three reasons that are all recorded in full in [`tokens.css`](tokens.css)'s Accent comment: the old value was outside the sRGB gamut (blue channel −0.0153, clipped by every browser, so the authored colour was never the rendered one); it sat at OKLab ΔE 0.085 from **both** `--color-danger` and `--color-warning`, putting the page's primary call-to-action almost exactly on top of its own critical-severity marker; and cream-plus-terracotta is two thirds of a cluster this pack's own always-loaded wall names as an AI-design default. Marine's worst separation from any other chromatic token is 0.167 — about double — and it is in gamut. The cost, stated because it is real: chroma drops from 0.157 to 0.088, so the accent carries visibly less force than it did. On a page whose keywords are *warm, restrained, evidentiary* that reads as consistent, but it is a genuine change in temperature and it was checked in a browser, not assumed.
-- **The hero introduces no colour beyond the accent, and spends it on exactly one mark.** `HeroCorpus` draws all 119 references in `--color-text-primary` at 22% and lights a single one in `--color-accent`. That ratio is the restraint rule made literal: the accent marks the one thing a request actually reaches for, and the other 118 are the page's ink. The WebGL object this replaced had to argue the same point harder — it kept the accent off its body and onto the silhouette rim only, because an early pass mixed it in and the object read as a brick in the accent hue. A flat drawing gets there by construction instead of by tuning.
+- **The hero introduces no colour beyond the accent, and spends it on exactly one mark.** `HeroCorpusRing` draws all 119 references in `--color-text-primary` at 34% and lights a single one in `--color-accent`, which is also the only tick that breaks the ring's outer edge. (22% was the block layout's value and it did not survive the move to hairline ticks — measured on the rendered page, the corpus read as a smudge and the lit tick had nothing to be lit against.) That ratio is the restraint rule made literal: the accent marks the one thing a request actually reaches for, and the other 118 are the page's ink. The WebGL object this replaced had to argue the same point harder — it kept the accent off its body and onto the silhouette rim only, because an early pass mixed it in and the object read as a brick in the accent hue. A flat drawing gets there by construction instead of by tuning.
 - **`--color-bg-surface` is a deeper cream at the same lightness (`oklch(95% 0.022 80)`), not a darker grey.** Lightness is pinned at 95% because accent-as-text on `bg-surface` is the page's tightest ratio (4.94); the surface can gain chroma and shift toward `bg-page`'s own H=80, but it cannot lose luminance. Under the terracotta this replaced that ratio was 4.50 — exactly the AA floor, no headroom at all. The pin stays anyway: the constraint is structural, not a property of whichever accent is current. The warmth plus the §6 seams and grain are what separate the below-hero sections — a lightness step is not available here.
 
 ## 3. Typography Rules
@@ -309,16 +309,25 @@ This page used to carry exactly one documented exception to its stated L2
 interaction tier — a full-viewport `ScrollTrigger` pin on the hero, bounded to
 one viewport of travel. **It is gone.** The pin existed to drive a single
 number: a 0→1 progress that the WebGL hero object read to reveal its strata as
-you scrolled. `HeroCorpus` shows the whole corpus at first paint instead,
+you scrolled. `HeroCorpusRing` shows the whole corpus at first paint instead,
 because the point was never that the corpus is large *in instalments* — it is
 that it is large and mostly untouched, which is a fact about a still image.
 With the object gone the pin had nothing left to drive, so it went with it and
 the page now honours its own interaction tier with no exception at all.
 
 What the hero does instead, all of it on load and none of it scroll-linked:
-the headline's words stagger up, the blocks beneath follow, and the corpus sets
-itself line by line before the one reference this pack would load ignites.
-One authored moment, then still.
+the headline's words stagger up, the blocks beneath follow, and a read head
+circles the corpus once and comes to rest on the one reference this pack would
+load. One authored moment, then still — and *still* is literal here, since the
+head's arrival is the last frame this page schedules.
+
+**The two motions have different owners on purpose.** GSAP staggers the type
+column; the ring animates itself with a CSS transition on a property nothing
+else writes. That separation is the fix for a shipped defect, not a style
+preference: when `Hero.tsx` reached into the corpus with `gsap.from()` over
+marks whose opacity React was already setting, 0 of 119 ticks were visible at
+500ms and still 0 at 8s. Do not reach into that subtree from the hero's
+effect; drive it from a prop the component owns.
 
 **Under `prefers-reduced-motion: reduce` no timeline is registered at all** and
 every element is already in its final state — the corpus is server-rendered
@@ -328,8 +337,10 @@ nothing.
 
 **Standing requirement:** `npm run pages:verify` asserts that the corpus draws
 one mark per reference file (counted against `data.generated.json`, not a
-literal), that exactly one is lit at rest, and that all of it is in the
-server-rendered HTML. Run it on any hero change. The separate `hero:verify`
+literal), that exactly one is lit at rest, that **every mark is actually on
+screen under default motion**, and that all of it is in the server-rendered
+HTML. The visibility assertion is the newest and the one that was missing: the
+other three passed in full while all 119 marks sat at opacity 0. Run it on any hero change. The separate `hero:verify`
 harness is retired: the three things it existed to prove — that the pin
 released, that no canvas mounted below 640px, and that a denied WebGL context
 still left a complete hero — are all statements about a hero that no longer

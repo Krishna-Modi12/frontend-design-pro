@@ -24,7 +24,7 @@ export interface HeroBackgroundProps {
  * read as the design.
  *
  * Both are gone rather than restyled. The object now lives in its own grid
- * track beside the copy (`HeroCorpus`, placed by `Hero.tsx`) instead of
+ * track beside the copy (`HeroCorpusRing`, placed by `Hero.tsx`) instead of
  * behind it, so there is nothing animated under the text to protect it from.
  * That also removes the last gradient this component owned — `home/DESIGN.md`
  * §2's sanction is narrower after this change, not wider.

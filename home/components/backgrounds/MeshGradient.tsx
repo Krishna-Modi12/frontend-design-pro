@@ -11,9 +11,16 @@ import type { ReactElement } from "react";
  * that variable; no hardcoded hex or rgba anywhere in this file. Drift is a
  * single `background-position` keyframe (`mesh-drift`, in `lib/tokens.ts`).
  * The page's global reduced-motion rule already clamps it to one 1ms frame;
- * `motion-reduce:` below states the same intent locally too — the same
- * belt-and-braces pairing `Hero.tsx`'s own scroll-indicator icon uses
- * (`animate-bounce motion-reduce:animate-none`).
+ * `motion-reduce:` below states the same intent locally too, because a global
+ * rule is easy to narrow by accident and a local one is not.
+ *
+ * This used to cite the hero's scroll-indicator icon as the matching example
+ * of that belt-and-braces pairing. There is no such icon: it went with the
+ * hero rebuild, and the hero deliberately has no scroll cue at all now — its
+ * height is 86dvh so the next section's seam sits above the fold, which is the
+ * cue an arrow was compensating for. A comment that sends a reader to a
+ * deleted element to learn a convention is worse than no comment, and this one
+ * survived two hero rewrites by being about something else.
  */
 export function MeshGradient(): ReactElement {
   return (

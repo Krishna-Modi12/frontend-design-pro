@@ -260,7 +260,17 @@ export function ShowcaseCoverflow({ slides }: ShowcaseCoverflowProps): ReactElem
         {/* Real buttons rather than dots-as-divs, each naming the project it
             jumps to — "slide 3 of 4" tells a screen-reader user nothing about
             what they would be choosing. */}
-        <div className="flex items-center gap-2">
+        {/* The dot stays 10px; the BUTTON is 24px.
+            WCAG 2.5.8 Target Size (Minimum) is 24x24 CSS px at AA, and these
+            were 10x10 — measured on the rendered page, not read off the
+            source. The standard's spacing exception does not rescue them
+            either: it only applies when a 24px circle centred on each target
+            clears its neighbours, and at 10px dots with an 8px gap the centres
+            sat 18px apart. Nothing caught it, because axe does not run
+            `target-size` by default and no constraint in this repo measures a
+            rendered box. Padding the hit area rather than growing the dot
+            keeps the visual rhythm the coverflow was designed with. */}
+        <div className="flex items-center gap-1">
           {slides.map((slide, index) => (
             <button
               key={slide.id}
@@ -268,10 +278,15 @@ export function ShowcaseCoverflow({ slides }: ShowcaseCoverflowProps): ReactElem
               onClick={() => scrollToIndex(index)}
               aria-label={`Show ${slide.name}`}
               aria-current={index === active ? "true" : undefined}
-              className={`${focusRing} h-2.5 w-2.5 rounded-full transition-colors duration-150 ease-out motion-reduce:transition-none ${
-                index === active ? "bg-accent" : "bg-border-strong hover:bg-text-muted"
-              }`}
-            />
+              className={`${focusRing} grid h-6 w-6 place-items-center rounded-full`}
+            >
+              <span
+                aria-hidden="true"
+                className={`block h-2.5 w-2.5 rounded-full transition-colors duration-150 ease-out motion-reduce:transition-none ${
+                  index === active ? "bg-accent" : "bg-border-strong hover:bg-text-muted"
+                }`}
+              />
+            </button>
           ))}
         </div>
 
