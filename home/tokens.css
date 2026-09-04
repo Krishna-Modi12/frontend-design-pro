@@ -36,9 +36,12 @@
 @theme {
   /* ── Ground ─────────────────────────────────────────────────────────────── */
   --color-bg-page: oklch(98% 0.008 80);
-  /* Lightness held at 95% deliberately — accent-as-text on `bg-surface` is the
-     page's tightest ratio (4.50, exactly at the AA floor; see the Accent block
-     below), so `bg-surface` can gain warmth but not lose luminance. The chroma
+  /* Lightness held at 95% deliberately — accent-as-text on `bg-surface` is
+     still the page's tightest ratio (4.94; see the Accent block below), so
+     `bg-surface` can gain warmth but not lose luminance. It sat at exactly
+     4.50, the AA floor, under the previous accent; the current one brought
+     headroom, and the pin stays regardless — the constraint is structural,
+     and the next accent may not be as generous. The chroma
      bump (0.015 → 0.022) and the hue shift toward `bg-page`'s own H=80 read as
      a deeper cream of the same family — enough, alongside the 1px section seams
      and the `signature` grain (both in `lib/tokens.ts`), to make the below-hero
@@ -50,16 +53,44 @@
   --color-bg-invert: oklch(18% 0.02 270);
 
   /* ── Accent — one chromatic colour on the whole page ──────────────────────
-     Terracotta clears AA in both directions without splitting into two tokens
-     the way `demo/landing-page`'s cobalt had to: as text on every light ground
-     (4.92 / 4.50 / 4.92 / 5.19) AND as a fill under white (5.21). One token
-     does both jobs here. The one place it does NOT clear AA-body is as small
-     text on `bg-invert` (3.61, large-text only) — the footer uses it for large
-     numerals/headings and button fills only, never small links; see
-     `ink-invert-secondary` for footer body/link colour. */
-  --color-accent: oklch(55% 0.18 45);
+     A deep marine blue. It clears AA in both directions without splitting into
+     two tokens the way `demo/landing-page`'s cobalt had to: as text on all
+     three light grounds (`bg-page` 5.40 / `bg-surface` 4.94 / `bg-elevated`
+     5.70) AND as a fill under white (5.72). One token does both jobs. The one
+     place it does NOT clear AA-body is as small text on `bg-invert` (3.29,
+     large-text only) — the footer uses it for large numerals/headings and
+     button fills only, never small links; see `ink-invert-secondary` for the
+     footer's body/link colour.
+
+     ── Why this hue, and not the terracotta that shipped through v14 ────────
+     Three measurements decided it, none of them taste:
+
+     1. `oklch(55% 0.18 45)` was OUT of the sRGB gamut. Its blue channel
+        computes to -0.0153 and every browser clipped it to zero, so the
+        authored value was never the rendered one — the chroma ceiling at that
+        L and H is 0.157. The old ratios were correct only because they had
+        been measured after the clip. This value is in gamut with room.
+     2. It sat almost exactly BETWEEN the two status colours: OKLab ΔE 0.085
+        to `--color-danger` and 0.085 to `--color-warning`. The page's primary
+        call-to-action was that close to its own critical-severity marker.
+        Marine's worst separation from any other chromatic token in the
+        palette is 0.167 (to the `mesh` world) — roughly double.
+     3. Cream ground plus terracotta accent is two thirds of a cluster the
+        pack's own always-loaded wall names as an AI-design default (root
+        `SKILL.md`, and `design-principles/references/anthropic-frontend-design.md`).
+        The face here is Geist, not a serif, so it was never the full three —
+        but a pack that tells agents not to reach for that palette should not
+        be wearing most of it on its own front door.
+
+     Lightness is not a free choice at any hue. Two floors pull opposite ways —
+     accent-as-text on `bg-surface` needs at least 4.5, and accent on the
+     footer's `bg-invert` needs at least 3.0 for the large numerals it already
+     fills — and between them they leave a window about four percentage points
+     wide at every hue. Chroma is pinned at 92% of the sRGB ceiling for this L
+     and H, so the browser never has to clip it. */
+  --color-accent: oklch(50.5% 0.088 225);
   --color-accent-ink: oklch(100% 0 0);
-  --color-accent-glow: oklch(55% 0.18 45 / 0.12);
+  --color-accent-glow: oklch(50.5% 0.088 225 / 0.12);
 
   /* ── Ink ────────────────────────────────────────────────────────────────── */
   --color-text-primary: oklch(18% 0.02 80);

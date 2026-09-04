@@ -147,7 +147,8 @@ const fragmentShader = /* glsl */ `
     // Without it a plain fresnel term peaks on exactly the faces a stack of
     // thin slabs shows most of — the horizontal ones, seen almost edge-on —
     // so every stratum's top and bottom glowed and the whole object read as
-    // a solid terracotta mass rather than a graphite one with a lit edge.
+    // a solid mass in the accent hue rather than a graphite one with a lit
+    // edge.
     // The flat faces are lit in ink; only the turning edge takes the hue.
     float fresnel = pow(1.0 - max(dot(N, V), 0.0), 3.0);
     float rim = fresnel * (1.0 - abs(N.y));
@@ -155,7 +156,7 @@ const fragmentShader = /* glsl */ `
     // The body is a warm taupe — the page's ink carried most of the way to
     // its paper. Two earlier passes proved the extremes both fail on a cream
     // ground: at full ink the object is a black brick whose seams vanish, and
-    // with the accent mixed into the body it is a terracotta one. A mid tone
+    // with the accent mixed into the body it is a brick in the accent hue. A mid tone
     // is what lets all three cues read at once — the lit top face of each
     // stratum, the page showing through the seam beneath it, and the hue on
     // the turning edge. It also keeps the accent scarce, which is the rule
@@ -163,7 +164,22 @@ const fragmentShader = /* glsl */ `
     // looked at, not smeared across the largest object on the page.
     vec3 body = mix(uInk, uPaper, 0.5);
     vec3 color = mix(body * 0.32, body * 1.04, key) * vLit;
-    color += uAccent * rim * 0.9 * vLit;
+    // 1.55, not the 0.9 this shipped with. The coefficient is not a free
+    // constant — it is tuned against the accent's CHROMA, and the accent
+    // changed hue in a direction where sRGB simply has less chroma to give:
+    // 0.157 at the old H 45, 0.088 at H 225. Left at 0.9 the rim measured
+    // roughly half its former force in a rendered screenshot (95th-percentile
+    // saturation over the object's pixels fell 0.261 -> 0.098, and the share
+    // of the object carrying any hue at all fell 9.4% -> 4.8%), which is the
+    // one thing the object cannot afford to lose: the flat faces are ink, so
+    // the turning edge is the ONLY place the page's accent appears here.
+    // 1.55 restores the rim's peak luminance to exactly what it was (99th
+    // percentile 0.627, both before and after) while leaving the body
+    // untouched (median saturation 0.0435 -> 0.0374, i.e. still ink). It is
+    // deliberately not pushed further: past this the edge is brighter than
+    // the design was ever tuned for, and the remaining saturation gap is a
+    // property of the hue, not something a multiplier can buy back.
+    color += uAccent * rim * 1.55 * vLit;
     color += uAccent * vHover * 0.55;
     color = mix(color, uAccent, clamp(vIgnite, 0.0, 1.0) * 0.94);
 
@@ -243,7 +259,7 @@ export function HeroDepthScene({
     // recompile the GLSL program every frame.
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const uniforms = {
-      uAccent: { value: readColorVar("--color-accent", "oklch(55% 0.18 45)") },
+      uAccent: { value: readColorVar("--color-accent", "oklch(50.5% 0.088 225)") },
       uInk: { value: readColorVar("--color-text-primary", "oklch(18% 0.02 80)") },
       uPaper: { value: readColorVar("--color-bg-page", "oklch(98% 0.008 80)") },
       uReveal: { value: reduced ? 1 : 0 },

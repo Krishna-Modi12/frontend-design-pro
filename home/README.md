@@ -16,7 +16,11 @@ same component conventions the rest of this repo's examples are held to.
 ## Why this palette, why one lit object
 
 The design brief this page was rebuilt from asked for a warm-editorial ground
-and a terracotta accent. The hero has been through three shapes: a canvas
+and a terracotta accent. The ground stayed; the accent did not, and
+[`tokens.css`](tokens.css) carries the three measurements that retired it — it
+was out of the sRGB gamut, it was ΔE 0.085 from the page's own danger colour,
+and it was most of a palette this pack's wall tells agents not to reach for.
+It is a marine blue now. The hero has been through three shapes: a canvas
 particle-typography hero, then a Three.js shader-mesh background, and now a
 single lit object built from the pack's own reference tree. All of it is
 checked against this pack's own rules before shipping, not just against a

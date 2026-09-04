@@ -10,18 +10,25 @@
  * documents, never eyeballed. Worst case across the three light grounds
  * (bg-page / bg-surface / bg-elevated):
  *
- *   signature  oklch(55%   0.18 45)   4.92 / 4.50 / 5.19
+ *   signature  oklch(50.5% 0.088 225) 5.40 / 4.94 / 5.70
  *   mesh       oklch(54.6% 0.22 270)  4.97 / 4.55 / 5.25
  *   grain      oklch(52%   0.12 120)  5.05 / 4.63 / 5.33
  *   grid       oklch(55%   0.17 310)  4.98 / 4.56 / 5.26
  *
  * All four clear 4.5:1 AA as text on every light ground and as a fill under
- * white; all four sit around 3.5–3.6:1 against the footer's `bg-invert`,
- * matching `signature`'s own existing large-text/fill-only restriction there
- * (see `tokens.css`'s Accent comment) — none of the four is used for small
- * text on the footer.
+ * white; all four sit between 3.29 and 3.57:1 against the footer's
+ * `bg-invert`, matching `signature`'s own existing large-text/fill-only
+ * restriction there (see `tokens.css`'s Accent comment) — none of the four is
+ * used for small text on the footer.
  *
- * `signature`'s accent is deliberately unchanged from today's value.
+ * `signature` is the one that changed. It was a terracotta at H 45 for the
+ * pack's whole life; `tokens.css`'s Accent comment carries the three measured
+ * reasons it is a marine blue now, the short version being that it was out of
+ * gamut, it was ΔE 0.085 from `--color-danger`, and the palette it belonged to
+ * is one the pack's own wall tells agents not to reach for. The other three
+ * worlds are untouched. Worth noting what the move bought at the level of the
+ * set: the four accents now sit at H 120 / 225 / 270 / 310 instead of
+ * stranding one of them down at H 45, between the two status hues.
  *
  * **All four worlds now render the hero's object.** They did not use to: the
  * shader this replaced carried contrast and cooling maths hand-tuned against
@@ -60,9 +67,9 @@ export interface WorldDef {
 export const WORLDS: WorldDef[] = [
   {
     id: "signature",
-    accent: "oklch(55% 0.18 45)",
+    accent: "oklch(50.5% 0.088 225)",
     accentInk: "oklch(100% 0 0)",
-    accentGlow: "oklch(55% 0.18 45 / 0.12)",
+    accentGlow: "oklch(50.5% 0.088 225 / 0.12)",
     headlineWeight: "font-medium",
   },
   {
