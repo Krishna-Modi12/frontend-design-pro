@@ -259,15 +259,30 @@ CONSTRAINTS: List[Constraint] = [
         # numbers passes. Agent judgment is still required for realistic-looking
         # invented data and for round percentages; do not cite this as coverage
         # for either.
+        #
+        # The predicate used to read "HAS an organic value OR LACKS a round one",
+        # and the first half alone satisfied it. So the rule caught a file whose
+        # figures were ENTIRELY round, and missed the mixed file — one real 47.2%
+        # anywhere in the source licensed unlimited 10,000+ / $10,000 / 100,000+
+        # beside it. The mixed file is the realistic slop case, which made this a
+        # bypass rather than a check: a fixture of three banned figures plus one
+        # 47.2% passed 36/36.
+        #
+        # Measured before and after, because "inert" would have been the easy
+        # overstatement and it is not true: across 247 checkable files in skills/,
+        # demo/, home/, core/, install/, docs/ and tools/, exactly one contains a
+        # banned figure at all — skills/web-interface/examples/bad-generic.tsx,
+        # whose numbers are all round, so it failed under the old predicate and
+        # still fails under this one. NO file in this corpus changes verdict. This
+        # closes a hole nothing currently walks through; it is a repair, not a new
+        # rule, and the published constraint count is unchanged.
         description="No bare placeholder-round comma-figures (10,000, $10,000, 100,000+) — percent literals and other fabricated figures are not evaluated",
         severity="medium",
         check=lambda c: (
-            # Pass if there are some non-round values OR no numeric data at all.
             # _uncommented() so illustrative "don't do X" comments (e.g. a JSDoc
-            # example citing "4,217 not 10,000+") don't count as live evidence.
-            _has(r'\d+\.\d+%|\$(?!10,000\b)(?!100,000\b)\d+,\d{3}(?!\d)|(?<![\d.])(?!10,000\b)(?!100,000\b)\d{1,2},\d{3}\b', _uncommented(c))
-            or _lacks(r'\$?(?<![\d.])(?:10,000|100,000)\+?(?!\d)', _uncommented(c)),
-            "Only round-number data values found — use organic values (47.2%, $12,847)"
+            # example citing "4,217 not 10,000+") don't count as a live violation.
+            _lacks(r'\$?(?<![\d.])(?:10,000|100,000)\+?(?!\d)', _uncommented(c)),
+            "Placeholder-round figure found (10,000 / 100,000) — use an organic value (47.2%, $12,847)"
         )
     ),
     Constraint(
@@ -916,6 +931,22 @@ def self_test():
     if bad_passes:
         for r in bad_passes:
             print(f"  - [{r.constraint.id}] {r.constraint.description} (unexpectedly passed)")
+
+    # SLOP-04 regression. FIXTURE_BAD cannot hold this line, because it already
+    # fails SLOP-04 on its all-round figures — a fixture that fails for two
+    # reasons proves nothing about either. The bypass this guards against is
+    # specifically the MIXED file: one organic value sitting beside banned
+    # placeholder-round ones, which the old "HAS organic OR LACKS round"
+    # predicate waved through at 36/36.
+    mixed = 'const a = "10,000+ users";\nconst rate = "47.2%";\n'
+    slop04 = next((r for r in run_constraints(mixed) if r.constraint.id == "SLOP-04"), None)
+    if slop04 is None:
+        print("\n✗ SLOP-04 regression: the constraint is no longer defined")
+    elif slop04.passed:
+        print("\n✗ SLOP-04 regression: a banned figure beside one organic value passed")
+        print("  → the 'organic OR round' bypass is back; the ban must stand alone")
+    else:
+        print("\n✓ SLOP-04 regression: a banned figure is caught even beside organic data")
 
     print(f"\nSelf-test complete. {len(CONSTRAINTS)} constraints defined.")
 

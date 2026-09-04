@@ -233,6 +233,55 @@ jobs:
         working-directory: home
         run: npm test
 
+  # The renderer checks for home/. Until now they existed, passed, and ran
+  # nowhere — `pages:verify` was a real, working harness with no caller, so
+  # home/'s entire CI footprint was the router suite above and the informational
+  # screenshot diff below. A check nobody runs is worth what an unrun check is
+  # worth, which is why this job exists.
+  #
+  # What it adds that no other job can see: axe WCAG 2.1 AA on the rendered DOM,
+  # React hydration mismatches, horizontal overflow at 390/768/1920 in both LTR
+  # and RTL, the reduced-motion paths, whether the router and the checker do what
+  # the copy beside them says, and the three hero assertions — one mark per
+  # reference counted against `data.generated.json`, exactly one lit at rest, all
+  # of it in the server-rendered HTML. Every one of those is invisible to a
+  # source-reading gate; `CLAUDE.md`'s "No gate renders anything" section lists
+  # what that blindness has already cost, and every item on that list was found
+  # by a human looking at a page rather than by the green chain.
+  #
+  # Blocking, deliberately, unlike visual-regression below: these are assertions
+  # about the DOM, not a pixel diff against a baseline, so there is no threshold
+  # to tune and no font drift to absorb.
+  home-renderer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # tools/screenshots ships without react/react-dom of its own and resolves
+      # them by walking up to this install — root first, or the servers it
+      # starts have no React at all. Same ordering as visual-regression below.
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install screenshot harness dependencies
+        working-directory: tools/screenshots
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: tools/screenshots
+        run: npx playwright install --with-deps chromium
+
+      - name: Install home/ dependencies
+        working-directory: home
+        run: npm ci
+
+      - name: Renderer checks — hydration, axe AA, overflow, hero (dev and prod)
+        run: npm run pages:verify
+
   # No gate in this repository renders a page and compares it to what it
   # rendered last time — this is that check, for the three demos that render
   # deterministically (demo/showcase's WebGL hero is otherwise seeded at
