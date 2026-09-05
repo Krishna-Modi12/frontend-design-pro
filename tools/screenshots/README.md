@@ -40,18 +40,22 @@ few-byte change is nothing.
 ## Visual regression
 
 ```bash
-npm run visual-regression                    # check home/ and demo/landing-page against baselines
+npm run visual-regression                    # check home/, demo/landing-page and demo/showcase
 npm run visual-regression -- --update-baselines
 ```
 
 Or from the repo root: `npm run visual-regression`.
 
-Diffs `home/` and `demo/landing-page` against committed baselines under
-`baselines/` (3 viewports each, one color scheme per target — see the doc
-comment at the top of `visual-regression.mjs` for why). `demo/showcase` is
-excluded: its hero is a WebGL particle field seeded at random, so every
-capture differs from the last (see "showcase is opt-in" above) — a pixel
-diff against it would fail on every run regardless of any real change.
+Diffs `home/`, `demo/landing-page` and `demo/showcase` against committed
+baselines under `baselines/` (3 viewports each, one color scheme per target —
+see the doc comment at the top of `visual-regression.mjs` for why).
+
+`demo/showcase` was excluded at first, and the reason is worth keeping: its hero
+is a WebGL particle field seeded at random, so every capture differs from the
+last and a pixel diff would have failed on every run regardless of any real
+change. It is included now because the capture freezes the seed via
+`?particleSeed=`, which pins particle position and rotation for a byte-identical
+repeat capture. Real users are unaffected.
 
 Baselines should come from CI, not a local machine: font rendering differs
 enough across platforms that a Windows- or macOS-captured baseline produces
