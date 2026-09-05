@@ -131,10 +131,10 @@ const CTA_TONE: Record<HeroCta["tone"], string> = {
 
 export default function HomePage() {
   return (
-    <main className="min-h-[100dvh]">
+    <>
       {/* First tabstop on the page. Anything with a <nav> needs one, or a
           keyboard reader walks all six nav links plus the CTA before reaching
-          the headline. `sr-only` until focused, then a real, visible target —
+          the headline. `sr-only` until focused, then a real, visible target -
           a skip link that stays invisible when focused is worse than none,
           because it silently moves the caret somewhere the user cannot see. */}
       <a
@@ -144,77 +144,93 @@ export default function HomePage() {
         Skip to content
       </a>
 
+      {/* Nav and Footer sit OUTSIDE <main>, deliberately. A <header> or
+          <footer> that descends from <main> (or <article>, or <section>) is
+          stripped of its role by HTML-AAM - it is no longer a `banner` or a
+          `contentinfo` landmark, just a generic box. So wrapping the whole
+          page in <main> does not merely nest two landmarks, it deletes them:
+          the landmark menu a screen-reader user navigates by loses both, and
+          because the elements are role-less rather than misplaced, axe has
+          nothing to report. Silence here is the failure mode, not the proof. */}
       <Nav />
-      <section id="main-content" className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0">
-          <Hero3D />
-        </div>
-        <div className="relative mx-auto flex max-w-6xl flex-col items-start px-6 py-28 sm:py-40">
-          <span className="rounded-full border border-border bg-bg-surface px-3 py-1 font-mono text-xs uppercase tracking-wide text-accent">
-            now parsing 214M events / day
-          </span>
-          <h1 className="mt-6 max-w-2xl text-4xl font-semibold tracking-tight text-text-primary sm:text-6xl">
-            Analytics that finds the signal before your dashboard loads
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-text-muted">
-            Wavelet ingests every event your product emits and surfaces the anomalies that actually
-            matter — ranked, explained, and routed to the right engineer.
-          </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            {heroCtas.map((cta: HeroCta) => (
-              <a
-                key={cta.href}
-                href={cta.href}
-                className={`inline-flex min-h-11 items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold ${CTA_TONE[cta.tone]}`}
-              >
-                {cta.label}
-              </a>
-            ))}
+
+      {/* tabIndex={-1} is what makes the skip link actually move focus. A
+          fragment jump to a non-focusable target only sets the sequential
+          focus starting point: the next Tab lands in the right place, but
+          focus itself never moves, so a screen reader keeps reading from the
+          nav it was told it had skipped. */}
+      <main id="main-content" tabIndex={-1} className="min-h-[100dvh] outline-none">
+        <section className="relative overflow-hidden border-b border-border">
+          <div className="absolute inset-0">
+            <Hero3D />
           </div>
-        </div>
-      </section>
+          <div className="relative mx-auto flex max-w-6xl flex-col items-start px-6 py-28 sm:py-40">
+            <span className="rounded-full border border-border bg-bg-surface px-3 py-1 font-mono text-xs uppercase tracking-wide text-accent">
+              now parsing 214M events / day
+            </span>
+            <h1 className="mt-6 max-w-2xl text-4xl font-semibold tracking-tight text-text-primary sm:text-6xl">
+              Analytics that finds the signal before your dashboard loads
+            </h1>
+            <p className="mt-6 max-w-xl text-lg text-text-muted">
+              Wavelet ingests every event your product emits and surfaces the anomalies that actually
+              matter — ranked, explained, and routed to the right engineer.
+            </p>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              {heroCtas.map((cta: HeroCta) => (
+                <a
+                  key={cta.href}
+                  href={cta.href}
+                  className={`inline-flex min-h-11 items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold ${CTA_TONE[cta.tone]}`}
+                >
+                  {cta.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section id="product" className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-        <h2 className="max-w-lg text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
-          One pipeline. Every signal.
-        </h2>
-        <div className="mt-12">
-          <BentoGrid features={features} />
-        </div>
-      </section>
-
-      <section id="pricing" className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-          <h2 className="text-center text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
-            Pricing that scales with your event volume
+        <section id="product" className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+          <h2 className="max-w-lg text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+            One pipeline. Every signal.
           </h2>
           <div className="mt-12">
-            <Pricing tiers={tiers} />
+            <BentoGrid features={features} />
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="testimonials" className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-          <Testimonials testimonials={testimonials} />
-        </div>
-      </section>
-
-      <section id="contact" className="border-t border-border">
-        <div className="mx-auto max-w-2xl px-6 py-24 sm:py-32">
-          <h2 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
-            Get a walkthrough of your own data
-          </h2>
-          <p className="mt-3 text-text-muted">
-            Tell us what you're tracking today and we'll show you what Wavelet surfaces from it.
-          </p>
-          <div className="mt-10">
-            <ContactForm />
+        <section id="pricing" className="border-t border-border">
+          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+            <h2 className="text-center text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+              Pricing that scales with your event volume
+            </h2>
+            <div className="mt-12">
+              <Pricing tiers={tiers} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section id="testimonials" className="border-t border-border">
+          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+            <Testimonials testimonials={testimonials} />
+          </div>
+        </section>
+
+        <section id="contact" className="border-t border-border">
+          <div className="mx-auto max-w-2xl px-6 py-24 sm:py-32">
+            <h2 className="text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+              Get a walkthrough of your own data
+            </h2>
+            <p className="mt-3 text-text-muted">
+              Tell us what you're tracking today and we'll show you what Wavelet surfaces from it.
+            </p>
+            <div className="mt-10">
+              <ContactForm />
+            </div>
+          </div>
+        </section>
+      </main>
 
       <Footer />
-    </main>
+    </>
   );
 }

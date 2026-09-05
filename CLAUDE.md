@@ -59,7 +59,10 @@ harness is split — `demos:verify`'s `ROUTES` mounts the three stub-typed demos
 inside the `tools/screenshots` app and never touches `demo/showcase`, a
 standalone app with its own install. Run only the first and you skip the demo
 with the WebGL hero and the only real interactive flow in `demo/`.
-**`demos:typecheck` and `screenshots` remain manual**:
+`demos:typecheck` runs in `demo-renderer` too, ahead of the browser
+download so a type error costs no Chromium install. **`screenshots` is the
+one that stays manual** — it writes files rather than checking them, so CI
+has nothing to assert about it that a reviewer's eye does not:
 
 ```bash
 npm run demos:verify     # page errors · console errors · hydration · axe WCAG 2.1 AA
