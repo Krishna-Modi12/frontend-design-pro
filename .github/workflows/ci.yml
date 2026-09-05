@@ -365,15 +365,28 @@ jobs:
   # random; visual-regression.mjs freezes it via ?particleSeed= for capture,
   # same as it does the reduced-motion path for the other two).
   #
-  # `continue-on-error: true` at the job level, on purpose: baselines were
-  # captured once and this has not yet run clean across enough real commits
-  # to trust the threshold, so a false positive here should not block a
-  # merge. Promoting this to a blocking, numbered gate is tracked as
-  # follow-up work in docs/CAPABILITY_MATRIX.md, not attempted in the PR
-  # that introduced the tool.
+  # Blocking as of this commit. It shipped `continue-on-error: true` because
+  # the threshold was untested; the evidence to drop that is now in the run
+  # history. Across every run since, the `landing-page` and `showcase`
+  # captures came back byte-identical on commits that did not touch them —
+  # including one that restructured showcase's landmarks, changing the DOM
+  # and no pixels — so the runner is deterministic and the budget is not
+  # absorbing drift. Every failure it has produced was a real, intended
+  # design change with a stale baseline behind it, which is the tool
+  # working, not a false positive.
+  #
+  # The cost this imposes is real and deliberate: a PR that intentionally
+  # changes how a page looks now has to regenerate its baselines before it
+  # can merge. That is the point — it makes an unreviewed visual change
+  # impossible to land by accident. Run the "Regenerate visual-regression
+  # baselines" workflow, commit what it produces, and say in the PR why the
+  # pixels moved. CONTRIBUTING.md carries the steps.
+  #
+  # Still outside the 11 numbered gates on purpose: those run in
+  # build_release.py against a source tree, and this one needs three built
+  # Next apps and a browser. Blocking and numbered are different things.
   visual-regression:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

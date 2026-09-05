@@ -124,6 +124,30 @@ npm run screenshots      # regenerate every image README.md links — still manu
 stub-typed demos inside the harness app, and showcase is a standalone app with its
 own install. Running only the first is how you skip the WebGL hero.
 
+### If your change moves pixels, regenerate the baselines
+
+`visual-regression` blocks a merge. It renders `home/`, `demo/landing-page` and
+`demo/showcase` at three viewports and diffs them against committed baselines,
+so a change that alters how any of those look will fail it — correctly. The
+failure is the check telling you a visual change is in the diff, not that
+something is broken.
+
+Do **not** fix it with a local `--update-baselines`. Font rendering differs
+enough across platforms that a baseline captured on Windows or macOS produces
+false diffs against the Linux runner. Instead:
+
+1. Run the **Regenerate visual-regression baselines** workflow (Actions →
+   Run workflow) against your branch.
+2. Download its `visual-regression-baselines` artifact and extract it over
+   `tools/screenshots/baselines/`.
+3. **Look at the diff before you commit it.** This is the review step the
+   whole check exists for — if a capture moved that your change had no
+   business touching, you have just found a bug, not a stale baseline.
+4. Commit the baselines separately from the change, and say in the PR why
+   the pixels moved.
+
+`--update-baselines` is for local iteration only.
+
 ### Version bumps are not yours to make
 
 Releases are cut by the maintainer. A version bump touches **six** places —

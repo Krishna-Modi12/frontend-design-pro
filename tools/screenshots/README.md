@@ -63,9 +63,15 @@ false diffs against the Linux runner this also runs on. `--update-baselines`
 is for local iteration; review what it reports before committing a baseline
 it produced.
 
-Runs in CI as `visual-regression` in `.github/workflows/ci.yml`, informational
-only (`continue-on-error: true`) until it has proven stable enough to block a
-merge.
+Runs in CI as `visual-regression` in `.github/workflows/ci.yml`, and it
+**blocks a merge**. It did not at first — it shipped informational while the
+threshold was unproven — and what changed is the run history: on commits that
+did not touch them, the `landing-page` and `showcase` captures come back
+byte-identical, so the budget is not quietly absorbing runner drift.
+
+The consequence for you: if your change is *meant* to move pixels, the check
+will fail, and that failure is correct. Regenerate the baselines from the
+runner before merging (see CONTRIBUTING.md) and say in the PR why they moved.
 
 ## Why this is a separate package
 
