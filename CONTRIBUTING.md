@@ -109,20 +109,29 @@ green chain.
 
 If you touch anything under `demo/`, run the renderer-level checks. They need a
 browser and real vendor libraries, so they live in `tools/screenshots/` with their
-own `package.json` and are not in CI:
+own `package.json`. The rendering ones now run in CI too, in the blocking
+`demo-renderer` job — run them locally anyway, because finding it here is cheaper
+than finding it on the PR:
 
 ```bash
 npm run demos:verify     # page + console errors · hydration · axe WCAG 2.1 AA · overflow
-npm run demos:typecheck  # against REAL vendor typings, not demo/_stubs.d.ts
-npm run screenshots      # regenerate every image README.md links
+npm run showcase:verify  # demo/showcase — the same, plus the pricing-to-contact flow
+npm run demos:typecheck  # against REAL vendor typings, not demo/_stubs.d.ts — still manual
+npm run screenshots      # regenerate every image README.md links — still manual
 ```
+
+`demos:verify` never touches `demo/showcase`: its `ROUTES` list mounts the three
+stub-typed demos inside the harness app, and showcase is a standalone app with its
+own install. Running only the first is how you skip the WebGL hero.
 
 ### Version bumps are not yours to make
 
-Releases are cut by the maintainer. A version bump touches `metadata.json`, a new
-top header in `docs/CHANGELOG.md`, and the `version:` line in **every**
-`skills/*/SKILL.md` — and the pre-flight gate fails on any of them being out of
-step. Open your PR against the current version and leave it alone.
+Releases are cut by the maintainer. A version bump touches **six** places —
+`metadata.json`'s `version` and its own `changelog` map, a new top header in
+`docs/CHANGELOG.md`, the `version:` line in **every** `skills/*/SKILL.md`,
+`.claude-plugin/plugin.json`, and the `## What's new in vX` heading in
+`README.md` — and the gates fail on any of them being out of step. Open your PR
+against the current version and leave it alone.
 
 Relatedly, the pre-flight **version-leak scan** fails if the current version string
 appears in any file outside a small allowlist. A branch name containing the version
