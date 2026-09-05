@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import type { ReactElement } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactElement, RefObject } from "react";
 import type { ReferenceRecord } from "../lib/data.types";
 
 export interface HeroCorpusRingProps {
@@ -69,6 +69,29 @@ export interface HeroCorpusRingProps {
  * own measurement: a previous hero carried a slow perpetual rotation and cost
  * a 29.9ms median frame against a 16.7ms baseline for a drift no reader would
  * notice. Nothing here animates at rest.
+ *
+ * **And then the reader drives it.** Past the resting tick the head is bound
+ * to scroll: as the hero leaves the viewport it completes exactly one more
+ * turn, arriving back where it started as the section closes. The technique
+ * came from Skiper UI's `Skiper19` — a stroke whose `pathLength` follows
+ * scroll progress — and it needed almost nothing to adopt, because this ring
+ * was already built on that primitive: `pathLength={1}`, a normalised dash,
+ * one offset. What the original supplies as a decorative squiggle (2,319 units
+ * of hand-copied path data meaning nothing) is here the read head crossing 119
+ * real files.
+ *
+ * That is also the whole reason it is scroll-bound rather than looping. At
+ * rest the head sits on one tick and the caption prices it: a request loaded
+ * this. Scrolling continues the traversal past it, through the files the
+ * request did *not* load, and the ring closes as the argument moves on. A
+ * perpetual spin would say the opposite — that the corpus is being read
+ * continuously, which is the claim this page exists to deny.
+ *
+ * The original arrives with `framer-motion`, a `scrollYProgress: any`, four
+ * hardcoded hex colours and no reduced-motion path — measured here as
+ * `MOTION-01`, `TS-01-AST` and `COL-04`. None of that was needed to take the
+ * idea: the driver below is 20 lines, adds no dependency, and is off entirely
+ * under `prefers-reduced-motion`.
  *
  * Pointing at any tick moves the read head to it and prices it. That is the
  * architecture demonstrated rather than asserted: every one of these is a file
@@ -193,6 +216,90 @@ const pointAt = (angleDeg: number, radius: number): [number, number] => {
   return [round(CENTRE + radius * Math.cos(rad)), round(CENTRE + radius * Math.sin(rad))];
 };
 
+/**
+ * How much scrolling completes the second turn, as a fraction of the viewport
+ * height. 0.6 rather than a full screen: the hero is `min-h-[86dvh]`, so a
+ * 1.0 span would still be mid-turn when the section's seam has already passed
+ * the fold, and a traversal that gets cut off is worse than no traversal.
+ */
+const READ_SPAN = 0.6;
+
+/**
+ * Quantisation of the scroll signal, in steps per turn. This is the whole
+ * performance story, so it is a named constant rather than a magic round().
+ *
+ * The head's offset is React state, and React state re-renders a component
+ * that owns 119 `<line>` elements. Left continuous, a scroll produces one
+ * distinct value per frame and this figure re-renders at scroll rate for the
+ * life of the section. Snapped to 200 steps, the whole traversal costs at most
+ * 200 renders no matter how slowly it is scrolled, and each step is 1.8° of
+ * arc — under two pixels of movement at this radius, which is below what the
+ * eye resolves as a step. The ticks themselves are memoised past it (see
+ * `markup` below), so those renders reconcile one `<circle>`.
+ */
+const READ_STEPS = 200;
+
+/**
+ * The scroll driver — the `Skiper19` idea, without its dependency.
+ *
+ * Three properties it has to have, each learned from something in this repo:
+ *
+ * - **rAF-coalesced.** `ANI-04` fails a `scroll` listener that calls a setState
+ *   directly, because that re-renders on every frame of a scroll. The handler
+ *   here only ever schedules a frame; the measurement and the setState happen
+ *   inside it, and it refuses to schedule a second while one is pending.
+ * - **Off under `prefers-reduced-motion`.** Not slowed, not shortened: the
+ *   listener is never attached, `progress` stays 0, and the head rests on its
+ *   tick. Scroll-linked movement is movement.
+ * - **Measured from the element, not from `window.scrollY`.** Lenis is the
+ *   scroll driver on this page and it animates the real scroll position, so
+ *   `getBoundingClientRect()` is true at the moment it is read while any
+ *   arithmetic on a remembered page offset would not be.
+ */
+function useReadProgress(ref: RefObject<SVGSVGElement | null>): number {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let last = 0;
+
+    const measure = (): void => {
+      frame = 0;
+      const node = ref.current;
+      if (node === null) return;
+      // Positive while the ring is still below the top of the viewport, so
+      // the whole first screen reads as 0 and the traversal begins only when
+      // the reader actually starts leaving.
+      const travelled = -node.getBoundingClientRect().top;
+      const span = window.innerHeight * READ_SPAN;
+      const raw = span <= 0 ? 0 : travelled / span;
+      const next =
+        Math.round(Math.min(1, Math.max(0, raw)) * READ_STEPS) / READ_STEPS;
+      if (next === last) return;
+      last = next;
+      setProgress(next);
+    };
+
+    const onScroll = (): void => {
+      if (frame !== 0) return;
+      frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame !== 0) cancelAnimationFrame(frame);
+    };
+  }, [ref]);
+
+  return progress;
+}
+
 export function HeroCorpusRing({
   references,
   litSkill,
@@ -202,6 +309,8 @@ export function HeroCorpusRing({
 }: HeroCorpusRingProps): ReactElement {
   const ticks = useMemo(() => layout(references), [references]);
   const [hovered, setHovered] = useState<string | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const readProgress = useReadProgress(svgRef);
 
   /**
    * The read head's entrance. It starts one full turn behind its resting
@@ -229,10 +338,15 @@ export function HeroCorpusRing({
   const activeKey = hovered ?? defaultKey;
   const active = ticks.find((t) => keyOf(t.ref) === activeKey) ?? ticks[0];
 
-  const setActive = (ref: ReferenceRecord | null): void => {
-    setHovered(ref === null ? null : keyOf(ref));
-    onHoverChange?.(ref);
-  };
+  // Stable across renders so the memoised tick markup below is not rebuilt
+  // once per scroll step just because its handlers changed identity.
+  const setActive = useCallback(
+    (ref: ReferenceRecord | null): void => {
+      setHovered(ref === null ? null : `${ref.skill}/${ref.name}`);
+      onHoverChange?.(ref);
+    },
+    [onHoverChange],
+  );
 
   // `pathLength={1}` normalises the circle so the dash numbers are turns, not
   // user units — the geometry can change without the motion needing to.
@@ -240,12 +354,77 @@ export function HeroCorpusRing({
   // tick means starting it half an arc early. It trailed the tick by a full
   // arc-length before this, which read as the head having overshot and stopped
   // just past what it was pointing at.
+  //
+  // Three inputs, ONE expression, and that is the rule this component exists
+  // to keep: `stroke-dashoffset` has exactly one owner, React. The entrance
+  // starts a full turn behind and arrives; scroll carries it a second turn
+  // past. Nothing else writes this property — no tween, no ref, no rAF
+  // reaching into this subtree — because the last hero that let two systems
+  // write one property rendered 0 of 119 marks for a whole release.
   const restingTurn = active === undefined ? 0 : active.turn;
   const restingOffset = round(HEAD_ARC / 2 - restingTurn);
-  const offset = entered ? restingOffset : restingOffset - 1;
+  const offset = entered
+    ? round(restingOffset + readProgress)
+    : restingOffset - 1;
+
+  /**
+   * The 119 ticks, built once per selection rather than once per render.
+   *
+   * This is what makes the scroll binding affordable. `readProgress` is
+   * state on this component, so every step of the traversal re-renders it —
+   * and without this the step would rebuild 119 `<line>` elements to move
+   * one `<circle>`. Memoised on the two things a tick actually depends on,
+   * React sees the identical element array and skips the whole subtree, so
+   * a scroll step reconciles exactly the node that changed.
+   */
+  const markup = useMemo(
+    () =>
+      ticks.map((tick) => {
+        const key = keyOf(tick.ref);
+        const isActive = key === activeKey;
+        const [x1, y1] = pointAt(tick.angle, isActive ? R_OUTER + LIT_OVERSHOOT : R_OUTER);
+        const [x2, y2] = pointAt(tick.angle, R_OUTER - tick.length);
+        return (
+          <line
+            key={key}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            strokeWidth={isActive ? TICK_WIDTH_LIT : TICK_WIDTH}
+            data-corpus-mark
+            data-lit={isActive ? "" : undefined}
+            stroke={isActive ? "var(--color-accent)" : "var(--color-text-primary)"}
+            // 0.3, not 0.22. At 0.22 against this warm ground the corpus read
+            // as a smudge and the lit tick had nothing to be lit against;
+            // measured on the rendered page, not chosen from the palette.
+            strokeOpacity={isActive ? 1 : 0.34}
+            // Pointer-only: see the component note. `onPointerEnter` rather
+            // than `onMouseEnter` so a stylus and a trackpad behave alike, and
+            // a touch tap lights a tick without needing a separate handler.
+            onPointerEnter={() => setActive(tick.ref)}
+            // `x1`/`y1` transition too, so the overshoot grows out of the
+            // edge as the head arrives rather than snapping.
+            className="transition-[stroke-opacity,stroke,stroke-width,x1,y1] duration-200 ease-out motion-reduce:transition-none"
+          />
+        );
+      }),
+    [ticks, activeKey, setActive],
+  );
+
+  // The 1600ms entrance ease is right for a traversal the page performs and
+  // wrong for one the reader is performing: under scroll it would lag the
+  // wheel by a second and a half and read as broken rather than smooth. So the
+  // transition belongs to the entrance and to hover, and hands over the moment
+  // the reader takes the wheel. Both states are still one property, one owner.
+  const headTransition =
+    readProgress === 0
+      ? "[transition:stroke-dashoffset_1600ms_cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+      : "";
 
   return (
     <svg
+      ref={svgRef}
       viewBox={`0 0 ${BOX} ${BOX}`}
       className={className}
       role="img"
@@ -280,42 +459,14 @@ export function HeroCorpusRing({
         strokeWidth={2}
         strokeLinecap="round"
         pathLength={1}
+        data-corpus-head
         strokeDasharray={`${HEAD_ARC} ${1 - HEAD_ARC}`}
         strokeDashoffset={offset}
         transform={`rotate(${START_DEG} ${CENTRE} ${CENTRE})`}
-        className="[transition:stroke-dashoffset_1600ms_cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+        className={headTransition}
       />
 
-      {ticks.map((tick) => {
-        const key = keyOf(tick.ref);
-        const isActive = key === activeKey;
-        const [x1, y1] = pointAt(tick.angle, isActive ? R_OUTER + LIT_OVERSHOOT : R_OUTER);
-        const [x2, y2] = pointAt(tick.angle, R_OUTER - tick.length);
-        return (
-          <line
-            key={key}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            strokeWidth={isActive ? TICK_WIDTH_LIT : TICK_WIDTH}
-            data-corpus-mark
-            data-lit={isActive ? "" : undefined}
-            stroke={isActive ? "var(--color-accent)" : "var(--color-text-primary)"}
-            // 0.3, not 0.22. At 0.22 against this warm ground the corpus read
-            // as a smudge and the lit tick had nothing to be lit against;
-            // measured on the rendered page, not chosen from the palette.
-            strokeOpacity={isActive ? 1 : 0.34}
-            // Pointer-only: see the component note. `onPointerEnter` rather
-            // than `onMouseEnter` so a stylus and a trackpad behave alike, and
-            // a touch tap lights a tick without needing a separate handler.
-            onPointerEnter={() => setActive(tick.ref)}
-            // `x1`/`y1` transition too, so the overshoot grows out of the
-            // edge as the head arrives rather than snapping.
-            className="transition-[stroke-opacity,stroke,stroke-width,x1,y1] duration-200 ease-out motion-reduce:transition-none"
-          />
-        );
-      })}
+      {markup}
 
       {/* What the head is pointing at, priced. Small on purpose — this is a
           label for the drawing, not a statistic competing with the headline,

@@ -53,7 +53,8 @@
 - Every colour is referenced through a custom property; no literal hex in components (`COL-04`).
 - `--color-accent` is the page's **only** chromatic hue — it already appears in more than one place (hero glow, CTA fills, metric numbers, eyebrow labels, step-card motifs) and that is correct: restraint means *no second accent hue exists anywhere on the page*, not that the accent appears exactly once. (This corrects an imprecise reading from earlier planning — the root README's screenshot alt text describes the hero specifically, captured above-the-fold per `SCREENSHOT_CONTRIBUTION.md`, and even there the accent already does double duty as the glow *and* the CTA fill. The claim was never "one occurrence"; it's "one hue.")
 - **New components (`ShowcaseCard` badges, `SectionSkillCatalog` card emphasis) use `--color-emphasis`/`--color-emphasis-bg`, never `--color-accent`.** This is a distinct, narrower rule: accent-level color is reserved for primary calls-to-action and the page's own live-metric numbers, so a badge on a screenshot card never competes with an actual "Get the skill pack" button for visual priority. `--color-emphasis`'s exact contrast ratios (text-on-bg, and against `--color-emphasis-bg`) are stated here as measured-in-spirit but must be re-verified against `pages:verify`'s axe pass once built — flagged explicitly in the plan as a Phase 2 risk, not silently assumed.
-- One ground family, one accent hue, one emphasis-neutral family. Every gradient on the page is a soft single-hue accent wash fading to transparent, never a purple→pink→blue AI-gradient shape (`COL-03`). **The hero rebuild narrowed this sanction rather than widening it**: the hero's radial accent glow and the radial `bg-page` scrim that used to sit over it are both gone, so the only gradient left anywhere is the optional, non-default `mesh` world's three positioned `radial-gradient` washes of `color-mix(in oklch, var(--color-accent) …, transparent)` (`lib/tokens.ts`). The default `signature` world, the hero, and the base page now carry **no gradient at all**; `signature`'s grain texture (§6) is an alpha-only desaturated noise — not a gradient and not a colour — so it adds tooth without adding a hue.
+- One ground family, one accent hue, one emphasis-neutral family. Every gradient on the page is a soft single-hue accent wash fading to transparent, never a purple→pink→blue AI-gradient shape (`COL-03`). **The hero rebuild narrowed this sanction rather than widening it**: the hero's radial accent glow and the radial `bg-page` scrim that used to sit over it are both gone, so the only gradient left anywhere is the optional, non-default `mesh` world's three positioned `radial-gradient` washes of `color-mix(in oklch, var(--color-accent) …, transparent)` (`lib/tokens.ts`). The base page carries **no gradient at all**; `signature`'s grain texture (§6) is an alpha-only desaturated noise — not a gradient and not a colour — so it adds tooth without adding a hue.
+- **The hero has one gradient again — `HeroBeams` — and the shape of the exception is the point.** Two crossed `repeating-linear-gradient` rakes and one soft `radial-gradient` source, every stop a `color-mix(in oklch, var(--color-accent) …, transparent)`, rendered under every world's texture. It is the same family the rule already sanctions, so it adds no new gradient *shape*; what it adds back is a gradient in the hero, which is the one place this page has been burned before. The two constraints that make it a different thing from the wash that failed are both structural rather than a matter of degree, and neither may be relaxed without re-opening the defect: it is **masked clear of the type column**, so no text ever composites over it; and it **does not render below `lg:`**, where the grid collapses to one column and "the right side" stops being empty. The scrim that used to cover the old wash is still gone and must stay gone — a scrim is the tell that a background was placed where text lives.
 - **The accent is a marine blue, and it was chosen by measurement.** It replaced a terracotta that had shipped since the page was built, for three reasons that are all recorded in full in [`tokens.css`](tokens.css)'s Accent comment: the old value was outside the sRGB gamut (blue channel −0.0153, clipped by every browser, so the authored colour was never the rendered one); it sat at OKLab ΔE 0.085 from **both** `--color-danger` and `--color-warning`, putting the page's primary call-to-action almost exactly on top of its own critical-severity marker; and cream-plus-terracotta is two thirds of a cluster this pack's own always-loaded wall names as an AI-design default. Marine's worst separation from any other chromatic token is 0.167 — about double — and it is in gamut. The cost, stated because it is real: chroma drops from 0.157 to 0.088, so the accent carries visibly less force than it did. On a page whose keywords are *warm, restrained, evidentiary* that reads as consistent, but it is a genuine change in temperature and it was checked in a browser, not assumed.
 - **The hero introduces no colour beyond the accent, and spends it on exactly one mark.** `HeroCorpusRing` draws all 119 references in `--color-text-primary` at 34% and lights a single one in `--color-accent`, which is also the only tick that breaks the ring's outer edge. (22% was the block layout's value and it did not survive the move to hairline ticks — measured on the rendered page, the corpus read as a smudge and the lit tick had nothing to be lit against.) That ratio is the restraint rule made literal: the accent marks the one thing a request actually reaches for, and the other 118 are the page's ink. The WebGL object this replaced had to argue the same point harder — it kept the accent off its body and onto the silhouette rim only, because an early pass mixed it in and the object read as a brick in the accent hue. A flat drawing gets there by construction instead of by tuning.
 - **`--color-bg-surface` is a deeper cream at the same lightness (`oklch(95% 0.022 80)`), not a darker grey.** Lightness is pinned at 95% because accent-as-text on `bg-surface` is the page's tightest ratio (4.94); the surface can gain chroma and shift toward `bg-page`'s own H=80, but it cannot lose luminance. Under the terracotta this replaced that ratio was 4.50 — exactly the AA floor, no headroom at all. The pin stays anyway: the constraint is structural, not a property of whichever accent is current. The warmth plus the §6 seams and grain are what separate the below-hero sections — a lightness step is not available here.
@@ -315,32 +316,58 @@ that it is large and mostly untouched, which is a fact about a still image.
 With the object gone the pin had nothing left to drive, so it went with it and
 the page now honours its own interaction tier with no exception at all.
 
-What the hero does instead, all of it on load and none of it scroll-linked:
-the headline's words stagger up, the blocks beneath follow, and a read head
-circles the corpus once and comes to rest on the one reference this pack would
-load. One authored moment, then still — and *still* is literal here, since the
-head's arrival is the last frame this page schedules.
+What the hero does instead: on load, the headline's words stagger up, the
+blocks beneath follow, and a read head circles the corpus once and comes to
+rest on the one reference this pack would load. One authored moment, then
+still — the head's arrival is the last frame this page schedules on its own
+initiative.
 
-**The two motions have different owners on purpose.** GSAP staggers the type
-column; the ring animates itself with a CSS transition on a property nothing
-else writes. That separation is the fix for a shipped defect, not a style
-preference: when `Hero.tsx` reached into the corpus with `gsap.from()` over
+**Then the reader drives it, and that is L2 rather than an exception to it.**
+Past the resting tick the head is bound to scroll: over 0.6 of a viewport the
+ring completes one further turn and closes as the hero leaves. This is a
+scroll-linked reveal, which is what the tier above says this page does; a pin
+is what it says this page does not do, and nothing here pins, jacks or lengthens
+the section. The rule of thumb the distinction rests on: a scroll-linked effect
+is fine when the reader's scroll still moves the page the amount they asked for.
+
+Three properties of the driver are requirements, not implementation detail:
+- **rAF-coalesced.** `ANI-04` fails a `scroll` listener that calls a setState
+  directly. The handler only schedules a frame, and refuses to schedule a
+  second while one is pending.
+- **Quantised to 200 steps per turn.** The offset is React state on a component
+  that owns 119 `<line>` elements, so a continuous signal would re-render the
+  figure at scroll rate. The tick markup is memoised past it, so a step
+  reconciles one `<circle>`.
+- **Not attached at all under `prefers-reduced-motion`.** Not slowed and not
+  shortened — the head rests on its tick and the page is static. Scroll-linked
+  movement is movement.
+
+**The motions have different owners on purpose.** GSAP staggers the type
+column; the ring animates itself, entrance and scroll alike, through a single
+React expression for a property nothing else writes. That separation is the fix
+for a shipped defect, not a style preference: when `Hero.tsx` reached into the corpus with `gsap.from()` over
 marks whose opacity React was already setting, 0 of 119 ticks were visible at
 500ms and still 0 at 8s. Do not reach into that subtree from the hero's
 effect; drive it from a prop the component owns.
 
-**Under `prefers-reduced-motion: reduce` no timeline is registered at all** and
-every element is already in its final state — the corpus is server-rendered
-markup at full opacity, not a hidden thing waiting to be revealed, so a reader
-with motion off or JavaScript disabled gets the finished hero rather than
-nothing.
+**Under `prefers-reduced-motion: reduce` no timeline is registered and no
+scroll listener is attached.** The head sits on its lit tick and stays there
+however far the page is scrolled, and every other element is already in its
+final state: the corpus is server-rendered markup at full opacity, not a hidden
+thing waiting to be revealed, so a reader with motion off or JavaScript
+disabled gets the finished hero rather than nothing.
 
 **Standing requirement:** `npm run pages:verify` asserts that the corpus draws
 one mark per reference file (counted against `data.generated.json`, not a
 literal), that exactly one is lit at rest, that **every mark is actually on
-screen under default motion**, and that all of it is in the server-rendered
-HTML. The visibility assertion is the newest and the one that was missing: the
-other three passed in full while all 119 marks sat at opacity 0. Run it on any hero change. The separate `hero:verify`
+screen under default motion**, that all of it is in the server-rendered HTML,
+and that **the read head's offset actually advances about one turn when the
+page is scrolled**. The visibility assertion was the one that was missing when
+all 119 marks sat at opacity 0 and the other three passed in full; the scroll
+assertion was added with the binding itself rather than after it, for the same
+reason — a motion path nothing exercises is where this hero's defects have
+lived. Its mirror sits in the reduced-motion check, where the same offset must
+NOT move. Run both on any hero change. The separate `hero:verify`
 harness is retired: the three things it existed to prove — that the pin
 released, that no canvas mounted below 640px, and that a denied WebGL context
 still left a complete hero — are all statements about a hero that no longer
@@ -348,11 +375,16 @@ exists, and a harness whose docblock describes a deleted feature is worse than
 no harness.
 
 ### Special effects
-No custom cursor (`SLOP-06`), no page transition, no parallax. Two
+No custom cursor (`SLOP-06`), no page transition, no parallax. Three
 scroll-linked effects, and they are linked to different scrollers.
 `RouteStroke` in `#how-it-works` tracks the *page* scroll: a routing path
 whose drawn length follows the section, three plateaus stepping down through
-the three cards it labels. `ShowcaseCoverflow` tracks its *own container's*
+the three cards it labels. `HeroCorpusRing`'s read head tracks the page scroll
+too, but only across the hero's own exit, and it scrubs a dash *offset* rather
+than a length — the same normalised `pathLength={1}` primitive moving a fixed
+arc instead of growing one. Both are the mechanic Skiper UI's `Skiper19`
+demonstrates; that this page already had one is the reason adopting the other
+cost no dependency. `ShowcaseCoverflow` tracks its *own container's*
 horizontal scroll, ramping each slide's `rotateY`/`translateZ`/`scale` by its
 distance from the centre — so it moves only when the reader drags it, and
 never while the page itself is scrolling past. It replaced a flat 1px rule whose width

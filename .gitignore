@@ -46,3 +46,8 @@ tsconfig.golds.*.json
 # produced commit 30d7a90 — 22 files swept in from a second session by a
 # `git add -A`. Cheaper to stop generating the noise than to guard it.
 .impeccable/
+
+# Ad hoc render audits (tools/screenshots/audit-*.mjs). Images for judging
+# a layout by eye; regenerated on demand, never a source of truth.
+.audit/
+.audit-*/

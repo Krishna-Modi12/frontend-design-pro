@@ -58,8 +58,31 @@ brief:
   **The loop is traversed once, not spun.** A read head circles the ring on
   load and comes to rest on the lit tick, which is what a request does to this
   corpus. It is one CSS transition on one `stroke-dashoffset`, so the page
-  schedules no work once it lands — this app has already measured what a
-  perpetual idle rotation costs, and nothing here animates at rest.
+  schedules no work of its own once it lands — this app has already measured
+  what a perpetual idle rotation costs, and nothing here animates at rest.
+
+  **Past that, the reader drives it.** Bound to scroll, the head completes one
+  further turn across the hero's exit and the ring closes as the section does.
+  The mechanic is Skiper UI's `Skiper19` — a stroke scrubbed against scroll
+  progress — and it cost no dependency, because this ring and `RouteStroke`
+  were already built on the same normalised `pathLength={1}` primitive. Its
+  own arrival is `framer-motion`, `scrollYProgress: any` and four hex literals,
+  measured here as `MOTION-01`, `TS-01-AST` and `COL-04`; none of that was
+  needed to take the idea. The driver is rAF-coalesced (`ANI-04`), quantised
+  to 200 steps so a scroll cannot re-render 119 ticks per frame, and not
+  attached at all under `prefers-reduced-motion`.
+
+  **The hero has a light now, and it is CSS.** The brief was React Bits'
+  `<Beams />`; the shipped answer is
+  [`components/backgrounds/HeroBeams.tsx`](components/backgrounds/HeroBeams.tsx)
+  — two crossed `repeating-linear-gradient` rakes and one soft source, every
+  stop a `color-mix()` off `--color-accent`, so all four worlds tint it and no
+  hex appears. The original wants `three`, `@react-three/fiber` and
+  `@react-three/drei`, which this app removed for the reason recorded below,
+  and fails the parser gate as a BLOCKER on `3D-03` twice. It is masked clear
+  of the type column and does not render below `lg:` — both structural, both
+  the reason the radial `bg-page` scrim that used to cover the old hero
+  gradient did not have to come back.
 
   **The bug this rebuild exists to fix, recorded because the gates all passed
   through it.** `Hero.tsx` ran `gsap.from(marks, { opacity: 0, ... })` over all
@@ -172,7 +195,7 @@ JSON is.
 ```bash
 npm run pages:verify     # from the repo root — home/'s own dev AND prod servers,
                          # axe, overflow, reduced motion, the router, the checker,
-                         # and the hero's four corpus assertions
+                         # and the hero's five corpus assertions
 ```
 
 It is a repo-root script, not a `home/` one — the `cd home` under "Run it" above
