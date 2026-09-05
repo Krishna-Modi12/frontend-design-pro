@@ -520,6 +520,37 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 
 ## Release history
 
+## What's new in v14.14.1
+
+**A route this project documented at length and never once ran.**
+
+The plugin manifest declares `"skills": ["./"]`, and `.claude-plugin/README.md`
+argued from other projects' manifests that this registers one skill — the root
+router — while `"./skills/"` would be the mistake, handing a host the nineteen
+the router exists to route between. That file also wrote its own falsification
+condition: if a host registers nineteen, it is wrong and should be withdrawn.
+
+Run for the first time, it registers **twenty**: all nineteen sub-skills as peers
+plus the router, with roughly two thousand tokens always-on — the sum of twenty
+descriptions rather than the always-loaded registry. It is exactly the inversion
+the file warned about, arriving through the pointer it recommended.
+
+The mechanism was then measured against a purpose-built fixture rather than
+inferred a second time: skill discovery is exactly one directory level beneath a
+top-level `skills/` at the plugin root, and it is unconditional. The manifest
+field only ever adds paths; it cannot subtract. Emptying it, or pointing it at
+the router file, still registers the nineteen and additionally drops the router.
+
+The fix is structural — the directory literally named `skills/` must not sit at
+the plugin root — and 130 files reference that path, so it is recorded with its
+evidence rather than taken here. **No marketplace listing should be submitted
+until it is resolved,** and none ever has been.
+
+This release exists so the shipped archive stops carrying the disproved claim. It
+also corrects three stale ones found beside it: that the renderer checks are not
+in CI, that a version bump touches three places, and that the showcase demo is
+excluded from visual regression.
+
 ## What's new in v14.14.0
 
 **The demo that broke this pack's own rule stopped breaking it — and the claim
