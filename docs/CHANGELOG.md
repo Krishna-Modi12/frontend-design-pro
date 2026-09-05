@@ -4,6 +4,62 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [14.14.1] — 2026-09-05
+
+**A route this pack documented at length and never once ran. The shipped archive
+was asserting a claim that measurement disproves; this release exists so it stops.**
+
+### The plugin manifest registers twenty skills, not one
+
+`.claude-plugin/README.md` reasoned from other projects' manifests that
+`"skills": ["./"]` would register **one** skill — the root router — and that
+`"./skills/"` would be the mistake, because it "would hand a host the nineteen it
+is meant to route between." It also wrote its own falsification condition: if a
+host registers nineteen, the file is wrong and the response is to withdraw it
+rather than adjust the architecture around it.
+
+Run against `v14.14.0` with `claude plugin marketplace add`, it registers
+**twenty** — all nineteen sub-skills as peers plus the router, `~1,991` tokens
+always-on, which is the sum of twenty descriptions rather than the 2,149-token
+registry. That is precisely the inversion the file said `./skills/` would cause,
+arriving through `./`.
+
+**The mechanism, measured rather than inferred.** Against a throwaway five-case
+plugin declaring `"skills": ["./"]` and nothing else, skill discovery is exactly
+one directory level beneath a top-level `skills/` at the plugin root, and it is
+unconditional — the manifest field only ever *adds* paths and cannot subtract. A
+sibling directory under a different name, a `skills/` that is not at the plugin
+root, and a skill one level too deep were all ignored; the one at the conventional
+path registered without being named anywhere. Two confirmations from this repo:
+`"skills": []` and `"skills": ["./SKILL.md"]` both still register the nineteen,
+and both *drop* the router, which is strictly worse.
+
+`["./"]` therefore stays — not because it does what the file claimed, but because
+it is the only value that registers the router at all.
+
+**The fix is structural and is not made here.** The directory literally named
+`skills/` must not exist at the plugin root, and 130 files reference it: the
+registry rows, the loading protocol, Gate 8b, `--dir skills`, the release script,
+the CI workflow and `prose_paths()`'s addressing forms. That is an architecture
+decision with an owner-sized blast radius, so it is recorded with its evidence.
+**No marketplace listing should be submitted until it is resolved**, and none ever
+has been — adding one locally publishes nothing.
+
+### Three stale claims corrected alongside
+
+`CONTRIBUTING.md` said the renderer checks "are not in CI"; the blocking
+`demo-renderer` job runs them. `CONTRIBUTING.md` and `.claude-plugin/README.md`
+both undercounted the version-bump locations, at three and four respectively
+against the real six. `tools/screenshots/README.md` said `demo/showcase` is
+excluded from visual regression, which stopped being true when the capture began
+freezing its WebGL hero via a seed parameter — all three showcase captures are
+diffed on every run.
+
+No content figure moved: 19 skills, 8 core files, 119 references, 61 constraints,
+11 release-blocking gates.
+
+---
+
 ## [14.14.0] — 2026-09-05
 
 **A demo that broke the pack's own rule stopped breaking it, and the claim that
