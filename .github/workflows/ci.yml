@@ -335,6 +335,14 @@ jobs:
         working-directory: tools/screenshots
         run: npm ci
 
+      # Cheap and dependency-light, so it runs before the browser download:
+      # a type error in a demo route should not cost a Chromium install to
+      # surface. The showcase's own types are checked by its `next build` in
+      # the `showcase` job; this covers the three stub-typed routes, which
+      # until now nothing type-checked outside a contributor's own machine.
+      - name: Type-check the stub-typed demo routes
+        run: npm run demos:typecheck
+
       - name: Install Playwright Chromium
         working-directory: tools/screenshots
         run: npx playwright install --with-deps chromium

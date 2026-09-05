@@ -109,14 +109,14 @@ green chain.
 
 If you touch anything under `demo/`, run the renderer-level checks. They need a
 browser and real vendor libraries, so they live in `tools/screenshots/` with their
-own `package.json`. The rendering ones now run in CI too, in the blocking
+own `package.json`. All but the last now run in CI too, in the blocking
 `demo-renderer` job — run them locally anyway, because finding it here is cheaper
 than finding it on the PR:
 
 ```bash
 npm run demos:verify     # page + console errors · hydration · axe WCAG 2.1 AA · overflow
 npm run showcase:verify  # demo/showcase — the same, plus the pricing-to-contact flow
-npm run demos:typecheck  # against REAL vendor typings, not demo/_stubs.d.ts — still manual
+npm run demos:typecheck  # against REAL vendor typings, not demo/_stubs.d.ts
 npm run screenshots      # regenerate every image README.md links — still manual
 ```
 
