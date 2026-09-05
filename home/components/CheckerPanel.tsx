@@ -88,7 +88,7 @@ export function CheckerPanel(): ReactElement {
           <div
             ref={gutterRef}
             aria-hidden="true"
-            className="select-none overflow-hidden border-r border-border bg-bg-surface px-2 py-4 font-mono text-xs leading-6 text-text-muted"
+            className="select-none overflow-hidden border-r border-border bg-bg-surface px-1.5 py-3 font-mono text-xs leading-6 text-text-muted sm:px-2 sm:py-4"
           >
             {lines.map((_, i) => (
               <div key={i} className="flex items-center justify-end gap-1.5 whitespace-nowrap">
@@ -111,7 +111,7 @@ export function CheckerPanel(): ReactElement {
             onChange={(e) => setCode(e.target.value)}
             onScroll={syncGutterScroll}
             data-check-input
-            className={`${focusRing} min-w-0 flex-1 resize-none whitespace-pre overflow-auto border-0 bg-transparent p-4 font-mono text-xs leading-6 text-text-primary`}
+            className={`${focusRing} min-w-0 flex-1 resize-none whitespace-pre overflow-auto border-0 bg-transparent p-3 font-mono text-xs leading-6 text-text-primary sm:p-4`}
           />
         </div>
       </label>

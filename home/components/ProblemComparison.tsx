@@ -87,7 +87,17 @@ export function ProblemComparison(): ReactElement {
       </div>
 
       <BrowserChrome url="localhost:3000">
-        <div className="relative" style={{ height: 360 }}>
+        {/* Taller as the frame gets NARROWER, which is the opposite of the
+            usual instinct and is what the content actually does: both panels
+            are prose and a card grid, so every line wraps to more lines as the
+            column shrinks. At a flat 360px — a literal, and the only fixed
+            pixel height in this file — the slop panel's own "Upgrade" button
+            was sliced in half at 390px, which read as a broken layout rather
+            than as the parody it is. The height has to be fixed at each
+            breakpoint rather than intrinsic, because the two panels are
+            absolutely positioned siblings that cross-fade: neither can
+            contribute a height. */}
+        <div className="relative h-[27.5rem] sm:h-[24rem] lg:h-[22.5rem]">
           <div ref={slopRef} aria-hidden="true" className="absolute inset-0">
             <SlopPanel />
           </div>
