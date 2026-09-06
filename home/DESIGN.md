@@ -250,7 +250,8 @@ Depth on this page is built from ground, tooth, and hairlines — never shadow.
 | Level | Treatment | Used for |
 |---|---|---|
 | Ground texture | `signature` world only: a static desaturated `feTurbulence` grain at 3.5% alpha, painted through the `[data-section-surface]` / `--world-texture` channel in `lib/tokens.ts`. No colour, no motion. | Every below-hero section (incl. the `#install` footer) — gives the ~7,000px scroll a felt surface so it doesn't read as one flat field |
-| Section seam | `[data-section-surface] + [data-section-surface] { border-top: 1px solid var(--color-border) }` — a 1px hairline between each pair of consecutive below-hero sections, horizontal only | Making one section legibly end and the next begin, without a lightness step big enough to threaten the accent-on-`bg-surface` ratio |
+| Section seam | `[data-section-surface] + [data-section-surface] { border-top: 1px solid var(--color-border) }` — a 1px hairline between each pair of consecutive below-hero sections, horizontal only — a repeating grid of straight rules is what the wall means by "broadsheet hairline columns", and that is what a vertical seam here would be | Making one section legibly end and the next begin, without a lightness step big enough to threaten the accent-on-`bg-surface` ratio |
+| Page spine | `PageSpine.tsx` — a single curve down the outer margin of `<main>`, its right edge parked against the text column. `--color-border` for the whole route, `--color-accent` for however much of it the reader has scrolled, a waypoint at each section's centre and a head at the current position. `lg:` and up only; the band is 32px there and 80px from `xl:`. | Telling a reader how far through ~8,500px they are and what the page's stages are, without a fixed progress bar stuck to the window. Not the row above: one non-repeating curve in the margin that touches no content and is absent until scrolled |
 | Flat | `border: 1px solid var(--color-border)`, no shadow | Card outlines, other decorative dividers |
 | Subtle | `border: 1px solid var(--color-border)` + `bg-bg-elevated` | Default card state (existing `cardShell`), Showcase/Catalog cards at rest — the grain sits on the ground, not the card, so an untextured card reads as cleanly lifted from a textured ground |
 | Elevated | `border-color: var(--color-border-strong)` on hover, no box-shadow anywhere on the page (deliberate — shadows read as the generic-SaaS default this pack argues against) | Card hover states, focus-within |
@@ -297,6 +298,42 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   ScrollTrigger.create({ trigger: node, start: "top 90%", once: true, onEnter: () => { /* … */ } });
 }
 ```
+
+### The page spine
+One `<svg>`, a direct child of `<main>`, absolutely positioned down the outer
+margin. **Its geometry is measured, never authored**: on mount it reads the
+real bounding box of every `:scope > section` and threads a curve through their
+centres, so the waypoints are the page's own stages and the gaps between them
+are the page's own rhythm. Adding a section adds a waypoint; changing a
+section's height moves one. A hand-drawn `d` would survive both edits
+unchanged, and that is the whole difference between a map and a squiggle.
+
+```ts
+// One owner for the drawn length, and it is not React. `scrub` writes the
+// dash offset straight to the node on every scroll frame — which is exactly
+// what ANI-04 exists to keep out of a setState — while React owns only the
+// path data, recomputed from a ResizeObserver on <main> (fonts landing and
+// reveals re-wrapping both move the page's height without a window resize).
+ScrollTrigger.create({ trigger: main, start: "top top", end: "bottom bottom", scrub: 0.6,
+  onUpdate: (self) => paint(self.progress) });
+```
+
+Two things it deliberately does not do. It **does not render below `lg:`** —
+the free margin at those widths is `sectionShell`'s 20px of padding, which is
+not enough for a curve, and a phone is already scrolling 13 screens of this
+page without extra chrome in the way. And it **does not claim its weave is
+visible**: 80px of horizontal excursion spread over 8,500px reads as a straight
+rail no matter what the path data says. What carries the meaning at that scale
+is the head and the waypoints, not the shape of the line between them, and the
+irregular spacing of the sections is what keeps it from reading as a
+decorative ripple down the margin.
+
+**Under `prefers-reduced-motion: reduce` the route renders complete and
+static**, and the head is removed — a head on a motionless route would mark a
+reading position that isn't moving and therefore isn't true. This is the
+opposite of hiding it: the route is information about the page's shape, so the
+destination state is the whole route, exactly as `RouteStroke` already does in
+`#how-it-works`.
 
 ### Hover and focus
 ```css
@@ -367,7 +404,15 @@ all 119 marks sat at opacity 0 and the other three passed in full; the scroll
 assertion was added with the binding itself rather than after it, for the same
 reason — a motion path nothing exercises is where this hero's defects have
 lived. Its mirror sits in the reduced-motion check, where the same offset must
-NOT move. Run both on any hero change. The separate `hero:verify`
+NOT move. Run both on any hero change.
+
+The page spine is held to the same pair in the same run, and for the same
+reason: under default motion its dash offset must fall by a real margin over a
+2,000px scroll, and under `reduce` it must already be at zero — the whole route
+drawn — and must not move when the page is scrolled. Both read the inline
+`style` rather than an attribute, because ScrollTrigger writes the offset
+directly to the node; `getAttribute` returns `null` there, and an equality
+check between two nulls passes while rendering nothing at all. The separate `hero:verify`
 harness is retired: the three things it existed to prove — that the pin
 released, that no canvas mounted below 640px, and that a denied WebGL context
 still left a complete hero — are all statements about a hero that no longer

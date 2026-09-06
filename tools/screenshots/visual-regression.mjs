@@ -47,9 +47,17 @@
  * way a `GRANDFATHERED` waiver in test_constraints.py has to state its
  * reason rather than silently pass.
  *
- * Ships informational-only in CI (continue-on-error) until it has run clean
- * — or caught a real regression — across enough commits to trust the
- * threshold. Not a numbered gate yet; see docs/CAPABILITY_MATRIX.md.
+ * It shipped informational-only (continue-on-error) and **blocks a merge as
+ * of the commit that refreshed the baselines behind it** — the evidence being
+ * that untouched targets return byte-identical captures across runs rather
+ * than diffs sitting inside the budget. Still not a numbered gate; see
+ * docs/CAPABILITY_MATRIX.md.
+ *
+ * Because it blocks, a change that deliberately moves pixels has to carry new
+ * baselines or it cannot land, and those baselines have to come from the
+ * Linux runner for the reason in the paragraph above — dispatch
+ * `.github/workflows/visual-regression-baselines.yml` against the branch,
+ * download the artifact, extract over `baselines/`, read the diff, commit.
  */
 import { chromium } from "playwright";
 import pixelmatch from "pixelmatch";

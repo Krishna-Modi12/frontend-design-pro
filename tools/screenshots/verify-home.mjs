@@ -196,7 +196,38 @@ async function checkReducedMotion(browser, base) {
       : [`read head moved ${headBefore} → ${headAfter} with reduced motion requested`],
   );
 
+  // The page spine's reduced-motion contract is the opposite of the ring's:
+  // the route is information about the page's shape, so it renders COMPLETE
+  // and static rather than hidden. Both halves matter — a spine left at full
+  // offset under reduce is an invisible element, and one that still tracks
+  // scroll is a `MOTION-01` violation that no source read would catch.
+  const spineBefore = await readSpineOffset(page);
+  await page.evaluate(() => window.scrollTo(0, 4000));
+  await page.waitForTimeout(600);
+  const spineAfter = await readSpineOffset(page);
+  const spineProblems = [];
+  if (spineBefore === null) spineProblems.push("no [data-page-spine-path] rendered at 1920px");
+  else if (spineBefore !== 0) spineProblems.push(`route not fully drawn: offset ${spineBefore}`);
+  if (spineBefore !== spineAfter) {
+    spineProblems.push(`route moved ${spineBefore} → ${spineAfter} with reduced motion requested`);
+  }
+  report("the page spine renders complete and static under prefers-reduced-motion", spineProblems);
+
   await ctx.close();
+}
+
+/**
+ * The spine's drawn length lives in an inline `style`, not an attribute —
+ * ScrollTrigger's `onUpdate` writes it directly rather than through React, so
+ * `getAttribute` would read `null` here and an equality assertion against two
+ * nulls would pass while rendering nothing.
+ */
+async function readSpineOffset(page) {
+  return page.evaluate(() => {
+    const path = document.querySelector("[data-page-spine-path]");
+    if (path === null || path.style.strokeDashoffset === "") return null;
+    return Number(path.style.strokeDashoffset);
+  });
 }
 
 /**
@@ -390,6 +421,8 @@ async function checkInteractivity(browser, base) {
   const headRest = Number(
     await motionPage.getAttribute("[data-corpus-head]", "stroke-dashoffset"),
   );
+  // Read before the scroll below, or "at rest" is measured at 2000px.
+  const spineRest = await readSpineOffset(motionPage);
   // Well past a full traversal (READ_SPAN is 0.6 of the viewport measured from
   // the ring's own top, which starts a few hundred px down), so the value is
   // clamped at 1 and the assertion is not a race with the exact scroll offset.
@@ -408,7 +441,33 @@ async function checkInteractivity(browser, base) {
     headScrolled = next;
   }
   const headDelta = headScrolled - headRest;
+
+  // The spine covers the whole of `<main>`, so 2000px is a small fraction of
+  // its travel — the assertion is that it moved substantially, not that it
+  // finished. Polled for the same reason as the ring above: Lenis is still
+  // lerping toward the target for some hundreds of ms after the jump, and
+  // ScrollTrigger's `scrub: 0.6` adds its own tail on top of that.
+  let spineScrolled = spineRest;
+  const spineDeadline = Date.now() + 5_000;
+  for (;;) {
+    await motionPage.waitForTimeout(120);
+    const next = await readSpineOffset(motionPage);
+    if (next === spineScrolled || Date.now() >= spineDeadline) {
+      spineScrolled = next;
+      break;
+    }
+    spineScrolled = next;
+  }
   await motionCtx.close();
+
+  if (spineRest === null || spineScrolled === null) {
+    problems.push("page spine did not render at 1920px under default motion");
+  } else if (!(spineRest - spineScrolled > 200)) {
+    problems.push(
+      `page spine did not follow scroll: offset moved ${(spineRest - spineScrolled).toFixed(0)}px ` +
+        `over a 2000px scroll (${spineRest.toFixed(0)} → ${spineScrolled.toFixed(0)})`,
+    );
+  }
   if (!(headDelta > 0.9)) {
     problems.push(
       `hero read head did not follow scroll: offset moved ${headDelta.toFixed(3)} turns ` +
@@ -500,6 +559,7 @@ async function checkInteractivity(browser, base) {
   report("hero corpus is visible under default motion", problems.filter((p) => p.includes("hero corpus invisible")));
   report("hero corpus is server-rendered", problems.filter((p) => p.includes("hero corpus server-rendered")));
   report("hero read head follows scroll", problems.filter((p) => p.includes("hero read head")));
+  report("page spine follows scroll", problems.filter((p) => p.includes("page spine")));
   report("showcase renders all 4 project cards", problems.filter((p) => p.includes("showcase rendered")));
   report(
     "router resolves the real registry and refuses to guess",
