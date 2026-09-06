@@ -26,19 +26,19 @@ This is P1 (Think Before Coding) made concrete. Ask, then build once.
 → Determines responsive strategy, a11y depth, performance gates, framework version.
 
 **Q6 — References.** "Any sites or designs to match — or to avoid?"
-→ Determines aesthetic direction and anti-patterns. A "match this" answer should trigger a Design DNA extraction (`skills/design-principles/references/design-dna.md`).
+→ Determines aesthetic direction and anti-patterns. A "match this" answer should trigger a Design DNA extraction (`catalog/design-principles/references/design-dna.md`).
 
 ## Routing from the answers
 
 | Answer | Also load |
 |---|---|
-| Q1 = marketing / landing | `skills/landing-pages/` |
-| Q1 = dashboard **and** Q3 = lots of data | `skills/data-tables/` + `skills/react-performance/` |
-| Q2 = playful / animated, or Q4 = cinematic | `skills/animations/` |
-| Q2 = corporate / minimal | `skills/design-principles/` + `skills/web-interface/` |
-| Q3 = real API data | `skills/data-tables/` (fetching, states) |
-| Q5 = mobile-first / native | `skills/platform/` |
-| Q6 = "match this site" | `skills/design-principles/` (DNA extraction) → `skills/design-system/` |
+| Q1 = marketing / landing | `catalog/landing-pages/` |
+| Q1 = dashboard **and** Q3 = lots of data | `catalog/data-tables/` + `catalog/react-performance/` |
+| Q2 = playful / animated, or Q4 = cinematic | `catalog/animations/` |
+| Q2 = corporate / minimal | `catalog/design-principles/` + `catalog/web-interface/` |
+| Q3 = real API data | `catalog/data-tables/` (fetching, states) |
+| Q5 = mobile-first / native | `catalog/platform/` |
+| Q6 = "match this site" | `catalog/design-principles/` (DNA extraction) → `catalog/design-system/` |
 
 ## What not to do
 

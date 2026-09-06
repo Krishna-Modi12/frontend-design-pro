@@ -1,6 +1,6 @@
 # Worked example — a complete DESIGN.md
 
-`skills/design-system/references/design-md-template.md` gives the nine-section
+`catalog/design-system/references/design-md-template.md` gives the nine-section
 shape. This is that shape filled in properly, for a real site: the design
 specification `xiaopu-ai/web-design` wrote for its own landing page, translated
 from the Chinese.

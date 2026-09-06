@@ -65,7 +65,7 @@ Scope, and why it is a list rather than everything
 `SCAN` is the set of surfaces that make claims *about the pack*. Reference files
 are excluded by default: `chart-types.md` saying an axis runs `1,000 – 10,000` is
 content, not a claim, and a gate that flagged it would be noise. The one
-exception is `skills/agent-ops/references/token-optimization.md`, which quotes
+exception is `catalog/agent-ops/references/token-optimization.md`, which quotes
 the pack's own budget and is named in `CLAUDE.md`'s sweep list for that reason,
 along with `context-engineering.md`, which opens on the same claim.
 
@@ -152,7 +152,7 @@ def _core_deps(router: Path) -> set:
 
 def compute_truth() -> Dict[str, object]:
     registry = tokens(ROOT / "SKILL.md")
-    routers = sorted((ROOT / "skills").glob("*/SKILL.md"))
+    routers = sorted((ROOT / "catalog").glob("*/SKILL.md"))
 
     budgets: Dict[str, int] = {}
     router_tokens: List[int] = []
@@ -166,8 +166,8 @@ def compute_truth() -> Dict[str, object]:
 
     # rglob, not glob: design-system nests references/styles/, and a flat glob
     # undercounts by 5. The published figure has always been the rglob one.
-    refs = [p for d in (ROOT / "skills").glob("*/references") for p in d.rglob("*.md")]
-    examples = [p for p in (ROOT / "skills").glob("*/examples/*.tsx")
+    refs = [p for d in (ROOT / "catalog").glob("*/references") for p in d.rglob("*.md")]
+    examples = [p for p in (ROOT / "catalog").glob("*/examples/*.tsx")
                 if not p.name.endswith(".test.tsx")]
 
     # Constraint counts come from the suites themselves — the same derivation
@@ -193,8 +193,8 @@ def compute_truth() -> Dict[str, object]:
         "reference_depth_tokens": sum(tokens(p) for p in refs),
         "core_files": len(list((ROOT / "core").glob("*.md"))),
         "example_files": len(examples),
-        "anti_examples": len(list((ROOT / "skills").glob("*/examples/bad-*.tsx"))),
-        "test_files": len(list((ROOT / "skills").glob("*/examples/*.test.tsx"))),
+        "anti_examples": len(list((ROOT / "catalog").glob("*/examples/bad-*.tsx"))),
+        "test_files": len(list((ROOT / "catalog").glob("*/examples/*.test.tsx"))),
         "release_gates": len(GATE_ROSTER),
         "parser_constraints": parser,
         "regex_constraints": regex,
@@ -350,7 +350,7 @@ FIGURES: Sequence[Figure] = (
         # for strangers, and it is the form that shipped stale in all three
         # tracked launch documents while this gate reported them clean. The
         # anchor must be the *root* file, hence `(?<![/\w-])`: without it,
-        # `skills/{id}/SKILL.md` reaches forward and reads the per-skill router
+        # `catalog/{id}/SKILL.md` reaches forward and reads the per-skill router
         # range as if it were the registry, which flags two correct tables.
         r"(?:registry|`?(?<![/\w-])SKILL\.md`?)[^.\n≤≥<>]{0,60}?\*{0,2}(?<![\d,])(?<!to )(\d,\d{3})\*{0,2}[ -]tokens?\b"
         r"|(?<![\d,])(\d,\d{3})\*{0,2}[ -]tokens?\b(?=[^.\n]{0,30}(?:always|registry))",
@@ -434,7 +434,7 @@ FIGURES: Sequence[Figure] = (
         # claim like "`foo.md` has 12 references", where the path and the count
         # share a clause. A table PIPE between them means they are separate
         # cells and the count is the corpus — which is how
-        # `| `skills/{id}/references/*.md` | N deep references |` hid a stale
+        # `| `catalog/{id}/references/*.md` | N deep references |` hid a stale
         # figure while the row's own token count was being swept correctly.
         forbid=r"(?:`\S+`|design-system|platform|agent-ops)[^.|]{0,10}$",
     ),
@@ -590,7 +590,7 @@ FIGURES: Sequence[Figure] = (
 # There is deliberately no SKILLS-WORD. It was written, and it produced eight
 # false positives to one true one: "when two skills match, the more specific
 # wins", "adding two skills cost 103 tokens", "routes to exactly one
-# skills/{id}/SKILL.md". A spelled number before "skills" nearly always counts
+# catalog/{id}/SKILL.md". A spelled number before "skills" nearly always counts
 # a subset or a step, not the corpus — whereas gates are a fixed roster, so
 # "N gates" is a claim about all of them. The noun has to be one that only the
 # total can occupy, or the gate gets muted for noise and stops being read.
@@ -610,11 +610,11 @@ SCAN: Sequence[str] = (
     "demo/landing-page/components/*.tsx",
     "demo/landing-page/lib/*.ts",
     "demo/landing-page/*.json",
-    "skills/agent-ops/references/token-optimization.md",
+    "catalog/agent-ops/references/token-optimization.md",
     # Its sibling qualifies under the same exception and was missed: the file
     # opens "This pack routes one skill per request out of ~Nk tokens of
     # depth", which is a claim about the pack, not content. It sat stale.
-    "skills/agent-ops/references/context-engineering.md",
+    "catalog/agent-ops/references/context-engineering.md",
     # The screenshot harness is not shipped, but its header explains what the
     # gates do and does it in numbers — and being outside this list is exactly
     # why it drifted to "53 constraints" and stayed there. A file that states a

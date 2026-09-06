@@ -38,7 +38,7 @@ Counts and token figures are hardcoded across ~30 documents and go stale
 silently. Re-derive from a green `--dry-run`; never hand-edit. Sweep `README.md`,
 `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `docs/USAGE.md`, `docs/INSTALL.md`,
 `docs/LAUNCH_*.md`, `docs/MAINTENANCE.md`, `install/*/README.md`,
-`skills/agent-ops/references/token-optimization.md`, `metadata.json` — **and
+`catalog/agent-ops/references/token-optimization.md`, `metadata.json` — **and
 `CLAUDE.md` and `AGENT_SYSTEM_PROMPT.md`**, which are the two most-read files in
 the repo and are on nobody's sweep list.
 
@@ -80,9 +80,9 @@ golds — the anti-examples violate these on purpose, and a check that always
 returns 30 hits gets muted:
 
 ```bash
-git grep -nE '#[0-9a-fA-F]{6}\b' -- 'skills/*/examples/good-*.tsx'
-git grep -n  'min-h-screen'      -- 'skills/*/examples/good-*.tsx'
-git grep -nE 'ease-in[^-]'       -- 'skills/*/examples/good-*.tsx'   # exits only
+git grep -nE '#[0-9a-fA-F]{6}\b' -- 'catalog/*/examples/good-*.tsx'
+git grep -n  'min-h-screen'      -- 'catalog/*/examples/good-*.tsx'
+git grep -nE 'ease-in[^-]'       -- 'catalog/*/examples/good-*.tsx'   # exits only
 ```
 
 Raw hex has exactly three sanctioned exceptions — brand assets, React Native

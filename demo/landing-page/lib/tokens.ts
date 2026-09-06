@@ -22,7 +22,7 @@ export const tokenStyles = `
 }
 
 /* Remove this rule if the page adopts Lenis — Lenis drives scroll position from
-   a rAF loop and the two fight. See skills/animations/references/lenis-smooth-scroll.md */
+   a rAF loop and the two fight. See catalog/animations/references/lenis-smooth-scroll.md */
 html {
   scroll-behavior: smooth;
 }

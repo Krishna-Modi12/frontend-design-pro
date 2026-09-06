@@ -22,6 +22,6 @@ If no, delete this section.
 ## Checklist
 
 - [ ] `tsc --noEmit` strict passes on all changed `.tsx` files
-- [ ] No `references/` paths introduced — use `skills/{id}/references/` instead (a pre-registry mistake already fixed once; Gate 6 now rejects bare `references/`/`_meta/` prefixes and bare reference filenames)
+- [ ] No `references/` paths introduced — use `catalog/{id}/references/` instead (a pre-registry mistake already fixed once; Gate 6 now rejects bare `references/`/`_meta/` prefixes and bare reference filenames)
 - [ ] No placeholder copy (no lorem ipsum, no `John Doe`/`user123`, no AI-slop phrasing)
 - [ ] Token budget respected — every skill file ≤3,000 tokens alone, ≤8,000 tokens with declared core-deps (Gate 8a)

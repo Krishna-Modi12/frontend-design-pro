@@ -31,7 +31,7 @@ Multi-step work states a plan with checkpoints. **Self-verify before returning**
 
 ## Research: configured tools beat blind search
 
-For anything time-sensitive or community-sentiment-shaped — "what's current", "what do people think of X", "what shipped recently" — prefer a research tool the host has actually configured (a `last30days` skill, an `agent-reach` capability layer, an MCP browser) over an unqualified `web_search`: they rank by real engagement and read platforms a search index flattens. Detect first; degrade silently when none is present. Their absence never blocks a task and is never a reason to tell the user to install one. `skills/design-research` applies this in its Phase 0.
+For anything time-sensitive or community-sentiment-shaped — "what's current", "what do people think of X", "what shipped recently" — prefer a research tool the host has actually configured (a `last30days` skill, an `agent-reach` capability layer, an MCP browser) over an unqualified `web_search`: they rank by real engagement and read platforms a search index flattens. Detect first; degrade silently when none is present. Their absence never blocks a task and is never a reason to tell the user to install one. `catalog/design-research` applies this in its Phase 0.
 
 ## Integration with the pipeline
 

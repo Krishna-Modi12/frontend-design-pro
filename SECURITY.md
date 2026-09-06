@@ -29,12 +29,12 @@ service and has no runtime, so the interesting risks are not the usual ones. In
 scope:
 
 - **Reference material that would make an agent produce insecure code.** The
-  `skills/*/references/*.md` corpus is instructions an agent acts on. A reference
+  `catalog/*/references/*.md` corpus is instructions an agent acts on. A reference
   prescribing `dangerouslySetInnerHTML` with unsanitised input, a permissive CORS
   or CSP recipe, an auth pattern that leaks tokens to the client, or a dependency
   suggestion with a known advisory is a genuine vulnerability in this project even
   though nothing here executes.
-- **Examples that ship the same problem.** `skills/*/examples/good-*.tsx` are
+- **Examples that ship the same problem.** `catalog/*/examples/good-*.tsx` are
   presented as the correct way to do something and get copied.
 - **Anything in the install adapters** (`install/`, `setup.sh`, `setup.ps1`) that
   would run unexpected code on a consumer's machine or write outside the target
@@ -91,7 +91,7 @@ Verify rather than trust it — these are the checks, not a summary of them:
 
 ```bash
 grep -nE 'curl|wget|eval|exec|sudo|base64' setup.sh setup.ps1        # expect: no matches
-grep -rlE 'sendBeacon|XMLHttpRequest|axios|new WebSocket' skills/     # expect: no matches
+grep -rlE 'sendBeacon|XMLHttpRequest|axios|new WebSocket' catalog/     # expect: no matches
 bash setup.sh --dry-run                                              # every path it would write
 ```
 

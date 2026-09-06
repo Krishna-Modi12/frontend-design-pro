@@ -5,12 +5,12 @@ Two hosts, two different installs. Claude Code has a filesystem; Claude Desktop 
 ## Claude Code — native, no system prompt
 
 1. Unzip `frontend-design-pro-v*.skill` into `~/.claude/skills/`, or into a repo's `.claude/skills/` for a project-scoped copy (project skills take precedence).
-2. Check the unzip produced `frontend-design-pro/SKILL.md` at the folder root, beside `core/` and `skills/`.
+2. Check the unzip produced `frontend-design-pro/SKILL.md` at the folder root, beside `core/` and `catalog/`.
 3. Start a new session and ask in plain language: *"Create a landing page for a developer tool."*
 
 Nothing else to configure — no system prompt, no environment variable. The YAML `description` in `SKILL.md` does the routing; its paths resolve relative to that root. No slash commands — matching is on trigger keywords.
 
-This is the only host with a real filesystem, so lazy loading works as designed: `SKILL.md` (2,149 tokens) always loaded, one matched skill plus its core deps, ~6,037–7,950 tokens per request against 436,039 tokens of on-demand depth.
+This is the only host with a real filesystem, so lazy loading works as designed: `SKILL.md` (2,154 tokens) always loaded, one matched skill plus its core deps, ~6,043–7,956 tokens per request against 436,284 tokens of on-demand depth.
 
 ## Claude Desktop — Projects, retrieval not lazy loading
 

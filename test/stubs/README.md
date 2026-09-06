@@ -2,7 +2,7 @@
 
 ## Why these exist
 
-`skills/*/examples/good-*.tsx` import ~25 peer libraries — `three`, `motion/react`,
+`catalog/*/examples/good-*.tsx` import ~25 peer libraries — `three`, `motion/react`,
 `react-hook-form`, `react-native`, `gsap`, `recharts` — that this repo deliberately
 does not install. The pack ships no runtime; installing three.js and React Native to
 render a markdown skill pack would be absurd, and the ambient `_stubs.d.ts`
@@ -15,7 +15,7 @@ execute end-to-end" as its first known gap for four minor versions.
 
 Each file here is the smallest real module that lets the components render.
 `vitest.config.ts` aliases the specifier to it. They are **test-only**:
-`scripts/build_release.py` ships `core/ skills/ scripts/ evals/ rules/ install/`
+`scripts/build_release.py` ships `core/ catalog/ scripts/ evals/ rules/ install/`
 plus four root files, and `test/` is in none of them.
 
 ## The contract

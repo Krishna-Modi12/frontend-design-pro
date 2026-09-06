@@ -3,7 +3,7 @@
 Before writing or editing frontend code, read `frontend-design-pro/SKILL.md`.
 
 It is a registry, not a document. Match the request against its routing table,
-then use exactly one `frontend-design-pro/skills/{id}/SKILL.md` plus the core
+then use exactly one `frontend-design-pro/catalog/{id}/SKILL.md` plus the core
 dependencies that skill declares under `frontend-design-pro/core/`. Every skill
 also inherits `frontend-design-pro/core/accessibility-baseline.md` and
 `frontend-design-pro/core/validate-checklist.md` whenever the task produces
@@ -17,7 +17,7 @@ read-only, never with `/add` — they are reference material, not edit targets:
 
 ```
 /read-only frontend-design-pro/SKILL.md
-/read-only frontend-design-pro/skills/forms/SKILL.md
+/read-only frontend-design-pro/catalog/forms/SKILL.md
 ```
 
 State which skill id you matched before generating code.
@@ -26,7 +26,7 @@ Follow the anti-slop rules in `frontend-design-pro/SKILL.md` as written — do n
 summarise them. Self-check against
 `frontend-design-pro/core/validate-checklist.md` before returning a diff.
 
-Depth lives in `frontend-design-pro/skills/{id}/references/`. If the routed
+Depth lives in `frontend-design-pro/catalog/{id}/references/`. If the routed
 skill points at one, name it and ask for it to be added read-only rather than
 approximating its contents.
 

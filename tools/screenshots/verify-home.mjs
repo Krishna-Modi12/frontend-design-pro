@@ -258,7 +258,7 @@ async function checkTimeoutFallback(browser, base) {
  * RTL resilience: force `dir="rtl"` on the document (no locale switch needed
  * — Tailwind's `rtl:`-aware/logical-property layout is a `dir` concern, not
  * a translation concern) and re-run the same horizontal-overflow check every
- * other viewport pass already uses. `skills/platform/references/i18n.md`
+ * other viewport pass already uses. `catalog/platform/references/i18n.md`
  * documents the logical-property/`dir` guidance this page is supposed to
  * follow; nothing before this checked that it actually does. Layout
  * mirroring correctness (is the right element on the right side) is a human-

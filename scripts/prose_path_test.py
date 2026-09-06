@@ -24,7 +24,7 @@ So the negatives here carry as much weight as the positives:
   * `_meta/CHANGELOG.md` is real — in the archive. `build_release.py` relocates
     `docs/CHANGELOG.md` there, so the citation is correct and the repo path
     simply is not the shipped one.
-  * `skills/{id}/SKILL.md` and `references/foo.md` are schema slots in prose
+  * `catalog/{id}/SKILL.md` and `references/foo.md` are schema slots in prose
     about the layout. They name files that are not supposed to exist.
 
 Fixtures are synthetic paths against a synthetic tree, not today's real files:
@@ -49,69 +49,72 @@ TREE = [
     "core/agent-behavior.md",
     "docs/ARCHITECTURE.md",
     "docs/CHANGELOG.md",
-    "skills/animations/SKILL.md",
-    "skills/animations/references/motion.md",
-    "skills/animations/references/motion-budget.md",
-    "skills/design-system/references/styles/soft.md",
-    "skills/forms/references/auth-patterns.md",
+    "catalog/animations/SKILL.md",
+    "catalog/animations/references/motion.md",
+    "catalog/animations/references/motion-budget.md",
+    "catalog/design-system/references/styles/soft.md",
+    "catalog/forms/references/auth-patterns.md",
 ]
 
 # (citing file, cited path, must_resolve, why)
 CASES = [
     # ── the six accepted forms ──────────────────────────────────────────────
-    ("skills/animations/references/motion.md", "core/agent-behavior.md",
+    ("catalog/animations/references/motion.md", "core/agent-behavior.md",
      True, "pack-rooted: a core file cited from inside a reference"),
-    ("skills/animations/references/motion.md", "docs/ARCHITECTURE.md",
+    ("catalog/animations/references/motion.md", "docs/ARCHITECTURE.md",
      True, "pack-rooted: a docs file cited from inside a reference"),
-    ("skills/forms/references/auth-patterns.md", "animations/references/motion.md",
+    ("catalog/forms/references/auth-patterns.md", "animations/references/motion.md",
      True, "skill-rooted: cross-skill, the form 63 sites already use"),
-    ("skills/animations/references/motion.md", "references/motion-budget.md",
+    ("catalog/animations/references/motion.md", "references/motion-budget.md",
      True, "skill-dir: this skill's own references/, written from inside it"),
-    ("skills/animations/references/motion.md", "../../forms/references/auth-patterns.md",
+    ("catalog/animations/references/motion.md", "../../forms/references/auth-patterns.md",
      True, "relative: the older spelling, still resolvable and left alone"),
     ("docs/ARCHITECTURE.md", "frontend-design-pro/SKILL.md",
      True, "install-rooted: where the pack lives once the archive is unzipped"),
     ("docs/ARCHITECTURE.md", "_meta/CHANGELOG.md",
      True, "archive: docs/CHANGELOG.md is relocated there by build_release.py"),
-    ("skills/animations/references/motion.md",
+    ("catalog/animations/references/motion.md",
      "design-system/references/styles/soft.md",
      True, "skill-rooted into a NESTED references dir — design-system has one"),
 
     # ── placeholders: prose about the layout, not citations ─────────────────
-    ("docs/ARCHITECTURE.md", "skills/new-skill/SKILL.md",
+    ("docs/ARCHITECTURE.md", "catalog/new-skill/SKILL.md",
      True, "the worked example in 'how to add a skill'"),
-    ("skills/animations/references/motion.md", "references/foo.md",
+    ("catalog/animations/references/motion.md", "references/foo.md",
      True, "'read references/foo.md only once you know the task needs foo'"),
-    ("skills/animations/references/motion.md", "skills/a/b/c/SKILL.md",
+    ("catalog/animations/references/motion.md", "catalog/a/b/c/SKILL.md",
      True, "illustrating nesting depth, not naming a file"),
+    ("catalog/agent-ops/references/skill-packaging.md", "skills/a/b/c/SKILL.md",
+     True, "the HOST's skills/ root, documenting a depth it will not walk — "
+           "this pack's catalog is deliberately not named skills/"),
 
     # ── the defects it exists to catch ──────────────────────────────────────
-    ("skills/forms/references/auth-patterns.md", "references/motion.md",
+    ("catalog/forms/references/auth-patterns.md", "references/motion.md",
      False, "cross-skill written in the same-skill spelling — the payments.md bug"),
-    ("skills/animations/references/motion.md", "styles/soft.md",
+    ("catalog/animations/references/motion.md", "styles/soft.md",
      False, "nested dir with the owning skill dropped — the phosphor.md bug"),
     ("docs/ARCHITECTURE.md", "references/motion.md",
      False, "'references/x.md' means nothing from docs/ — no skill in scope"),
-    ("skills/animations/references/motion.md", "animations/references/gone.md",
+    ("catalog/animations/references/motion.md", "animations/references/gone.md",
      False, "well-formed and skill-rooted, but the file was deleted"),
-    ("skills/animations/references/motion.md", "design-research/references/motion.md",
+    ("catalog/animations/references/motion.md", "design-research/references/motion.md",
      False, "right filename, wrong skill named — the INGESTION_REVIEW.md bug"),
     ("docs/ARCHITECTURE.md", "frontend-design-pro/core/gone.md",
      False, "install-rooted at a file the archive will not contain"),
-    ("skills/animations/references/motion.md", "docs/architecture.md",
+    ("catalog/animations/references/motion.md", "docs/architecture.md",
      False, "wrong case — resolves on Windows/macOS, 404s on the Linux that "
             "reads the archive; `docs/install.md` shipped exactly this way"),
-    ("skills/animations/references/motion.md", "animations/References/motion.md",
+    ("catalog/animations/references/motion.md", "animations/References/motion.md",
      False, "wrong case in a middle segment, not just the filename"),
 
     # ── load-bearing negatives: things that must NOT be judged ──────────────
-    ("skills/animations/references/motion.md", "motion-budget.md",
+    ("catalog/animations/references/motion.md", "motion-budget.md",
      None, "bare sibling filename — not path-shaped, never judged"),
-    ("skills/animations/references/motion.md", "harden.md",
+    ("catalog/animations/references/motion.md", "harden.md",
      None, "bare name that resolves nowhere — still not path-shaped"),
     ("docs/ARCHITECTURE.md", "SKILL.md",
      None, "20 files share this name; judging it would be a coin flip"),
-    ("docs/ARCHITECTURE.md", "skills/{id}/SKILL.md",
+    ("docs/ARCHITECTURE.md", "catalog/{id}/SKILL.md",
      None, "a `{...}` slot is a template, not a path — braces never resolve"),
 ]
 

@@ -62,7 +62,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const SOURCE_DIRS = ["skills", "core", "demo", "home"];
+const SOURCE_DIRS = ["catalog", "core", "demo", "home"];
 const EXCLUDE_PARTS = new Set(["node_modules", ".next", "dist", "baselines", ".diff-output"]);
 
 const SCALE_PX = [4, 8, 12, 16, 24, 32, 48, 64, 96];

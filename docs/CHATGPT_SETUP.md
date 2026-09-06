@@ -12,7 +12,7 @@ The skill is a folder of markdown built around a registry (`SKILL.md`) that rout
 ```
 You have access to a knowledge base called frontend-design-pro. SKILL.md is
 a registry, not a document: it has a routing table matching request keywords
-to exactly one skills/{id}/SKILL.md, plus a short list of core/ dependencies
+to exactly one catalog/{id}/SKILL.md, plus a short list of core/ dependencies
 that skill declares. When asked for frontend UI/UX work:
 
 1. Identify which single skill in the routing table matches the request.
@@ -29,13 +29,13 @@ file via search, say so rather than improvising generic advice.
 
 ## Plain ChatGPT (no Custom GPT)
 
-Paste `SKILL.md` directly into the conversation, then paste the specific `skills/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 436k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
+Paste `SKILL.md` directly into the conversation, then paste the specific `catalog/{id}/SKILL.md` and `core/*.md` files the request needs, based on the routing table. This is the most reliable mode precisely because no retrieval step is guessing at relevance — you do the routing by hand. It does not scale to 436k tokens of references, so expect shallower output on skills that lean on `references/*.md`.
 
 ## Verifying it took
 
 Ask: **"Which skill file are you using, and what does its routing table say matched this request?"**
 
-A correctly wired setup names one `skills/{id}/SKILL.md`, roughly quotes the keyword row that matched, and lists the core deps it pulled in. A plausible summary instead of a quoted routing row means it is improvising from training knowledge, not retrieving your upload. That failure is harder to catch here than in a tool-using agent — ChatGPT answers confidently either way.
+A correctly wired setup names one `catalog/{id}/SKILL.md`, roughly quotes the keyword row that matched, and lists the core deps it pulled in. A plausible summary instead of a quoted routing row means it is improvising from training knowledge, not retrieving your upload. That failure is harder to catch here than in a tool-using agent — ChatGPT answers confidently either way.
 
 ## Honest limitations
 

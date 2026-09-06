@@ -5,7 +5,7 @@ Frontend Design Pro — Security scan
 The gap this closes
 --------------------
 `docs/AUDIT.md` (2026-08-10) found a real stored-XSS bug in shipped reference
-prose — unescaped `<` in `JSON.stringify`'d JSON-LD, `skills/platform/references/seo.md`
+prose — unescaped `<` in `JSON.stringify`'d JSON-LD, `catalog/platform/references/seo.md`
 — by manual, one-time LLM audit. It was fixed as a prose edit. No rule was ever
 added to catch that class of bug again, and no `SEC-*` category exists anywhere
 in `scripts/test_constraints.py` or `scripts/parser_constraints.js`.
@@ -31,7 +31,7 @@ nearby `DOMPurify.sanitize`/`sanitizeHtml` call. Running it against this
 repo's own corpus produced 6 findings, and every one was a false positive —
 `home/app/page.tsx` injects build-time-generated CSS text into a `<style>`
 tag (no sanitizer call needed; nothing user-controlled ever reaches it), and
-`skills/ai-ui-generation/examples/good-registry-renderer.tsx` only mentions
+`catalog/ai-ui-generation/examples/good-registry-renderer.tsx` only mentions
 the API name inside a comment *warning* about it, which a naive substring
 match cannot distinguish from a real JSX attribute. The AUDIT.md bug this
 was meant to generalize from was fixed by escaping `<` before interpolating
@@ -50,7 +50,7 @@ anti-pattern (preceded by a heading/line containing "bad", "don't", or
 reasoning `check_references.py` (Gate 10) already applies.
 
 Usage:
-  python scripts/check_security.py            # skills/ + core/ + demo/ + home/
+  python scripts/check_security.py            # catalog/ + core/ + demo/ + home/
   python scripts/check_security.py --json
   python scripts/check_security.py <path>      # one file or directory
 """
@@ -70,7 +70,7 @@ for _s in (sys.stdout, sys.stderr):
 ROOT = Path(__file__).resolve().parent.parent
 
 SOURCE_GLOBS = ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"]
-SOURCE_DIRS = ["skills", "core", "demo", "home", "tools"]
+SOURCE_DIRS = ["catalog", "core", "demo", "home", "tools"]
 EXCLUDE_DIR_PARTS = {"node_modules", ".next", "dist", "baselines", "__pycache__"}
 
 JS_URL = re.compile(r"""["'`]\s*javascript:""", re.IGNORECASE)

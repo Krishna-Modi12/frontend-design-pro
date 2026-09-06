@@ -35,8 +35,8 @@ TSCONFIG = {
         "noEmit": True,
         "types": ["react", "react-dom"],
     },
-    "include": ["skills/*/examples/*.tsx", "skills/*/examples/*.d.ts"],
-    "exclude": ["skills/*/examples/*.test.tsx"],
+    "include": ["catalog/*/examples/*.tsx", "catalog/*/examples/*.d.ts"],
+    "exclude": ["catalog/*/examples/*.test.tsx"],
 }
 
 
@@ -83,7 +83,7 @@ def main() -> int:
         return 2
 
     cfg = TSCONFIG.copy()
-    n = len([p for p in root.glob("skills/*/examples/*.tsx") if not p.name.endswith(".test.tsx")])
+    n = len([p for p in root.glob("catalog/*/examples/*.tsx") if not p.name.endswith(".test.tsx")])
     with tempfile.NamedTemporaryFile(
         "w", suffix=".json", dir=root, prefix="tsconfig.golds.", delete=False
     ) as f:

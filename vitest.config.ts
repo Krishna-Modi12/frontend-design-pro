@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     // Gold examples import ~25 peer libraries this repo deliberately does not
-    // install — the pack ships no runtime. `skills/*/examples/_stubs.d.ts`
+    // install — the pack ships no runtime. `catalog/*/examples/_stubs.d.ts`
     // satisfies `tsc`, but declaration files do not exist at runtime, so Vite
     // could not resolve these specifiers and 29 of 39 test files failed to load
     // before running a single assertion.
@@ -19,7 +19,7 @@ export default defineConfig({
     // and `vi.mock` keys on the resolved path. `test/stubs/README.md` has the
     // detail and the failures that forced each rule.
     //
-    // Test-only: `build_release.py` ships core/, skills/, scripts/, evals/,
+    // Test-only: `build_release.py` ships core/, catalog/, scripts/, evals/,
     // rules/, install/ and four root files. `test/` and this config are in none
     // of them.
     //
@@ -73,7 +73,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    include: ['skills/*/examples/**/*.test.tsx'],
+    include: ['catalog/*/examples/**/*.test.tsx'],
     // One jsdom environment per worker is expensive; an unbounded pool spawns one
     // per test file. Capped so the run has a predictable memory ceiling on a
     // developer machine rather than one that scales with the example count.

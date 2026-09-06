@@ -15,8 +15,8 @@ Gemini CLI reads `GEMINI.md` from the project root. It does **not** read
 standard does not cover.
 
 The CLI has a real filesystem, so the registry works as designed: `GEMINI.md`
-routes, and the matched `skills/{id}/SKILL.md` and its references are opened as
-files rather than pasted. Roughly 6,037–7,950 tokens per request instead of the
+routes, and the matched `catalog/{id}/SKILL.md` and its references are opened as
+files rather than pasted. Roughly 6,043–7,956 tokens per request instead of the
 whole pack.
 
 ## Gemini API — manual
@@ -28,10 +28,10 @@ There is no rules file to drop in; the pack goes into the system instruction.
    the `google-genai` SDK, or the System Instructions field in AI Studio. The
    same field works against AI Studio and Vertex AI; only the client
    construction differs.
-3. Narrow integration: add the one or two `skills/{id}/SKILL.md` files plus the
+3. Narrow integration: add the one or two `catalog/{id}/SKILL.md` files plus the
    `core/*.md` deps you know you need. Broad integration: add all 8 `core/*.md`
    and all 19 skill routers — small enough that a large context window absorbs
-   it. Leave `references/` out; 436,039 tokens is too large to paste wholesale
+   it. Leave `references/` out; 436,284 tokens is too large to paste wholesale
    in any window.
 4. For genuine on-demand loading, wire a function/tool that reads a pack file by
    path, and let the model call it after matching the routing table in `SKILL.md`.

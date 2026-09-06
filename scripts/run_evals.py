@@ -46,18 +46,18 @@ for _s in (sys.stdout, sys.stderr):
 
 
 def _resolve_gold(rel: str) -> str:
-    """v13: examples live in skills/*/examples/. Resolve by basename."""
+    """v13: examples live in catalog/*/examples/. Resolve by basename."""
     import glob as _g, os as _o
     base = _o.path.basename(rel)
     root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
-    hits = _g.glob(_o.path.join(root, "skills", "*", "examples", base))
+    hits = _g.glob(_o.path.join(root, "catalog", "*", "examples", base))
     return hits[0] if hits else _o.path.join(root, rel)
 
 
 
 SCRIPT_DIR = Path(__file__).parent
 DEFAULT_EVALS_PATH = SCRIPT_DIR.parent / "evals" / "evals.json"
-EXAMPLES_DIR = SCRIPT_DIR.parent / "skills"   # v13: examples live in skills/*/examples/
+EXAMPLES_DIR = SCRIPT_DIR.parent / "catalog"   # v13: examples live in catalog/*/examples/
 
 # ─────────────────────────────────────────────
 # Semantic runner (v12 — claude-haiku judge)

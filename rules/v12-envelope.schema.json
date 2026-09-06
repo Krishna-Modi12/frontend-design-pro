@@ -40,12 +40,12 @@
         "files_loaded": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Every file actually read, relative to the skill root — e.g. SKILL.md, skills/forms/SKILL.md, core/component-api.md."
+          "description": "Every file actually read, relative to the skill root — e.g. SKILL.md, catalog/forms/SKILL.md, core/component-api.md."
         },
         "skills_loaded": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^skills/[a-z0-9-]+/SKILL\\.md$" },
-          "description": "The skills/{id}/SKILL.md routed to. Normally exactly one — the registry loads a single skill per request."
+          "items": { "type": "string", "pattern": "^catalog/[a-z0-9-]+/SKILL\\.md$" },
+          "description": "The catalog/{id}/SKILL.md routed to. Normally exactly one — the registry loads a single skill per request."
         },
         "shortcodes_detected": {
           "type": "array",
@@ -107,8 +107,8 @@
       "metadata": {
         "intent": "CREATE_COMPONENT",
         "mode": "Full",
-        "files_loaded": ["SKILL.md", "skills/forms/SKILL.md", "core/component-api.md", "core/accessibility-baseline.md", "core/validate-checklist.md"],
-        "skills_loaded": ["skills/forms/SKILL.md"],
+        "files_loaded": ["SKILL.md", "catalog/forms/SKILL.md", "core/component-api.md", "core/accessibility-baseline.md", "core/validate-checklist.md"],
+        "skills_loaded": ["catalog/forms/SKILL.md"],
         "shortcodes_detected": ["[json]"],
         "design_md_tokens_overridden": false,
         "dials": { "dv": 7, "mi": 5, "vd": 4 },

@@ -85,8 +85,8 @@ EXTRA_CHECKS = [
     ),
     (
         "registry loading protocol",
-        r"skills/\{?id\}?/SKILL\.md|registry",
-        "describes registry routing to skills/{id}/SKILL.md",
+        r"catalog/\{?id\}?/SKILL\.md|registry",
+        "describes registry routing to catalog/{id}/SKILL.md",
     ),
     (
         "core dependency loading",
@@ -105,11 +105,11 @@ EXTRA_CHECKS = [
 # headings stayed valid while the file's contents rotted underneath them.
 #
 # Three checks, because the rot took three forms and a single existence test on
-# `skills/…`-prefixed paths catches none of them:
+# `catalog/…`-prefixed paths catches none of them:
 #   1. rooted paths that do not resolve
 #   2. v12 dead prefixes — `references/…` and `_meta/…` are pre-registry layout
 #   3. bare reference filenames — `design-patterns.md` with no directory is
-#      unroutable now that every reference lives at skills/{id}/references/
+#      unroutable now that every reference lives at catalog/{id}/references/
 CITED_PATH_RE = re.compile(r"`((?:skills|core|rules|evals|scripts|docs)/[\w./{}-]+\.\w+)`")
 DEAD_PREFIX_RE = re.compile(r"`((?:references|_meta)/[\w./-]+\.\w+)`")
 BARE_FILE_RE = re.compile(r"`([\w-]+\.(?:md|json))`")
@@ -242,7 +242,7 @@ def check_cited_paths(content: str, root: Path) -> list[tuple[str, bool, str]]:
     rows.append((
         "No bare reference filenames",
         not bare,
-        f"unroutable without skills/{{id}}/references/: {', '.join(bare[:8])}"
+        f"unroutable without catalog/{{id}}/references/: {', '.join(bare[:8])}"
         f"{f' (+{len(bare) - 8} more)' if len(bare) > 8 else ''}"
         if bare else "no unrooted reference citations",
     ))

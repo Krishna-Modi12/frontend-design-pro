@@ -71,14 +71,14 @@ jobs:
       - name: Gate 4 — Semantic AST constraints
         if: failure() && steps.chain.outcome == 'failure'
         run: |
-          for f in skills/*/examples/good-*.tsx; do
+          for f in catalog/*/examples/good-*.tsx; do
             case "$f" in *.test.tsx) continue;; esac
             node scripts/parser_constraints.js "$f"
           done
 
       - name: Gate 5 — Syntactic constraints
         if: failure() && steps.chain.outcome == 'failure'
-        run: python3 scripts/test_constraints.py --dir skills
+        run: python3 scripts/test_constraints.py --dir catalog
 
       - name: Gate 6 — Pipeline smoke test
         if: failure() && steps.chain.outcome == 'failure'
@@ -97,7 +97,7 @@ jobs:
         if: failure() && steps.chain.outcome == 'failure'
         run: |
           missing=0
-          for gold in skills/*/examples/good-*.tsx; do
+          for gold in catalog/*/examples/good-*.tsx; do
             case "$gold" in *.test.tsx) continue;; esac
             test -f "${gold%.tsx}.test.tsx" || { echo "missing test for $gold"; missing=1; }
           done
@@ -105,7 +105,7 @@ jobs:
           npx tsc --noEmit --strict --noImplicitAny --jsx react-jsx \
             --moduleResolution bundler --target ES2022 --module ESNext \
             --esModuleInterop --skipLibCheck --types react,react-dom \
-            skills/*/examples/*.test.tsx skills/*/examples/*.d.ts
+            catalog/*/examples/*.test.tsx catalog/*/examples/*.d.ts
 
       # `basic` was REMOVED in Vitest 4 (this repo is on ^4.1.10), so this step
       # errored instead of printing anything — the diagnostic that exists to

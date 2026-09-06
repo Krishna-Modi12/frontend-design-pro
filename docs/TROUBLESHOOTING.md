@@ -51,7 +51,7 @@ It reports the skip rather than passing silently, which is the intended behaviou
 
 `npx skills add` clones the default branch and drops `metadata.json`, so the install has no version stamp at its root — and it tracks `main`, which may be ahead of the release badge and is not the artifact the gates signed off.
 
-Every `skills/*/SKILL.md` carries a `version:` field if you just need to know what you have. If you want a pinned, gated artifact instead, take [the release archive](https://github.com/Krishna-Modi12/frontend-design-pro/releases/latest) — it is built only when every gate passes.
+Every `catalog/*/SKILL.md` carries a `version:` field if you just need to know what you have. If you want a pinned, gated artifact instead, take [the release archive](https://github.com/Krishna-Modi12/frontend-design-pro/releases/latest) — it is built only when every gate passes.
 
 </details>
 

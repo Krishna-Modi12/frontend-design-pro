@@ -1,7 +1,7 @@
 /**
  * live-audit.mjs — the deterministic half of `web-interface`'s Layer B.
  *
- * `skills/web-interface/references/live-verification.md` describes an
+ * `catalog/web-interface/references/live-verification.md` describes an
  * MCP-driven, interactive rendered-DOM audit. This script is its headless
  * regression counterpart: it implements the measurement primitives that
  * workflow relies on (viewport sweep, real horizontal overflow, computed text
@@ -18,7 +18,7 @@
  *   node live-audit.mjs url <URL> [--json]  # audit a live URL, print the findings report
  *   node live-audit.mjs url <URL> --out report.json
  *
- * Fixtures live in ../../skills/web-interface/examples/live-audit/; override the
+ * Fixtures live in ../../catalog/web-interface/examples/live-audit/; override the
  * directory with LV_FIXTURE_DIR (used when running from another checkout).
  */
 import { chromium } from "playwright";
@@ -68,7 +68,7 @@ function sampledBg(png, rect, fg) {
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURE_DIR =
   process.env.LV_FIXTURE_DIR ||
-  resolve(HERE, "..", "..", "skills", "web-interface", "examples", "live-audit");
+  resolve(HERE, "..", "..", "catalog", "web-interface", "examples", "live-audit");
 
 const VIEWPORTS = [
   // 390/768/1920 is the repo-standard sweep. 320 is added because a real

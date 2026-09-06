@@ -1,7 +1,7 @@
 # Design Tokens (core)
 
 Loaded as a core dependency by `landing-pages`, `design-system`, `animations`, `web-interface`.
-Full palette library and brand profiles live in `skills/design-system/references/`.
+Full palette library and brand profiles live in `catalog/design-system/references/`.
 
 ## Colour — OKLCH only
 

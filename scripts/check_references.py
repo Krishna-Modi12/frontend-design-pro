@@ -95,33 +95,33 @@ ANTI_MARKERS = re.compile(
 # Exemptions are per-file and per-constraint, and every one carries the reason it
 # is not a defect. A blanket file skip would hide real findings in the same file.
 EXEMPT: Dict[str, Dict[str, str]] = {
-    "skills/platform/references/mobile-patterns.md": {
+    "catalog/platform/references/mobile-patterns.md": {
         "A11Y-06": "Vaul Drawer.Content is a focus-trapped dialog container: it takes "
                    "programmatic focus on open so the trap works, and a ring on the "
                    "sheet itself is noise. The indicator belongs on the controls inside, "
                    "which carry their own focus-visible styles",
     },
-    "skills/platform/references/react-native.md": {
+    "catalog/platform/references/react-native.md": {
         "COL-04": "React Native StyleSheet has no OKLCH and no Tailwind arbitrary values; hex is the only expressible form",
         "TOK-01": "same — RN colour literals are not CSS custom properties",
         "PLAT-01": "onPress IS the React Native handler; the wall bans it on web",
         "RES-03": "no Tailwind screen utilities in RN; any match is prose",
     },
-    "skills/platform/references/email-templates.md": {
+    "catalog/platform/references/email-templates.md": {
         "COL-04": "HTML email renders in Outlook/Gmail, which support neither OKLCH nor CSS custom properties; hex is required",
         "TOK-01": "same — inline hex is the only portable colour in email",
         "TYP-02": "Outlook ignores @font-face, so Arial/Helvetica are the correct choice here rather than the lazy one",
     },
-    "skills/design-system/references/brand-core.md": {
+    "catalog/design-system/references/brand-core.md": {
         "COL-04": "documentary — records the hex real design systems publish; converting it would falsify the citation",
     },
-    "skills/design-system/references/brand-extended.md": {
+    "catalog/design-system/references/brand-extended.md": {
         "COL-04": "documentary — see brand-core.md",
     },
-    "skills/design-system/references/brand-design-systems.md": {
+    "catalog/design-system/references/brand-design-systems.md": {
         "COL-04": "documentary — see brand-core.md",
     },
-    "skills/design-system/references/figma-to-code.md": {
+    "catalog/design-system/references/figma-to-code.md": {
         "COL-04": "hex is the INPUT side of the translation; Figma emits hex and the file's subject is converting it",
         "TOK-01": "same",
     },
@@ -196,7 +196,7 @@ def check_file(path: Path) -> List[Finding]:
 
 def targets() -> List[Path]:
     paths: List[Path] = []
-    paths.extend(sorted((REPO / "skills").rglob("*.md")))
+    paths.extend(sorted((REPO / "catalog").rglob("*.md")))
     paths.extend(sorted((REPO / "core").glob("*.md")))
     return [p for p in paths if "node_modules" not in p.parts]
 

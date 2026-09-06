@@ -11,7 +11,7 @@ one copy rather than duplicating it, so a later `npx skills update` reaches all
 of them at once. `--copy` trades that for independent copies.
 
 **The pack installs as one skill, and that is required, not incidental.** The
-root `SKILL.md` router arrives with `core/` and all 19 `skills/` beside it; the
+root `SKILL.md` router arrives with `core/` and all 19 `catalog/` beside it; the
 router does the routing. A root `SKILL.md` is what stops the installer walking
 deeper, so the default behaviour is the correct one.
 
@@ -23,7 +23,7 @@ npx skills add Krishna-Modi12/frontend-design-pro --list               # one ent
 npx skills add Krishna-Modi12/frontend-design-pro --list --full-depth  # the router plus all 19 behind it, as peers
 ```
 
-The second form replaces a 2,149-token registry with nineteen skills competing to
+The second form replaces a 2,154-token registry with nineteen skills competing to
 match each request — the architecture this pack exists to avoid. `--skill <name>`
 has the same effect for the skills it names, and is only useful if you genuinely
 want one skill and not the router.
@@ -69,13 +69,13 @@ while anything is red.
 
    Other hosts: **Claude.ai** — upload the unzipped contents as project knowledge. **Cursor, Copilot, Windsurf, Continue.dev and Aider** keep their rules in a file, so the pack ships that file already written — run `bash frontend-design-pro/setup.sh` from your project root and it detects the agent and writes the right one. See [`install/`](../install/) for the files themselves and a card per host.
 
-3. Confirm the layout. `SKILL.md` must sit at the root of the skill folder, beside `core/` and `skills/`:
+3. Confirm the layout. `SKILL.md` must sit at the root of the skill folder, beside `core/` and `catalog/`:
 
    ```
    ~/.claude/skills/frontend-design-pro/
    ├── SKILL.md        ← the registry; the only file always read
    ├── core/           ← 8 shared primitives
-   ├── skills/         ← 19 skills + references + examples
+   ├── catalog/         ← 19 skills + references + examples
    └── scripts/  evals/  rules/
    ```
 
@@ -85,7 +85,7 @@ while anything is red.
 
    > Create a landing page for a SaaS product
 
-   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~6,037–7,950 tokens). See [USAGE.md](USAGE.md).
+   There are no slash commands. The agent reads the registry, matches your wording against trigger keywords, and loads exactly one skill plus its declared dependencies (~6,043–7,956 tokens). See [USAGE.md](USAGE.md).
 
 > **Optional — `AGENT_SYSTEM_PROMPT.md`:** if your host has a system-prompt field, paste it in. `SKILL.md` alone is sufficient (it carries the identity, behavioural preamble, anti-slop wall, routing table and failure handling), but the system prompt makes the loading protocol, the intake trigger, the per-pass core-file citations and the validation contract explicit. It is version-free and every path it cites is verified by Gate 6 on each build.
 
