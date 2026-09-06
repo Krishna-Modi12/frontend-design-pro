@@ -1,4 +1,4 @@
-name: Deploy showcase to Pages
+name: Deploy the site to Pages
 
 # The two demos in demo/ that actually run are the only artifacts here a
 # stranger can evaluate without installing anything. Both were reachable by
