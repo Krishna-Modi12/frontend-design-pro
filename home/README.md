@@ -195,7 +195,9 @@ JSON is.
 ```bash
 npm run pages:verify     # from the repo root — home/'s own dev AND prod servers,
                          # axe, overflow, reduced motion, the router, the checker,
-                         # and the hero's five corpus assertions
+                         # the hero's five corpus assertions, and the page
+                         # spine's two (it draws with scroll; under reduce it
+                         # renders complete and does not move)
 ```
 
 It is a repo-root script, not a `home/` one — the `cd home` under "Run it" above

@@ -217,8 +217,13 @@ body {
    which carries no \`data-section-surface\`, so its soft glow bottom blends
    into the section below it untouched). \`--color-border\` carries no WCAG
    floor — it is the decorative-divider treatment \`DESIGN.md\` §6 already
-   names. Horizontal only; a vertical rule here would read as the anti-slop
-   wall's "broadsheet hairline columns". */
+   names. Horizontal only, and the reason is narrower than it used to read
+   here: what the anti-slop wall calls "broadsheet hairline columns" is a
+   repeating grid of straight rules used as page structure, and putting one
+   between every pair of sections would be exactly that. It is not a ban on
+   every vertical stroke. \`PageSpine\` draws a single non-repeating curve in
+   the outer margin that carries the reader's position, touches no content and
+   is absent until scrolled, and that is a different object. */
 [data-section-surface] + [data-section-surface] {
   border-top: 1px solid var(--color-border);
 }

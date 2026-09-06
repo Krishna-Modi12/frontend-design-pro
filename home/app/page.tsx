@@ -11,6 +11,7 @@ import SectionHow from "../components/SectionHow";
 import SectionProof from "../components/SectionProof";
 import SectionShowcase from "../components/SectionShowcase";
 import SectionInstall from "../components/SectionInstall";
+import PageSpine from "../components/PageSpine";
 import { focusRing, tokenStyles } from "../lib/tokens";
 
 const payload = data as GeneratedData;
@@ -38,7 +39,10 @@ export default function Page(): ReactElement {
 
           <Navbar version={payload.version} />
 
-          <main id="main">
+          {/* `relative` is here for `PageSpine` below, which is absolutely
+              positioned against the whole of `<main>` — without it the spine
+              would resolve against the viewport and be one screen tall. */}
+          <main id="main" className="relative">
             <Hero
               installHref="#install"
               howItWorksHref="#how-it-works"
@@ -51,6 +55,10 @@ export default function Page(): ReactElement {
             <SectionProof figures={payload.figures} />
             <SectionShowcase />
             <SectionInstall adapters={payload.adapters} buildYear={new Date().getFullYear()} />
+
+            {/* Last, so it paints over the sections' own opaque backgrounds.
+                It lives in the outer margin and touches no content. */}
+            <PageSpine />
           </main>
         </div>
       </SmoothScroll>
