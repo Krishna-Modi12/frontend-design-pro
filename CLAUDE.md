@@ -137,7 +137,7 @@ A monolithic pack of ~344k tokens cannot be loaded at all, so the pack is not a 
 | `catalog/{id}/SKILL.md` | Exactly one per request, chosen by trigger-keyword match. |
 | `catalog/{id}/references/*.md` | Only when the skill file's own Reference Index points at one. |
 
-A request loads roughly 6,043–7,956 tokens against ~436k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
+A request loads roughly 6,042–7,956 tokens against ~436k of available depth. **Gate 8a hard-fails the build** if any skill exceeds 3,000 tokens alone or 8,000 with deps, so the budget is not advisory. Token count is `file size in bytes ÷ 4`.
 
 `AGENT_SYSTEM_PROMPT.md` is an optional drop-in system prompt scored by the Pipeline gate (`scripts/test_v12_pipeline.py`) — it checks stage markers, architecture claims, and that every path it cites resolves. Edit it only with that gate in mind.
 

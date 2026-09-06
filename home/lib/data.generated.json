@@ -12,7 +12,7 @@
     "regexConstraints": 44,
     "ciConstraints": 61,
     "registryTokens": 2154,
-    "bandLow": 6043,
+    "bandLow": 6042,
     "bandHigh": 7956
   },
   "baseDeps": [
@@ -279,7 +279,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6432,
+      "budget": 6431,
       "group": "Making it look right",
       "covers": "Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff",
       "trySaying": "\"Build me a token system from this brand colour, with a dark mode that isn't just inverted.\""
@@ -334,7 +334,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6046,
+      "budget": 6045,
       "group": "Making it look right",
       "covers": "Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration",
       "trySaying": "\"These icons look off next to the text — fix the sizing and optical alignment.\""
@@ -363,7 +363,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6043,
+      "budget": 6042,
       "group": "Building something new",
       "covers": "Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding",
       "trySaying": "\"Build a landing page for a CI tool. Dark, technical, no stock-photo energy.\""
@@ -397,7 +397,7 @@
         "core/component-api.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6894,
+      "budget": 6893,
       "group": "Making it work well",
       "covers": "Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI",
       "trySaying": "\"Make this work as a PWA with proper safe-area handling on iOS.\""
@@ -537,7 +537,7 @@
         "core/design-tokens.md",
         "core/validate-checklist.md"
       ],
-      "budget": 6590,
+      "budget": 6589,
       "group": "Making it work well",
       "covers": "Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas, plus a live rendered-DOM audit of the running page",
       "trySaying": "\"Review this component. What's wrong with it that I'm not seeing?\""
@@ -1198,5 +1198,5 @@
       "label": "Zed"
     }
   ],
-  "version": "14.14.1"
+  "version": "15.0.0"
 }

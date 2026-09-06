@@ -4,6 +4,99 @@ All notable changes to this skill package. Follows [Semantic Versioning](https:/
 
 ---
 
+## [15.0.0] — 2026-09-06
+
+**The pack's central architectural claim was measured against a real plugin host
+for the first time, and did not hold. Fixing it is a breaking change.**
+
+### BREAKING — the catalog directory is `catalog/`, not `skills/`
+
+Installing this repo as a plugin registered **twenty** skills — all nineteen as
+peers of the router, at `~1,991` tokens always-on — rather than the one router
+the whole architecture rests on:
+
+```text
+Component inventory
+  Skills (20)  agent-ops, ai-ui-generation, animations, … web-interface
+  Always-on:   ~1,991 tok
+```
+
+Skill discovery walks a top-level `skills/` at the plugin root
+**unconditionally**, and the manifest field only ever *adds* paths. `"skills": []`
+and `"skills": ["./SKILL.md"]` both still registered the nineteen and
+additionally dropped the router. There was no manifest value that produced one
+skill, so the fix could only be structural.
+
+The directory is now `catalog/` — the project's own word for the collection of
+nineteen, already used by the home page's nav and `CATALOG_COPY`, which leaves
+*registry* to mean the router's routing table as it always has. Those had been
+one word for two different things.
+
+```text
+Component inventory
+  Skills (1)  frontend-design-pro
+  Always-on:  ~176 tok
+```
+
+One skill; an elevenfold drop in always-on cost. **Anything pinning a path
+inside an extracted pack needs the same edit**; the adapters under `install/`
+are updated.
+
+Roughly 130 files moved, and every token figure moved with them — `catalog/` is
+one character longer than the name it replaced, so every path citation in the
+pack grew. Gate 11 caught the drift across 156 claim surfaces.
+
+Three classes of `skills/` were deliberately left alone, and a blind sweep gets
+all three wrong: the host's own `~/.claude/skills/` and its per-host
+equivalents, which are the reason the fix works; the discovery contract in
+`agent-ops/references/skill-packaging.md`, which documents the `npx skills`
+CLI's searched roots; and the historical record in `README.md`'s release notes,
+this file, and `docs/RELEASE_NOTES-*`.
+
+That reference also gains the fact this exercise established, and whose absence
+caused the defect: **a manifest cannot hide a directory the host already
+claims**, so a pack whose root `SKILL.md` is a router must not name its
+directory `skills/`.
+
+### The showcase had one landmark where it should have had three
+
+`demo/showcase` wrapped its whole page in `<main>`, so `Nav`'s `<header>` and
+the page `<footer>` sat inside it. HTML-AAM strips the role from a `header` or
+`footer` descending from `main`: they were not misplaced landmarks, they were
+not landmarks. A screen-reader user's landmark menu listed one entry.
+
+**Every check passed throughout.** A role-less element matches no axe rule, so
+the verifier was green before the fix and after it. It is verified against the
+prerendered HTML instead. `<main>` also gained `tabIndex={-1}`, without which
+the skip link only moved the sequential focus starting point and never focus
+itself.
+
+### `visual-regression` blocks a merge
+
+It shipped informational while its threshold was unproven. The run history
+settled that: on commits that did not touch them, the `landing-page` and
+`showcase` captures come back **byte-identical** — not "inside the 0.5%
+budget" — so the budget sits on exact matches rather than absorbing runner
+drift. A PR that means to change how a page looks now regenerates its baselines
+first, which is what makes an unreviewed visual change hard to land by accident.
+
+It remains outside the 11 numbered gates: those run against a source tree, this
+needs three built Next apps and a browser.
+
+### `demos:typecheck` runs in CI
+
+The last check in the demo path that only ever ran on a contributor's machine.
+It sits before the Playwright download, so a type error costs no Chromium
+install to surface. `screenshots` is now the only manual command, because it
+writes files rather than checking them.
+
+### The page got a spine
+
+`home/` gained a scroll-drawn route whose geometry is **measured, not
+authored** — on mount it reads the real bounding box of every section inside
+`<main>` and threads a curve through their centres, so the waypoints are the
+page's own stages. Add a section and it gets one.
+
 ## [14.14.1] — 2026-09-05
 
 **A route this pack documented at length and never once ran. The shipped archive

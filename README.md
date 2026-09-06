@@ -27,7 +27,7 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **119** | **436,284 tokens** | **2,154 tokens** | **6,043–7,956** | **61** | **11** |
+| **19** | **119** | **436,284 tokens** | **2,154 tokens** | **6,042–7,956** | **61** | **11** |
 
 </div>
 
@@ -391,7 +391,7 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 | `catalog/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
 | `catalog/{id}/references/` | Deep material | **436,284 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 6,043–7,956 tokens, not 436,284.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,042–7,956 tokens, not 436,284.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -519,6 +519,41 @@ Its capture is at the top of this page, in [What it builds](#what-it-builds) —
 ---
 
 ## Release history
+
+## What's new in v15.0.0
+
+**A claim this pack rests on, measured against a real plugin host for the first
+time — and it was wrong.**
+
+One router always loaded, exactly one skill routed per request. Installed as a
+plugin, this repo registered **twenty** skills instead: all nineteen as peers of
+the router, at roughly two thousand tokens always-on. Skill discovery walks a
+top-level `skills/` at the plugin root unconditionally, and the manifest field
+only ever adds paths — an empty list and a pointer at the router file both still
+registered the nineteen *and* dropped the router. No manifest value produced one
+skill.
+
+So the fix is structural, and breaking: **the catalog directory is `catalog/`.**
+Re-measured, the route registers one skill at ~176 tokens always-on, an
+elevenfold drop. The architecture the docs describe is now the one a host gets.
+Anything pinning a path inside an extracted pack needs the same edit; the
+adapters under `install/` are updated.
+
+Three classes of `skills/` were deliberately left alone, because a blind sweep
+gets all three wrong: the host's own `~/.claude/skills/`, which is the reason
+the fix works; the `npx skills` discovery contract this pack documents; and the
+historical record.
+
+**The showcase had one landmark where it should have had three.** Its `<header>`
+and `<footer>` sat inside `<main>`, which strips their roles entirely — so they
+were not landmarks at all, and no axe rule can report that. Every check was green
+before the fix and after it; it is verified against the prerendered HTML instead.
+
+**`visual-regression` now blocks a merge**, on the evidence that untouched
+targets return byte-identical captures rather than diffs inside the budget.
+`demos:typecheck` moved into CI, leaving `screenshots` the only manual command.
+And `home/` gained a page spine whose geometry is read from the real bounding
+boxes of the page's own sections rather than authored as a path.
 
 ## What's new in v14.14.1
 
@@ -663,7 +698,7 @@ fifth file.
 Every new file was written only after auditing the ten nearest references, and
 cross-links rather than restates. Reference depth now stands at 436,284 tokens
 over 119 references; the registry is still 2,154 tokens and a request still
-costs 6,043–7,956. Nothing new is loaded unless a request routes to one of the
+costs 6,042–7,956. Nothing new is loaded unless a request routes to one of the
 four skills this release touched — `platform`, `react-performance`, `agent-ops`
 or `design-system`.
 
