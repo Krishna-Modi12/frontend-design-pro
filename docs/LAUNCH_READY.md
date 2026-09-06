@@ -32,7 +32,7 @@ primitives that skill declares, and leaves the other 436,284 tokens of
 reference material on disk.
 
 Measured, not estimated: the heaviest possible request loads 7,956 tokens.
-The lightest loads 6,043. A gate fails the build if any skill exceeds 8,000
+The lightest loads 6,042. A gate fails the build if any skill exceeds 8,000
 with its dependencies, so it can't quietly regress. Adding the 17th skill
 grew the always-loaded registry by 51 tokens.
 
@@ -200,7 +200,7 @@ A registry rather than a document:
   validation checklist, intake). A skill declares the 3–4 it needs.
 - 119 references, 436,284 tokens. Loaded only when a skill routes to one.
 
-Measured per-request load: **6,043 to 7,956 tokens.** A gate fails the build
+Measured per-request load: **6,042 to 7,956 tokens.** A gate fails the build
 if any skill exceeds 8,000 with dependencies.
 
 **What's actually enforced**

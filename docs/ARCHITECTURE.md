@@ -24,7 +24,7 @@ hand. Seventeen of its nineteen rows had drifted by three tokens each before
 that was written down — the registry grew, every row moved, and nothing said so.
 
 ```text
-landing-pages       6,043   ← lightest
+landing-pages       6,042   ← lightest
 iconography         6,040
 testing             6,092
 data-tables         6,111

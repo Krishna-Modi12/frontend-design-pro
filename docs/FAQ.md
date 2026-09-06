@@ -6,7 +6,7 @@
 
 A: There's no ranked "best" — see [`AGENT_COMPATIBILITY.md`](AGENT_COMPATIBILITY.md) for the full matrix across all eight host surfaces (Claude Code, Claude Desktop, Claude.ai, Cursor, ChatGPT, OpenAI API, Copilot, Gemini). The one fact that actually separates them, per that doc: *can the agent decide, mid-conversation, to open one specific file it wasn't given up front?*
 
-**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~6,043–7,956 tokens), leaving the other 436,284 tokens of reference depth untouched until the routing table points at something.
+**Claude Code is the only host with a real filesystem for that**, so it's the only one with true lazy loading — `SKILL.md`, the one matched skill, and its declared `core/*.md` deps load automatically per request (~6,042–7,956 tokens), leaving the other 436,284 tokens of reference depth untouched until the routing table points at something.
 
 Everywhere else, that degrades — not uniformly, and not to zero:
 
