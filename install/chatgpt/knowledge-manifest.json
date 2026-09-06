@@ -36,29 +36,29 @@
     ],
     "skill_routers_example": [
       {
-        "path": "skills/landing-pages/SKILL.md",
+        "path": "catalog/landing-pages/SKILL.md",
         "why": "Example pick. Replace with the routers your requests actually hit."
       },
       {
-        "path": "skills/design-system/SKILL.md",
+        "path": "catalog/design-system/SKILL.md",
         "why": "Example pick. Replace with the routers your requests actually hit."
       },
       {
-        "path": "skills/forms/SKILL.md",
+        "path": "catalog/forms/SKILL.md",
         "why": "Example pick. Replace with the routers your requests actually hit."
       }
     ],
     "references_example": [
       {
-        "path": "skills/landing-pages/references/landing-patterns.md",
+        "path": "catalog/landing-pages/references/landing-patterns.md",
         "why": "Example depth pick. Only useful if it matches the work this GPT does."
       },
       {
-        "path": "skills/design-system/references/color-palettes.md",
+        "path": "catalog/design-system/references/color-palettes.md",
         "why": "Example depth pick. Only useful if it matches the work this GPT does."
       },
       {
-        "path": "skills/design-system/references/dark-mode.md",
+        "path": "catalog/design-system/references/dark-mode.md",
         "why": "Example depth pick. Only useful if it matches the work this GPT does."
       }
     ]

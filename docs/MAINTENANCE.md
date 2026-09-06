@@ -15,7 +15,7 @@ The freeze machinery below is retained deliberately. It is what the project retu
 
 Deliberately not version-pinned here: a policy that needs editing on every patch bump is a policy that goes stale, and the version-leak gate would fail the build for it anyway. See the top entry in [CHANGELOG.md](CHANGELOG.md) for what shipped last.
 
-The pack is 19 skills, 119 references, 436,039 tokens of on-demand depth, 61 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
+The pack is 19 skills, 119 references, 436,284 tokens of on-demand depth, 61 machine-enforced constraints, 11 release-blocking gates, one runnable demo app. The seventeenth skill and the ingestion that grew the reference count both landed through the override recorded below, not through the thresholds in the next section — which is precisely why the override is written down. The remaining risk to this project is not missing features. It is churn — every commit is a chance to break something that currently works.
 
 So the default answer to "should we build X" remains **no, not yet**, and the burden is on evidence.
 
@@ -25,13 +25,13 @@ Same disclosure obligation as the entries below. "New skill, reference, example,
 
 **Directive date:** 2026-09-02.
 
-**Directive:** Owner-supplied, explicit. Read `emilkowalski/skills` (twelve flat markdown skills, MIT) and the skill content of `ibelick/ui-skills` (seven task-scoped skills plus a 47-item playbook, MIT — the Astro app, CLI and Cloudflare infra explicitly out of scope) against this pack's existing registry, and extend it with the genuinely-new UI/animation/design-engineering knowledge those sources hold. Scoped down with the owner to *no new skill*. emil's decision framework was **already ingested** — `skills/animations/references/animation-framework.md` opens "Source: emilkowalski/skills" — so the emil half is a delta pass, not a first ingest.
+**Directive:** Owner-supplied, explicit. Read `emilkowalski/skills` (twelve flat markdown skills, MIT) and the skill content of `ibelick/ui-skills` (seven task-scoped skills plus a 47-item playbook, MIT — the Astro app, CLI and Cloudflare infra explicitly out of scope) against this pack's existing registry, and extend it with the genuinely-new UI/animation/design-engineering knowledge those sources hold. Scoped down with the owner to *no new skill*. emil's decision framework was **already ingested** — `catalog/animations/references/animation-framework.md` opens "Source: emilkowalski/skills" — so the emil half is a delta pass, not a first ingest.
 
 Outcome: **0 new skills**, **2 new `references/*.md`** in `animations` (`native-motion-physics.md` from `apple-design`; `finding-motion.md` from `find-animation-opportunities`), **7 folds** into existing references (`animation-framework.md`, `motion-direction.md`, `animation-pitfalls.md`, `live-verification.md`, `shadcn-ecosystem.md`, `react-native.md`, `ux-deep-rules.md`), and a set of declines. Full taken/rejected reasoning per source in [`INGESTION_REVIEW.md`](INGESTION_REVIEW.md).
 
-**Why this isn't the failure pattern this file warns about:** single session, staged as independent branches each held to `npm run gates` before merge, every moved figure re-derived from `scripts/check_figures.py --truth` in the same PR's sweep commit rather than hand-asserted. No new skill, constraint or gate, and nothing new in the always-loaded root `SKILL.md`; the two new Reference-Index rows land in `skills/animations/SKILL.md`, which is loaded only when a request routes to animations.
+**Why this isn't the failure pattern this file warns about:** single session, staged as independent branches each held to `npm run gates` before merge, every moved figure re-derived from `scripts/check_figures.py --truth` in the same PR's sweep commit rather than hand-asserted. No new skill, constraint or gate, and nothing new in the always-loaded root `SKILL.md`; the two new Reference-Index rows land in `catalog/animations/SKILL.md`, which is loaded only when a request routes to animations.
 
-**What this costs, stated plainly:** two references and seven folds land across the pass. On-demand depth is now 436,039 tokens — about 3% above `origin/main`, all of it lazy, none loaded unless a request routes to the skill that owns the reference. The two new Reference-Index rows in `skills/animations/SKILL.md` add roughly 90 tokens to that skill's request budget, which stays far under its Gate 8a ceiling. The folds add prose to files an agent already loads for those tasks.
+**What this costs, stated plainly:** two references and seven folds land across the pass. On-demand depth is now 436,284 tokens — about 3% above `origin/main`, all of it lazy, none loaded unless a request routes to the skill that owns the reference. The two new Reference-Index rows in `catalog/animations/SKILL.md` add roughly 90 tokens to that skill's request budget, which stays far under its Gate 8a ceiling. The folds add prose to files an agent already loads for those tasks.
 
 **Tracked by:** [`INGESTION_REVIEW.md`](INGESTION_REVIEW.md) (per-source decisions and their reasons) and this file's changelog cross-reference at the top of [CHANGELOG.md](CHANGELOG.md) once each PR merges.
 
@@ -117,7 +117,7 @@ That is the whole list.
 
 - New skills, new references, new examples.
 - New constraints, new gates.
-- Any change to `skills/*/SKILL.md` or `core/*.md` that is not tied to a labelled `bug` issue. Those files are the product; editing them on a hunch is the failure mode this policy exists to stop.
+- Any change to `catalog/*/SKILL.md` or `core/*.md` that is not tied to a labelled `bug` issue. Those files are the product; editing them on a hunch is the failure mode this policy exists to stop.
 - Refactors "while we're in there". Dependency bumps without a reported reason. Rewording the anti-slop wall because a better phrasing occurred to someone.
 
 Each of those is individually reasonable, which is exactly why the list has to be written down.
@@ -144,7 +144,7 @@ Write the changelog entry yourself before running it; the bump leaves an existin
 
 ## Unattended writers
 
-A freeze is a policy, and a policy only binds the actors who read it. Across the three sprints leading up to the freeze, files kept appearing in this repo that no one in the active session had written: `demo/showcase/`, `skills/agent-ops/`, `docs/METRICS_BASELINE.md`, `docs/RESPONSE_TEMPLATES.md`, `docs/FAQ.md`, `docs/FOLLOWUP_TEMPLATES.md`, and the issue templates in `.github/`. Commits and tags were pushed that the session doing the work had not made.
+A freeze is a policy, and a policy only binds the actors who read it. Across the three sprints leading up to the freeze, files kept appearing in this repo that no one in the active session had written: `demo/showcase/`, `catalog/agent-ops/`, `docs/METRICS_BASELINE.md`, `docs/RESPONSE_TEMPLATES.md`, `docs/FAQ.md`, `docs/FOLLOWUP_TEMPLATES.md`, and the issue templates in `.github/`. Commits and tags were pushed that the session doing the work had not made.
 
 **Cause, established rather than assumed:** two Claude Code sessions were running against this same working directory at the same time. Every commit here carries a `Co-Authored-By` trailer naming the model that made it, and the history splits cleanly along it — one set from an Opus 5 session, another from a Sonnet 5 session, interleaved minutes apart. Ruled out by inspection: no git hooks (`.git/hooks/` holds only samples), no embedded repositories, no scheduled task invoking git/node/python, no script in the repo that shells out to `git commit`/`push`, and no workflow that writes to the repo — `release.yml` holds `contents: write` but uses it to publish a release and attach the archive, never to commit.
 

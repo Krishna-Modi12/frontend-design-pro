@@ -11,7 +11,7 @@ labels: enhancement
 
 ## Describe the solution you'd like
 
-What should be added — a new skill, a new reference inside an existing skill, a new example, or a new constraint (semantic/syntactic gate rule)? Be specific about where it would live (e.g. `skills/{id}/SKILL.md`, `skills/{id}/references/`, `skills/{id}/examples/`).
+What should be added — a new skill, a new reference inside an existing skill, a new example, or a new constraint (semantic/syntactic gate rule)? Be specific about where it would live (e.g. `catalog/{id}/SKILL.md`, `catalog/{id}/references/`, `catalog/{id}/examples/`).
 
 ## Describe alternatives you've considered
 

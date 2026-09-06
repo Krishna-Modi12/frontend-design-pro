@@ -42,7 +42,7 @@ Four things that are true and are easy to forget:
      Do not put these in front of a paying customer as production assets.
   4. **Download rather than hotlink** the moment a mock becomes something real.
 
-`skills/iconography/references/icons-avatars.md` covers the alternative for the
+`catalog/iconography/references/icons-avatars.md` covers the alternative for the
 commonest case, which is people: initials avatars beat a stock portrait of
 somebody who does not work at the company.
 """

@@ -143,7 +143,7 @@ critical axe violations against WCAG 2.1 AA, and horizontal overflow at 390 /
 ## Live-audit harness
 
 `npm run live-audit:fixtures` runs `live-audit.mjs` — the deterministic,
-headless half of `web-interface`'s Layer B (`skills/web-interface/references/live-verification.md`).
+headless half of `web-interface`'s Layer B (`catalog/web-interface/references/live-verification.md`).
 It implements the measurement primitives that workflow relies on — a
 320/390/768/1920 viewport sweep, real horizontal overflow, computed text
 contrast (including text over a gradient, resolved from screenshot pixels),
@@ -157,7 +157,7 @@ npm run live-audit -- fixreverify           # e-contrast fixture: FOUND -> FIXED
 npm run live-audit -- url <URL> [--json] [--out report.json]
 ```
 
-Fixtures live in `skills/web-interface/examples/live-audit/`. Running from
+Fixtures live in `catalog/web-interface/examples/live-audit/`. Running from
 another checkout: set `LV_FIXTURE_DIR` to that path.
 
 The interactive steps of the workflow — real user journeys, judgement on a

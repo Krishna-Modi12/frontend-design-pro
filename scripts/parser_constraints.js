@@ -439,7 +439,7 @@ walk(sf, (n) => { if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)
 // re-renders the component each time. Throttled/debounced/rAF-batched handlers are
 // fine; so is anything that never touches state. The declarative routes —
 // useScroll(), ScrollTrigger, IntersectionObserver, animation-timeline: view() —
-// are what skills/animations/references/scroll-experience.md teaches.
+// are what catalog/animations/references/scroll-experience.md teaches.
 // Scoped to the "scroll" event on purpose: keydown, resize and mq "change"
 // listeners are legitimate and must not trip this.
 {

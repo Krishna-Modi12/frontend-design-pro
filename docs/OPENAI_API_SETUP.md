@@ -2,11 +2,11 @@
 
 This is for developers calling the OpenAI API directly, not going through ChatGPT's UI. You get to choose how much of the registry model to reconstruct — anywhere from "paste `SKILL.md` as a system message and nothing else" up to a real per-request retrieval tool that approximates the lazy loading described in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-Neither approach gives you what Claude Code gets natively: an agent with real filesystem tools that decides, mid-conversation, to open exactly one `skills/{id}/SKILL.md` and its declared `core/*.md` deps. The API model has no filesystem of its own — whatever context reaches it, you put there, either up front or via a tool call you implement.
+Neither approach gives you what Claude Code gets natively: an agent with real filesystem tools that decides, mid-conversation, to open exactly one `catalog/{id}/SKILL.md` and its declared `core/*.md` deps. The API model has no filesystem of its own — whatever context reaches it, you put there, either up front or via a tool call you implement.
 
 ## Option A — static context (simplest, fine for small integrations)
 
-Put `SKILL.md` (~2,149 tokens) in the system/developer message, plus whichever `skills/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
+Put `SKILL.md` (~2,154 tokens) in the system/developer message, plus whichever `catalog/{id}/SKILL.md` and `core/*.md` files you already know are relevant to your product's typical requests. This works well if your integration is narrow (e.g., you only ever generate landing pages), because you can hardcode the one or two skills you need and skip building a router.
 
 ```python
 from openai import OpenAI
@@ -15,7 +15,7 @@ client = OpenAI()
 
 with open("frontend-design-pro/SKILL.md") as f:
     skill_md = f.read()
-with open("frontend-design-pro/skills/landing-pages/SKILL.md") as f:
+with open("frontend-design-pro/catalog/landing-pages/SKILL.md") as f:
     landing_pages = f.read()
 with open("frontend-design-pro/core/design-tokens.md") as f:
     design_tokens = f.read()
@@ -57,7 +57,7 @@ PACK_ROOT = pathlib.Path("frontend-design-pro")
 
 def read_pack_file(path: str) -> str:
     """Reads a file from the frontend-design-pro skill pack by relative path,
-    e.g. 'skills/forms/SKILL.md' or 'core/component-api.md'."""
+    e.g. 'catalog/forms/SKILL.md' or 'core/component-api.md'."""
     resolved = (PACK_ROOT / path).resolve()
     if PACK_ROOT.resolve() not in resolved.parents and resolved != PACK_ROOT.resolve():
         raise ValueError("path escapes pack root")

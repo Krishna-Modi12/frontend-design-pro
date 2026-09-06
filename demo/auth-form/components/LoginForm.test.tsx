@@ -1,4 +1,4 @@
-// Test for LoginForm — generated per the Testing Doctrine (skills/testing/SKILL.md).
+// Test for LoginForm — generated per the Testing Doctrine (catalog/testing/SKILL.md).
 // Compile-only in this repo (test libs are ambient-stubbed in demo/_stubs.d.ts);
 // install deps to run:
 //   npm i -D vitest @testing-library/react @testing-library/user-event jest-axe jsdom

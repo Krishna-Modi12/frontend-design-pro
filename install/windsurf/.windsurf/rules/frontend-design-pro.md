@@ -7,14 +7,14 @@ description: Frontend UI/UX generation via the frontend-design-pro registry
 Before writing or editing any frontend code, read `frontend-design-pro/SKILL.md`.
 
 It is a registry, not a document. Match the request against its Trigger Keywords
-column and load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
+column and load exactly ONE `frontend-design-pro/catalog/{id}/SKILL.md`, then the
 `metadata.core-deps` named in that skill's frontmatter, plus
 `frontend-design-pro/core/accessibility-baseline.md` and
 `frontend-design-pro/core/validate-checklist.md`. Budget 8,000 tokens; a correct
-request lands near 6,037–7,950. Do not load every skill, and do not answer from
+request lands near 6,043–7,956. Do not load every skill, and do not answer from
 the registry alone.
 
-Open a `frontend-design-pro/skills/{id}/references/*.md` file only when the skill
+Open a `frontend-design-pro/catalog/{id}/references/*.md` file only when the skill
 file points at it — open it, do not paraphrase it from memory.
 
 Before building a page, site or dashboard, load

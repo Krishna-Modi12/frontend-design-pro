@@ -15,7 +15,7 @@
     "gates": "python scripts/build_release.py --dry-run",
     "build": "python scripts/build_release.py",
     "typecheck": "python scripts/typecheck_golds.py",
-    "constraints": "python scripts/test_constraints.py --dir skills",
+    "constraints": "python scripts/test_constraints.py --dir catalog",
     "references": "python scripts/check_references.py",
     "figures": "python scripts/check_figures.py",
     "figures:test": "python scripts/figure_pattern_test.py",

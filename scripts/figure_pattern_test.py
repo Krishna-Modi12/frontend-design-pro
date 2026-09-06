@@ -20,7 +20,7 @@ fixtures judged against a synthetic truth table, asserting in both directions.
 
 The negative cases matter as much as the positive ones. A pattern widened until
 it matches everything is not a stricter gate, it is a broken one — the anchor
-here once reached out of `skills/{id}/SKILL.md` and read the per-skill router
+here once reached out of `catalog/{id}/SKILL.md` and read the per-skill router
 range as the registry size, which would have failed two correct tables.
 
 Truth is synthetic and far apart on purpose. A test pinned to today's real
@@ -67,7 +67,7 @@ CASES = [
      True, "anchored on the word rather than the filename"),
     ("REGISTRY", "SKILL.md is 1,111 tokens.",
      False, "correct value — a gate that flags the truth is noise"),
-    ("REGISTRY", "| `skills/{id}/SKILL.md` | One skill file | 843–1,718 tokens |",
+    ("REGISTRY", "| `catalog/{id}/SKILL.md` | One skill file | 843–1,718 tokens |",
      False, "path-qualified: this row states the PER-SKILL range, not the registry"),
     ("REGISTRY", "Gate 1 asserts SKILL.md ≤6,000 tokens.",
      False, "a bound the gate enforces is not a measurement of the file"),
@@ -212,7 +212,7 @@ CASES = [
     # prefer. The negatives are the load-bearing half here — the reason `files`
     # was never widened bare is the platform cap in the fourth case.
     ("REFERENCES",
-     "| `skills/{id}/references/*.md` | 99 deep references | **349,445 tokens** |",
+     "| `catalog/{id}/references/*.md` | 99 deep references | **349,445 tokens** |",
      True, "table row: a backticked path in the PRECEDING CELL must not suppress "
            "a corpus claim — this row's token count was swept while its file "
            "count sat stale"),
@@ -223,7 +223,7 @@ CASES = [
     ("REFERENCES", "A Custom GPT accepts at most 20 knowledge files for the lifetime of that GPT.",
      False, "a platform cap, not the corpus — widening to a bare `files` would "
             "flag this, which is precisely why it stayed unmatched for so long"),
-    ("REFERENCES", "| `skills/{id}/references/*.md` | 101 deep references |",
+    ("REFERENCES", "| `catalog/{id}/references/*.md` | 101 deep references |",
      False, "correct value in the table row the fix opened up"),
     ("REFERENCES", "The 101 reference files reach the model only if you paste one in.",
      False, "correct value in the newly-read shape"),

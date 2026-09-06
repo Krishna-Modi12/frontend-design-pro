@@ -17,7 +17,7 @@ A few things that'll help track it down fast:
    Claude.ai, Cursor, ChatGPT, OpenAI API, Copilot, Gemini — see
    docs/AGENT_COMPATIBILITY.md if you're not sure which bucket you're in; behavior
    genuinely differs by host.)
-2. **Which skill file got routed?** e.g. `skills/forms/SKILL.md`. If you don't
+2. **Which skill file got routed?** e.g. `catalog/forms/SKILL.md`. If you don't
    know, ask the agent "which skill did you load, and what did it cost?" —
    that also confirms routing happened at all rather than the agent improvising.
 3. **The exact error or broken output** — paste the actual text/output, not a
@@ -60,7 +60,7 @@ thing, point them at this issue instead of opening a duplicate — it keeps the
 count honest and traceable.
 
 If/when this clears the threshold, the natural home for it is
-`skills/{id}/references/` — a new reference file cited from that skill's
+`catalog/{id}/references/` — a new reference file cited from that skill's
 Reference Index, plus a gold example if it's substantial enough to warrant one.
 A PR scoped that way now, ready to open the moment the freeze lifts on this
 specific item, is genuinely useful groundwork even before the count gets there.
@@ -220,8 +220,8 @@ Figures below are gate-reported and re-checkable with `python scripts/build_rele
 
 ````text
 Mainly the loading model. Most packs are one large file you load in full. This one
-loads a 2,149-token registry that does nothing but route, then pulls in the single
-skill your request matched — measured 6,037–7,950 tokens all-in, including that
+loads a 2,154-token registry that does nothing but route, then pulls in the single
+skill your request matched — measured 6,043–7,956 tokens all-in, including that
 skill's shared core dependencies. Reference depth sits behind that and is only read
 when the skill file points at it for your specific task.
 

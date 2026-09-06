@@ -36,7 +36,7 @@ export interface SkillRecord {
 }
 
 /**
- * One `skills/<skill>/references/<name>` file. The hero draws one mark per
+ * One `catalog/<skill>/references/<name>` file. The hero draws one mark per
  * record, tick length scaled by `tokens` — see `components/HeroCorpusRing.tsx`.
  * `tokens` is the repo's canonical measure (LF-normalised bytes ÷ 4), and the
  * generator asserts both the count and the sum against

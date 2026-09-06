@@ -15,14 +15,14 @@ and loading it is neither possible nor the intent.
 2. Match the request against its **Trigger keywords** column and pick exactly
    **one** skill. Most specific wins — "form validation" routes to `forms`, not
    `react-components`.
-3. Read `frontend-design-pro/skills/{id}/SKILL.md`.
+3. Read `frontend-design-pro/catalog/{id}/SKILL.md`.
 4. Read the `core/*.md` files that skill declares in its frontmatter `metadata.core-deps`,
    plus `frontend-design-pro/core/accessibility-baseline.md` and
    `frontend-design-pro/core/validate-checklist.md` whenever the task produces code.
-5. Read a `frontend-design-pro/skills/{id}/references/*.md` file **only** when the
+5. Read a `frontend-design-pro/catalog/{id}/references/*.md` file **only** when the
    routed skill's Reference Index points at it for this specific task. Open it —
    do not paraphrase it from memory.
-6. Budget **8,000 tokens**. A correctly routed request lands near 6,037–7,950.
+6. Budget **8,000 tokens**. A correctly routed request lands near 6,043–7,956.
 
 Before building a page, site, app or dashboard, read
 `frontend-design-pro/core/user-intake.md` and ask what is load-bearing. Building

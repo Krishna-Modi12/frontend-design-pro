@@ -426,7 +426,7 @@ pattern this page's direction argues against.
 - Don't SSR-render `MetricCard`'s real value while leaving its `textContent`-writing effect untouched — preserve the "JSX renders the static start state only" invariant.
 - Don't hardcode a raw image path string for Showcase assets — use `next/image` or a static `import` so `basePath` resolves correctly under the Pages export.
 - Don't let `SectionSkillCatalog`'s curated skill IDs go unvalidated — the `generate.mjs` check must fail the build loudly if one goes missing.
-- Don't touch `scripts/test_constraints.py`'s `GRANDFATHERED` matching regex or any `skills/`-scoped entry — additive `home/` keys only.
+- Don't touch `scripts/test_constraints.py`'s `GRANDFATHERED` matching regex or any `catalog/`-scoped entry — additive `home/` keys only.
 - Don't add new component-test infrastructure (jsdom/RTL/jest-axe) — accessibility for new components is verified through `pages:verify`'s existing browser-level axe pass, per the explicit scope decision.
 
 ## 9. Responsive Behavior

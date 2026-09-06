@@ -33,7 +33,7 @@
  *
  *   SKILL.md (root)      the registry: id, path, trigger keywords, the ONE core
  *                        dep the row advertises
- *   skills/<id>/SKILL.md the frontmatter `core-deps:` — what actually loads,
+ *   catalog/<id>/SKILL.md the frontmatter `core-deps:` — what actually loads,
  *                        which is a superset of the row's single cell
  *   README.md            the three grouped skill tables: what each skill covers
  *                        and a sentence that routes there. Prose belongs in
@@ -161,8 +161,8 @@ function registry() {
 
 /** Directories that hold a skill, which is the only definition that ships. */
 function skillIdsOnDisk() {
-  return readdirSync(join(REPO, "skills"), { withFileTypes: true })
-    .filter((e) => e.isDirectory() && existsSync(join(REPO, "skills", e.name, "SKILL.md")))
+  return readdirSync(join(REPO, "catalog"), { withFileTypes: true })
+    .filter((e) => e.isDirectory() && existsSync(join(REPO, "catalog", e.name, "SKILL.md")))
     .map((e) => e.name)
     .sort();
 }
@@ -177,12 +177,12 @@ function skillIdsOnDisk() {
  * the first draft of this parser did in the sibling generator.
  */
 function declaredDeps(id) {
-  const src = readFileSync(join(REPO, "skills", id, "SKILL.md"), "utf8");
+  const src = readFileSync(join(REPO, "catalog", id, "SKILL.md"), "utf8");
   const block = src.match(/core-deps:[ \t]*\r?\n((?:[ \t]*-[ \t]+\S+[ \t]*\r?\n)+)/);
   const declared = block ? [...block[1].matchAll(/-[ \t]+(\S+)/g)].map((m) => m[1]) : [];
   if (!declared.length || declared.some((d) => !d.startsWith("core/"))) {
     throw new Error(
-      `could not read core-deps: from skills/${id}/SKILL.md — got [${declared.join(", ")}]`,
+      `could not read core-deps: from catalog/${id}/SKILL.md — got [${declared.join(", ")}]`,
     );
   }
   return [...new Set([...BASE_DEPS, ...declared])].sort();
@@ -245,7 +245,7 @@ function catalogIds() {
 }
 
 /**
- * One entry per `skills/*&#47;references/**&#47;*.md`, sorted — the hero's geometry.
+ * One entry per `catalog/*&#47;references/**&#47;*.md`, sorted — the hero's geometry.
  *
  * `home/components/HeroDepthScene.tsx` builds one stratum per entry, thickness
  * proportional to `tokens`. The slab is therefore the reference tree itself
@@ -253,7 +253,7 @@ function catalogIds() {
  * whole reason the hero can't be lifted onto another product.
  *
  * The enumeration and the measure both mirror `check_figures.py` exactly —
- * `rglob("*.md")` under every `skills/*&#47;references` directory, and
+ * `rglob("*.md")` under every `catalog/*&#47;references` directory, and
  * LF-normalised bytes ÷ 4. They are then asserted against that file's own
  * `--truth` output below, as a set relationship rather than a second count,
  * per this generator's standing rule: two numbers derived independently from
@@ -261,7 +261,7 @@ function catalogIds() {
  * that goes wrong.
  */
 function references() {
-  const root = join(REPO, "skills");
+  const root = join(REPO, "catalog");
   const out = [];
 
   for (const skill of readdirSync(root, { withFileTypes: true })) {
@@ -291,7 +291,7 @@ function references() {
     walk(dir, "");
   }
 
-  if (!out.length) throw new Error("skills/*/references holds no markdown");
+  if (!out.length) throw new Error("catalog/*/references holds no markdown");
   return out.sort((a, b) =>
     a.skill === b.skill ? a.name.localeCompare(b.name) : a.skill.localeCompare(b.skill),
   );
@@ -347,7 +347,7 @@ function render() {
   const copy = readmeCopy();
 
   const ids = rows.map((r) => r.id).sort();
-  assertSameSet("The registry rows and the skill directories", ids, "SKILL.md", onDisk, "skills/");
+  assertSameSet("The registry rows and the skill directories", ids, "SKILL.md", onDisk, "catalog/");
   assertSameSet("The registry rows and README's tables", ids, "SKILL.md", [...copy.keys()].sort(), "README.md");
   assertSameSet(
     "The registry rows and the budget table",

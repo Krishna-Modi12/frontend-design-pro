@@ -117,7 +117,7 @@ ALLOWED_VERSION_FILES = {"metadata.json", "README.md", "package.json",
 # a FOURTH place the version lives, `bump_patch()` rewrites it and Gate 2 asserts
 # it matches — an unbumped, ungated version location goes stale in silence, which
 # is this repo's most repeated defect.
-ALLOWED_VERSION_GLOBS = ("skills/", ".github/workflows/", "demo/showcase/",
+ALLOWED_VERSION_GLOBS = ("catalog/", ".github/workflows/", "demo/showcase/",
                          ".claude-plugin/")
 ALLOWED_VERSION_FILENAMES = {"package-lock.json"}
 
@@ -391,13 +391,13 @@ def _spec_errors(fm, text):
 def gate_frontmatter():
     hdr("GATE 2 — SKILL FRONTMATTER")
     ok = True
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")) + [SKILL_MD]:
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")) + [SKILL_MD]:
         fm = _frontmatter(sk)
         if not fm: bad(f"{sk.parent.name}: no YAML frontmatter"); ok = False; continue
         for e in _spec_errors(fm, sk.read_text(encoding="utf-8")):
             bad(f"{sk.parent.name}: {e}"); ok = False
     target = _version()
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")):
         fm = _frontmatter(sk)
         if not fm: continue
         meta = fm.get("metadata")
@@ -413,7 +413,7 @@ def gate_frontmatter():
             bad(f"{sk.parent.name}: metadata.core-deps is empty"); ok = False
         for dep in deps:
             if not _exists_cased(ROOT / dep): bad(f"{sk.parent.name}: core-dep missing {dep}"); ok = False
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")):
         desc = _description(sk.read_text(encoding="utf-8"))
         if desc and not _ACTIVATION.search(desc):
             bad(f"{sk.parent.name}: description names topics but no activation "
@@ -429,7 +429,7 @@ def gate_frontmatter():
         pv = json.loads(PLUGIN_JSON.read_text(encoding="utf-8")).get("version")
         if pv != _version():
             bad(f".claude-plugin/plugin.json: version {pv} != {_version()}"); ok = False
-    n = len(list(ROOT.glob('skills/*/SKILL.md')))
+    n = len(list(ROOT.glob('catalog/*/SKILL.md')))
     if ok: ok_(f"all {n + 1} files pass Anthropic's frontmatter schema, {n} declare "
                f"metadata.version/core-deps, and {n + 1} descriptions state when to load")
     return ok
@@ -438,7 +438,7 @@ def gate_budget():
     hdr("GATE 8a — PER-SKILL TOKEN BUDGET (≤8,000)")
     reg = tokens(SKILL_MD); ok = True
     base_deps = ["core/accessibility-baseline.md", "core/validate-checklist.md"]
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")):
         fm = _frontmatter(sk) or {}
         deps = set((fm.get("metadata") or {}).get("core-deps") or []) | set(base_deps)
         dt = sum(tokens(ROOT / d) for d in deps if (ROOT / d).exists())
@@ -453,14 +453,14 @@ def gate_registry():
     hdr("GATE 8b — REGISTRY RESOLUTION")
     import re as _re
     s = SKILL_MD.read_text(encoding="utf-8"); ok = True
-    rows = _re.findall(r"\| `([\w-]+)` \| `(skills/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", s)
+    rows = _re.findall(r"\| `([\w-]+)` \| `(catalog/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", s)
     if not rows: bad("no registry rows parsed from SKILL.md"); return False
     for sid, path, dep in rows:
         if not _exists_cased(ROOT / path): bad(f"{sid}: registry path missing {path}"); ok = False
         if not _exists_cased(ROOT / dep): bad(f"{sid}: core dep missing {dep}"); ok = False
-        exs = list((ROOT / "skills" / sid / "examples").glob("*.tsx"))
+        exs = list((ROOT / "catalog" / sid / "examples").glob("*.tsx"))
         if not exs: bad(f"{sid}: no examples"); ok = False
-    dirs = {p.name for p in (ROOT / "skills").iterdir() if p.is_dir()}
+    dirs = {p.name for p in (ROOT / "catalog").iterdir() if p.is_dir()}
     for orphan in dirs - {r[0] for r in rows}: warn(f"skill directory not in registry: {orphan}")
     if ok: ok_(f"all {len(rows)} registry rows resolve; every skill has examples")
     return ok
@@ -468,7 +468,7 @@ def gate_registry():
 # ── Stage 2 — Gate chain ─────────────────────────────────────────────────────
 def gate_chain() -> tuple[bool, list]:
     hdr("STAGE 2 — GATE CHAIN")
-    tsx = sorted(ROOT.glob("skills/*/examples/*.tsx"))
+    tsx = sorted(ROOT.glob("catalog/*/examples/*.tsx"))
     golds = [f for f in tsx if not f.name.startswith("bad-") and not f.name.endswith(".test.tsx")]
     results = []
 
@@ -526,7 +526,7 @@ def gate_chain() -> tuple[bool, list]:
         f"{sem_pass}/{sem_total} files ({len(golds)} golds + {len(demo_tsx)} demo) pass {n_sem}/{n_sem} parser checks"
         + (f" (fail: {sem_fail})" if sem_fail else ""))
 
-    r = run([PY, str(SCRIPTS / "test_constraints.py"), "--dir", "skills"])
+    r = run([PY, str(SCRIPTS / "test_constraints.py"), "--dir", "catalog"])
     syn_ok = r.returncode == 0
     if r.returncode: print(r.stdout[-1500:], r.stderr[-500:])
     syn_detail = f"gold examples clean, anti-examples fail as designed ({f'{n_syn}/{n_syn}' if syn_ok else 'FAIL'})"
@@ -540,7 +540,7 @@ def gate_chain() -> tuple[bool, list]:
     all_ok &= record("Syntactic", syn_ok, syn_detail)
 
     # References — the gate that reads the other 98% of the pack.
-    # Everything above this line judges skills/*/examples/*.tsx and demo/: 55 files.
+    # Everything above this line judges catalog/*/examples/*.tsx and demo/: 55 files.
     # The 94 reference files are ~333k tokens and are what an agent actually loads
     # for depth, and until this gate they were scanned by nothing, because
     # test_constraints.py globs code extensions and a reference is markdown. The
@@ -603,8 +603,8 @@ def gate_chain() -> tuple[bool, list]:
     # It still degrades rather than lies. A fresh clone with no `npm install` has
     # neither tsc nor vitest, and the detail string names exactly which layers ran.
     import glob as _glob, json as _json
-    golds_n = [f[:-4] for f in _glob.glob(str(ROOT / "skills/*/examples/good-*.tsx")) if not f.endswith(".test.tsx")]
-    tests = {f[:-9] for f in _glob.glob(str(ROOT / "skills/*/examples/good-*.test.tsx"))}
+    golds_n = [f[:-4] for f in _glob.glob(str(ROOT / "catalog/*/examples/good-*.tsx")) if not f.endswith(".test.tsx")]
+    tests = {f[:-9] for f in _glob.glob(str(ROOT / "catalog/*/examples/good-*.test.tsx"))}
     missing = sorted(set(golds_n) - tests)
     if missing:
         all_ok &= record("Test coverage", False, f"missing tests: {missing}")
@@ -615,7 +615,7 @@ def gate_chain() -> tuple[bool, list]:
         cfg = {"compilerOptions": {"strict": True, "noImplicitAny": True, "jsx": "react-jsx",
                "moduleResolution": "bundler", "target": "ES2022", "module": "ESNext",
                "esModuleInterop": True, "skipLibCheck": True, "noEmit": True, "types": ["react", "react-dom"]},
-               "include": ["skills/*/examples/*.test.tsx", "skills/*/examples/*.d.ts"]}
+               "include": ["catalog/*/examples/*.test.tsx", "catalog/*/examples/*.d.ts"]}
         cfgp = ROOT / "tsconfig.tests.json"; cfgp.write_text(_json.dumps(cfg))
         tsc = _find_tsc()
         if tsc:
@@ -686,14 +686,14 @@ def path_integrity() -> bool:
     ok = True
     # registry rows resolve
     reg = SKILL_MD.read_text(encoding="utf-8")
-    rows = re.findall(r"\| `([\w-]+)` \| `(skills/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", reg)
+    rows = re.findall(r"\| `([\w-]+)` \| `(catalog/[\w-]+/SKILL\.md)` \|[^|]*\| `(core/[\w./-]+\.md)` \|", reg)
     for sid, path, dep in rows:
         if not _exists_cased(ROOT / path): bad(f"registry path missing: {path}"); ok = False
         if not _exists_cased(ROOT / dep): bad(f"core dep missing: {dep}"); ok = False
     if ok: ok_(f"all {len(rows)} registry rows resolve")
     # every reference cited inside a skill file exists
     cited = missing = 0
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")):
         txt = sk.read_text(encoding="utf-8")
         for rel in re.findall(r"`((?:\.\./[\w-]+/)?references/[\w./-]+\.md)`", txt):
             cited += 1
@@ -701,7 +701,7 @@ def path_integrity() -> bool:
             if not _exists_cased(target): bad(f"{sk.parent.name}: cited reference missing {rel}"); missing += 1; ok = False
     if not missing: ok_(f"all {cited} skill-cited references resolve")
     # orphan references (present on disk, never cited)
-    for sk in sorted(ROOT.glob("skills/*/references")):
+    for sk in sorted(ROOT.glob("catalog/*/references")):
         txt = (sk.parent / "SKILL.md").read_text(encoding="utf-8")
         for ref in sk.glob("*.md"):
             if ref.name not in txt: warn(f"{sk.parent.name}: {ref.name} not cited in its Reference Index")
@@ -727,7 +727,7 @@ def path_integrity() -> bool:
     return ok
 
 
-# The check above reads `skills/*/SKILL.md` and looks for BACKTICKED paths. A
+# The check above reads `catalog/*/SKILL.md` and looks for BACKTICKED paths. A
 # gold example names its sources in a plain `//` comment on line 2, unbackticked,
 # in a `.tsx` — which is neither file nor syntax, so eight dead pointers survived
 # every green build. `references/phosphor.md`, `openui.md` and `aceternity.md`
@@ -758,7 +758,7 @@ _DOCTRINE_REF = re.compile(r"(?:\.\./[\w-]+/)?(?i:references)/[\w./-]+\.md")
 
 def example_doctrine() -> bool:
     ok, cited, missing = True, 0, 0
-    for ex in sorted(ROOT.glob("skills/*/examples/*.tsx")):
+    for ex in sorted(ROOT.glob("catalog/*/examples/*.tsx")):
         for line in _DOCTRINE.findall(ex.read_text(encoding="utf-8")):
             for rel in _DOCTRINE_REF.findall(line):
                 cited += 1
@@ -820,7 +820,7 @@ def _heading_anchors(lines) -> set:
 
 def reference_contents() -> bool:
     ok, indexed, checked = True, 0, 0
-    for ref in sorted(ROOT.glob("skills/*/references/**/*.md")):
+    for ref in sorted(ROOT.glob("catalog/*/references/**/*.md")):
         lines = ref.read_text(encoding="utf-8").splitlines()
         if len(lines) <= _TOC_MIN_LINES: continue
         rel = ref.relative_to(ROOT).as_posix()
@@ -937,15 +937,21 @@ _ARCHIVE_MOVES = {"_meta/CHANGELOG.md": "docs/CHANGELOG.md"}  # see RELOCATED
 # Illustrative paths in documentation ABOUT the layout. Each names a file that
 # is not supposed to exist — a schema slot, not a citation.
 _PROSE_PLACEHOLDERS = {
-    "skills/id/SKILL.md", "skills/new-skill/SKILL.md", "skills/a/b/c/SKILL.md",
+    "catalog/id/SKILL.md", "catalog/new-skill/SKILL.md", "catalog/a/b/c/SKILL.md",
     "core/one-dep.md", "references/_index.md", "references/foo.md",
+    # The host's own layout, not ours. `agent-ops/references/skill-packaging.md`
+    # documents the discovery contract of the `npx skills` CLI, whose searched
+    # root is literally `skills/` — the name this pack deliberately does NOT use
+    # (see .claude-plugin/README.md). It names a depth a host will not walk, so
+    # it is a schema slot in someone else's schema, and must never resolve here.
+    "skills/a/b/c/SKILL.md",
 }
 
 # Path-shaped: a directory separator, ending `.md`, optionally `../`-prefixed.
 # The leading-`../` alternation is load-bearing — without it the 16 surviving
 # `../../x/references/y.md` citations are not matched at all, which is the
 # quietest way for a check like this to be wrong. A `{...}` template such as
-# `skills/{id}/SKILL.md` deliberately does not match: braces mean it is a schema
+# `catalog/{id}/SKILL.md` deliberately does not match: braces mean it is a schema
 # slot, and no path with one in it is ever meant to resolve.
 _PROSE_PATH = re.compile(
     r"`((?:\.\./)*[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_.-]+\.md)`")
@@ -970,7 +976,7 @@ def _resolve_prose_path(p: str, f: Path) -> str | None:
     bare = p[len(_PACK_DIR):] if p.startswith(_PACK_DIR) else p
     if _exists_cased(ROOT / bare):                           # `core/x.md`, `docs/x.md`
         return "pack-rooted" if bare == p else "install-rooted"
-    if _exists_cased(ROOT / "skills" / bare):                # `animations/references/x.md`
+    if _exists_cased(ROOT / "catalog" / bare):                # `animations/references/x.md`
         return "skill-rooted"
     if _exists_cased(f.parent / p):                          # `../../x/references/y.md`
         return "relative"
@@ -1007,7 +1013,7 @@ def prose_paths() -> bool:
 def token_budget() -> bool:
     hdr("STAGE 4 — REFERENCE DEPTH (informational)")
     total = 0
-    for sk in sorted(ROOT.glob("skills/*/references")):
+    for sk in sorted(ROOT.glob("catalog/*/references")):
         t = sum(tokens(p) for p in sk.rglob("*.md")); total += t
         print(f"      {sk.parent.name:20} {len(list(sk.rglob('*.md'))):>2} refs  ~{t:>6} tokens (lazy)")
     ok_(f"{total:,} tokens of reference depth available, none loaded by default")
@@ -1061,7 +1067,7 @@ def gate_showcase() -> bool:
 # layer for every host that is not Claude Code. An adapter that exists only in
 # the git repo is unreachable to someone who downloaded a .skill from Releases —
 # exactly the audience the adapters were written for.
-ARCHIVE_FROM_SRC = ["metadata.json", "core", "skills", "scripts", "evals", "_meta", "rules", "demo", "install"]
+ARCHIVE_FROM_SRC = ["metadata.json", "core", "catalog", "scripts", "evals", "_meta", "rules", "demo", "install"]
 ARCHIVE_FROM_REPO = ["SKILL.md", "AGENT_SYSTEM_PROMPT.md", "README.md", "LICENSE", "setup.sh", "setup.ps1"]
 
 # The consumer-facing half of docs/. These ship because the archive told people
@@ -1207,8 +1213,8 @@ def build_archive(version: str) -> Path:
             """A backticked path is still an instruction to go open something.
             Inline code cannot carry a URL, so it becomes a real link.
 
-            Kept scoped to `docs/` on purpose: `skills/new-skill/SKILL.md` and
-            `skills/a/b/c/SKILL.md` are illustrative placeholders in prose, and
+            Kept scoped to `docs/` on purpose: `catalog/new-skill/SKILL.md` and
+            `catalog/a/b/c/SKILL.md` are illustrative placeholders in prose, and
             turning those into links would promise files that never existed.
             """
             nonlocal rewritten
@@ -1343,7 +1349,7 @@ def post_build_smoke(archive: Path, version: str) -> bool:
                 warn(f"could not link node_modules into {link.parent}")
     r1 = run([PY, str(base / "scripts/typecheck_golds.py")])
     r2_fail = []
-    for f in sorted(base.glob("skills/*/examples/*.tsx")):
+    for f in sorted(base.glob("catalog/*/examples/*.tsx")):
         if f.name.startswith("bad-") or f.name.endswith(".test.tsx"): continue
         if run(["node", str(base / "scripts/parser_constraints.js"), str(f)]).returncode: r2_fail.append(f.name)
     smoke_ok = r1.returncode == 0 and not r2_fail
@@ -1418,8 +1424,8 @@ def archive_content_checks(base: Path, version: str) -> bool:
             if not target.startswith(("http://", "https://", "mailto:", "#")):
                 cited.add(target.split("#")[0])
         # A backticked docs/ path is an instruction to open something even
-        # without link syntax. Left scoped to docs/ because `skills/new-skill/…`
-        # and `skills/a/b/c/…` are illustrative placeholders in prose, not
+        # without link syntax. Left scoped to docs/ because `catalog/new-skill/…`
+        # and `catalog/a/b/c/…` are illustrative placeholders in prose, not
         # promises. The lookarounds skip a backticked path used as a link's
         # display text — `[`docs/x.md`](https://…)` resolves via its URL.
         cited |= set(re.findall(r"(?<!\[)`(docs/[\w.-]+\.(?:md|html))`(?!\])", text))
@@ -1466,12 +1472,12 @@ def release_notes(version: str, archive: Path, gate_results, elapsed):
     # "tokens", which measured compression ratio rather than content.
     tok = sum(i.file_size for i in infos if i.filename.endswith(".md")) // 4
     n_sem, n_syn = constraint_counts()
-    skills = sorted(ROOT.glob("skills/*/SKILL.md"))
-    refs = list(ROOT.glob("skills/*/references/**/*.md"))
+    skills = sorted(ROOT.glob("catalog/*/SKILL.md"))
+    refs = list(ROOT.glob("catalog/*/references/**/*.md"))
     ref_tok = sum(tokens(p) for p in refs)
-    golds = [p for p in ROOT.glob("skills/*/examples/good-*.tsx") if not p.name.endswith(".test.tsx")]
-    antis = list(ROOT.glob("skills/*/examples/bad-*.tsx"))
-    tests = list(ROOT.glob("skills/*/examples/good-*.test.tsx"))
+    golds = [p for p in ROOT.glob("catalog/*/examples/good-*.tsx") if not p.name.endswith(".test.tsx")]
+    antis = list(ROOT.glob("catalog/*/examples/bad-*.tsx"))
+    tests = list(ROOT.glob("catalog/*/examples/good-*.test.tsx"))
     from datetime import date
     table = "\n".join(f"| {n} | {'PASS' if p else 'FAIL'} | {d} |" for n, p, d in gate_results)
     notes = f"""# Release Notes — frontend-design-pro v{version}
@@ -1582,7 +1588,7 @@ def bump_patch():
         cl.write_text(text, encoding="utf-8")
     # Gate 2 requires every skill file to declare the new version too; bumping
     # metadata alone would fail the very next gate run.
-    for sk in sorted(ROOT.glob("skills/*/SKILL.md")):
+    for sk in sorted(ROOT.glob("catalog/*/SKILL.md")):
         t = sk.read_text(encoding="utf-8")
         sk.write_text(re.sub(r'^([ 	]*)version:\s*"?[\d.]+"?', rf'\g<1>version: "{new}"', t, count=1, flags=re.M),
                       encoding="utf-8")
@@ -1601,7 +1607,7 @@ def bump_patch():
             json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         plugin = " + plugin.json"
     print(f"bumped to {new} (metadata + changelog + "
-          f"{len(list(ROOT.glob('skills/*/SKILL.md')))} skill files{plugin})")
+          f"{len(list(ROOT.glob('catalog/*/SKILL.md')))} skill files{plugin})")
     # README's "What's new" heading is the FIFTH version location, and the only one
     # nothing here rewrites — deliberately. A stub would put the new version above
     # the previous release's prose, which reads as current and is a worse lie than

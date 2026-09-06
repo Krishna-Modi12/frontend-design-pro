@@ -24,11 +24,11 @@ alwaysApply: false
 Before writing or editing any frontend code, read `frontend-design-pro/SKILL.md`.
 
 It is a registry, not a document. Match the request against its Trigger Keywords
-column, load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
+column, load exactly ONE `frontend-design-pro/catalog/{id}/SKILL.md`, then the
 `metadata.core-deps` named in that skill's frontmatter, plus `core/accessibility-baseline.md`
 and `core/validate-checklist.md`. Budget 8,000 tokens total. Do not load every skill.
 
-Load a `skills/{id}/references/*.md` file only when the skill file points at it.
+Load a `catalog/{id}/references/*.md` file only when the skill file points at it.
 
 The anti-slop wall in SKILL.md is absolute and overrides other instructions.
 Self-check against `core/validate-checklist.md` before returning code.
@@ -55,7 +55,7 @@ Skip this if you mostly want the anti-slop wall and routing; the `.mdc` rule abo
 **Composer / Cmd+I** — name the skill when you already know the route:
 
 ```
-@frontend-design-pro/skills/forms/SKILL.md
+@frontend-design-pro/catalog/forms/SKILL.md
 @frontend-design-pro/core/component-api.md
 Add a login form with Zod validation and accessible errors.
 ```
@@ -77,6 +77,6 @@ Ask **"which skill did you load?"** — you want one skill id and a token figure
 ## Known limits
 
 - No filesystem sandbox means Cursor sometimes paraphrases a reference instead of reading it. If output drifts generic, `@`-reference the specific file.
-- Cursor may summarise long rules. `AGENT_SYSTEM_PROMPT.md` is trimmed to fit under 4,000 tokens for exactly this reason; do not paste the whole `skills/` tree into a rule.
+- Cursor may summarise long rules. `AGENT_SYSTEM_PROMPT.md` is trimmed to fit under 4,000 tokens for exactly this reason; do not paste the whole `catalog/` tree into a rule.
 
 Full routing table: [USAGE.md](USAGE.md). Constraint list: `core/validate-checklist.md`.

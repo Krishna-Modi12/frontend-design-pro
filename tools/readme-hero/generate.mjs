@@ -151,7 +151,7 @@ const HOLD_TO = 93; // % where the finished state starts fading back
 /**
  * The audit rows. Each is one wireframe element plus the constraint that
  * governs it — the four are named, not numbered, and every one of them is a
- * rule this pack actually enforces on `skills/*​/examples/good-*.tsx`.
+ * rule this pack actually enforces on `catalog/*​/examples/good-*.tsx`.
  */
 const ROWS = [
   { y: 148, kind: "heading", label: "type scale" },

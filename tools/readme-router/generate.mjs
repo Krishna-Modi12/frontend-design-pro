@@ -169,7 +169,7 @@ const SKILLS = [
   "web-interface",
 ];
 
-/** The one that wins. Its declared core-deps are in skills/landing-pages/SKILL.md. */
+/** The one that wins. Its declared core-deps are in catalog/landing-pages/SKILL.md. */
 const CHOSEN = "landing-pages";
 
 /**
@@ -197,11 +197,11 @@ const DEPS = ["core/design-tokens.md", "core/accessibility-baseline.md", "core/v
 /** Charged to every skill regardless of declaration — mirrors BASE_DEPS in check_figures.py. */
 const BASE_DEPS = ["core/accessibility-baseline.md", "core/validate-checklist.md"];
 
-const skillDir = (id) => join(REPO, "skills", id);
+const skillDir = (id) => join(REPO, "catalog", id);
 
-/** Every skill the loader can route to: a directory under skills/ with a SKILL.md in it. */
+/** Every skill the loader can route to: a directory under catalog/ with a SKILL.md in it. */
 function skillIdsOnDisk() {
-  return readdirSync(join(REPO, "skills"), { withFileTypes: true })
+  return readdirSync(join(REPO, "catalog"), { withFileTypes: true })
     .filter((e) => e.isDirectory() && existsSync(join(skillDir(e.name), "SKILL.md")))
     .map((e) => e.name)
     .sort();
@@ -223,7 +223,7 @@ function effectiveDeps(id) {
   const declared = block ? [...block[1].matchAll(/-[ \t]+(\S+)/g)].map((m) => m[1]) : [];
   if (!declared.length || declared.some((d) => !d.startsWith("core/"))) {
     throw new Error(
-      `could not read core-deps: from skills/${id}/SKILL.md — got [${declared.join(", ")}]. ` +
+      `could not read core-deps: from catalog/${id}/SKILL.md — got [${declared.join(", ")}]. ` +
         "A silent parse failure here would fall back to the base deps and quietly " +
         "agree with whatever the banner already drew.",
     );
@@ -268,7 +268,7 @@ assertSameSet(
   `The core files drawn for "${CHOSEN}"`,
   DEPS,
   effectiveDeps(CHOSEN),
-  `Update DEPS, or check core-deps: in skills/${CHOSEN}/SKILL.md.`,
+  `Update DEPS, or check core-deps: in catalog/${CHOSEN}/SKILL.md.`,
 );
 
 const CHOSEN_INDEX = SKILLS.indexOf(CHOSEN);
@@ -490,7 +490,7 @@ ${rows.join("\n")}
 <text x="${METER_X}" y="106" font-family="${SANS}" font-size="9.5" font-weight="600" letter-spacing="1.4" fill="${C.inkFaint}">LOADED FOR THIS REQUEST</text>
 <rect class="lock" x="${METER_X}" y="126" width="${METER_W}" height="20" rx="3" fill="${C.panelLit}" stroke="${C.edgeLit}"/>
 <rect class="lock" x="${METER_X}" y="126" width="2" height="20" fill="${C.accent}"/>
-<text class="lock-t" x="${METER_X + 11}" y="140" font-family="${MONO}" font-size="10" fill="${C.ink}">skills/${CHOSEN}/SKILL.md</text>
+<text class="lock-t" x="${METER_X + 11}" y="140" font-family="${MONO}" font-size="10" fill="${C.ink}">catalog/${CHOSEN}/SKILL.md</text>
 
 <text x="${METER_X}" y="176" font-family="${SANS}" font-size="9.5" font-weight="600" letter-spacing="1.4" fill="${C.inkFaint}">ITS DECLARED CORE FILES</text>
 ${depChips}

@@ -48,7 +48,7 @@ It takes about two minutes. Narrower checks while you iterate:
 ```bash
 npm test             # 232 tests across 45 files, ~23s
 npm run typecheck    # tsc --noEmit strict over every example
-npm run constraints  # the 44 regex constraints over skills/
+npm run constraints  # the 44 regex constraints over catalog/
 npm run figures      # every documented count and token figure vs. the filesystem
 npm run evals        # 22 eval cases
 npm run regression   # 16 parser-vs-regex divergence cases
@@ -57,21 +57,21 @@ npm run regression   # 16 parser-vs-regex divergence cases
 Single file, fastest loop of all:
 
 ```bash
-node scripts/parser_constraints.js skills/<id>/examples/good-x.tsx   # 17 AST constraints
-python scripts/test_constraints.py skills/<id>/examples/good-x.tsx   # 44 regex constraints
+node scripts/parser_constraints.js catalog/<id>/examples/good-x.tsx   # 17 AST constraints
+python scripts/test_constraints.py catalog/<id>/examples/good-x.tsx   # 44 regex constraints
 ```
 
 ## Things that will surprise you
 
 ### Examples are fixtures, not illustrations
 
-`skills/*/examples/good-*.tsx` are the files the constraint suites run against.
+`catalog/*/examples/good-*.tsx` are the files the constraint suites run against.
 They must pass all 61 checks (17 AST via the TypeScript compiler API + 44 regex).
 `bad-*.tsx` are deliberate anti-examples that **must fail** — the suite asserts
 both directions, so "fixing" a `bad-*.tsx` breaks the build.
 
 Model new golds closely on an existing one;
-`skills/landing-pages/examples/good-landing.tsx` is the fullest. The recurring
+`catalog/landing-pages/examples/good-landing.tsx` is the fullest. The recurring
 requirements: OKLCH only (no raw hex, no `[#...]`), `min-h-[100dvh]` never
 `min-h-screen`, a declared font — never Inter/Roboto/Poppins as the display face —
 all four states with no `setTimeout` fake loader, a working `useReducedMotion`,
@@ -152,7 +152,7 @@ false diffs against the Linux runner. Instead:
 
 Releases are cut by the maintainer. A version bump touches **six** places —
 `metadata.json`'s `version` and its own `changelog` map, a new top header in
-`docs/CHANGELOG.md`, the `version:` line in **every** `skills/*/SKILL.md`,
+`docs/CHANGELOG.md`, the `version:` line in **every** `catalog/*/SKILL.md`,
 `.claude-plugin/plugin.json`, and the `## What's new in vX` heading in
 `README.md` — and the gates fail on any of them being out of step. Open your PR
 against the current version and leave it alone.
@@ -170,9 +170,9 @@ Six requirements, each enforced by a different gate:
 2. **A registry row** in the root `SKILL.md`, in this exact shape. The parser
    requires the deps cell to hold *exactly one* backticked `core/*.md`; two deps
    there means the row is not parsed and the skill silently becomes an orphan:
-   ``| `id` | `skills/id/SKILL.md` | keywords | `core/one-dep.md` |``
+   ``| `id` | `catalog/id/SKILL.md` | keywords | `core/one-dep.md` |``
    (The skill's own YAML `metadata.core-deps:` may still list several.)
-3. **At least one `*.tsx` in `skills/{id}/examples/`.** A markdown-only examples
+3. **At least one `*.tsx` in `catalog/{id}/examples/`.** A markdown-only examples
    directory fails.
 4. **A 1:1 test for every gold**, both compiling strict.
 5. **Every `references/*.md` cited** in that skill's Reference Index. A reference

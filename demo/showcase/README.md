@@ -24,7 +24,7 @@ It's a cinematic dark-mode SaaS landing page for a fictional AI analytics produc
 > print the waiver, then close it.** A rule held back until nothing violates it
 > catches nothing in the meantime, and a rule that silently skips its own
 > repository is the context-clash defect described in
-> `skills/agent-ops/references/context-engineering.md`.
+> `catalog/agent-ops/references/context-engineering.md`.
 
 ## Running it
 

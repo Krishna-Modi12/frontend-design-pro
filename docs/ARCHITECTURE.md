@@ -12,10 +12,10 @@ So the pack is not a document. It is a **registry that routes**.
 
 | Layer | What it holds | Cost | When loaded |
 |---|---|---|---|
-| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,149 tokens** | always |
-| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,964, 3,095, 3,505 or 3,923 tokens** | the 3–4 a matched skill declares |
-| `skills/{id}/SKILL.md` | One skill router | **848–1,878 tokens** | exactly one per request |
-| `skills/{id}/references/*.md` | 119 deep references | **436,039 tokens** | only when a skill file points at one for the task at hand |
+| `SKILL.md` | Identity, behavioural preamble, anti-slop wall, 19-row routing table, loading protocol, failure table | **2,154 tokens** | always |
+| `core/*.md` | 8 shared primitives — tokens, a11y baseline, component API, agent behaviour, validation checklist, intake | **2,965, 3,095, 3,505 or 3,924 tokens** | the 3–4 a matched skill declares |
+| `catalog/{id}/SKILL.md` | One skill router | **848–1,878 tokens** | exactly one per request |
+| `catalog/{id}/references/*.md` | 119 deep references | **436,284 tokens** | only when a skill file points at one for the task at hand |
 
 Measured per-request totals, every skill, registry + skill + declared deps.
 Gate 11 reads prose, not fenced blocks, so this table is outside it: regenerate
@@ -24,7 +24,7 @@ hand. Seventeen of its nineteen rows had drifted by three tokens each before
 that was written down — the registry grew, every row moved, and nothing said so.
 
 ```text
-landing-pages       6,037   ← lightest
+landing-pages       6,043   ← lightest
 iconography         6,040
 testing             6,092
 data-tables         6,111
@@ -42,12 +42,12 @@ design-principles   6,835
 platform            6,889
 agent-ops           6,979
 canvas-typography   7,250
-design-research     7,950   ← heaviest
+design-research     7,956   ← heaviest
 ```
 
 The top of that list is a dependency choice, not a size problem. `design-research` and `canvas-typography` are heaviest because they declare two core deps (`design-tokens` + `component-api`) where most skills declare one. Their own routers differ, though: `canvas-typography` is mid-pack at 1,178 tokens, while `design-research` has the largest router in the pack at 1,878 — so it pays on both counts. `color-themes` declares two as well (`design-tokens` + `accessibility-baseline`), but `accessibility-baseline` is already charged to every skill, so the second declaration costs it nothing.
 
-**Ceiling is 7,950 tokens against 436,039 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**Ceiling is 7,956 tokens against 436,284 available.** Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 > **How these are measured.** Every token figure in this repo is `file size in bytes ÷ 4`, taken from the **LF/git-index** copy — which is what CI measures and what the `.skill` archive contains. `.gitattributes` is `eol=lf`, so the index is LF on every platform, and both `build_release.py:tokens()` and `check_figures.py:tokens()` normalise CRLF→LF before counting. Gate 8a and Gate 11 therefore report the same numbers on Windows and Linux, and stay stable even when an editor has left a file you touched with CRLF endings before it is committed. The LF figure is canonical because it is what a reader who downloads the archive can reproduce.
 
@@ -67,14 +67,14 @@ That split cut the per-request dependency load from **4,143 → 2,843–3,747 to
 ## Repo layout
 
 <!-- figures:historical — the 61 counts the reference files inside the DELETED `src/` tree, not the live corpus. It was correct when written, describes something that no longer exists, and is not a figure anything can recompute. Marked when REFERENCES was widened to read `N reference files`, which correctly began matching this sentence. -->
-One layout. `src/` — the pre-registry v12 tree — has been removed; nothing reads from it and 55 of its 61 reference files were byte-identical duplicates of their `skills/` counterparts.
+One layout. `src/` — the pre-registry v12 tree — has been removed; nothing reads from it and 55 of its 61 reference files were byte-identical duplicates of their `catalog/` counterparts.
 <!-- /figures:historical -->
 
 ```
 SKILL.md                 registry — copied to archive root
 AGENT_SYSTEM_PROMPT.md   optional drop-in system prompt (registry-native)
 core/                    8 shared primitives
-skills/{id}/
+catalog/{id}/
   ├── SKILL.md           router: rules, patterns, reference index
   ├── references/        deep docs, loaded on demand
   └── examples/          good-*.tsx + good-*.test.tsx + bad-*.tsx + *.d.ts
@@ -86,7 +86,7 @@ docs/                    this directory
 dist/                    build output, gitignored
 ```
 
-`build_release.py` copies `SKILL.md`, `AGENT_SYSTEM_PROMPT.md`, `README.md`, `LICENSE` to the archive root, `docs/CHANGELOG.md` to `_meta/CHANGELOG.md`, and `core/ skills/ scripts/ evals/ rules/ metadata.json` verbatim. The archive root folder is `frontend-design-pro/`, asserted before the zip is accepted.
+`build_release.py` copies `SKILL.md`, `AGENT_SYSTEM_PROMPT.md`, `README.md`, `LICENSE` to the archive root, `docs/CHANGELOG.md` to `_meta/CHANGELOG.md`, and `core/ catalog/ scripts/ evals/ rules/ metadata.json` verbatim. The archive root folder is `frontend-design-pro/`, asserted before the zip is accepted.
 
 ## The gate chain
 
@@ -94,7 +94,7 @@ dist/                    build output, gitignored
 
 | # | Gate | Asserts | Current result |
 |---|---|---|---|
-| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | registry at 2,149 tokens; version consistent; no leaks |
+| 1 | Pre-flight | `SKILL.md` ≤6,000 tokens · `metadata.json` version == top `docs/CHANGELOG.md` header · current version appears in no file outside the allowlist | registry at 2,154 tokens; version consistent; no leaks |
 | 2 | Frontmatter | all 20 files pass Anthropic's `quick_validate.py` schema (no top-level key outside its six); every skill declares `metadata.version`/`metadata.core-deps`; version matches `metadata.json`; every declared dep exists on disk | 20/20 |
 | 3 | Compile | `tsc --noEmit` strict + `noImplicitAny` over every example, plus the three stub-typed demo projects | 55/55 examples · 20/20 demo files |
 | 4 | Semantic | 17 AST constraints via the TypeScript compiler API, on every gold and stub-typed demo file | 65/65 files × 17/17 |
@@ -124,7 +124,7 @@ A parser-regression proof runs alongside gate 4: 16 synthetic cases, each provin
 
 ### Why gate 10 exists
 
-Gates 3–5 judge `skills/*/examples/*.tsx` and `demo/` — 55 files. The 119
+Gates 3–5 judge `catalog/*/examples/*.tsx` and `demo/` — 55 files. The 119
 references are ~436k tokens and are the part an agent actually opens for depth,
 and no gate read them at all, because `test_constraints.py` globs code
 extensions and a reference is markdown. 98% of the corpus by volume sat outside
@@ -167,13 +167,13 @@ The two suites are complementary, not redundant — 17 semantic + 44 syntactic =
 
 **A new skill:**
 
-1. `skills/new-skill/SKILL.md` with frontmatter (`name`, `description`, `version` matching `metadata.json`, `core-deps`)
-2. References in `skills/new-skill/references/`, each cited in the skill's Reference Index — an uncited reference is flagged by the path-integrity stage
-3. At least one example in `skills/new-skill/examples/` — Gate 8b fails a skill with none
+1. `catalog/new-skill/SKILL.md` with frontmatter (`name`, `description`, `version` matching `metadata.json`, `core-deps`)
+2. References in `catalog/new-skill/references/`, each cited in the skill's Reference Index — an uncited reference is flagged by the path-integrity stage
+3. At least one example in `catalog/new-skill/examples/` — Gate 8b fails a skill with none
 4. One row in the `SKILL.md` registry table: id, path, trigger keywords, core dep
 5. `npm run gates`
 
-**A new gold example:** `skills/{id}/examples/good-*.tsx` **plus** a matching `good-*.test.tsx`. Gate 7 fails on any gold without a 1:1 test, and now also on a test that does not pass. If the example imports a peer library nothing else uses, add a stub for it — `test/stubs/README.md` has the rules, and the first one is that every specifier gets its own file.
+**A new gold example:** `catalog/{id}/examples/good-*.tsx` **plus** a matching `good-*.test.tsx`. Gate 7 fails on any gold without a 1:1 test, and now also on a test that does not pass. If the example imports a peer library nothing else uses, add a stub for it — `test/stubs/README.md` has the rules, and the first one is that every specifier gets its own file.
 
 **A new semantic rule:** a check in `scripts/parser_constraints.js` **and** a divergence case in `scripts/parser_regression_test.js` proving it beats regex. Gate labels read their counts from the suites themselves, so `51` updates on its own.
 

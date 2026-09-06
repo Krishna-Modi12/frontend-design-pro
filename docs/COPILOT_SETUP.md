@@ -20,7 +20,7 @@ Create `.github/copilot-instructions.md` at the repo root:
 Before writing or editing frontend code, read `frontend-design-pro/SKILL.md`.
 
 It is a registry, not a document: match the request against its routing
-table, then use exactly one `frontend-design-pro/skills/{id}/SKILL.md`
+table, then use exactly one `frontend-design-pro/catalog/{id}/SKILL.md`
 plus the core/ dependencies that skill declares (typically
 `core/accessibility-baseline.md` and `core/validate-checklist.md` plus
 one or two others). Do not try to apply every skill at once.
@@ -40,7 +40,7 @@ GitHub also supports path-scoped instruction files: `*.instructions.md` inside `
 applyTo: "**/*.tsx"
 ---
 Route via `frontend-design-pro/SKILL.md` before generating component code.
-Load exactly one `skills/{id}/SKILL.md` plus its declared core deps.
+Load exactly one `catalog/{id}/SKILL.md` plus its declared core deps.
 ```
 
 Support is uneven across Copilot surfaces — the repo-wide file is the one that works everywhere. If path-specific instructions appear to be ignored in your IDE, fall back to the single `.github/copilot-instructions.md` rather than debugging it.
@@ -51,11 +51,11 @@ Reference the skill explicitly in chat, the same way you would with Cursor's `@`
 
 ```
 #file:frontend-design-pro/SKILL.md
-#file:frontend-design-pro/skills/forms/SKILL.md
+#file:frontend-design-pro/catalog/forms/SKILL.md
 Add a login form with Zod validation and accessible errors.
 ```
 
-If your Copilot Chat version doesn't support inline file references, paste the relevant `skills/{id}/SKILL.md` content directly into the chat instead.
+If your Copilot Chat version doesn't support inline file references, paste the relevant `catalog/{id}/SKILL.md` content directly into the chat instead.
 
 ## Verifying it took
 
@@ -63,7 +63,7 @@ Ask **"which skill file are you using, and what's in its routing table row for t
 
 ## Honest limitations
 
-- **Always-loaded instructions, not fetch-on-demand.** This is the biggest degradation. Instruction files are loaded whole on every matching request; Copilot cannot decide mid-conversation to go open `skills/animations/references/animation-recipes.md` the way a filesystem agent can. It is binary — a file is either always in context or never in context unless you paste it. There isn't even ChatGPT's retrieval search to soften it.
+- **Always-loaded instructions, not fetch-on-demand.** This is the biggest degradation. Instruction files are loaded whole on every matching request; Copilot cannot decide mid-conversation to go open `catalog/animations/references/animation-recipes.md` the way a filesystem agent can. It is binary — a file is either always in context or never in context unless you paste it. There isn't even ChatGPT's retrieval search to soften it.
 - **The 119 reference files are effectively out of reach.** You get the registry, one skill router, and the anti-slop wall. The depth those references carry arrives only if you paste a specific one into chat by hand.
 - **No execution of the gate scripts.** Copilot Chat can suggest code but cannot run `scripts/build_release.py` or the AST/regex constraint checks against its own output. Run `npm run gates` yourself if enforcement matters.
 - **Instruction files can be summarised.** Long rules compete with the rest of the prompt. If output drifts generic, shorten the instructions file before adding to it.

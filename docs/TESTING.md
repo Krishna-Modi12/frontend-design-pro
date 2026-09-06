@@ -15,11 +15,11 @@ Gate 7 degrades rather than lies. A fresh clone with no `npm install` has neithe
 
 ## Why the suite could not run at all
 
-Gold examples import ~25 peer libraries the repo deliberately does not install: the pack ships no runtime, and vendoring three.js, React Native and Storybook to render a markdown skill pack would be absurd. Those imports are satisfied for `tsc` by ambient `declare module` blocks in `skills/*/examples/_stubs.d.ts`.
+Gold examples import ~25 peer libraries the repo deliberately does not install: the pack ships no runtime, and vendoring three.js, React Native and Storybook to render a markdown skill pack would be absurd. Those imports are satisfied for `tsc` by ambient `declare module` blocks in `catalog/*/examples/_stubs.d.ts`.
 
 **Declaration files do not exist at runtime.** They satisfy the type checker and are invisible to Vite, so every import of `motion/react`, `three`, `zod` and the rest failed to resolve and 29 of 39 files died before running a single assertion. Expanding `_stubs.d.ts` cannot fix this — it is the wrong layer.
 
-The fix is resolution-level: `vitest.config.ts` aliases each specifier to a small **runtime** module under `test/stubs/`. Those modules are test-only — `build_release.py` ships `core/ skills/ scripts/ evals/ rules/ install/` plus four root files, and `test/` is in none of them. The rules they follow, and the failure that produced each rule, are in [`test/stubs/README.md`](../test/stubs/README.md).
+The fix is resolution-level: `vitest.config.ts` aliases each specifier to a small **runtime** module under `test/stubs/`. Those modules are test-only — `build_release.py` ships `core/ catalog/ scripts/ evals/ rules/ install/` plus four root files, and `test/` is in none of them. The rules they follow, and the failure that produced each rule, are in [`test/stubs/README.md`](../test/stubs/README.md).
 
 ## The three causes, once they were established
 

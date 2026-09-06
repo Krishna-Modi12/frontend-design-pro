@@ -14,7 +14,7 @@ Provenance: vendored unchanged from `xiaopu-ai/web-design` (MIT, Copyright (c)
 2026 KAOPU-XiaoPu). Kept as-is deliberately so it can be re-synced from upstream;
 this pack's commentary lives here in the header rather than as edits to the body.
 
-Why it is here: `skills/design-system/references/brand-extraction.md` states the
+Why it is here: `catalog/design-system/references/brand-extraction.md` states the
 rule that a palette must come from the source rather than from memory. This is
 the tool that makes obeying it cheap. Run it, then map the ramp it returns onto
 semantic roles yourself -- the output is evidence, not a theme.

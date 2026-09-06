@@ -88,7 +88,7 @@ CONSTRAINTS: List[Constraint] = [
         check=lambda c: (
             # Allowed as fallback in font stacks, banned as only/primary font.
             # The banned set matches the prose: AGENT_SYSTEM_PROMPT.md §6, core/design-tokens.md,
-            # skills/design-system/SKILL.md and font-pairings.md all name Space Grotesk.
+            # catalog/design-system/SKILL.md and font-pairings.md all name Space Grotesk.
             # Plus Jakarta Sans is NOT an escape hatch — aesthetic-direction.md and
             # font-pairings.md's Convergence Watch both ban it.
             # Left of the `:`/`=`: a `font-family` / `fontFamily` declaration, OR a
@@ -269,9 +269,9 @@ CONSTRAINTS: List[Constraint] = [
         # 47.2% passed 36/36.
         #
         # Measured before and after, because "inert" would have been the easy
-        # overstatement and it is not true: across 247 checkable files in skills/,
+        # overstatement and it is not true: across 247 checkable files in catalog/,
         # demo/, home/, core/, install/, docs/ and tools/, exactly one contains a
-        # banned figure at all — skills/web-interface/examples/bad-generic.tsx,
+        # banned figure at all — catalog/web-interface/examples/bad-generic.tsx,
         # whose numbers are all round, so it failed under the old predicate and
         # still fails under this one. NO file in this corpus changes verdict. This
         # closes a hole nothing currently walks through; it is a repair, not a new
@@ -310,7 +310,7 @@ CONSTRAINTS: List[Constraint] = [
         # its place) and has no other common legitimate use in this pack's
         # component code; `cursor: url(...)` is the other real mechanism, a raw
         # CSS/inline-style custom pointer image. Neither pattern occurs anywhere in
-        # this repo's own corpus today (skills/, demo/, home/, core/ — checked
+        # this repo's own corpus today (catalog/, demo/, home/, core/ — checked
         # before shipping), so this has no real-corpus false-positive evidence
         # either way; if a legitimate `cursor-none` use surfaces later (e.g. a
         # canvas/game surface that hides the pointer without replacing it), add a
@@ -644,7 +644,7 @@ class TestResult:
 
 
 # Constraints that describe a *page*, not a unit of code. Each one is correct
-# against `skills/*/examples/`, where every gold is a whole self-contained
+# against `catalog/*/examples/`, where every gold is a whole self-contained
 # screen — and wrong against a real codebase, where a status pill is a status
 # pill. Pointed at four correctly-factored components, the suite reported 0/4
 # and every failure in that report was an artefact of this: a badge asked for a
@@ -1115,8 +1115,8 @@ def main():
                 files_to_check.extend(d.rglob(ext))
             else:
                 files_to_check.extend(d.glob(ext))
-                files_to_check.extend(d.glob(f"examples/{ext}"))     # --dir skills/<id>
-                files_to_check.extend(d.glob(f"*/examples/{ext}"))   # --dir skills  (Gate 5)
+                files_to_check.extend(d.glob(f"examples/{ext}"))     # --dir catalog/<id>
+                files_to_check.extend(d.glob(f"*/examples/{ext}"))   # --dir catalog (Gate 5)
     else:
         for path in args:
             p = Path(path)

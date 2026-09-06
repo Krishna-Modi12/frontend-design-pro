@@ -1,7 +1,7 @@
 # Trigger Evaluation Queries for frontend-design-pro
 
 Measured against the description in `SKILL.md`, using Anthropic's own
-`skill-creator` eval harness (`skills/skill-creator/scripts/run_eval.py` /
+`skill-creator` eval harness (`catalog/skill-creator/scripts/run_eval.py` /
 `run_loop.py` in the upstream repo, https://github.com/anthropics/skills), run
 against a realistic Next.js 15 + Tailwind v4 codebase so the model can orient
 before deciding whether to invoke the skill — an empty project makes every

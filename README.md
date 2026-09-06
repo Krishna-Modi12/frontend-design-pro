@@ -27,13 +27,13 @@ A machine-enforced frontend UI/UX skill pack for AI coding agents. Most prompt p
 
 | Skills | References | Depth | Always loaded | Per request | Constraints | Gates |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **19** | **119** | **436,039 tokens** | **2,149 tokens** | **6,037–7,950** | **61** | **11** |
+| **19** | **119** | **436,284 tokens** | **2,154 tokens** | **6,043–7,956** | **61** | **11** |
 
 </div>
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 436,039 tokens of available depth, drawn to scale." width="100%">
+<img src="https://raw.githubusercontent.com/Krishna-Modi12/frontend-design-pro/main/.github/assets/router.svg" alt="How one request routes: a prompt asking for a pricing page with a comparison table is matched against a registry of 19 skills, exactly one — landing-pages — is selected, its three declared core files attach, and a cost meter shows the loaded tokens against 436,284 tokens of available depth, drawn to scale." width="100%">
 
 <sub>Every figure on that banner is read from <code>check_figures.py --truth</code> at generation time, and CI fails if the committed file drifts from it.</sub>
 
@@ -121,7 +121,7 @@ These are not style preferences. Each row below is a check that fails a build, w
 | Equal-height card grid, 3 across | Asymmetry, hierarchy, one showpiece per viewport | anti-slop wall |
 | A component with only a happy path | All four states — loading, empty, error, success | `STA-01`, `STA-02` |
 
-The full list of 61 constraints lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`skills/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
+The full list of 61 constraints lives in [`core/validate-checklist.md`](core/validate-checklist.md). Ten deliberate **anti-examples** (`catalog/*/examples/bad-*.tsx`) exist to prove the checks fire — the suite asserts they fail.
 
 ### Run them against your own code
 
@@ -269,7 +269,7 @@ npx skills add Krishna-Modi12/frontend-design-pro
 
 One command, no clone, no setup script. It detects every agent you have installed and wires the pack into each.
 
-It installs as **one** skill, which is the shape this pack needs: the root `SKILL.md` router arrives with `core/` and all 19 `skills/` beside it, so lazy loading still works. Verified against a clean directory — 19 of 19 registry rows and 6 of 6 declared core deps resolve inside the install.
+It installs as **one** skill, which is the shape this pack needs: the root `SKILL.md` router arrives with `core/` and all 19 `catalog/` beside it, so lazy loading still works. Verified against a clean directory — 19 of 19 registry rows and 6 of 6 declared core deps resolve inside the install.
 
 > [!NOTE]
 > This tracks `main`, not a release — may be ahead of the badge above. Want a pinned, gated build instead? **[Grab the release archive](https://github.com/Krishna-Modi12/frontend-design-pro/releases/latest)** (built only when all 11 gates pass). Don't pass `--full-depth` — it installs all 19 skills as competing peers instead of one router, which is the architecture this pack exists to avoid. `npx skills add … --list` should show one entry.
@@ -340,40 +340,40 @@ One skill loads per request. You never name it — the **Try saying** column is 
 
 | Skill | What it covers | Try saying |
 |---|---|---|
-| [`landing-pages`](skills/landing-pages/SKILL.md) | Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding | *"Build a landing page for a CI tool. Dark, technical, no stock-photo energy."* |
-| [`react-components`](skills/react-components/SKILL.md) | One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, `forwardRef`, CVA | *"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly."* |
-| [`forms`](skills/forms/SKILL.md) | Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement | *"Multi-step checkout with Zod validation and errors wired to aria-describedby."* |
-| [`data-tables`](skills/data-tables/SKILL.md) | Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query | *"Sortable, filterable users table with pagination and a loading skeleton."* |
-| [`threejs-3d`](skills/threejs-3d/SKILL.md) | Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes | *"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion."* |
+| [`landing-pages`](catalog/landing-pages/SKILL.md) | Heroes, pricing, testimonials, bento grids, logo walls, comparison tables, FAQ, CTAs, footers — plus empty states and onboarding | *"Build a landing page for a CI tool. Dark, technical, no stock-photo energy."* |
+| [`react-components`](catalog/react-components/SKILL.md) | One reusable component or a small family: button, card, modal, dropdown, tabs, accordion, tooltip, select, popover. shadcn/Radix, compound components, `forwardRef`, CVA | *"Build a Dialog with a compound API — Dialog.Root, Trigger, Content — that traps focus properly."* |
+| [`forms`](catalog/forms/SKILL.md) | Anything collecting input: contact, checkout, login, signup, password reset, OTP/MFA, multi-step wizards, settings. React Hook Form + Zod, Stripe PaymentElement | *"Multi-step checkout with Zod validation and errors wired to aria-describedby."* |
+| [`data-tables`](catalog/data-tables/SKILL.md) | Tabular and data-dense UI: sorting, filtering, pagination, row selection, KPI cards, charts, analytics dashboards, admin panels. TanStack Table/Query | *"Sortable, filterable users table with pagination and a loading skeleton."* |
+| [`threejs-3d`](catalog/threejs-3d/SKILL.md) | Browser 3D: scenes, GLTF/GLB models, shaders, post-processing, orbit controls, raycasting, Spline embeds, particle systems, 3D heroes | *"A subtle WebGL particle hero that doesn't tank LCP or run under reduced motion."* |
 
 ### Making it look right
 
 | Skill | What it covers | Try saying |
 |---|---|---|
-| [`design-system`](skills/design-system/SKILL.md) | Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff | *"Build me a token system from this brand colour, with a dark mode that isn't just inverted."* |
-| [`design-principles`](skills/design-principles/SKILL.md) | The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction | *"Critique this layout. Why does it feel cluttered, and what's the actual fix?"* |
-| [`design-research`](skills/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, or run a social/trend pass over engagement-ranked community signal, and convert either into typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: &lt;url&gt; — dark, developer tool."* · *"What's trending in fintech dashboard design right now?"* |
-| [`animations`](skills/animations/SKILL.md) | Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion | *"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion."* |
-| [`component-patterns`](skills/component-patterns/SKILL.md) | Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit | *"Give me an animated headline like Aceternity's, but keyboard-accessible."* |
-| [`iconography`](skills/iconography/SKILL.md) | Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration | *"These icons look off next to the text — fix the sizing and optical alignment."* |
-| [`canvas-typography`](skills/canvas-typography/SKILL.md) | Type rendered as a system: particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path — with the real string always left in the DOM | *"A hero headline that assembles from particles on mouse-over, and still reads fine with JS off."* |
-| [`color-themes`](skills/color-themes/SKILL.md) | Colour computed rather than chosen: OKLCH token generation from one hue, harmonic schemes, palettes extracted from an image, light/dark/auto architecture, contrast measured before a token ships | *"Generate a full dark theme from this brand blue, and prove the text passes AA."* |
+| [`design-system`](catalog/design-system/SKILL.md) | Design tokens, OKLCH palettes, typography and spacing scales, theming, dark mode, brand systems, font pairing, Figma handoff | *"Build me a token system from this brand colour, with a dark mode that isn't just inverted."* |
+| [`design-principles`](catalog/design-principles/SKILL.md) | The *why*: visual hierarchy, Gestalt grouping, Fitts/Hick/Miller, cognitive load, choice architecture, perceived performance, design-DNA extraction | *"Critique this layout. Why does it feel cluttered, and what's the actual fix?"* |
+| [`design-research`](catalog/design-research/SKILL.md) | Live web research — browse Dribbble, Mobbin, Aceternity, Motion.dev, React Bits, 21st.dev, or run a social/trend pass over engagement-ranked community signal, and convert either into typed constraints **before** any code | *"Build a hero inspired by this Dribbble shot: &lt;url&gt; — dark, developer tool."* · *"What's trending in fintech dashboard design right now?"* |
+| [`animations`](catalog/animations/SKILL.md) | Entrance/exit transitions, micro-interactions, hover states, scroll-driven sequences, parallax, route transitions, shared-element morphs, stagger, reduced motion | *"Add a staggered reveal to these cards — subtle, and respect prefers-reduced-motion."* |
+| [`component-patterns`](catalog/component-patterns/SKILL.md) | Patterns from third-party libraries — animated text, magnetic/tilt/spotlight effects, ambient canvas backgrounds, carousels, docks, bento — with the a11y and perf rules they omit | *"Give me an animated headline like Aceternity's, but keyboard-accessible."* |
+| [`iconography`](catalog/iconography/SKILL.md) | Icon sizing, weight matching, colour inheritance, hit areas, SVG accessibility, avatars and initials, empty-state illustration | *"These icons look off next to the text — fix the sizing and optical alignment."* |
+| [`canvas-typography`](catalog/canvas-typography/SKILL.md) | Type rendered as a system: particle text, kinetic type, variable-font axis animation, scramble/decode reveals, text on a path — with the real string always left in the DOM | *"A hero headline that assembles from particles on mouse-over, and still reads fine with JS off."* |
+| [`color-themes`](catalog/color-themes/SKILL.md) | Colour computed rather than chosen: OKLCH token generation from one hue, harmonic schemes, palettes extracted from an image, light/dark/auto architecture, contrast measured before a token ships | *"Generate a full dark theme from this brand blue, and prove the text passes AA."* |
 
 ### Making it work well
 
 | Skill | What it covers | Try saying |
 |---|---|---|
-| [`react-performance`](skills/react-performance/SKILL.md) | Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals | *"This page has a 4s LCP. Find the waterfall and fix it."* |
-| [`web-interface`](skills/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas, plus a live rendered-DOM audit of the running page | *"Review this component. What's wrong with it that I'm not seeing?"* |
-| [`testing`](skills/testing/SKILL.md) | Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy | *"Write tests for this form — including the validation errors and an axe pass."* |
-| [`platform`](skills/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
+| [`react-performance`](catalog/react-performance/SKILL.md) | Request waterfalls, bundle size, RSC boundaries, memoization, re-renders, long lists, lazy loading, prefetching, Core Web Vitals | *"This page has a 4s LCP. Find the waterfall and fix it."* |
+| [`web-interface`](catalog/web-interface/SKILL.md) | Auditing and polishing what already exists — design review, a11y audit, copy review, typography and contrast passes, touch targets, safe areas, plus a live rendered-DOM audit of the running page | *"Review this component. What's wrong with it that I'm not seeing?"* |
+| [`testing`](catalog/testing/SKILL.md) | Vitest, Testing Library, jest-axe accessibility assertions, Playwright e2e, Storybook stories, mock policy | *"Write tests for this form — including the validation errors and an axe pass."* |
+| [`platform`](catalog/platform/SKILL.md) | Platform surfaces rather than generic components: mobile/PWA, desktop, React Native/Expo, i18n and RTL, SEO/metadata, Stripe, transactional email, AI chat and streaming UI | *"Make this work as a PWA with proper safe-area handling on iOS."* |
 
 ### Meta
 
 | Skill | What it covers | Try saying |
 |---|---|---|
-| [`ai-ui-generation`](skills/ai-ui-generation/SKILL.md) | Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships | *"Render components from this JSON schema, and validate before it hits the DOM."* |
-| [`agent-ops`](skills/agent-ops/SKILL.md) | The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration | *"You keep re-reading the same files. Set up a context budget."* |
+| [`ai-ui-generation`](catalog/ai-ui-generation/SKILL.md) | Prompt-to-UI, JSON/schema-driven rendering, server-driven UI, component registries, and the guardrails generated markup must pass before it ships | *"Render components from this JSON schema, and validate before it hits the DOM."* |
+| [`agent-ops`](catalog/agent-ops/SKILL.md) | The agent's own process: token budgeting, cross-session memory, self-verification loops, parallel work, subagent orchestration | *"You keep re-reading the same files. Set up a context budget."* |
 
 > [!IMPORTANT]
 > **No keyword match?** The agent asks one clarifying question rather than guessing — that behaviour is part of the contract, not a fallback.
@@ -386,12 +386,12 @@ The pack is not a document. It is a **registry that routes**: a monolithic 330k-
 
 | Layer | What it is | Cost |
 |---|---|---|
-| `SKILL.md` | Registry, routing table, anti-slop wall | **2,149 tokens** — always loaded |
-| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,964–3,923 tokens — the deps one skill declares |
-| `skills/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
-| `skills/{id}/references/` | Deep material | **436,039 tokens** — loaded only when a skill points at it |
+| `SKILL.md` | Registry, routing table, anti-slop wall | **2,154 tokens** — always loaded |
+| `core/` | Shared primitives (tokens, a11y, component API, behaviour, checklist, intake) | 2,965–3,924 tokens — the deps one skill declares |
+| `catalog/{id}/SKILL.md` | One skill file | 848–1,878 tokens — one per request |
+| `catalog/{id}/references/` | Deep material | **436,284 tokens** — loaded only when a skill points at it |
 
-**A typical request loads 6,037–7,950 tokens, not 436,039.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
+**A typical request loads 6,043–7,956 tokens, not 436,284.** Adding a skill costs about 51 tokens of always-loaded context. The two skills in v14.5.0 took the registry from 1,895 to 1,998 — 103 tokens for both, which is the clearest confirmation of that figure the project has: it was derived from a single skill and held exactly when two were added at once. Their 8 new reference files added 65,000 tokens of depth, none of it loaded unless a request routes there. Gate 8a fails the build if any skill exceeds 3,000 tokens alone or 8,000 with dependencies, so this cannot silently regress.
 
 <details>
 <summary><b>The 8 core files, and when each one loads</b></summary>
@@ -661,9 +661,9 @@ section — woff2-only, variable against static, subsetting, self-hosting — no
 fifth file.
 
 Every new file was written only after auditing the ten nearest references, and
-cross-links rather than restates. Reference depth now stands at 436,039 tokens
-over 119 references; the registry is still 2,149 tokens and a request still
-costs 6,037–7,950. Nothing new is loaded unless a request routes to one of the
+cross-links rather than restates. Reference depth now stands at 436,284 tokens
+over 119 references; the registry is still 2,154 tokens and a request still
+costs 6,043–7,956. Nothing new is loaded unless a request routes to one of the
 four skills this release touched — `platform`, `react-performance`, `agent-ops`
 or `design-system`.
 
@@ -689,7 +689,7 @@ Every release is produced by `scripts/build_release.py` with 11 blocking gates:
 | 7 | **Evals + coverage** | 22 eval cases; every gold has a test; the suite runs and passes |
 | 8 | **Budget + registry** | Every skill ≤3,000 tokens and ≤8,000 with deps; every registry row resolves |
 | 9 | **Showcase build** | `demo/showcase/` builds clean under `next build` against its actual vendor typings |
-| 10 | **References** | The constraints run over `skills/*/references/*.md`, not just the examples |
+| 10 | **References** | The constraints run over `catalog/*/references/*.md`, not just the examples |
 | 11 | **Figures** | Every documented count and token figure recomputed from the filesystem |
 
 Then: path integrity — including that every relative link in the repo's markdown resolves — a reference-depth audit, a **release source guard** that refuses to build unless `HEAD` is `origin/main` with a clean tree, the archive build, and a post-build smoke test that re-runs the gates against the *unzipped* archive and checks what it claims: the version it announces, the changelog it tops out at, that every demo image actually shipped, and that no shipped file points at a document the archive does not contain.
@@ -714,8 +714,8 @@ Bugs first. [Open an issue](https://github.com/Krishna-Modi12/frontend-design-pr
 Sending code — [CONTRIBUTING.md](CONTRIBUTING.md) is the full guide, including the traps that will fail your build before you understand why. The short version:
 
 - All changes must pass the 11 gates — CI runs them on every push and PR
-- New depth → `skills/{id}/references/`; new skill → a directory plus one registry row
-- New gold example → `skills/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
+- New depth → `catalog/{id}/references/`; new skill → a directory plus one registry row
+- New gold example → `catalog/{id}/examples/` **with** a matching `.test.tsx` (Gate 7 blocks otherwise)
 - New semantic rule → a check in `parser_constraints.js` **and** a divergence case in `parser_regression_test.js`
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the repo-vs-archive layout, and [CLAUDE.md](CLAUDE.md) if you are pointing an agent at this repo.

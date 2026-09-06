@@ -9,7 +9,7 @@ labels: bug
 
 ## Which file is wrong?
 
-Path to the skill, reference, or example (e.g. `skills/forms/SKILL.md`, `skills/design-system/references/brand-design-systems.md`, `skills/react-components/examples/good-modal.tsx`):
+Path to the skill, reference, or example (e.g. `catalog/forms/SKILL.md`, `catalog/design-system/references/brand-design-systems.md`, `catalog/react-components/examples/good-modal.tsx`):
 
 ## What should it say/do?
 
@@ -28,7 +28,7 @@ If you ran `python scripts/build_release.py --dry-run`, which of the 11 gates fl
 - [ ] 7 — Evals + coverage (eval cases, 1:1 gold/test coverage)
 - [ ] 8 — Budget + registry (token budget per skill, registry rows resolve)
 - [ ] 9 — Showcase build (`demo/showcase/` builds clean under `next build`)
-- [ ] 10 — References (the constraints run over `skills/*/references/*.md`, not just examples)
+- [ ] 10 — References (the constraints run over `catalog/*/references/*.md`, not just examples)
 - [ ] 11 — Figures (every documented count and token figure recomputed from the filesystem)
 - [ ] None of these / not sure
 

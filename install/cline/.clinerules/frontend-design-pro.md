@@ -3,16 +3,16 @@
 Before writing or editing frontend code, read `frontend-design-pro/SKILL.md`.
 
 It is a registry, not a document. Match the request against its Trigger keywords
-column and load exactly ONE `frontend-design-pro/skills/{id}/SKILL.md`, then the
+column and load exactly ONE `frontend-design-pro/catalog/{id}/SKILL.md`, then the
 `metadata.core-deps` named in that skill's frontmatter, plus
 `frontend-design-pro/core/accessibility-baseline.md` and
 `frontend-design-pro/core/validate-checklist.md`. Most specific match wins —
 "form validation" routes to `forms`, not `react-components`.
 
-Budget 8,000 tokens; a correct request lands near 6,037–7,950. Do not load every
+Budget 8,000 tokens; a correct request lands near 6,043–7,956. Do not load every
 skill, and do not answer from the registry alone.
 
-Open a `frontend-design-pro/skills/{id}/references/*.md` file only when the routed
+Open a `frontend-design-pro/catalog/{id}/references/*.md` file only when the routed
 skill points at it — read it with your file tool, do not paraphrase it from memory.
 
 Before building a page, site or dashboard, read

@@ -2,8 +2,8 @@
 
 "All four states" is already the single most-repeated rule in this pack —
 `loading / empty / error / success` appears, nearly verbatim, as a numbered
-`## Core Rules` item in `skills/data-tables/SKILL.md` ("Four states per data
-surface") and `skills/forms/SKILL.md` ("Four states always"), and again in
+`## Core Rules` item in `catalog/data-tables/SKILL.md` ("Four states per data
+surface") and `catalog/forms/SKILL.md` ("Four states always"), and again in
 the `## Constraints` self-check summary line of seven more skills
 (`platform`, `landing-pages`, `react-components`, `web-interface`,
 `design-principles`, `ai-ui-generation`, `threejs-3d`), plus
@@ -47,7 +47,7 @@ counts as "empty" is not the same shape on a data surface as it is on a form.
 
 ### Data surface (table, list, grid)
 
-Source: `skills/data-tables/examples/good-data-table.tsx`.
+Source: `catalog/data-tables/examples/good-data-table.tsx`.
 
 | State | Trigger | What renders | Route out |
 |---|---|---|---|
@@ -65,7 +65,7 @@ the empty state.
 
 ### Form / checkout flow
 
-Source: `skills/forms/examples/good-checkout.tsx`.
+Source: `catalog/forms/examples/good-checkout.tsx`.
 
 The label itself changes here — this gold's own state type is
 `"loading" | "ready" | "error" | "success"`, not `"empty"`. A form has

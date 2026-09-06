@@ -79,8 +79,8 @@ which ships with upstream's raw hex, DM Sans, CDN script tags and global custom
 cursor intact, behind a preface listing what this pack would do differently. A
 sanitised worked example teaches the format but hides the judgement, and the
 judgement is the transferable part. That file's placement is load-bearing:
-`check_references.py` rglobs all of `skills/`, so the same file under
-`skills/*/examples/` would be scanned by Gate 10 and fail `COL-04` on its own
+`check_references.py` rglobs all of `catalog/`, so the same file under
+`catalog/*/examples/` would be scanned by Gate 10 and fail `COL-04` on its own
 honesty.
 
 **Not taken:** the Chinese-language duplicates of files already translated, and
@@ -311,7 +311,7 @@ prose.
 
 MIT, © Emil Kowalski. Twelve flat markdown skills — no app, no build — carrying
 one author's taste for interface motion. **Already a cited source here:**
-`skills/animations/references/animation-framework.md` opens
+`catalog/animations/references/animation-framework.md` opens
 "Source: emilkowalski/skills", ingested in an earlier pass. So this was a delta
 read, not a first ingest, and the question for each of the twelve was narrower:
 is there a technique in here that this pack's animation depth does not already
