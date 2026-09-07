@@ -201,13 +201,13 @@ async function checkReducedMotion(browser, base) {
   // and static rather than hidden. Both halves matter — a spine left at full
   // offset under reduce is an invisible element, and one that still tracks
   // scroll is a `MOTION-01` violation that no source read would catch.
-  const spineBefore = await readSpineOffset(page);
+  const spineBefore = await readSpineProgress(page);
   await page.evaluate(() => window.scrollTo(0, 4000));
   await page.waitForTimeout(600);
-  const spineAfter = await readSpineOffset(page);
+  const spineAfter = await readSpineProgress(page);
   const spineProblems = [];
-  if (spineBefore === null) spineProblems.push("no [data-page-spine-path] rendered at 1920px");
-  else if (spineBefore !== 0) spineProblems.push(`route not fully drawn: offset ${spineBefore}`);
+  if (spineBefore === null) spineProblems.push("no [data-page-spine-drawn] rendered at 1920px");
+  else if (spineBefore !== 1) spineProblems.push(`route not fully drawn: scaleY ${spineBefore}`);
   if (spineBefore !== spineAfter) {
     spineProblems.push(`route moved ${spineBefore} → ${spineAfter} with reduced motion requested`);
   }
@@ -217,16 +217,22 @@ async function checkReducedMotion(browser, base) {
 }
 
 /**
- * The spine's drawn length lives in an inline `style`, not an attribute —
- * ScrollTrigger's `onUpdate` writes it directly rather than through React, so
- * `getAttribute` would read `null` here and an equality assertion against two
- * nulls would pass while rendering nothing.
+ * The spine's drawn fraction lives in an inline `transform`, not an attribute
+ * — ScrollTrigger's `onUpdate` writes it directly rather than through React,
+ * so `getAttribute` would read `null` here and an equality assertion between
+ * two nulls would pass while rendering nothing.
+ *
+ * It is a `scaleY` rather than a `stroke-dashoffset` because the SVG version
+ * of this cost a forced layout on every scroll frame; see the note at the top
+ * of `PageSpine.tsx`. Reading the number back off the transform is therefore
+ * also a check that the cheap path is the one still wired up.
  */
-async function readSpineOffset(page) {
+async function readSpineProgress(page) {
   return page.evaluate(() => {
-    const path = document.querySelector("[data-page-spine-path]");
-    if (path === null || path.style.strokeDashoffset === "") return null;
-    return Number(path.style.strokeDashoffset);
+    const drawn = document.querySelector("[data-page-spine-drawn]");
+    if (drawn === null) return null;
+    const match = /scaleY\(([-\d.]+)\)/.exec(drawn.style.transform);
+    return match === null ? null : Number(match[1]);
   });
 }
 
@@ -422,7 +428,7 @@ async function checkInteractivity(browser, base) {
     await motionPage.getAttribute("[data-corpus-head]", "stroke-dashoffset"),
   );
   // Read before the scroll below, or "at rest" is measured at 2000px.
-  const spineRest = await readSpineOffset(motionPage);
+  const spineRest = await readSpineProgress(motionPage);
   // Well past a full traversal (READ_SPAN is 0.6 of the viewport measured from
   // the ring's own top, which starts a few hundred px down), so the value is
   // clamped at 1 and the assertion is not a race with the exact scroll offset.
@@ -451,7 +457,7 @@ async function checkInteractivity(browser, base) {
   const spineDeadline = Date.now() + 5_000;
   for (;;) {
     await motionPage.waitForTimeout(120);
-    const next = await readSpineOffset(motionPage);
+    const next = await readSpineProgress(motionPage);
     if (next === spineScrolled || Date.now() >= spineDeadline) {
       spineScrolled = next;
       break;
@@ -462,10 +468,11 @@ async function checkInteractivity(browser, base) {
 
   if (spineRest === null || spineScrolled === null) {
     problems.push("page spine did not render at 1920px under default motion");
-  } else if (!(spineRest - spineScrolled > 200)) {
+  } else if (!(spineScrolled - spineRest > 0.02)) {
     problems.push(
-      `page spine did not follow scroll: offset moved ${(spineRest - spineScrolled).toFixed(0)}px ` +
-        `over a 2000px scroll (${spineRest.toFixed(0)} → ${spineScrolled.toFixed(0)})`,
+      `page spine did not follow scroll: drawn fraction moved ` +
+        `${(spineScrolled - spineRest).toFixed(4)} over a 2000px scroll ` +
+        `(${spineRest.toFixed(4)} → ${spineScrolled.toFixed(4)})`,
     );
   }
   if (!(headDelta > 0.9)) {

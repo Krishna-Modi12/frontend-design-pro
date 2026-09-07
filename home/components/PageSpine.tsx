@@ -5,55 +5,58 @@ import type { ReactElement } from "react";
 import { ScrollTrigger } from "../lib/gsapClient";
 
 /**
- * The route the page itself takes, drawn in the left gutter exactly as far as
+ * The route the page itself takes, drawn in the outer margin exactly as far as
  * the reader has scrolled.
  *
- * **The geometry is measured, not authored.** There is no hand-drawn `d` in
- * this file. On mount the component reads the real position of every
- * `<section>` inside `<main>` and threads a curve through their centres, so
- * the waypoints are the page's own stages and the spacing between them is the
- * page's own rhythm — the hero's long opener, the short install close. Change
- * a section's height and the route changes with it; add a section and it gets
- * a waypoint. A decorative squiggle would survive either edit unchanged, and
- * that is the difference being drawn here.
+ * **The waypoints are measured, not authored.** There are no hand-placed
+ * positions in this file. On mount the component reads the real bounding box
+ * of every `:scope > section` inside `<main>` and puts a waypoint at each
+ * centre, so the marks are the page's own stages and the gaps between them are
+ * the page's own rhythm — the hero's long opener, the short install close. Add
+ * a section and it gets a waypoint; change a section's height and one moves.
  *
- * **Why the weave never settles into a pattern.** The x co-ordinate alternates
- * between two rails, which on its own is a zigzag. What keeps it from reading
- * as one is that the y co-ordinates are section centres, and this page's
- * sections are nothing like equal in height — so the wave has a constant
- * amplitude and a thoroughly irregular period. That is load-bearing: a
- * regular one would be a decorative ripple down the margin, which is the
- * failure mode this construction is one step away from.
+ * **It is a straight rail, and that is a correction rather than a compromise.**
+ * The first version of this drew an SVG curve weaving between two rails. Two
+ * separate measurements killed it. Rendered, 80px of horizontal excursion
+ * spread over an 8,500px page reads as a straight line — no amplitude that
+ * fits the free margin changes that. Profiled, the SVG cost one forced layout
+ * per scroll frame: writing `stroke-dashoffset` on a path and `transform` on a
+ * `<g>` both dirty SVG layout in Blink, and on the built page at 4x CPU
+ * throttle that was **251 layouts on an upward scroll against 3 with the spine
+ * off the page**. It was spending a layout per frame to draw a curve nobody
+ * could see, and it was felt as stutter.
+ *
+ * So the per-frame update is now transform-only on plain HTML elements, which
+ * the compositor handles without layout, style recalc or paint: one
+ * `scaleY` for the drawn length, one `translate3d` for the head. Waypoint
+ * opacities are written only when the set of reached waypoints actually
+ * changes, rather than re-asserted seven at a time every frame.
  *
  * **`Skiper19`'s mechanic, this page's runtime.** The technique — one
- * continuous stroke whose drawn length tracks scroll progress — was prompted
- * by Skiper UI's `Skiper19` (`@gurvinder-singh02`, skiper-ui.com), which
- * reaches it through Framer Motion's `useScroll` + `pathLength`. `home/`
- * already runs GSAP and ScrollTrigger for every other scroll-linked effect
- * here, so adding a second animation runtime to offset a dash would be pure
- * bundle cost; this uses `getTotalLength()` and `strokeDashoffset`, the same
- * way `RouteStroke` does. Nothing else from that component travelled — not
- * its palette (an acid green on navy, one of the three AI-design clusters
- * this pack's own wall names), not its display face, not its 350vh scroll
- * region, and not its path data, which is the part that would have made this
- * decoration rather than a map.
+ * continuous line whose drawn length tracks scroll progress — was prompted by
+ * Skiper UI's `Skiper19` (`@gurvinder-singh02`, skiper-ui.com), which reaches
+ * it through Framer Motion's `useScroll` + `pathLength`. `home/` already runs
+ * GSAP and ScrollTrigger for every other scroll-linked effect here, so adding
+ * a second animation runtime would be pure bundle cost. Nothing else from that
+ * component travelled — not its palette (an acid green on navy, one of the
+ * three AI-design clusters this pack's own wall names), not its display face,
+ * not its 350vh scroll region, and not its path data.
  *
  * **Not a hairline column.** `lib/tokens.ts` says the section seams are
  * horizontal only, because a vertical rule between sections would read as the
  * anti-slop wall's "broadsheet hairline columns". That prohibition is about a
  * repeating grid of straight rules used as structure, and it still stands.
- * This is a single non-repeating curve in the outer margin that touches no
- * content, carries the reader's position, and is absent until scrolled — the
- * comment in `tokens.ts` was narrowed to say which of the two it means.
+ * This is one line in the outer margin that touches no content, carries the
+ * reader's position, and is absent until scrolled.
  *
- * **Reduced motion gets the finished route.** Not hidden and not faded to:
- * the route is information about the page's shape, so it renders complete and
- * static, exactly as `RouteStroke` does.
+ * **Reduced motion gets the finished route.** Not hidden and not faded to: the
+ * route is information about the page's shape, so it renders complete and
+ * static, and the head is removed — a head on a motionless route would mark a
+ * reading position that isn't moving.
  *
  * Below `lg` it does not render at all. The free margin at those widths is the
- * 20px of `sectionShell` padding, which is not enough room for a curve, and a
- * phone is already scrolling 13 screens of this page without extra chrome in
- * the way.
+ * 20px of `sectionShell` padding, which is not enough room for it, and a phone
+ * is already scrolling 13 screens of this page without extra chrome in the way.
  */
 export interface PageSpineProps {
   /** Which children of the route's own parent get a waypoint. Scoped to direct
@@ -64,18 +67,17 @@ export interface PageSpineProps {
 }
 
 interface Waypoint {
-  readonly x: number;
   readonly y: number;
-  /** Fraction of the route drawn by the time the tip reaches this waypoint. */
+  /** Fraction of the route drawn by the time the head reaches this waypoint. */
   readonly at: number;
 }
 
 interface Route {
-  readonly width: number;
   readonly height: number;
   /** Distance from the viewport's left edge to the band, in px. */
   readonly left: number;
-  readonly d: string;
+  /** Distance from the band's left edge to the rail, in px. */
+  readonly x: number;
   readonly stroke: number;
   readonly radius: number;
   readonly nodes: readonly Waypoint[];
@@ -90,14 +92,6 @@ interface Route {
 const SHELL_MAX = 1152;
 const SHELL_PAD = 32;
 
-/** How far the weave stays clear of each edge of the band, as a fraction. */
-const INSET = 0.28;
-
-/** Handle length as a fraction of a segment's vertical run. Vertical handles
-    at both ends mean every waypoint is passed through smoothly, with no cusp
-    where two segments meet. */
-const TENSION = 0.42;
-
 /** The band is wide enough at `xl` to carry a heavier line without it reading
     as a border; below that it stays a hairline. */
 const EXPRESSIVE_BAND = 64;
@@ -107,54 +101,24 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
   if (height <= 0) return null;
 
   const origin = main.getBoundingClientRect().top;
-  const near = band * INSET;
-  const far = band * (1 - INSET);
-
-  const points = sections.map((section, index) => {
+  const nodes = sections.map((section) => {
     const box = section.getBoundingClientRect();
-    return {
-      x: index % 2 === 0 ? near : far,
-      y: box.top - origin + box.height / 2,
-    };
+    const y = box.top - origin + box.height / 2;
+    return { y, at: y / height };
   });
-
-  const first = points[0];
-  const last = points[points.length - 1];
-  if (first === undefined || last === undefined) return null;
-
-  // The route runs the full height of `<main>`, entering at the top edge and
-  // leaving at the bottom, so it never appears to start or stop mid-page.
-  const path = [{ x: first.x, y: 0 }, ...points, { x: last.x, y: height }];
-
-  let d = `M${path[0]?.x.toFixed(1) ?? 0} 0`;
-  for (let i = 1; i < path.length; i += 1) {
-    const from = path[i - 1];
-    const to = path[i];
-    if (from === undefined || to === undefined) continue;
-    const handle = (to.y - from.y) * TENSION;
-    d +=
-      ` C${from.x.toFixed(1)} ${(from.y + handle).toFixed(1)}` +
-      ` ${to.x.toFixed(1)} ${(to.y - handle).toFixed(1)}` +
-      ` ${to.x.toFixed(1)} ${to.y.toFixed(1)}`;
-  }
+  if (nodes.length === 0) return null;
 
   const gutter = Math.max(0, (main.clientWidth - SHELL_MAX) / 2) + SHELL_PAD;
 
   return {
-    width: band,
     height,
     // Right edge of the band meets the left edge of the text, or hard against
     // the window once the gutter is too narrow to hold the band at all.
     left: Math.max(0, gutter - band),
-    d,
+    x: Math.round(band / 2),
     stroke: band >= EXPRESSIVE_BAND ? 2 : 1.5,
     radius: band >= EXPRESSIVE_BAND ? 4.5 : 3,
-    // Arc length and vertical distance are within a fraction of a percent of
-    // each other here: the whole horizontal excursion is at most the band's
-    // 80px against a page thousands of pixels tall. `y / height` is the honest
-    // approximation, and measuring the real arc length would need a second
-    // layout pass to buy nothing.
-    nodes: points.map((point) => ({ ...point, at: point.y / height })),
+    nodes,
   };
 }
 
@@ -162,30 +126,34 @@ export function PageSpine({
   sectionSelector = ":scope > section",
   className = "",
 }: PageSpineProps): ReactElement {
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const pathRef = useRef<SVGPathElement | null>(null);
-  const headRef = useRef<SVGGElement | null>(null);
-  const nodeRefs = useRef<Array<SVGCircleElement | null>>([]);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const drawnRef = useRef<HTMLDivElement | null>(null);
+  const headRef = useRef<HTMLDivElement | null>(null);
+  const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [route, setRoute] = useState<Route | null>(null);
 
-  // Only ever replaces the route when the numbers actually moved. Without
-  // this every ResizeObserver callback would hand back a fresh object, and the
+  // Only ever replaces the route when the numbers actually moved. Without this
+  // every ResizeObserver callback would hand back a fresh object, and the
   // paint effect below would kill and rebuild its ScrollTrigger each time.
   const commit = useCallback((next: Route | null): void => {
     setRoute((current) => {
       if (current === null || next === null) return current === next ? current : next;
       const same =
-        current.d === next.d && current.width === next.width && current.height === next.height;
+        current.height === next.height &&
+        current.left === next.left &&
+        current.x === next.x &&
+        current.nodes.length === next.nodes.length &&
+        current.nodes.every((node, i) => node.y === next.nodes[i]?.y);
       return same ? current : next;
     });
   }, []);
 
   useEffect(() => {
-    const svg = svgRef.current;
-    if (svg === null) return;
+    const wrap = wrapRef.current;
+    if (wrap === null) return;
     // The spine is rendered as a direct child of the element whose extent it
     // maps, so its own parent is the route.
-    const main = svg.parentElement;
+    const main = wrap.parentElement;
     if (main === null) return;
 
     let frame = 0;
@@ -193,7 +161,7 @@ export function PageSpine({
       frame = 0;
       // `clientWidth` is 0 while the band is `display: none` below `lg`, which
       // is how one check covers both the breakpoint and an unmounted layout.
-      const band = svg.clientWidth;
+      const band = wrap.clientWidth;
       if (band === 0) {
         commit(null);
         return;
@@ -222,31 +190,37 @@ export function PageSpine({
   }, [commit, sectionSelector]);
 
   useEffect(() => {
-    const path = pathRef.current;
-    const svg = svgRef.current;
-    if (path === null || svg === null || route === null) return;
-    const main = svg.parentElement;
+    const wrap = wrapRef.current;
+    const drawn = drawnRef.current;
+    if (wrap === null || drawn === null || route === null) return;
+    const main = wrap.parentElement;
     if (main === null) return;
 
-    const length = path.getTotalLength();
-    const nodes = nodeRefs.current;
     const head = headRef.current;
+    const nodes = nodeRefs.current;
+    // Only touch a waypoint when the set of reached ones actually changes.
+    let painted = -1;
     const paint = (progress: number): void => {
-      path.style.strokeDashoffset = String(length * (1 - progress));
+      // Both of these are transform-only writes on composited elements: no
+      // layout, no style recalc, no paint. See the note at the top of the file
+      // for the measurement that made this the whole point of the component.
+      drawn.style.transform = `scaleY(${progress})`;
       if (head !== null) {
-        // Without this the drawn line simply stops in mid-air, which reads as
-        // a line that failed to render rather than as a position in the page.
-        const tip = path.getPointAtLength(length * progress);
-        head.setAttribute("transform", `translate(${tip.x.toFixed(2)} ${tip.y.toFixed(2)})`);
+        head.style.transform = `translate3d(0, ${(progress * route.height).toFixed(1)}px, 0)`;
       }
-      route.nodes.forEach((node, index) => {
+
+      let reached = -1;
+      for (let i = 0; i < route.nodes.length; i += 1) {
+        if (progress >= route.nodes[i]!.at) reached = i;
+      }
+      if (reached === painted) return;
+      painted = reached;
+      route.nodes.forEach((_node, index) => {
         const element = nodes[index];
         if (element === undefined || element === null) return;
-        element.style.opacity = progress >= node.at ? "1" : "0";
+        element.style.opacity = index <= reached ? "1" : "0";
       });
     };
-
-    path.style.strokeDasharray = String(length);
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // No head under reduce. The route renders complete and static, and a
@@ -274,57 +248,81 @@ export function PageSpine({
   }, [route]);
 
   return (
-    <svg
-      ref={svgRef}
+    <div
+      ref={wrapRef}
       data-page-spine
       aria-hidden="true"
-      focusable="false"
       className={`pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-8 lg:block xl:w-20 ${className}`}
-      {...(route === null
-        ? {}
-        : {
-            viewBox: `0 0 ${route.width} ${route.height}`,
-            preserveAspectRatio: "xMidYMin meet",
-            style: { left: route.left },
-          })}
+      {...(route === null ? {} : { style: { left: route.left } })}
     >
       {route === null ? null : (
         <>
           {/* The road ahead. Without it the drawn line arrives from nowhere and
               reads as an effect rather than as progress along something. */}
-          <path d={route.d} fill="none" stroke="var(--color-border)" strokeWidth="1" />
-          <path
-            ref={pathRef}
-            data-page-spine-path
-            d={route.d}
-            fill="none"
-            stroke="var(--color-accent)"
-            strokeWidth={route.stroke}
-            strokeLinecap="round"
+          <div
+            className="absolute inset-y-0 w-px bg-border"
+            style={{ left: route.x }}
+            aria-hidden="true"
+          />
+          <div
+            ref={drawnRef}
+            data-page-spine-drawn
+            className="absolute inset-y-0 origin-top bg-accent"
+            style={{
+              left: route.x - (route.stroke - 1) / 2,
+              width: route.stroke,
+              transform: "scaleY(0)",
+              willChange: "transform",
+            }}
           />
           {route.nodes.map((node, index) => (
-            <circle
-              key={`${node.x}:${node.y}`}
+            <div
+              key={node.y}
               ref={(element) => {
                 nodeRefs.current[index] = element;
               }}
-              cx={node.x}
-              cy={node.y}
-              r={route.radius}
-              fill="var(--color-accent)"
-              style={{ opacity: 0, transition: "opacity 240ms ease-out" }}
-              className="motion-reduce:transition-none"
+              className="absolute rounded-full bg-accent motion-reduce:transition-none"
+              style={{
+                left: route.x - route.radius + 0.5,
+                top: node.y - route.radius,
+                width: route.radius * 2,
+                height: route.radius * 2,
+                opacity: 0,
+                transition: "opacity 240ms ease-out",
+              }}
             />
           ))}
-          {/* Where the reader is, drawn last so it sits over a waypoint it has
-              just reached rather than under it. */}
-          <g ref={headRef} data-page-spine-head>
-            <circle r={route.radius * 2.2} fill="var(--color-accent)" opacity="0.16" />
-            <circle r={route.radius * 0.85} fill="var(--color-accent)" />
-          </g>
+          {/* Where the reader is. Its own element so the per-frame write is a
+              transform on one composited node and nothing else. */}
+          <div
+            ref={headRef}
+            data-page-spine-head
+            className="absolute left-0 top-0"
+            style={{ transform: "translate3d(0, 0, 0)", willChange: "transform" }}
+          >
+            <div
+              className="absolute rounded-full bg-accent"
+              style={{
+                left: route.x - route.radius * 2.2,
+                top: -route.radius * 2.2,
+                width: route.radius * 4.4,
+                height: route.radius * 4.4,
+                opacity: 0.16,
+              }}
+            />
+            <div
+              className="absolute rounded-full bg-accent"
+              style={{
+                left: route.x - route.radius * 0.85,
+                top: -route.radius * 0.85,
+                width: route.radius * 1.7,
+                height: route.radius * 1.7,
+              }}
+            />
+          </div>
         </>
       )}
-    </svg>
+    </div>
   );
 }
 
