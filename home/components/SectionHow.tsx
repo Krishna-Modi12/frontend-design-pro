@@ -21,7 +21,7 @@ function StepMotif({ letter }: { letter: string }): ReactElement | null {
         {[40, 56, 32].map((width, i) => (
           <span
             key={i}
-            className="h-5 rounded-full bg-bg-page [animation:chip-cycle_2.4s_ease-in-out_infinite]"
+            className="h-5 rounded-full bg-bg-page [animation:chip-cycle_2.4s_ease-in-out_infinite] motion-reduce:[animation:none]"
             style={{ width, animationDelay: `${i * 0.3}s` }}
           />
         ))}
@@ -33,7 +33,7 @@ function StepMotif({ letter }: { letter: string }): ReactElement | null {
       <div aria-hidden="true" className="relative mt-4 h-6 w-6">
         <svg
           viewBox="0 0 24 24"
-          className="absolute inset-0 h-6 w-6 text-text-muted [animation:crossfade-swap_2.6s_ease-in-out_infinite]"
+          className="absolute inset-0 h-6 w-6 text-text-muted [animation:crossfade-swap_2.6s_ease-in-out_infinite] motion-reduce:[animation:none]"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -42,7 +42,7 @@ function StepMotif({ letter }: { letter: string }): ReactElement | null {
         </svg>
         <svg
           viewBox="0 0 24 24"
-          className="absolute inset-0 h-6 w-6 text-accent [animation:crossfade-swap_2.6s_ease-in-out_infinite_1.3s]"
+          className="absolute inset-0 h-6 w-6 text-accent [animation:crossfade-swap_2.6s_ease-in-out_infinite_1.3s] motion-reduce:[animation:none]"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -57,7 +57,7 @@ function StepMotif({ letter }: { letter: string }): ReactElement | null {
       {[0, 1, 2, 3, 4].map((i) => (
         <span
           key={i}
-          className="h-4 w-1.5 rounded-full bg-accent [animation:dim-to-bright_2.2s_ease-in-out_infinite]"
+          className="h-4 w-1.5 rounded-full bg-accent [animation:dim-to-bright_2.2s_ease-in-out_infinite] motion-reduce:[animation:none]"
           style={{ animationDelay: `${i * 0.15}s` }}
         />
       ))}
