@@ -54,9 +54,14 @@ import { ScrollTrigger } from "../lib/gsapClient";
  * static, and the head is removed — a head on a motionless route would mark a
  * reading position that isn't moving.
  *
- * Below `lg` it does not render at all. The free margin at those widths is the
- * 20px of `sectionShell` padding, which is not enough room for it, and a phone
- * is already scrolling 13 screens of this page without extra chrome in the way.
+ * **It does render on a phone**, which it did not at first. The objection was
+ * that the free margin below `sm` is `sectionShell`'s 20px of padding and a
+ * rail parked against the text the way it is at 1280 would foul the copy. That
+ * is an argument against one placement rule, not against the rail — so the
+ * geometry is now driven from the ink outward (`CLEARANCE`), and a 12px band
+ * flush to the window clears the first character by 8px. A reader scrolling
+ * thirteen screens on a phone is the one who most needs to know how far
+ * through they are.
  */
 export interface PageSpineProps {
   /** Which children of the route's own parent get a waypoint. Scoped to direct
@@ -83,14 +88,22 @@ interface Route {
   readonly nodes: readonly Waypoint[];
 }
 
-/** `sectionShell`'s `max-w-6xl` and its `lg:px-8`, in px — see `lib/tokens.ts`.
-    The band is parked immediately outside the text column rather than against
-    the window, because at 1920 those are 336px apart and a line at the window
-    edge belongs to the browser rather than to the page. If these two ever
-    drift from the shell, the spine moves outward by the difference and the
-    clamp below keeps it on screen; nothing breaks. */
+/** `sectionShell`'s `max-w-6xl` and its `px-5 sm:px-8`, in px — see
+    `lib/tokens.ts`. The band is parked immediately outside the text column
+    rather than against the window, because at 1920 those are 336px apart and a
+    line at the window edge belongs to the browser rather than to the page. If
+    these ever drift from the shell the spine moves by the difference and the
+    clamps below keep it on screen and off the text; nothing breaks. */
 const SHELL_MAX = 1152;
+const SHELL_PAD_SM = 20;
 const SHELL_PAD = 32;
+const SM = 640;
+
+/** Minimum air between the rail's right-most ink and the first character of
+    body text. This is what makes a phone possible at all: the whole free
+    margin there is 20px, so the band cannot simply be parked against the text
+    the way it is at 1280 and up — it has to be placed from the ink outward. */
+const CLEARANCE = 8;
 
 /** The band is wide enough at `xl` to carry a heavier line without it reading
     as a border; below that it stays a hairline. */
@@ -108,16 +121,25 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
   });
   if (nodes.length === 0) return null;
 
-  const gutter = Math.max(0, (main.clientWidth - SHELL_MAX) / 2) + SHELL_PAD;
+  const pad = main.clientWidth >= SM ? SHELL_PAD : SHELL_PAD_SM;
+  const gutter = Math.max(0, (main.clientWidth - SHELL_MAX) / 2) + pad;
+  const x = Math.round(band / 2);
+  const radius = band >= EXPRESSIVE_BAND ? 4.5 : 3;
 
   return {
     height,
-    // Right edge of the band meets the left edge of the text, or hard against
-    // the window once the gutter is too narrow to hold the band at all.
-    left: Math.max(0, gutter - band),
-    x: Math.round(band / 2),
+    // Two rules, and the tighter one wins. The band's right edge meets the
+    // left edge of the text — which is what places it at 1280 and up — but
+    // never at the cost of crowding: the right-most ink (the rail plus a
+    // waypoint's radius) keeps `CLEARANCE` from the text regardless. At 1920
+    // the first rule binds and the band sits at 336; at 390 the second does,
+    // and pulls it to 3 so the dots clear the copy by 8px instead of fouling
+    // it. Clamped at 0 so it can never leave the viewport and scroll the page
+    // sideways.
+    left: Math.max(0, Math.min(gutter - band, gutter - CLEARANCE - x - radius)),
+    x,
     stroke: band >= EXPRESSIVE_BAND ? 2 : 1.5,
-    radius: band >= EXPRESSIVE_BAND ? 4.5 : 3,
+    radius,
     nodes,
   };
 }
@@ -252,7 +274,7 @@ export function PageSpine({
       ref={wrapRef}
       data-page-spine
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-8 lg:block xl:w-20 ${className}`}
+      className={`pointer-events-none absolute inset-y-0 left-0 z-10 w-3 sm:w-6 lg:w-8 xl:w-20 ${className}`}
       {...(route === null ? {} : { style: { left: route.left } })}
     >
       {route === null ? null : (
