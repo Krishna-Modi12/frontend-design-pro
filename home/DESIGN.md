@@ -251,7 +251,7 @@ Depth on this page is built from ground, tooth, and hairlines — never shadow.
 |---|---|---|
 | Ground texture | `signature` world only: a static desaturated `feTurbulence` grain at 3.5% alpha, painted through the `[data-section-surface]` / `--world-texture` channel in `lib/tokens.ts`. No colour, no motion. | Every below-hero section (incl. the `#install` footer) — gives the ~7,000px scroll a felt surface so it doesn't read as one flat field |
 | Section seam | `[data-section-surface] + [data-section-surface] { border-top: 1px solid var(--color-border) }` — a 1px hairline between each pair of consecutive below-hero sections, horizontal only — a repeating grid of straight rules is what the wall means by "broadsheet hairline columns", and that is what a vertical seam here would be | Making one section legibly end and the next begin, without a lightness step big enough to threaten the accent-on-`bg-surface` ratio |
-| Page spine | `PageSpine.tsx` — one rail down the outer margin of `<main>`, its band's right edge parked against the text column. `--color-border` for the whole route, `--color-accent` for however much of it the reader has scrolled, a waypoint at each section's centre and a head at the current position. `lg:` and up only; the band is 32px there and 80px from `xl:`. | Telling a reader how far through ~8,500px they are and what the page's stages are, without a fixed progress bar stuck to the window. Not the row above: a single line in the margin that touches no content, carries the reader's position, and is absent until scrolled — not a repeating grid of rules used as structure |
+| Page spine | `PageSpine.tsx` — one rail down the outer margin of `<main>`, its band's right edge parked against the text column. `--color-border` for the whole route, `--color-accent` for however much of it the reader has scrolled, a waypoint at each section's centre and a head at the current position. Every width; the band is 12px at 360 and 80px from `xl:`, placed from a fixed clearance to the text column rather than a fixed offset. | Telling a reader how far through ~8,500px they are and what the page's stages are, without a fixed progress bar stuck to the window. Not the row above: a single line in the margin that touches no content, carries the reader's position, and is absent until scrolled — not a repeating grid of rules used as structure |
 | Flat | `border: 1px solid var(--color-border)`, no shadow | Card outlines, other decorative dividers |
 | Subtle | `border: 1px solid var(--color-border)` + `bg-bg-elevated` | Default card state (existing `cardShell`), Showcase/Catalog cards at rest — the grain sits on the ground, not the card, so an untextured card reads as cleanly lifted from a textured ground |
 | Elevated | `border-color: var(--color-border-strong)` on hover, no box-shadow anywhere on the page (deliberate — shadows read as the generic-SaaS default this pack argues against) | Card hover states, focus-within |
@@ -332,9 +332,41 @@ ScrollTrigger.create({ trigger: main, start: "top top", end: "bottom bottom", sc
   onUpdate: (self) => paint(self.progress) });
 ```
 
-It **does not render below `lg:`** — the free margin at those widths is
-`sectionShell`'s 20px of padding, and a phone is already scrolling 13 screens of
-this page without extra chrome in the way.
+**It renders at every width, and the rule that makes that safe is stated in
+ink, not in breakpoints.** The band narrows — 12px at 360, 24px from `sm:`, 32px
+from `lg:`, 80px from `xl:` — but what is actually held constant is the air
+between the rail's right-most drawn pixel and the first character of body text:
+`left` is solved from `CLEARANCE`, the shell's own max-width and its own
+padding, so the rail cannot be placed anywhere that would crowd the column.
+
+**The reservation is the head's halo, not the rail and not a waypoint dot** —
+at `radius * HEAD_HALO` it is the widest ink on the spine, and at narrow widths
+it is wider than the band itself, so a clamp that reserves anything less spends
+the clearance without saying so. Measured on the built app, mid-scroll with the
+head on screen, taking the right-most edge of every visible node in the
+subtree:
+
+| width | ink right | first character | clearance | h-overflow |
+|---|---|---|---|---|
+| 360 | 12.6 | 20 | 7.4px | 0 |
+| 390 | 12.6 | 20 | 7.4px | 0 |
+| 768 | 24.0 | 32 | 8.0px | 0 |
+| 1024 | 22.6 | 32 | 9.4px | 0 |
+| 1280 | 65.9 | 96 | 30.1px | 0 |
+| 1440 | 145.9 | 176 | 30.1px | 0 |
+| 1920 | 385.9 | 416 | 30.1px | 0 |
+
+At 360 and 390 the clamp bottoms out and the band sits flush to the viewport
+edge. That is the honest answer rather than a failure: 20px of margin cannot
+hold 13.2px of ink and 8px of air at once, and of the two, the air beside the
+text is the one that matters.
+
+An earlier note here said the spine did not render below `lg:` because the free
+margin there is only `sectionShell`'s 20px of padding. That was an argument
+against one *placement rule* — pinning a wide band to a fixed offset — and it
+was read as an argument against the rail. A 12px band inside a 20px margin is
+not crowding anything, provided the placement is solved from the ink outward,
+which is what the constant above does.
 
 **Under `prefers-reduced-motion: reduce` the route renders complete and
 static**, and the head is removed — a head on a motionless route would mark a

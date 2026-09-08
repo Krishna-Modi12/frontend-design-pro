@@ -80,8 +80,12 @@ export function CheckerPanel(): ReactElement {
         <span className="text-sm font-medium text-text-secondary">
           Edit it — the checks re-run as you type
         </span>
+        {/* A fixed viewport, not a floor. `min-h` here let the row grow to the
+            gutter's one-div-per-line height, so neither pane ever scrolled and
+            `syncGutterScroll` below was dead code — it writes `scrollTop` to an
+            element that had no overflow to scroll. */}
         <div
-          className={`mt-2 flex min-h-[22rem] overflow-hidden rounded-lg border border-border-strong bg-bg-elevated transition-shadow duration-300 ease-out motion-reduce:transition-none ${
+          className={`mt-2 flex h-[22rem] overflow-hidden rounded-lg sm:h-[26rem] border border-border-strong bg-bg-elevated transition-shadow duration-300 ease-out motion-reduce:transition-none ${
             justSwapped ? "ring-2 ring-accent" : ""
           }`}
         >
@@ -111,6 +115,9 @@ export function CheckerPanel(): ReactElement {
             onChange={(e) => setCode(e.target.value)}
             onScroll={syncGutterScroll}
             data-check-input
+            /* Lenis owns the wheel on this page (`SmoothScroll`); without this it
+               swallows the delta before the code pane can scroll itself. */
+            data-lenis-prevent
             className={`${focusRing} min-w-0 flex-1 resize-none whitespace-pre overflow-auto border-0 bg-transparent p-3 font-mono text-xs leading-6 text-text-primary sm:p-4`}
           />
         </div>
