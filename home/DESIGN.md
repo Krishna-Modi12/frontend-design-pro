@@ -338,11 +338,6 @@ from `lg:`, 80px from `xl:` — but what is actually held constant is the air
 between the rail's right-most drawn pixel and the first character of body text:
 `left` is solved from `CLEARANCE`, the shell's own max-width and its own
 padding, so the rail cannot be placed anywhere that would crowd the column.
-<<<<<<< HEAD
-Measured on the built app, right-most ink to first character: 7px at 360 and
-390, 8px at 768, 12px at 1024, 35px at 1280 and 1920 — and 0px of horizontal
-overflow at every one of them.
-=======
 
 **The reservation is the head's halo, not the rail and not a waypoint dot** —
 at `radius * HEAD_HALO` it is the widest ink on the spine, and at narrow widths
@@ -365,7 +360,6 @@ At 360 and 390 the clamp bottoms out and the band sits flush to the viewport
 edge. That is the honest answer rather than a failure: 20px of margin cannot
 hold 13.2px of ink and 8px of air at once, and of the two, the air beside the
 text is the one that matters.
->>>>>>> origin/main
 
 An earlier note here said the spine did not render below `lg:` because the free
 margin there is only `sectionShell`'s 20px of padding. That was an argument

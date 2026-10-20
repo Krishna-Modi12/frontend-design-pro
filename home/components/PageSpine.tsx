@@ -137,15 +137,6 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
     height,
     // Two rules, and the tighter one wins. The band's right edge meets the
     // left edge of the text — which is what places it at 1280 and up — but
-<<<<<<< HEAD
-    // never at the cost of crowding: the right-most ink (the rail plus a
-    // waypoint's radius) keeps `CLEARANCE` from the text regardless. At 1920
-    // the first rule binds and the band sits at 336; at 390 the second does,
-    // and pulls it to 3 so the dots clear the copy by 8px instead of fouling
-    // it. Clamped at 0 so it can never leave the viewport and scroll the page
-    // sideways.
-    left: Math.max(0, Math.min(gutter - band, gutter - CLEARANCE - x - radius)),
-=======
     // never at the cost of crowding: the right-most ink keeps `CLEARANCE` from
     // the text regardless. That ink is the head's halo, not the rail and not a
     // waypoint, so the reservation is `x + radius * HEAD_HALO`; at narrow
@@ -156,7 +147,6 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
     // hold 13.2px of ink and 8px of air. Clamped at 0 so it can never leave
     // the viewport and scroll the page sideways.
     left: Math.max(0, Math.min(gutter - band, gutter - CLEARANCE - x - radius * HEAD_HALO)),
->>>>>>> origin/main
     x,
     stroke: band >= EXPRESSIVE_BAND ? 2 : 1.5,
     radius,
@@ -345,17 +335,10 @@ export function PageSpine({
             <div
               className="absolute rounded-full bg-accent"
               style={{
-<<<<<<< HEAD
-                left: route.x - route.radius * 2.2,
-                top: -route.radius * 2.2,
-                width: route.radius * 4.4,
-                height: route.radius * 4.4,
-=======
                 left: route.x - route.radius * HEAD_HALO,
                 top: -route.radius * HEAD_HALO,
                 width: route.radius * HEAD_HALO * 2,
                 height: route.radius * HEAD_HALO * 2,
->>>>>>> origin/main
                 opacity: 0.16,
               }}
             />
