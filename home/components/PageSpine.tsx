@@ -108,6 +108,13 @@ const CLEARANCE = 8;
 /** The band is wide enough at `xl` to carry a heavier line without it reading
     as a border; below that it stays a hairline. */
 const EXPRESSIVE_BAND = 64;
+/** The head's halo is the right-most ink on the whole rail — wider than a
+    waypoint dot, and wider than the band at narrow widths. Its extent has to
+    be a shared constant, because `buildRoute` reserves the space and the
+    markup draws into it; when the clamp reserved only `radius`, the halo ate
+    2.6px of the 8px clearance at 390 and the measurement in DESIGN.md was
+    reading a waypoint rather than the widest thing on screen. */
+const HEAD_HALO = 2.2;
 
 function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElement[]): Route | null {
   const height = main.offsetHeight;
@@ -130,6 +137,7 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
     height,
     // Two rules, and the tighter one wins. The band's right edge meets the
     // left edge of the text — which is what places it at 1280 and up — but
+<<<<<<< HEAD
     // never at the cost of crowding: the right-most ink (the rail plus a
     // waypoint's radius) keeps `CLEARANCE` from the text regardless. At 1920
     // the first rule binds and the band sits at 336; at 390 the second does,
@@ -137,6 +145,18 @@ function buildRoute(band: number, main: HTMLElement, sections: readonly HTMLElem
     // it. Clamped at 0 so it can never leave the viewport and scroll the page
     // sideways.
     left: Math.max(0, Math.min(gutter - band, gutter - CLEARANCE - x - radius)),
+=======
+    // never at the cost of crowding: the right-most ink keeps `CLEARANCE` from
+    // the text regardless. That ink is the head's halo, not the rail and not a
+    // waypoint, so the reservation is `x + radius * HEAD_HALO`; at narrow
+    // widths the halo is wider than the band itself and reserving anything
+    // less silently spends the clearance. At 1920 the first rule binds and the
+    // band sits at 336; at 390 the second does, and pulls it flush to the
+    // viewport edge, which is the honest answer when 20px of margin has to
+    // hold 13.2px of ink and 8px of air. Clamped at 0 so it can never leave
+    // the viewport and scroll the page sideways.
+    left: Math.max(0, Math.min(gutter - band, gutter - CLEARANCE - x - radius * HEAD_HALO)),
+>>>>>>> origin/main
     x,
     stroke: band >= EXPRESSIVE_BAND ? 2 : 1.5,
     radius,
@@ -325,10 +345,17 @@ export function PageSpine({
             <div
               className="absolute rounded-full bg-accent"
               style={{
+<<<<<<< HEAD
                 left: route.x - route.radius * 2.2,
                 top: -route.radius * 2.2,
                 width: route.radius * 4.4,
                 height: route.radius * 4.4,
+=======
+                left: route.x - route.radius * HEAD_HALO,
+                top: -route.radius * HEAD_HALO,
+                width: route.radius * HEAD_HALO * 2,
+                height: route.radius * HEAD_HALO * 2,
+>>>>>>> origin/main
                 opacity: 0.16,
               }}
             />
